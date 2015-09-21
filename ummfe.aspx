@@ -81,22 +81,7 @@
                 q_mask(bbmMask);
                 bbsMask = [['txtIndate', r_picd], ['txtMon', r_picm]];
 				
-		        q_cmbParse("combAcc1", '1111@現金,1121@應收票據','s');
-		        /*
-		           現金
-			匯款
-			信用狀
-			手續費
-			支票
-			現金折讓
-			折讓金額
-			佣金支出
-			佣金收入
-			利息支出
-			利息收入
-			其它支出
-			其他收入
-		         */
+		        q_cmbParse("combAcc1", '現金,匯款,信用狀,手續費,支票,現金折讓,折讓金額,佣金支出,佣金收入,利息支出,利息收入,其它支出,其他收入','s');
 		        
 		         $('#txtDatea').blur(function() {
 		         	if(!emp($('#txtDatea').val())&&(q_cur==1 || q_cur==2)){
