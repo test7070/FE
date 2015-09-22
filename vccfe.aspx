@@ -51,17 +51,18 @@
             , ['txtPost2', 'lblAddr2', 'addr2', 'noa,post', 'txtPost2', 'addr2_b.aspx']
             , ['txtProductno_', 'btnProduct_', 'ucaucc', 'noa,product,unit,spec', 'txtProductno_,txtProduct_,txtUnit_,txtSpec_', 'ucaucc_b.aspx'], ['txtTranstartno', 'lblTranstart', 'addr2', 'noa,post', 'txtTranstartno,txtTranstart', 'addr2_b.aspx'], ['txtDriverno', 'lblDriver', 'driver', 'noa,namea', 'txtDriverno,txtDriver', 'driver_b.aspx']);
 
-            var isinvosystem = false;
+            var isinvosystem = false,t_acomp=new Array();
             //購買發票系統
             $(document).ready(function() {
                 q_desc = 1;
                 bbmKey = ['noa'];
                 bbsKey = ['noa', 'noq'];
                 q_brwCount();
-                q_gt(q_name, q_content, q_sqlCount, 1, 0, '', r_accy);
-                q_gt('acomp', 'stop=1 ', 0, 0, 0, "cno_acomp");
-                q_gt('ucca', 'stop=1 ', 0, 0, 0, "ucca_invo");//判斷是否有買發票系統
-                q_gt('flors_coin', '', 0, 0, 0, "flors_coin");
+                
+                
+                q_gt('acomp', '', 0, 0, 0, "");
+                
+                
             });
 
             function main() {
@@ -398,6 +399,40 @@
             function q_gtPost(t_name) {
                 var as;
                 switch (t_name) {
+                	case 'acomp':
+                		var as = _q_appendData("acomp", "", true);
+		                if (as[0] != undefined) {
+		                	t_acomp = new Array();
+		                	for (i = 0; i < as.length; i++) {
+		                		t_acomp.push({noa:as[i].noa,acomp:as[i].acomp});
+		                    } 
+		                }
+		                q_gt('ucca', 'stop=1 ', 0, 0, 0, "ucca_invo");//判斷是否有買發票系統
+                		break;
+                	case 'ucca_invo':
+                        var as = _q_appendData("ucca", "", true);
+                        if (as[0] != undefined) {
+                            isinvosystem = true;
+                            $('.istax').hide();
+                        } else {
+                            isinvosystem = false;
+                        }
+                        q_gt('flors_coin', '', 0, 0, 0, "flors_coin");
+                        break;
+                    
+					case 'flors_coin':
+						var as = _q_appendData("flors", "", true);
+						z_coin='';
+						for ( i = 0; i < as.length; i++) {
+							z_coin+=','+as[i].coin;
+						}
+						if(z_coin.length==0) z_coin=' ';
+						
+						q_cmbParse("cmbCoin", z_coin);
+						if(abbm[q_recno])
+							$('#cmbCoin').val(abbm[q_recno].coin);
+						q_gt(q_name, q_content, q_sqlCount, 1, 0, '', r_accy);
+						break;
                     case 'GetOrdeList':
                         var as = _q_appendData("view_ordes", "", true);
                         for (var k = 0; k < q_bbsCount; k++) {
@@ -489,36 +524,7 @@
                         $('#div_stk').css('left', mouse_point.pageX - parseInt($('#div_stk').css('width')));
                         $('#div_stk').toggle();
                         break;
-                    case 'ucca_invo':
-                        var as = _q_appendData("ucca", "", true);
-                        if (as[0] != undefined) {
-                            isinvosystem = true;
-                            $('.istax').hide();
-                        } else {
-                            isinvosystem = false;
-                        }
-                        break;
-                    case 'cno_acomp':
-                        var as = _q_appendData("acomp", "", true);
-                        if (as[0] != undefined) {
-                            z_cno = as[0].noa;
-                            z_acomp = as[0].acomp;
-                            z_nick = as[0].nick;
-                        }
-                        break;
-					case 'flors_coin':
-						var as = _q_appendData("flors", "", true);
-						var z_coin='';
-						for ( i = 0; i < as.length; i++) {
-							z_coin+=','+as[i].coin;
-						}
-						if(z_coin.length==0) z_coin=' ';
-						
-						q_cmbParse("cmbCoin", z_coin);
-						if(abbm[q_recno])
-							$('#cmbCoin').val(abbm[q_recno].coin);
-						
-						break;
+                    
 					case 'flors':
 						var as = _q_appendData("flors", "", true);
 						if (as[0] != undefined) {
