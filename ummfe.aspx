@@ -1085,123 +1085,110 @@
 			}
 		</script>
 		<style type="text/css">
-            #dmain {
-                overflow: hidden;
-            }
-            .dview {
-                float: left;
-                width: 25%;
-                border-width: 0px;
-            }
-            .tview {
-                border: 5px solid gray;
-                font-size: medium;
-                background-color: black;
-            }
-            .tview tr {
-                height: 30px;
-            }
-            .tview td {
-                padding: 2px;
-                text-align: center;
-                border-width: 0px;
-                background-color: #FFFF66;
-                color: blue;
-            }
-            .dbbm {
-                float: left;
-                width: 75%;
-                /*margin: -1px;
-                 border: 1px black solid;*/
-                border-radius: 5px;
-            }
-            .tbbm {
-                padding: 0px;
-                border: 1px white double;
-                border-spacing: 0;
-                border-collapse: collapse;
-                font-size: medium;
-                color: blue;
-                background: #cad3ff;
-                width: 100%;
-            }
-            .tbbm tr {
-                height: 35px;
-            }
-            .tbbm tr td {
-                /*width: 10%;*/
-            }
-            .tbbm .tdZ {
-                width: 1%;
-            }
-            .tbbm tr td span {
-                float: right;
-                display: block;
-                width: 5px;
-                height: 10px;
-            }
-            .tbbm tr td .lbl {
-                float: right;
-                color: blue;
-                font-size: medium;
-            }
-            .tbbm tr td .lbl.btn {
-                color: #4295D7;
-                font-weight: bolder;
-            }
-            .tbbm tr td .lbl.btn:hover {
-                color: #FF8F19;
-            }
-            .txt.c1 {
-                width: 100%;
-                float: left;
-            }
-            .txt.c2 {
-                width: 50%;
-                float: left;
-            }
-            .txt.c3 {
-                width: 50%;
-                float: left;
-            }
-            .txt.c4 {
-                width: 20%;
-                float: left;
-            }
-            .txt.c5 {
-                width: 80%;
-                float: left;
-            }
-            .txt.num {
-                text-align: right;
-            }
-            .tbbm td {
-                margin: 0 -1px;
-                padding: 0;
-            }
-            .tbbm td input[type="text"] {
-                border-width: 1px;
-                padding: 0px;
-                margin: -1px;
-                float: left;
-            }
-            .tbbm select {
-                border-width: 1px;
-                padding: 0px;
-                margin: -1px;
-            }
-            .dbbs {
-                width: 100%;
-            }
-            .tbbs a {
-                font-size: medium;
-            }
-            input[type="text"], input[type="button"],select {
-                font-size: medium;
-            }
-            .num {
-                text-align: right;
-            }
+			#dmain {
+				overflow: hidden;
+			}
+			.dview {
+				float: left;
+				width: 300px;
+				border-width: 0px;
+			}
+			.tview {
+				border: 5px solid gray;
+				font-size: medium;
+				background-color: black;
+			}
+			.tview tr {
+				height: 30px;
+			}
+			.tview td {
+				padding: 2px;
+				text-align: center;
+				border-width: 0px;
+				background-color: #FFFF66;
+				color: blue;
+			}
+			.dbbm {
+				float: left;
+				width: 1000px;
+				/*margin: -1px;
+				 border: 1px black solid;*/
+				border-radius: 5px;
+			}
+			.tbbm {
+				padding: 0px;
+				border: 1px white double;
+				border-spacing: 0;
+				border-collapse: collapse;
+				font-size: medium;
+				color: blue;
+				background: #cad3ff;
+				width: 100%;
+			}
+			.tbbm tr {
+				height: 35px;
+			}
+			.tbbm tr td {
+				width: 10%;
+			}
+			.tbbm .tdZ {
+				width: 1%;
+			}
+			.tbbm tr td span {
+				float: right;
+				display: block;
+				width: 5px;
+				height: 10px;
+			}
+			.tbbm tr td .lbl {
+				float: right;
+				color: black;
+				font-size: medium;
+			}
+			.tbbm tr td .lbl.btn {
+				color: #4297D7;
+				font-weight: bolder;
+			}
+			.tbbm tr td .lbl.btn:hover {
+				color: #FF8F19;
+			}
+			.txt.c1 {
+				width: 100%;
+				float: left;
+			}
+			.txt.num {
+				text-align: right;
+			}
+			.tbbm td {
+				margin: 0 -1px;
+				padding: 0;
+			}
+			.tbbm td input[type="text"] {
+				border-width: 1px;
+				padding: 0px;
+				margin: -1px;
+				float: left;
+			}
+			.tbbm select {
+				border-width: 1px;
+				padding: 0px;
+				margin: -1px;
+			}
+			.dbbs {
+				width: 1300px;
+			}
+			.tbbs a {
+				font-size: medium;
+			}
+			input[type="text"], input[type="button"] {
+				font-size: medium;
+			}
+			.num {
+				text-align: right;
+			}
+			select {
+				font-size: medium;
+			}
 		</style>
 	</head>
 	<body ondragstart="return false" draggable="false"
@@ -1210,7 +1197,7 @@
 	ondrop="event.dataTransfer.dropEffect='none';event.stopPropagation(); event.preventDefault();"
 	>
 		<!--#include file="../inc/toolbar.inc"-->
-		<div id='dmain' style="width: 1260px;">
+		<div id='dmain' style="width: 1300px;">
 			<div class="dview" id="dview">
 				<table class="tview" id="tview">
 					<tr>
@@ -1327,24 +1314,24 @@
 				</table>
 			</div>
 		</div>
-		<div class='dbbs' style="width: 1260px;">
+		<div class='dbbs'>
 			<table id="tbbs" class='tbbs'>
 				<tr style='color:white; background:#003366;' >
-					<td  align="center" style="width:1%;">
-					<input class="btn"  id="btnPlus" type="button" value='+' style="font-weight: bold;"  />
+					<td align="center" style="width:30px;">
+						<input class="btn" id="btnPlus" type="button" value='+' style="font-weight: bold;" />
 					</td>
-					<td align="center" style="width:1%;"> </td>
-					<td align="center" style="width:7%;"><a id='lblAcc1'></a><br><a id='lblAcc2'></a></td>
-					<td align="center" style="width:8%;"><a id='lblMoney'></a><br><a id='lblAccmemo'></a></td>
-					<td align="center" style="width:9%;"><a id='lblCheckno'></a><br><a id='lblGqbtitle'></a></td>
-					<td align="center" style="width:8%;"><a id='lblAccount'></a></td>
-					<td align="center" style="width:7%;"><a id='lblBankno'></a><br><a id='lblBank'></a></td>
-					<td align="center" style="width:5%;"><a id='lblIndate'></a></td>
-					<td align="center" style="width:5%;"><a id='lblChgsTran'></a><br><a id='lblParts'></a></td>
-					<td align="center" style="width:7%;"><a id='lblMemos'></a></td>
-					<td align="center" style="width:5%;"><a id='lblPaysales'></a></td>
-					<td align="center" style="width:5%;"><a id='lblUnpay_s'></a></td>
-					<td align="center" style="width:3%;"><a id='lblCoins'></a></td>
+					<td align="center" style="width:20px;"></td>
+					<td align="center" style="width:150px;"><a id='lblAcc1'></a><br><a id='lblAcc2'></a></td>
+					<td align="center" style="width:120px;"><a id='lblMoney'></a><br><a id='lblAccmemo'></a></td>
+					<td align="center" style="width:150px;"><a id='lblCheckno'></a><br><a id='lblGqbtitle'></a></td>
+					<td align="center" style="width:120px;"><a id='lblAccount'></a></td>
+					<td align="center" style="width:100px;"><a id='lblBankno'></a><br><a id='lblBank'></a></td>
+					<td align="center" style="width:80px;"><a id='lblIndate'></a></td>
+					<td align="center" style="width:80px;"><a id='lblChgsTran'></a><br><a id='lblParts'></a></td>
+					<td align="center" style="width:100px;"><a id='lblMemos'></a></td>
+					<td align="center" style="width:120px;"><a id='lblPaysales'></a></td>
+					<td align="center" style="width:80px;"><a id='lblUnpay_s'></a></td>
+					<td align="center" style="width:80px;"><a id='lblCoins'></a></td>
 				</tr>
 				<tr  style='background:#cad3ff;'>
 					<td align="center">
