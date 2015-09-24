@@ -81,8 +81,8 @@
                 q_mask(bbmMask);
                 bbsMask = [['txtIndate', r_picd], ['txtMon', r_picm]];
 				
-		        q_cmbParse("combAcc1", '現金,匯款,信用狀,手續費,支票,現金折讓,折讓金額,佣金支出,佣金收入,利息支出,利息收入,其它支出,其他收入','s');
-		        
+		        q_cmbParse("combAcc1", '1111@現金,匯款,信用狀,手續費,支票,4107@現金折讓,4106@折讓金額,6236@佣金支出,7114@佣金收入,8101@利息支出,7103@利息收入,8103@其它支出,7194@其他收入','s');
+
 		         $('#txtDatea').blur(function() {
 		         	if(!emp($('#txtDatea').val())&&(q_cur==1 || q_cur==2)){
 		         		
@@ -757,6 +757,79 @@
                 	$('#lblNo_'+i).text(i+1);	
                     if ($('#btnMinus_' + i).hasClass('isAssign'))/// 重要
                         continue;
+                    $('#combAcc1_'+i).change(function(e){
+			        	//q_cmbParse("combAcc1", '1111@現金,匯款,信用狀,手續費,支票,4107@現金折讓,4106@折讓金額,6236@佣金支出,7114@佣金收入,8101@利息支出,7103@利息收入,8103@其它支出,7194@其他收入','s');
+						var n = $(this).attr('id').replace('combAcc1_', '');
+						
+						$('#txtAcc1_'+n).attr('disabled','disabled').css('color','green').css('background','rgb(237,237,237)');
+						$('#txtAcc2_'+n).attr('disabled','disabled').css('color','green').css('background','rgb(237,237,237)');
+						switch($(this).val()){
+							case '1111':
+								//現金
+								$('#txtAcc1_'+n).val('1111.');
+								$('#txtAcc2_'+n).val('現金');
+								break;
+							case '匯款':
+								$('#txtAcc1_'+n).removeAttr('disabled').css('color','black').css('background','white');
+								$('#txtAcc2_'+n).removeAttr('disabled').css('color','black').css('background','white');
+								break;
+							case '信用狀':
+								$('#txtAcc1_'+n).removeAttr('disabled').css('color','black').css('background','white');
+								$('#txtAcc2_'+n).removeAttr('disabled').css('color','black').css('background','white');
+								break;
+							case '手續費':
+								$('#txtAcc1_'+n).removeAttr('disabled').css('color','black').css('background','white');
+								$('#txtAcc2_'+n).removeAttr('disabled').css('color','black').css('background','white');
+								break;
+							case '支票':
+								$('#txtAcc1_'+n).removeAttr('disabled').css('color','black').css('background','white');
+								$('#txtAcc2_'+n).removeAttr('disabled').css('color','black').css('background','white');
+								break;
+							case '4107':
+								//現金折讓
+								$('#txtAcc1_'+n).val('4107.');
+								$('#txtAcc2_'+n).val('現金折讓');
+								break;
+							case '4106':
+								//折讓金額
+								$('#txtAcc1_'+n).val('4106.');
+								$('#txtAcc2_'+n).val('折讓金額');
+								break;
+							case '6236':
+								//佣金支出
+								$('#txtAcc1_'+n).val('6236.');
+								$('#txtAcc2_'+n).val('佣金支出');
+								break;
+							case '7114':
+								//佣金收入
+								$('#txtAcc1_'+n).val('7114.');
+								$('#txtAcc2_'+n).val('佣金收入');
+								break;
+							case '8101':
+								//利息支出
+								$('#txtAcc1_'+n).val('8101.');
+								$('#txtAcc2_'+n).val('利息支出');
+								break;
+							case '7103':
+								//利息收入
+								$('#txtAcc1_'+n).val('7103.');
+								$('#txtAcc2_'+n).val('利息收入');
+								break;
+							case '8103':
+								//其它支出
+								$('#txtAcc1_'+n).val('8103.');
+								$('#txtAcc2_'+n).val('其它支出');
+								break;
+							case '7194':
+								//其他收入 *
+								$('#txtAcc1_'+n).val('7194.'+$('#txtCustno').val());
+								$('#txtAcc2_'+n).val('其他收入');
+								break;
+							default:
+								break;
+						}
+			        	
+			        });
                     $('#txtAcc1_' + i).bind('contextmenu', function(e) {
                         /*滑鼠右鍵*/
                         e.preventDefault();
@@ -840,6 +913,14 @@
                  		$('#txtVccno_'+i).css('color','black').css('background','white').removeAttr('readonly');
                  	else
                  		$('#txtVccno_'+i).css('color','green').css('background','RGB(237,237,237)').attr('readonly','readonly');
+                 }
+                 for(var i=0;i<q_bbsCount;i++){
+                 	if(q_cur==1 || q_cur==2){
+                 		
+                 		$("#combAcc1_"+i).removeAttr("disabled").css('color','black').css('background','white');
+                 	}else{
+						$("#combAcc1_"+i).attr("disabled","disabled").css('color','green').css('background','RGB(237,237,237)');                 		
+                 	}
                  }
             }
 
@@ -926,6 +1007,7 @@
 		        }
                 getOpay();
             }
+
 
             function readonly(t_para, empty) {
                 _readonly(t_para, empty);
