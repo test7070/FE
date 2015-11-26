@@ -417,6 +417,8 @@
 						$('#txtWorker4_'+i).val(bbs[i].worker4);
 						$('#txtWorker5_'+i).val(bbs[i].worker5);
 						$('#txtPicno_'+i).val(bbs[i].picno);
+						$('#txtPara_'+i).val(bbs[i].para);
+						$('#txtImgorg_'+i).val(bbs[i].imgorg);
 						//$('#txtImgdata_'+i).val(bbs[i].imgdata);
 						//$('#txtImgbarcode_'+i).val(bbs[i].imgbarcode);
 						createImg(i);//產生圖片 ,若太多筆要等一下
@@ -477,7 +479,9 @@
                 		createImg(n);
                 	case 'txtPicno_':
                 		var n = b_seq;
-                		createImg(n);
+                		t_noa = $('#txtPicno_'+n).val();
+                		//console.log('popPost:'+t_noa);
+                		q_gt('img', "where=^^noa='"+t_noa+"'^^", 0, 0, 0, JSON.stringify({action:"getimg",n:n}),1);
                     default:
                         break;
                 }
@@ -543,8 +547,19 @@
                     default:
                     	try{
                     		var t_para = JSON.parse(t_name);
-                    		if(t_para.action=="createimg" || t_para.action=="createimg_btnOk"){
-                    			
+                    		if(t_para.action=="getimg"){
+                    			var n = t_para.n;
+                    			as = _q_appendData("img", "", true);
+                    			if(as[0]!=undefined){
+                    				$('#txtPara_'+n).val(as[0].para);
+                    				$('#txtImgorg_'+n).val(as[0].org);
+                    			}else{
+                    				$('#txtPara_'+n).val('');
+                    				$('#txtImgorg_'+n).val('');
+                    			}
+                    			createImg(n);
+                    		}else if(t_para.action=="createimg" || t_para.action=="createimg_btnOk"){
+                    			alert('xxxx');
                     			var n = t_para.n;
                     			var action = t_para.action;
                     			//console.log('gtpost:'+n);
@@ -605,7 +620,58 @@
                         break;
                 }
             }
-
+			function createImg(n){
+				var t_picno = $('#txtPicno_'+n).val();
+				var t_para = $('#txtPara_'+n).val();
+                var t_imgorg = $('#txtImgorg_'+n).val();
+				try{
+					t_para = JSON.parse(t_para);
+				}catch(e){
+					console.log(e.message);
+				}
+				if(t_imgorg.length==0)
+					return;
+				$('#imgPic_'+n).attr('src',t_imgorg);
+                var imgwidth = 300;
+                var imgheight = 100;
+                $('#canvas_'+n).width(imgwidth).height(imgheight);
+                var c = document.getElementById("canvas_"+n);
+				var ctx = c.getContext("2d");		
+				c.width = imgwidth;
+				c.height = imgheight;
+				ctx.drawImage($('#imgPic_'+n)[0],0,0,imgwidth,imgheight);
+				var t_length = 0;
+				for(var i=0;i<t_para.length;i++){
+					value = q_float('txtPara'+t_para[i].key.toLowerCase()+'_'+n);
+					if(value!=0){
+						t_length += value;
+						ctx.font = t_para[i].fontsize+"px Arial";
+						ctx.fillStyle = 'black';
+						ctx.fillText(value+'',t_para[i].left,t_para[i].top);
+					}
+				}
+				//------------------------------
+				$('#imgPic_'+n).attr('src',c.toDataURL());
+				//條碼用圖形
+				xx_width = 355;
+				xx_height = 119;						
+				$('#canvas_'+n).width(xx_width).height(xx_height);
+				c.width = xx_width;
+				c.height = xx_height;
+				$('#canvas_'+n)[0].getContext("2d").drawImage($('#imgPic_'+n)[0],0,0,imgwidth,imgheight,0,0,xx_width,xx_height);
+				$('#txtImgbarcode_'+n).val(c.toDataURL());
+				//報表用圖形 縮放為150*50
+				$('#canvas_'+n).width(150).height(50);
+				c.width = 150;
+				c.height = 50;
+				$('#canvas_'+n)[0].getContext("2d").drawImage($('#imgPic_'+n)[0],0,0,imgwidth,imgheight,0,0,150,50);
+				$('#txtImgdata_'+n).val(c.toDataURL());	
+				//------------------------------
+				if($('#txtMemo_'+n).val().substring(0,1)!='*'){
+					$('#txtLengthb_'+n).val(t_length);
+				}
+				sum();
+			};
             function q_stPost() {
                 if (!(q_cur == 1 || q_cur == 2))
                     return false;
@@ -650,7 +716,7 @@
             function btnModi() {
                 if (emp($('#txtNoa').val()))
                     return;
-                var t_ordeno = $('#txtOrdeno').val()
+                var t_ordeno = $('#txtOrdeno').val();
                 if(t_ordeno.length>0){
                 	Lock(1,{opacity:0});
                		q_gt('view_vccs', "where=^^ ordeno='"+t_ordeno+"' ^^ stop=1", 0, 0, 0, 'btnModi'); 
@@ -718,7 +784,16 @@
                 } else
                     $('#txtWorker2').val(r_name);
                 $('#btnMemo').focus();
-				createImg_btnOk(q_bbsCount-1);
+                for(var i=0;i<q_bbsCount;i++){
+                	createImg(i);
+                }
+                sum();
+                var t_noa = trim($('#txtNoa').val());
+                var t_date = trim($('#txtDatea').val());
+                if (t_noa.length == 0 || t_noa == "AUTO")
+                    q_gtnoa(q_name, replaceAll(q_getPara('sys.key_workj') + (t_date.length == 0 ? q_date() : t_date), '/', ''));
+                else
+                    wrServer(t_noa);
             }
 
             function wrServer(key_value) {
@@ -797,29 +872,7 @@
             function btnPlut(org_htm, dest_tag, afield) {
                 _btnPlut(org_htm, dest_tag, afield);
             }*/
-			function createImg(n){
-				var t_picno = $('#txtPicno_'+n).val();
-				q_gt('img', "where=^^noa='"+t_picno+"'^^", 0, 0, 0, JSON.stringify({action:"createimg",n:n}),r_accy,1);	
-			};
-			function createImg_btnOk(n){
-				//console.log(n);
-				if(n>=0){				
-					var t_picno = $('#txtPicno_'+n).val();
-					if(t_picno.length>0){
-						q_gt('img', "where=^^noa='"+t_picno+"'^^", 0, 0, 0, JSON.stringify({action:"createimg_btnOk",n:n}),r_accy,1);	
-					}else{
-						createImg_btnOk(n-1)
-					}
-				}else{
-					sum();
-	                var t_noa = trim($('#txtNoa').val());
-	                var t_date = trim($('#txtDatea').val());
-	                if (t_noa.length == 0 || t_noa == "AUTO")
-	                    q_gtnoa(q_name, replaceAll(q_getPara('sys.key_workj') + (t_date.length == 0 ? q_date() : t_date), '/', ''));
-	                else
-	                    wrServer(t_noa);
-				}
-			};
+			
 			function CopyMech(n){
 				if(!$('#lbl_mech').data('isInit')){
 					$('#lbl_mech').bind('contextmenu', function(e) {
@@ -1446,11 +1499,13 @@
 					<td>
 						<canvas id="canvas.*" width="150" height="50"> </canvas>
 						<img id="imgPic.*" src="" style="display:none;"/>
+						<input id="txtImgorg.*" type="text" style="display:none;"/>
 						<input id="txtImgdata.*" type="text" style="display:none;"/>
 						<input id="txtImgbarcode.*" type="text" style="display:none;"/>
 					</td>
 					<td>
 						<input class="txt" id="txtPicno.*" type="text" style="width:95%;"/>
+						<input class="txt" id="txtPara.*" type="text" style="display:none;"/>
 						<input id="btnPicno.*" type="button" style="display:none;">
 					</td>
 					<td style="background-color: burlywood;">
