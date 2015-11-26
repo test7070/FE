@@ -57,7 +57,7 @@
 		            tolerance:$('#txtTolerance').val(),
 		            trantype1:$('#mbTrantype1').val(),
 		            trantype2:$('#mbTrantype2').val()    
-		        }
+		       };
 		        var t_workjs = new Array();
 		    	for(var i=0;i<q_bbsCount;i++){
 		    		t_workjs.push({
@@ -70,6 +70,8 @@
 			            weight:q_float('txtWeight_'+i),
 			            memo:$('#txtMemo_'+i).val(),
 			            picno:$('#txtPicno_'+i).val(),
+			            para:$('#txtPara_'+i).val(),
+			            imgorg:$('#txtImgorg_'+i).val(),
 			            imgpara:$('#txtImgpara_'+i).val(),
 			            imgdata:$('#txtImgdata_'+i).val(),
 			            imgbarcode:$('#txtImgBarcode_'+i).val(),
@@ -202,11 +204,11 @@
      
                 $('#btnPrint_d').click(function(e){
                 	$('#btnPrint_d').attr('disabled','disabled');
-                	setTimeout(function(){$('#btnPrint_d').removeAttr('disabled')}, 3000);
+                	setTimeout(function(){$('#btnPrint_d').removeAttr('disabled');}, 3000);
                 	Lock(1,{opacity:0});
                 	var t_noq = '';
                 	if($('#combPrint').val()=='barfe2.bat'){
-                		var t_printCount = 0
+                		var t_printCount = 0;
                 		for(var i=0;i<q_bbtCount;i++){
 	                		if($('#checkIsprint__'+i).prop('checked') && $.trim($('#txtBno__'+i).val()).length>0){
 	                			t_noq = t_noq + (t_noq.length>0?'^'.val():'')+$('#txtNoq__'+i);	
@@ -224,8 +226,8 @@
 	                		}	                		
 	                	}	
                 	}else{
-                		var t_printCount = 0
-                		var t_printPage = 0
+                		var t_printCount = 0;
+                		var t_printPage = 0;
                 		for(var i=0;i<q_bbsCount;i++){
 	                		if($('#checkIsprint_'+i).prop('checked') && $.trim($('#txtProductno_'+i).val()).length>0){
 	                			t_noq = t_noq + (t_noq.length>0?'^':'')+$('#txtNoq_'+i).val();	
@@ -346,6 +348,8 @@
 							,worker4:$('#txtWorker4_'+i).val()
 							,worker5:$('#txtWorker5_'+i).val()
 							,picno:$('#txtPicno_'+i).val()
+							,para:$('#txtPara_'+i).val()
+							,imgorg:$('#txtImgorg_'+i).val()
 							//,imgdata:$('#txtImgdata_'+i).val()
 							//,imgbarcode:$('#txxtImgbarcode_'+i).val()
 						});
@@ -560,59 +564,6 @@
                     			createImg(n);
                     		}else if(t_para.action=="createimg" || t_para.action=="createimg_btnOk"){
                     			alert('xxxx');
-                    			var n = t_para.n;
-                    			var action = t_para.action;
-                    			//console.log('gtpost:'+n);
-                    			as = _q_appendData("img", "", true);
-                    			t_para = JSON.parse(as[0].para);
-                    			//先用原大小
-		                    	$('#imgPic_'+n).attr('src',as[0].org)
-		                    	
-								/*var imgwidth = $('#imgPic_'+n).width();
-				                var imgheight = $('#imgPic_'+n).height();*/
-				                var imgwidth = 300;
-				                var imgheight = 100;
-				                $('#canvas_'+n).width(imgwidth).height(imgheight);
-				                var c = document.getElementById("canvas_"+n);
-								var ctx = c.getContext("2d");		
-								c.width = imgwidth;
-								c.height = imgheight;
-								ctx.drawImage($('#imgPic_'+n)[0],0,0,imgwidth,imgheight);
-								var t_length = 0;
-								for(var i=0;i<t_para.length;i++){
-									value = q_float('txtPara'+t_para[i].key.toLowerCase()+'_'+n);
-									if(value!=0){
-										t_length += value;
-										//ctx.font = t_para[i].fontsize+"px times new roman";
-										ctx.font = t_para[i].fontsize+"px Arial";
-										ctx.fillStyle = 'black';
-										ctx.fillText(value+'',t_para[i].left,t_para[i].top);
-									}
-								}
-								//------------------------------
-								$('#imgPic_'+n).attr('src',c.toDataURL());
-								//條碼用圖形
-								xx_width = 355;
-								xx_height = 119;						
-								$('#canvas_'+n).width(xx_width).height(xx_height);
-								c.width = xx_width;
-								c.height = xx_height;
-								$('#canvas_'+n)[0].getContext("2d").drawImage($('#imgPic_'+n)[0],0,0,imgwidth,imgheight,0,0,xx_width,xx_height);
-								$('#txtImgbarcode_'+n).val(c.toDataURL());
-								//報表用圖形 縮放為150*50
-								$('#canvas_'+n).width(150).height(50);
-								c.width = 150;
-								c.height = 50;
-								$('#canvas_'+n)[0].getContext("2d").drawImage($('#imgPic_'+n)[0],0,0,imgwidth,imgheight,0,0,150,50);
-								$('#txtImgdata_'+n).val(c.toDataURL());	
-								//------------------------------
-								if($('#txtMemo_'+n).val().substring(0,1)!='*'){
-									$('#txtLengthb_'+n).val(t_length);
-                				}
-								sum();
-								if(action=="createimg_btnOk"){
-									createImg_btnOk(n-1);
-								}	
 							}
                     	}catch(e){
                     		Unlock(1);
@@ -627,7 +578,7 @@
 				try{
 					t_para = JSON.parse(t_para);
 				}catch(e){
-					console.log(e.message);
+					console.log('createImg:'+t_para);
 				}
 				if(t_imgorg.length==0)
 					return;
@@ -957,10 +908,10 @@
                             var n = $(this).attr('id').replace('txtPicno_', '');
                             $('#btnPicno_'+n).click();
                         });
-                    	$('#txtPicno_'+i).change(function(e){
+                    	/*$('#txtPicno_'+i).change(function(e){
                     		var n = $(this).attr('id').replace('txtPicno_', '');
                     		createImg(n);
-                    	});
+                    	});*/
                     	$('#txtParaa_'+i).change(function(e){
                     		var n = $(this).attr('id').replace('txtParaa_', '');
                     		createImg(n);
@@ -1499,9 +1450,9 @@
 					<td>
 						<canvas id="canvas.*" width="150" height="50"> </canvas>
 						<img id="imgPic.*" src="" style="display:none;"/>
-						<input id="txtImgorg.*" type="text" style="display:none;"/>
-						<input id="txtImgdata.*" type="text" style="display:none;"/>
-						<input id="txtImgbarcode.*" type="text" style="display:none;"/>
+						<textarea id="txtImgorg.*" style="display:none;"> </textarea>
+						<textarea id="txtImgdata.*" style="display:none;"> </textarea>
+						<textarea id="txtImgbarcode.*" style="display:none;"> </textarea>
 					</td>
 					<td>
 						<input class="txt" id="txtPicno.*" type="text" style="width:95%;"/>

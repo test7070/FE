@@ -627,7 +627,7 @@
 				try{
 					t_para = JSON.parse(t_para);
 				}catch(e){
-					console.log(e.message);
+					console.log('createImg:'+t_para);
 				}
 				if(t_imgorg.length==0)
 					return;
@@ -957,10 +957,10 @@
                             var n = $(this).attr('id').replace('txtPicno_', '');
                             $('#btnPicno_'+n).click();
                         });
-                    	$('#txtPicno_'+i).change(function(e){
+                    	/*$('#txtPicno_'+i).change(function(e){
                     		var n = $(this).attr('id').replace('txtPicno_', '');
                     		createImg(n);
-                    	});
+                    	});*/
                     	$('#txtParaa_'+i).change(function(e){
                     		var n = $(this).attr('id').replace('txtParaa_', '');
                     		createImg(n);
