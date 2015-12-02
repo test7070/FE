@@ -754,7 +754,7 @@
             }
 
             function bbsSave(as) {
-                if (!as['product'] && !as['imgorg']) {
+                if (!as['product'] && !as['para']) {
                     as[bbsKey[1]] = '';
                     return;
                 }
