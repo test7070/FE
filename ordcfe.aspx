@@ -61,7 +61,7 @@
 
 			function sum() {
 				var t_unit, t_count, t_moneys,t_weight = 0, t_money= 0;
-				var t_weight =0
+				var t_weight =0;
 				for (var j = 0; j < q_bbsCount; j++) {
 					
 					t_unit = $('#txtUnit_' + j).val().toUpperCase();
@@ -115,6 +115,15 @@
 				$('#txtFloata').change(function() {
 					sum();
 				});
+				
+				
+				$('#lblOrdb').click(function(e){
+					if(!(q_cur==1 || q_cur==2))
+						return;
+					var t_noa = $('#txtNoa').val();
+                	var t_where ='';
+                	q_box("ordcfe_b.aspx?" + r_userno + ";" + r_name + ";" + q_time + ";" + t_where+";"+";"+JSON.stringify({ordcno:t_noa,para:'ordcfe'}), "import_ordcfe", "95%", "95%", '');
+                });
 			}
 
 			function q_boxClose(s2) {///   q_boxClose 2/4
@@ -434,7 +443,7 @@
 				margin: -1px;
 			}
 			.dbbs {
-				width: 1200px;
+				width: 1400px;
 			}
 			.tbbs a {
 				font-size: medium;
@@ -652,7 +661,7 @@
 					<td align="center" style="width:30px;">
 						<input class="btn" id="btnPlus" type="button" value='+' style="font-weight: bold;" />
 					</td>
-					<td align="center" style="width:20px;"></td>
+					<td align="center" style="width:20px;"> </td>
 					<td align="center" style="width:250px;"><a id='lblProduct_s'> </a></td>
 					<td align="center" style="width:80px;"><a id='lblLengthb_s'> </a></td>
 					<td align="center" style="width:80px;"><a id='lblUnit_s'> </a></td>
@@ -662,6 +671,7 @@
 					<td align="center" style="width:80px;"><a id='lblTotal_s'> </a></td>
 					<td align="center" style="width:100px;"><a id='lblMemo_s'> </a></td>
 					<td align="center" style="width:80px;"><a id='lblIndate_s'> </a></td>
+					<td align="center" style="width:140px;"><a>訂單<BR>詢價單</a></td>
 				</tr>
 				<tr style='background:#cad3ff;'>
 					<td align="center">
@@ -682,6 +692,12 @@
 					<td><input class="txt" id="txtTotal.*" type="text" style="width:95%;text-align: right;"/></td>
 					<td><input class="txt" id="txtMemo.*" type="text" style="width:95%;"></td>
 					<td><input class="txt" id="txtIndate.*" type="text" style="width:95%;"></td>
+					<td>
+						<input class="txt" id="txtTablea.*" type="text" style="display:none;"/>
+						<input class="txt" id="txtTableaccy.*" type="text" style="display:none;"/>
+						<input class="txt" id="txtOrdeno.*" type="text" style="width:75%;float:left;"/>
+						<input class="txt" id="txtNo3.*" type="text" style="width:20%;float:left;"/>
+					</td>
 				</tr>
 			</table>
 		</div>
