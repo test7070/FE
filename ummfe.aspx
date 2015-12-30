@@ -20,7 +20,7 @@
             q_tables = 's';
             var q_name = "umm";
             var q_readonly = [ 'txtWorker', 'txtCno', 'txtAcomp', 'txtSale', 'txtTotal', 'txtPaysale', 'txtUnpay', 'txtOpay', 'textOpay','txtAccno','txtWorker2'];
-            var q_readonlys = ['txtUnpay', 'txtUnpayorg', 'txtAcc2', 'txtPart2','txtMemo2','txtCno','txtCoin'];
+            var q_readonlys = ['txtUnpay', 'txtUnpayorg', 'txtAcc2', 'txtPart2','txtMemo2','txtCno','txtCoin','txtAcc1'];
             var bbmNum = new Array(['txtSale', 10, 0, 1], ['txtTotal', 10, 0, 1], ['txtPaysale', 10, 0, 1], ['txtUnpay', 10, 0, 1], ['txtOpay', 10, 0, 1], ['txtUnopay', 10, 0, 1], ['textOpay', 10, 0, 1]);
             var bbsNum = [['txtMoney', 10, 0, 1], ['txtChgs', 10, 0, 1], ['txtPaysale', 10, 0, 1], ['txtUnpay', 10, 0, 1], ['txtUnpayorg', 10, 0, 1]];
             var bbmMask = [];
@@ -81,7 +81,7 @@
                 q_mask(bbmMask);
                 bbsMask = [['txtIndate', r_picd], ['txtMon', r_picm]];
 				
-		        q_cmbParse("combAcc1", '1111@現金,匯款,信用狀,手續費,支票,4107@現金折讓,4106@折讓金額,6236@佣金支出,7114@佣金收入,8101@利息支出,7103@利息收入,8103@其它支出,7194@其他收入','s');
+		        q_cmbParse("combAcc1", '@,1111@現金,1112@匯款,1112@信用狀,6206@手續費,1121@支票,4107@現金折讓,4106@折讓金額,6236@佣金支出,7114@佣金收入,8101@利息支出,7103@利息收入,8103@其它支出,7194@其他收入','s');
 
 		         $('#txtDatea').blur(function() {
 		         	if(!emp($('#txtDatea').val())&&(q_cur==1 || q_cur==2)){
@@ -758,7 +758,7 @@
                     if ($('#btnMinus_' + i).hasClass('isAssign'))/// 重要
                         continue;
                     $('#combAcc1_'+i).change(function(e){
-			        	//q_cmbParse("combAcc1", '1111@現金,匯款,信用狀,手續費,支票,4107@現金折讓,4106@折讓金額,6236@佣金支出,7114@佣金收入,8101@利息支出,7103@利息收入,8103@其它支出,7194@其他收入','s');
+			        	//q_cmbParse("combAcc1", '@ ,1111@現金,匯款,信用狀,手續費,支票,4107@現金折讓,4106@折讓金額,6236@佣金支出,7114@佣金收入,8101@利息支出,7103@利息收入,8103@其它支出,7194@其他收入','s');
 						var n = $(this).attr('id').replace('combAcc1_', '');
 						
 						$('#txtAcc1_'+n).attr('disabled','disabled').css('color','green').css('background','rgb(237,237,237)');
@@ -769,21 +769,29 @@
 								$('#txtAcc1_'+n).val('1111.');
 								$('#txtAcc2_'+n).val('現金');
 								break;
-							case '匯款':
-								$('#txtAcc1_'+n).removeAttr('disabled').css('color','black').css('background','white');
-								$('#txtAcc2_'+n).removeAttr('disabled').css('color','black').css('background','white');
+							case '1112'://匯款
+								$('#txtAcc1_'+n).val('1112.');
+								$('#txtAcc2_'+n).val('銀行存款');
+								//$('#txtAcc1_'+n).removeAttr('disabled').css('color','black').css('background','white');
+								//$('#txtAcc2_'+n).removeAttr('disabled').css('color','black').css('background','white');
 								break;
-							case '信用狀':
-								$('#txtAcc1_'+n).removeAttr('disabled').css('color','black').css('background','white');
-								$('#txtAcc2_'+n).removeAttr('disabled').css('color','black').css('background','white');
+							case '1112'://信用狀
+								$('#txtAcc1_'+n).val('1112.');
+								$('#txtAcc2_'+n).val('銀行存款');
+								//$('#txtAcc1_'+n).removeAttr('disabled').css('color','black').css('background','white');
+								//$('#txtAcc2_'+n).removeAttr('disabled').css('color','black').css('background','white');
 								break;
-							case '手續費':
-								$('#txtAcc1_'+n).removeAttr('disabled').css('color','black').css('background','white');
-								$('#txtAcc2_'+n).removeAttr('disabled').css('color','black').css('background','white');
+							case '6206'://手續費
+								$('#txtAcc1_'+n).val('6206.');
+								$('#txtAcc2_'+n).val('郵 電 費');
+								//$('#txtAcc1_'+n).removeAttr('disabled').css('color','black').css('background','white');
+								//$('#txtAcc2_'+n).removeAttr('disabled').css('color','black').css('background','white');
 								break;
-							case '支票':
-								$('#txtAcc1_'+n).removeAttr('disabled').css('color','black').css('background','white');
-								$('#txtAcc2_'+n).removeAttr('disabled').css('color','black').css('background','white');
+							case '1121'://支票
+								$('#txtAcc1_'+n).val('1121.');
+								$('#txtAcc2_'+n).val('應收票據');
+								//$('#txtAcc1_'+n).removeAttr('disabled').css('color','black').css('background','white');
+								//$('#txtAcc2_'+n).removeAttr('disabled').css('color','black').css('background','white');
 								break;
 							case '4107':
 								//現金折讓
@@ -820,9 +828,9 @@
 								$('#txtAcc1_'+n).val('8103.');
 								$('#txtAcc2_'+n).val('其它支出');
 								break;
-							case '7194':
+							case '7149':
 								//其他收入 *
-								$('#txtAcc1_'+n).val('7194.'+$('#txtCustno').val());
+								$('#txtAcc1_'+n).val('7149.');
 								$('#txtAcc2_'+n).val('其他收入');
 								break;
 							default:
@@ -915,6 +923,10 @@
                  		$('#txtVccno_'+i).css('color','green').css('background','RGB(237,237,237)').attr('readonly','readonly');
                  }
                  
+                 for(var i=0;i<q_bbsCount;i++){
+		        	$('#combAcc1_'+i).val($('#txtAcc1_'+i).val().substring(0,4));
+		        }
+                 
             }
 			function txtAcc1Status(){
 				for(var i=0;i<q_bbsCount;i++){
@@ -924,19 +936,19 @@
 								$('#txtAcc1_'+n).val('1111.');
 								$('#txtAcc2_'+n).val('現金');
 								break;
-							case '匯款':
+							case '1112'://匯款
 								$('#txtAcc1_'+n).removeAttr('disabled').css('color','black').css('background','white');
 								$('#txtAcc2_'+n).removeAttr('disabled').css('color','black').css('background','white');
 								break;
-							case '信用狀':
+							case '1112'://信用狀
 								$('#txtAcc1_'+n).removeAttr('disabled').css('color','black').css('background','white');
 								$('#txtAcc2_'+n).removeAttr('disabled').css('color','black').css('background','white');
 								break;
-							case '手續費':
+							case '6206'://手續費
 								$('#txtAcc1_'+n).removeAttr('disabled').css('color','black').css('background','white');
 								$('#txtAcc2_'+n).removeAttr('disabled').css('color','black').css('background','white');
 								break;
-							case '支票':
+							case '1121'://支票
 								$('#txtAcc1_'+n).removeAttr('disabled').css('color','black').css('background','white');
 								$('#txtAcc2_'+n).removeAttr('disabled').css('color','black').css('background','white');
 								break;
@@ -1075,6 +1087,7 @@
 		        	$("#btnMon").attr("disabled","disabled");
 		        	$("#btnAuto").attr("disabled","disabled");
 		        }
+		        
                 getOpay();
             }
 
