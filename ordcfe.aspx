@@ -18,7 +18,7 @@
 			q_tables = 's';
 			var q_name = "ordc";
 			var q_readonly = ['txtTgg', 'txtAcomp', 'txtSales', 'txtNoa', 'txtWorker', 'txtWorker2', 'txtMoney', 'txtWeight', 'txtTotal', 'txtTax', 'txtTotalus'];
-			var q_readonlys = ['txtC1', 'txtNotv', 'txtNo3', 'txtOrdbno', 'txtNo2'];
+			var q_readonlys = ['txtC1', 'txtNotv', 'txtNo3', 'txtOrdeno', 'txtNo2'];
 			var bbmNum = [['txtMoney', 10, 0, 1], ['txtTax', 10, 0, 1], ['txtTotal', 10, 0, 1], ['txtTotalus', 10, 2, 1], ['txtWeight', 10, 3, 1], ['txtFloata', 10, 4, 1]];
 			var bbsNum = [['txtPrice', 15, 3, 1], ['txtTotal', 12, 2, 1, 1], ['txtWeight', 10, 3, 1], ['txtMount', 10, 2, 1], ['txtTheory', 10, 3, 1], ['textSize1', 10, 3, 1], ['textSize2', 10, 2, 1], ['textSize3', 10, 3, 1], ['textSize4', 10, 2, 1]];
 			var bbmMask = [];
@@ -117,7 +117,7 @@
 				});
 				
 				
-				$('#lblOrdb').click(function(e){
+				$('#btnImportOrdc').click(function(e){
 					if(!(q_cur==1 || q_cur==2))
 						return;
 					var t_noa = $('#txtNoa').val();
@@ -126,8 +126,17 @@
                 });
 			}
 
-			function q_boxClose(s2) {///   q_boxClose 2/4
+			function q_boxClose(s2) {
 				switch (b_pop) {
+					case 'import_ordcfe':
+                        if (b_ret != null) {
+                        	as = b_ret;
+                    		q_gridAddRow(bbsHtm, 'tbbs', 'txtTablea,txtTableaccy,txtOrdeno,txtNo3,txtProductno,txtProduct,txtLengthb,txtUnit,txtMount,txtWeight,txtPrice,txtEmount,txtEweight'
+                        	, as.length, as, 'tablea,tableaccy,noa,noq,productno,product,lengthb,unit,emount,eweight,price,emount,eweight', '','');
+                        }else{
+                        }
+                        sum();
+                        break;
 					case q_name + '_s':
 						q_boxClose2(s2);
 						break;
@@ -284,6 +293,7 @@
 
 			function refresh(recno) {
                 _refresh(recno);
+                
 			}
 
 			function q_popPost(s1) {
@@ -295,6 +305,11 @@
 
 			function readonly(t_para, empty) {
 				_readonly(t_para, empty);
+				if (t_para) {
+                    $('#btnImportOrdc').attr('disabled','disabled');
+                } else {	
+                    $('#btnImportOrdc').removeAttr('disabled');
+                }
 			}
 
 			function btnMinus(id) {
@@ -561,10 +576,12 @@
 						<td colspan="4">
 						<input id="txtTel"  type="text"  class="txt c1"/>
 						</td>
-						<td><span> </span><a id='lblOrdb' class="lbl btn"> </a></td>
+						<td> </td>
+						<td><input type="button" id='btnImportOrdc' class="txt c1" value="詢價/訂單匯入"/></td>
+						<!--<td><span> </span><a id='lblOrdb' class="lbl btn"> </a></td>
 						<td colspan="2">
 						<input id="txtOrdbno" type="text" class="txt c1" />
-						</td>
+						</td>-->
 					</tr>
 					<tr>
 						<td><span> </span><a id='lblFax' class="lbl"> </a></td>
