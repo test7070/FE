@@ -529,21 +529,34 @@ declare @t_ezdate nvarchar(20) = case when '#non' = [16] then CHAR(255) else [16
 		bank nvarchar(60),
 		indate nvarchar(10)
 	)
-	insert into @tmp(gno,rno,rec,custno,comp,addr,tel,datea,typea,noa,stotal,product,unit,mount,price,mtotal,slmoney,bkmoney,tax)
+	insert into @tmp(gno,rno,rec,custno,comp,addr,tel
+		,datea,typea,noa,stotal
+		,product,unit,mount,price,mtotal,slmoney,bkmoney,tax)
 	select 
-		'2',ROW_NUMBER()over(partition by a.custno order by a.noa),ROW_NUMBER()over(partition by a.noa order by a.noa),
-		a.custno,a.comp,a.addr,a.tel,a.datea,
-		case when a.typea = '1' then '出' else '退' end,
-		a.noa,a.total,b.product,b.unit,b.mount,b.price,b.total,
-		case when a.typea = '1' then ISNULL(b.total,0) else 0 end,
-		case when a.typea = '2' then ISNULL(b.total,0) else 0 end,
-		case when ROW_NUMBER()over(partition by a.noa order by a.noa)=1 then ISNULL(a.tax,0) else 0 end
-	from view_vcc a
-	left join view_vccs b on a.noa = b.noa
-	where (len(@t_cno)=0 or a.cno=@t_cno) and (a.custno between @t_bcustno and @t_ecustno) and
- 		  (a.mon between @t_bmon and @t_emon) and (a.datea between @t_bzdate and @t_ezdate)
-
-	update @tmp set tax = case when typea = '出' then tax else -1*tax end
+		'2',ROW_NUMBER()over(partition by a.custno order by a.datea,a.noa)
+		,ROW_NUMBER()over(partition by a.noa order by a.noa)
+		,a.*
+	from (	
+		select a.custno,a.comp,a.addr,a.tel,a.datea
+			,case when a.typea = '1' then '出' else '退' end typea
+			,a.noa,a.total stotal,b.product,b.unit,b.mount,b.price,b.total mtotal
+			,case when a.typea = '1' then ISNULL(b.total,0) else 0 end [money]
+			,case when a.typea = '2' then ISNULL(b.total,0) else 0 end [bkmoney]
+			,case when ROW_NUMBER()over(partition by a.noa order by a.noa)=1 then ISNULL(a.tax,0) else 0 end tax
+		from view_vcc a
+		left join view_vccs b on a.noa = b.noa
+		where (len(@t_cno)=0 or a.cno=@t_cno) and (a.custno between @t_bcustno and @t_ecustno) 
+			and (a.mon between @t_bmon and @t_emon) and (a.datea between @t_bzdate and @t_ezdate)
+		union all	
+		select a.custno,a.comp,'',''
+			,a.datea,'稅',noa,null,product,unit,mount,price,a.tax,null,null,a.tax
+ 		from vcca a
+ 		where (len(@t_cno)=0 or a.cno=@t_cno) 
+ 			and (a.custno between @t_bcustno and @t_ecustno) 
+ 			and (a.mon between @t_bmon and @t_emon) 
+ 			and (a.datea between @t_bzdate and @t_ezdate)	
+		) a
+ 	update @tmp set tax = case when typea = '出' or typea='稅' then tax else -1*tax end
 
 	--出貨金額&退貨金額&稅額&單據張數
 	insert into @tmp(gno,rno,custno,slmoney,bkmoney,tax,counts)
@@ -566,9 +579,9 @@ declare @t_ezdate nvarchar(20) = case when '#non' = [16] then CHAR(255) else [16
 	update @tmp set pay = ISNULL(b.pay,0),unpay = ISNULL(b.unpay,0)
 	from @tmp a
 	left join(	
-		select noa,SUM(case when mon between @t_bmon and @t_emon then 1 else 0 end *pay)pay,SUM(unpay)unpay
+		select noa,SUM(case when mon between @t_bmon and @t_emon then 1 else 0 end *pay)pay,SUM(case when mon>@t_bmon then unpay else 0 end)unpay
 		from cust_2s
-		where (noa between @t_bcustno and @t_ecustno) and(mon < @t_bmon)
+		where (noa between @t_bcustno and @t_ecustno) and(mon <= @t_bmon)
 		group by noa
 	)b on a.custno = b.noa
 	where gno = '3'
