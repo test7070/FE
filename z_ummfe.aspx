@@ -140,6 +140,7 @@
 				t_month = t_month > 9 ? t_month + '' : '0' + t_month;
 				
 				$('#txtXmon1').val(t_year + '/' + t_month);
+				$('#txtXmon2').val(t_year + '/' + t_month);
 				
 				//出貨-預收(2選1)
 				$('#chkYoption01 [value="出貨-預收+"]').click(function(){

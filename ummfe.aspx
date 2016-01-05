@@ -14,7 +14,7 @@
 		<script src="css/jquery/ui/jquery.ui.widget.js"></script>
 		<script src="css/jquery/ui/jquery.ui.datepicker_tw.js"></script>
 		<script type="text/javascript">
-            t_part=new Array(),t_acomp= new Array();
+            t_part='',t_acomp= '';
             
             q_desc = 1;
             q_tables = 's';
@@ -48,18 +48,9 @@
             }
 			
             function mainPost() {
-            	var t_item = "@";
-                for (i = 0; i < as.length; i++) {
-                    t_item = t_item + (t_item.length > 0 ? ',' : '') + as[i].noa + '@' + as[i].part;
-                }
-                q_cmbParse("cmbPartno", t_item, 's');
+                q_cmbParse("cmbCno", t_acomp);
+            	q_cmbParse("cmbPartno", t_part, 's');
                 refresh(q_recno);  /// 第一次需要重新載入
-            	var t_item = "@";
-                for (i = 0; i < as.length; i++) {
-                    t_item = t_item + (t_item.length > 0 ? ',' : '') + as[i].noa + '@' + as[i].acomp;
-                }
-                q_cmbParse("cmbCno", t_item);
-            	
             	
             	
             	
@@ -305,9 +296,10 @@
                 	case 'part':
 		                var as = _q_appendData("part", "", true);
 		                if (as[0] != undefined) {
-		                	t_part = new Array();
+		                	t_part = '';
 		                	for (i = 0; i < as.length; i++) {
-		                		t_part.push({noa:as[i].noa,part:as[i].part});
+		                		t_part += (t_part.length > 0 ? ',' : '') + as[i].noa + '@' + as[i].part;
+		                		//t_part.push({noa:as[i].noa,part:as[i].part});
 		                    } 
 		                }
 		                q_gt('acomp', '', 0, 0, 0, "");
@@ -315,9 +307,10 @@
 		            case 'acomp':
 		                var as = _q_appendData("acomp", "", true);
 		                if (as[0] != undefined) {
-		                	t_acomp = new Array();
+		                	t_acomp = '';
 		                	for (i = 0; i < as.length; i++) {
-		                		t_acomp.push({noa:as[i].noa,acomp:as[i].acomp});
+		                		t_acomp += (t_acomp.length > 0 ? ',' : '') + as[i].noa + '@' + as[i].acomp;
+		                		//t_acomp.push({noa:as[i].noa,acomp:as[i].acomp});
 		                    } 
 		                }
 		                q_gt(q_name, q_content, q_sqlCount, 1);
