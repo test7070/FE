@@ -75,7 +75,10 @@
                     t_weight = q_float('txtWeight_' + j);
                     t_weights= q_add(t_weights,t_weight);
                     t_discount = q_div(q_float('txtDiscount_' + j),100);
-                    
+                    if(t_discount==0){
+                    	$('#txtDiscount_' + j).val(100);
+                    	t_discount = 100;
+                    }
                     if(t_unit=='公斤' || t_unit.toUpperCase()=='KG'){
                         t_total = round(q_mul(t_price, t_weight), 0);
                     }else{
