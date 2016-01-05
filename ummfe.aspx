@@ -131,7 +131,7 @@
                     var t_unpay, t_pay = 0;
                     for (var i = 0; i < q_bbsCount; i++) {
                         if (q_float('txtUnpay_' + i) != 0) {
-                            t_unpay = q_float('txtUnpayorg_' + i)
+                            t_unpay = q_float('txtUnpayorg_' + i);
                             if (t_money >= t_unpay) {
                                 q_tr('txtPaysale_' + i, t_unpay);
                                 $('#txtUnpay_' + i).val(0);
@@ -753,9 +753,10 @@
                     $('#combAcc1_'+i).change(function(e){
 			        	//q_cmbParse("combAcc1", '@ ,1111@現金,匯款,信用狀,手續費,支票,4107@現金折讓,4106@折讓金額,6236@佣金支出,7114@佣金收入,8101@利息支出,7103@利息收入,8103@其它支出,7194@其他收入','s');
 						var n = $(this).attr('id').replace('combAcc1_', '');
-						
-						$('#txtAcc1_'+n).attr('disabled','disabled').css('color','green').css('background','rgb(237,237,237)');
-						$('#txtAcc2_'+n).attr('disabled','disabled').css('color','green').css('background','rgb(237,237,237)');
+
+						$('#txtAcc1_'+n).attr('readonly','readonly').css('color','green').css('background','rgb(237,237,237)');
+						$('#txtAcc2_'+n).attr('readonly','readonly').css('color','green').css('background','rgb(237,237,237)');
+	
 						switch($(this).val()){
 							case '1111':
 								//現金
@@ -765,14 +766,14 @@
 							case '1112'://匯款
 								$('#txtAcc1_'+n).val('1112.');
 								$('#txtAcc2_'+n).val('銀行存款');
-								//$('#txtAcc1_'+n).removeAttr('disabled').css('color','black').css('background','white');
-								//$('#txtAcc2_'+n).removeAttr('disabled').css('color','black').css('background','white');
+								$('#txtAcc1_'+n).removeAttr('disabled').removeAttr('readonly').css('color','black').css('background','white');
+								$('#txtAcc2_'+n).removeAttr('disabled').removeAttr('readonly').css('color','black').css('background','white');
 								break;
 							case '1112'://信用狀
 								$('#txtAcc1_'+n).val('1112.');
 								$('#txtAcc2_'+n).val('銀行存款');
-								//$('#txtAcc1_'+n).removeAttr('disabled').css('color','black').css('background','white');
-								//$('#txtAcc2_'+n).removeAttr('disabled').css('color','black').css('background','white');
+								$('#txtAcc1_'+n).removeAttr('disabled').css('color','black').css('background','white');
+								$('#txtAcc2_'+n).removeAttr('disabled').css('color','black').css('background','white');
 								break;
 							case '6206'://手續費
 								$('#txtAcc1_'+n).val('6206.');
@@ -828,8 +829,7 @@
 								break;
 							default:
 								break;
-						}
-			        	
+						}	
 			        });
                     $('#txtAcc1_' + i).bind('contextmenu', function(e) {
                         /*滑鼠右鍵*/
@@ -916,16 +916,34 @@
                  		$('#txtVccno_'+i).css('color','green').css('background','RGB(237,237,237)').attr('readonly','readonly');
                  }
                  
-                 for(var i=0;i<q_bbsCount;i++){
-		        	$('#combAcc1_'+i).val($('#txtAcc1_'+i).val().substring(0,4));
-		        	if(q_cur==1 || q_cur==2)
-		        		$('#combAcc1_'+i).removeAttr('disabled');
-		        	else	
-		        		$('#combAcc1_'+i).attr('disabled','disabled');
-		        }
+                 StatusCombAcc1();
                  
             }
-			
+			function StatusCombAcc1(){
+				for(var n=0;n<q_bbsCount;n++){
+					$('#combAcc1_'+n).val($('#txtAcc1_'+n).val().substring(0,4));
+					$('#txtAcc1_'+n).attr('readonly','readonly').css('color','green').css('background','rgb(237,237,237)');
+					$('#txtAcc2_'+n).attr('readonly','readonly').css('color','green').css('background','rgb(237,237,237)');
+				}
+				if(!(q_cur==1 || q_cur==2))
+					return;
+				
+				for(var n=0;n<q_bbsCount;n++){
+					$('#combAcc1_'+n).removeAttr('disabled');
+					switch($('#combAcc1_'+n).val()){
+						case '1112'://匯款
+							$('#txtAcc1_'+n).removeAttr('disabled').removeAttr('readonly').css('color','black').css('background','white');
+							$('#txtAcc2_'+n).removeAttr('disabled').removeAttr('readonly').css('color','black').css('background','white');
+							break;
+						case '1112'://信用狀
+							$('#txtAcc1_'+n).removeAttr('disabled').css('color','black').css('background','white');
+							$('#txtAcc2_'+n).removeAttr('disabled').css('color','black').css('background','white');
+							break;
+						default:
+							break;
+					}
+				}
+			}
             function btnIns() {
                 _btnIns();
                 $('#txtDatea').focus();
@@ -1007,12 +1025,7 @@
 		        	$("#btnMon").attr("disabled","disabled");
 		        	$("#btnAuto").attr("disabled","disabled");
 		        }
-		        for(var i=0;i<q_bbsCount;i++){
-		        	if(q_cur==1 || q_cur==2)
-		        		$('#combAcc1_'+i).removeAttr('disabled');
-		        	else	
-		        		$('#combAcc1_'+i).attr('disabled','disabled');
-		        }
+		        StatusCombAcc1();
                 getOpay();
             }
 
@@ -1023,10 +1036,14 @@
 		        	$("#btnVcc").removeAttr("disabled");
 		        	$("#btnMon").removeAttr("disabled");
 		        	$("#btnAuto").removeAttr("disabled");
+		        	for(var i=0;i<q_bbsCount;i++)
+		        		$('#combAcc1_'+i).removeAttr('disabled');
 		        }else{
 		        	$("#btnVcc").attr("disabled","disabled");
 		        	$("#btnMon").attr("disabled","disabled");
 		        	$("#btnAuto").attr("disabled","disabled");
+		        	for(var i=0;i<q_bbsCount;i++)
+		        		$('#combAcc1_'+i).attr('disabled','disabled');
 		        }
 		        if(q_cur==1){
 		        	$('#txtNoa').css('color','black').css('background','white').removeAttr('readonly');

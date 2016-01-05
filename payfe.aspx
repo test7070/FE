@@ -10,7 +10,7 @@
 		<script src='../script/mask.js' type="text/javascript"></script>
 		<link href="../qbox.css" rel="stylesheet" type="text/css" />
 		<script type="text/javascript">
-		    q_desc = 1
+		    q_desc = 1;
 		    q_tables = 's';
 		    var q_name = "pay";
 		    var q_readonly = ['txtWorker', 'txtWorker2', 'txtAccno','txtSale','txtTotal','txtPaysale','txtUnpay','txtOpay','textOpay','txtWorker2','txtRc2no'];
@@ -671,8 +671,8 @@
 			        	//@,1111@現金,1112@銀行存款,1123@同業對扣,2121@應付票據,5204@現金折扣-進貨,5206@進貨折讓,6206@郵 電 費,7149@其他收入,8103@其他支出
 						var n = $(this).attr('id').replace('combAcc1_', '');
 						
-						$('#txtAcc1_'+n).attr('disabled','disabled').css('color','green').css('background','rgb(237,237,237)');
-						$('#txtAcc2_'+n).attr('disabled','disabled').css('color','green').css('background','rgb(237,237,237)');
+						$('#txtAcc1_'+n).attr('readonly','readonly').css('color','green').css('background','rgb(237,237,237)');
+						$('#txtAcc2_'+n).attr('readonly','readonly').css('color','green').css('background','rgb(237,237,237)');
 						switch($(this).val()){
 							case '1111':
 								//現金
@@ -683,6 +683,8 @@
 								//銀行存款
 								$('#txtAcc1_'+n).val('1112.');
 								$('#txtAcc2_'+n).val('銀行存款');
+								$('#txtAcc1_'+n).removeAttr('disabled').removeAttr('readonly').css('color','black').css('background','white');
+								$('#txtAcc2_'+n).removeAttr('disabled').removeAttr('readonly').css('color','black').css('background','white');
 								break;
 							case '1123':
 								//同業對扣
@@ -779,15 +781,31 @@
 		        }
 
 		        _bbsAssign();
-		        for(var i=0;i<q_bbsCount;i++){
-		        	$('#combAcc1_'+i).val($('#txtAcc1_'+i).val().substring(0,4));
-		        	if(q_cur==1 || q_cur==2)
-		        		$('#combAcc1_'+i).removeAttr('disabled');
-		        	else	
-		        		$('#combAcc1_'+i).attr('disabled','disabled');
-		        }
+		        StatusCombAcc1();
 		    }
-
+			function StatusCombAcc1(){
+				for(var n=0;n<q_bbsCount;n++){
+					$('#combAcc1_'+n).val($('#txtAcc1_'+n).val().substring(0,4));
+					$('#txtAcc1_'+n).attr('readonly','readonly').css('color','green').css('background','rgb(237,237,237)');
+					$('#txtAcc2_'+n).attr('readonly','readonly').css('color','green').css('background','rgb(237,237,237)');
+				}
+				if(!(q_cur==1 || q_cur==2))
+					return;
+				for(var n=0;n<q_bbsCount;n++){
+					$('#combAcc1_'+n).removeAttr('disabled');
+					switch($('#combAcc1_'+n).val()){
+						case '1112':
+							//銀行存款
+							$('#txtAcc1_'+n).val('1112.');
+							$('#txtAcc2_'+n).val('銀行存款');
+							$('#txtAcc1_'+n).removeAttr('disabled').removeAttr('readonly').css('color','black').css('background','white');
+							$('#txtAcc2_'+n).removeAttr('disabled').removeAttr('readonly').css('color','black').css('background','white');
+							break;
+						default:
+							break;
+					}
+				}
+			}
 		    function btnIns() {
 		        _btnIns();
 		        $('#txtDatea').focus();
@@ -871,12 +889,7 @@
 		        	$("#btnMon").attr("disabled","disabled");
 		        	$("#btnAuto").attr("disabled","disabled");
 		        }
-		        for(var i=0;i<q_bbsCount;i++){
-		        	if(q_cur==1 || q_cur==2)
-		        		$('#combAcc1_'+i).removeAttr('disabled');
-		        	else	
-		        		$('#combAcc1_'+i).attr('disabled','disabled');
-		        }
+		        StatusCombAcc1();
 		        getOpay();
 		    }
 
@@ -886,16 +899,21 @@
 		        	$("#btnVcc").removeAttr("disabled");
 		        	$("#btnMon").removeAttr("disabled");
 		        	$("#btnAuto").removeAttr("disabled");
+		        	for(var i=0;i<q_bbsCount;i++)
+		        		$('#combAcc1_'+i).removeAttr('disabled');
 		        }else{
 		        	$("#btnVcc").attr("disabled","disabled");
 		        	$("#btnMon").attr("disabled","disabled");
 		        	$("#btnAuto").attr("disabled","disabled");
+		        	for(var i=0;i<q_bbsCount;i++)
+		        		$('#combAcc1_'+i).attr('disabled','disabled');
+		        }
+		        if(q_cur==1){
+		        	$('#txtNoa').css('color','black').css('background','white').removeAttr('readonly');
+		        }else{
+		        	$('#txtNoa').css('color','green').css('background','RGB(237,237,237)').attr('readonly','readonly');
 		        }
 		        
-		        if(q_cur==1)
-                    $('#txtNoa').removeAttr('disabled');
-                else
-                    $('#txtNoa').attr('disabled', 'disabled');
 		    }
 
 		    function btnMinus(id) {
