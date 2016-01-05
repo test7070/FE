@@ -12,7 +12,7 @@
 		<script type="text/javascript">
             //匯入ordcfe
             
-            var q_name = "import_ordcfe", t_content = "where=^^['','')^^", bbsKey = ['tablea','tableaccy','noa','noq'], as;
+            var q_name = "import_ordcfe", t_content = "where=^^['','','','')^^", bbsKey = ['tablea','tableaccy','noa','noq'], as;
             var isBott = false;
             var txtfield = [], afield, t_data, t_htm, t_bbsTag = 'tbbs';
        		brwCount = -1;
@@ -29,7 +29,7 @@
                 var t_para = new Array();
 	            try{
 	            	t_para = JSON.parse(decodeURIComponent(q_getId()[5]));
-	            	t_content = "where=^^['"+t_para.ordcno+"','"+t_para.para+"')^^";
+	            	t_content = "where=^^['"+t_para.ordcno+"','"+t_para.custno+"','"+t_para.tggno+"','"+t_para.para+"')^^";
 	            }catch(e){
 	            }    
                 brwCount = -1;
@@ -49,7 +49,7 @@
 				switch (t_name) {
 					case q_name:
 						//if (isLoadGt == 1) {
-							abbs = _q_appendData(q_name, "", true);
+							abbs = _q_appendData(q_name, "", true,1);
 							isLoadGt = 0;
 							refresh();
 						//}
@@ -74,13 +74,13 @@
 					<th align="center" style="width:2%;"><input type="checkbox" id="checkAllCheckbox"/></th>
 					<td align="center" style="width:10%;">單號</td>
 					<td align="center" style="width:10%;">品名</td>
-					<td align="center" style="width:5%;">米</td>
 					<td align="center" style="width:5%;">單位</td>
 					<td align="center" style="width:5%;">數量</td>
 					<td align="center" style="width:5%;">重量</td>
 					<td align="center" style="width:5%;">單價</td>
 					<td align="center" style="width:5%;">未訂數量</td>
 					<td align="center" style="width:5%;">未訂重量</td>
+					<td align="center" style="width:5%;">預交日期</td>
 				</tr>
 			</table>
 		</div>
@@ -90,13 +90,13 @@
 					<th align="center" style="width:2%;"></th>
 					<td align="center" style="width:10%;">單號</td>
 					<td align="center" style="width:10%;">品名</td>
-					<td align="center" style="width:5%;">米</td>
 					<td align="center" style="width:5%;">單位</td>
 					<td align="center" style="width:5%;">數量</td>
 					<td align="center" style="width:5%;">重量</td>
 					<td align="center" style="width:5%;">單價</td>
 					<td align="center" style="width:5%;">未訂數量</td>
 					<td align="center" style="width:5%;">未訂重量</td>
+					<td align="center" style="width:5%;">預交日期</td>
 				</tr>
 				<tr style='background:#cad3ff;'>
 					<td style="width:2%;"><input type="checkbox" class="ccheck" id="chkSel.*"/></td>
@@ -110,13 +110,13 @@
 						<input id="txtProductno.*" type="text" style="float:left;width:95%;"  readonly="readonly" />
 						<input id="txtProduct.*" type="text" style="float:left;width:95%;"  readonly="readonly" />
 					</td>
-					<td style="width:5%;"><input id="txtLengthb.*" type="text" style="float:left;width:100%;"  readonly="readonly" /></td>
 					<td style="width:5%;"><input id="txtUnit.*" type="text" style="float:left;width:100%;"  readonly="readonly" /></td>
 					<td style="width:5%;"><input id="txtMount.*" type="text" style="float:left;width:100%;"  readonly="readonly" /></td>
 					<td style="width:5%;"><input id="txtWeight.*" type="text" style="float:left;width:100%;"  readonly="readonly" /></td>
 					<td style="width:5%;"><input id="txtPrice.*" type="text" style="float:left;width:100%;"  readonly="readonly" /></td>
 					<td style="width:5%;"><input id="txtEmount.*" type="text" style="float:left;width:100%;"  readonly="readonly" /></td>
 					<td style="width:5%;"><input id="txtEweight.*" type="text" style="float:left;width:100%;"  readonly="readonly" /></td>
+					<td style="width:5%;"><input id="txtDatea.*" type="text" style="float:left;width:100%;"  readonly="readonly" /></td>
 				</tr>
 			</table>
 		</div>

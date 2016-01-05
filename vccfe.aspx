@@ -37,7 +37,7 @@
             aPop = new Array(['txtCustno', 'lblCust', 'cust', 'noa,nick,tel,fax,zip_comp,addr_comp,paytype,trantype,salesno,sales', 'txtCustno,txtComp,txtTel,txtFax,txtPost,txtAddr,txtPaytype,cmbTrantype,txtSalesno,txtSales', 'cust_b.aspx']
             , ['txtStoreno_', 'btnStore_', 'store', 'noa,store', 'txtStoreno_,txtStore_', 'store_b.aspx']
             , ['txtRackno_', 'btnRackno_', 'rack', 'noa,rack,storeno,store', 'txtRackno_', 'rack_b.aspx']
-            , ['txtCardealno', 'lblCardeal', 'cardeal', 'noa,comp', 'txtCardealno,txtCardeal', 'cardeal_b.aspx']
+            , ['txtCardealno', 'lblCardeal', 'cardeal', 'noa,comp', '0txtCardealno,txtCardeal', 'cardeal_b.aspx']
             , ['txtCno', 'lblAcomp', 'acomp', 'noa,acomp', 'txtCno,txtAcomp', 'acomp_b.aspx']
             , ['txtSalesno', 'lblSales', 'sss', 'noa,namea', 'txtSalesno,txtSales', 'sss_b.aspx']
             , ['txtSalesno2', 'lblSales2', 'sss', 'noa,namea', 'txtSalesno2,txtSales2', 'sss_b.aspx']
@@ -49,7 +49,8 @@
             , ['txtAddr2', '', 'view_road', 'memo,zipcode', '0txtAddr2,txtPost2', 'road_b.aspx']
             , ['txtPost', 'lblAddr', 'addr2', 'noa,post', 'txtPost', 'addr2_b.aspx']
             , ['txtPost2', 'lblAddr2', 'addr2', 'noa,post', 'txtPost2', 'addr2_b.aspx']
-            , ['txtProductno_', 'btnProduct_', 'ucaucc', 'noa,product,unit,spec', 'txtProductno_,txtProduct_,txtUnit_,txtSpec_', 'ucaucc_b.aspx'], ['txtTranstartno', 'lblTranstart', 'addr2', 'noa,post', 'txtTranstartno,txtTranstart', 'addr2_b.aspx'], ['txtDriverno', 'lblDriver', 'driver', 'noa,namea', 'txtDriverno,txtDriver', 'driver_b.aspx']);
+            , ['txtProductno_', 'btnProduct_', 'ucaucc', 'noa,product,unit,spec', 'txtProductno_,txtProduct_,txtUnit_,txtSpec_', 'ucaucc_b.aspx']
+            , ['txtTranstartno', 'lblTranstart', 'addr2', 'noa,post', 'txtTranstartno,txtTranstart', 'addr2_b.aspx'], ['txtDriverno', 'lblDriver', 'driver', 'noa,namea', 'txtDriverno,txtDriver', 'driver_b.aspx']);
 
             var isinvosystem = false,t_acomp=new Array();
             //購買發票系統
@@ -110,7 +111,7 @@
                 q_getFormat();
                 bbmMask = [['txtDatea', r_picd], ['txtMon', r_picm]];
                 q_mask(bbmMask);
-                bbmNum = [['txtPrice', 10, q_getPara('vcc.pricePrecision'), 1], ['txtWeight', 9, q_getPara('vcc.weightPrecision'), 1], ['txtTranmoney', 11, 0, 1], ['txtMoney', 15, 0, 1], ['txtTax', 15, 0, 1], ['txtTotal', 15, 0, 1], ['txtTotalus', 15, 0, 1]];
+                bbmNum = [['txtCartrips',10,0,1],['txtPrice', 10, q_getPara('vcc.pricePrecision'), 1], ['txtWeight', 9, q_getPara('vcc.weightPrecision'), 1], ['txtTranmoney', 11, 0, 1], ['txtMoney', 15, 0, 1], ['txtTax', 15, 0, 1], ['txtTotal', 15, 0, 1], ['txtTotalus', 15, 0, 1]];
                 bbsNum = [['txtPrice', 12, q_getPara('vcc.pricePrecision'), 1], ['txtMount', 9, q_getPara('vcc.mountPrecision'), 1], ['txtWeight', 9, q_getPara('vcc.weightPrecision'), 1], ['txtTotal', 15, 0, 1], ['txtWcost', 12, 2, 1], ['txtTranmoney', 12, 0, 1], ['txtProfit', 12, q_getPara('vcc.pricePrecision'), 1], ['txtSprice', 12, q_getPara('vcc.pricePrecision'), 1], ['txtSprice2', 12, q_getPara('vcc.pricePrecision'), 1]];
                 q_cmbParse("cmbTranstyle", q_getPara('fe.trantype2'));
                 q_cmbParse("cmbTypea", q_getPara('vcc.typea'));

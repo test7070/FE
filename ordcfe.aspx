@@ -39,6 +39,7 @@
 				['txtAddr2', '', 'view_road', 'memo,zipcode', '0txtAddr2,txtPost2', 'road_b.aspx'], 
 				['txtSpec_', '', 'spec', 'noa,product', '0txtSpec_,txtSpec_', 'spec_b.aspx', '95%', '95%'], 
 				['txtTggno', 'lblTgg', 'tgg', 'noa,comp,nick,paytype,tel,fax,addr_fact,zip_fact', 'txtTggno,txtTgg,txtNick,txtPaytype,txtTel,txtFax,txtAddr,txtPost', 'tgg_b.aspx']
+				,['txtCustno', 'lblCust', 'cust', 'noa,comp', 'txtCustno,txtCust', 'cust_b.aspx']
 			);
 			brwCount2 = 10;
 			$(document).ready(function() {
@@ -117,12 +118,27 @@
 				});
 				
 				
-				$('#btnImportOrdc').click(function(e){
+				$('#btnImportOrde').click(function(e){
 					if(!(q_cur==1 || q_cur==2))
 						return;
 					var t_noa = $('#txtNoa').val();
+					var t_tggno = $('#txtTggno').val();
+					var t_custno = $('#txtCustno').val();
                 	var t_where ='';
-                	q_box("ordcfe_b.aspx?" + r_userno + ";" + r_name + ";" + q_time + ";" + t_where+";"+";"+JSON.stringify({ordcno:t_noa,para:'ordcfe'}), "import_ordcfe", "95%", "95%", '');
+                	if(t_custno.length==0){
+                		alert('請輸入客戶編號!');
+                		return;
+                	}
+                	q_box("ordcfe_b.aspx?" + r_userno + ";" + r_name + ";" + q_time + ";" + t_where+";"+";"+JSON.stringify({ordcno:t_noa,custno:t_custno,tggno:t_tggno,para:'orde'}), "import_ordcfe", "95%", "95%", '');
+                });
+                $('#btnImportOrdh').click(function(e){
+					if(!(q_cur==1 || q_cur==2))
+						return;
+					var t_noa = $('#txtNoa').val();
+					var t_tggno = $('#txtTggno').val();
+					var t_custno = $('#txtCustno').val();
+                	var t_where ='';
+                	q_box("ordcfe_b.aspx?" + r_userno + ";" + r_name + ";" + q_time + ";" + t_where+";"+";"+JSON.stringify({ordcno:t_noa,custno:t_custno,tggno:t_tggno,para:'ordh'}), "import_ordcfe", "95%", "95%", '');
                 });
 			}
 
@@ -131,8 +147,8 @@
 					case 'import_ordcfe':
                         if (b_ret != null) {
                         	as = b_ret;
-                    		q_gridAddRow(bbsHtm, 'tbbs', 'txtTablea,txtTableaccy,txtOrdeno,txtNo3,txtProductno,txtProduct,txtLengthb,txtUnit,txtMount,txtWeight,txtPrice,txtEmount,txtEweight'
-                        	, as.length, as, 'tablea,tableaccy,noa,noq,productno,product,lengthb,unit,emount,eweight,price,emount,eweight', '','');
+                    		q_gridAddRow(bbsHtm, 'tbbs', 'txtTablea,txtTableaccy,txtOrdeno,txtNo3,txtProductno,txtProduct,txtLengthb,txtUnit,txtMount,txtWeight,txtPrice,txtEmount,txtEweight,txtIndate'
+                        	, as.length, as, 'tablea,tableaccy,noa,noq,productno,product,lengthb,unit,emount,eweight,price,emount,eweight,datea', '','');
                         }else{
                         }
                         sum();
@@ -306,9 +322,11 @@
 			function readonly(t_para, empty) {
 				_readonly(t_para, empty);
 				if (t_para) {
-                    $('#btnImportOrdc').attr('disabled','disabled');
+                    $('#btnImportOrde').attr('disabled','disabled');
+                    $('#btnImportOrdh').attr('disabled','disabled');
                 } else {	
-                    $('#btnImportOrdc').removeAttr('disabled');
+                    $('#btnImportOrde').removeAttr('disabled');
+                    $('#btnImportOrdh').removeAttr('disabled');
                 }
 			}
 
@@ -576,12 +594,11 @@
 						<td colspan="4">
 						<input id="txtTel"  type="text"  class="txt c1"/>
 						</td>
-						<td> </td>
-						<td><input type="button" id='btnImportOrdc' class="txt c1" value="詢價/訂單匯入"/></td>
-						<!--<td><span> </span><a id='lblOrdb' class="lbl btn"> </a></td>
+						<td ><span> </span><a id="lblCust" class="lbl btn">客戶</a></td>
 						<td colspan="2">
-						<input id="txtOrdbno" type="text" class="txt c1" />
-						</td>-->
+							<input id="txtCustno" type="text" style="float:left;width:50%;"/>
+							<input id="txtCust"  type="text" style="float:left;width:50%;"/>
+						</td>
 					</tr>
 					<tr>
 						<td><span> </span><a id='lblFax' class="lbl"> </a></td>
@@ -593,7 +610,7 @@
 						<input id="txtSalesno" type="text" style="float:left;width:50%;"/>
 						<input id="txtSales" type="text" style="float:left;width:50%;"/>
 						</td>
-
+						
 					</tr>
 					<tr>
 						<td><span> </span><a id='lblAddr' class="lbl"> </a></td>
@@ -629,6 +646,8 @@
 						<td class="st">
 						<input id="txtWeight"  type="text" class="txt num c1"/>
 						</td>
+						<td><input type="button" id='btnImportOrde' class="txt c1" value="訂單匯入"/></td>
+						
 					</tr>
 					<tr>
 						<td><span> </span><a id='lblMoney' class="lbl"> </a></td>
@@ -644,6 +663,7 @@
 						<td>
 						<input id="txtTotal" type="text" class="txt num c1" />
 						</td>
+						<td><input type="button" id='btnImportOrdh' class="txt c1" value="詢價匯入"/></td>
 					</tr>
 					<tr>
 						<td><span> </span><a id='lblMemo' class="lbl"> </a></td>
