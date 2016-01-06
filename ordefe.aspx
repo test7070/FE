@@ -670,7 +670,7 @@
 			function _btnSeek() {
 				if (q_cur > 0 && q_cur < 4)
 					return;
-				q_box('orde_s.aspx', q_name + '_s', "500px", "450px", q_getMsg("popSeek"));
+				q_box('ordefe_s.aspx', q_name + '_s', "500px", "500px", q_getMsg("popSeek"));
 			}
 
 			function combPaytype_chg() {
@@ -1179,7 +1179,7 @@
 				<table class="tview" id="tview">
 					<tr>
 						<td align="center" style="width:5%"><a id='vewChk'> </a></td>
-						<td align="center" style="width:25%"><a id='vewDatea'> </a></td>
+						<td align="center" style="width:25%"><a id='vewOdate'> </a></td>
 						<td align="center" style="width:25%"><a id='vewNoa'> </a></td>
 						<td align="center" style="width:40%"><a id='vewComp'> </a></td>
 					</tr>

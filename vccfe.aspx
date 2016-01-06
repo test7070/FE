@@ -848,7 +848,7 @@
             function checkPrice(n){
             	if(n<q_bbsCount){
             		if(r_rank>=8){
-            			checkPrice(q_bbsCount)
+            			checkPrice(q_bbsCount);
             		}else{
             			if($('#txtProductno_'+n).val().length>0){
             				t_ordeno = $('#txtOrdeno_'+n).val();
@@ -863,9 +863,9 @@
 						//核准檢查
 						var t_noa = $.trim($('#txtNoa').val());
 						var t_typea = $.trim($('#cmbTypea').val());
-		                var t_custno = $.trim($('#txtCustno').val())
+		                var t_custno = $.trim($('#txtCustno').val());
 		                var t_datea = $.trim($('#txtDatea').val());
-		                var t_mon = $.trim($('#txtMon').val())
+		                var t_mon = $.trim($('#txtMon').val());
 		                var t_total = q_float('txtTotal');
 		                var t_other = '';
 		                for(var i=0;i<q_bbsCount;i++){
