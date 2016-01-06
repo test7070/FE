@@ -108,8 +108,7 @@
 						<input id="txtComp.*" type="text" style="display:none;"  readonly="readonly" />
 					</td>
 					<td style="width:5%;"><input id="txtProductno.*" type="text" style="float:left;width:100%;"  readonly="readonly" /></td>
-					<td style="width:5%;"><input id="txtProduct.*" type="text" style="float:left;width:100%;"  readonly="readonly" /></td>
-					
+					<td style="width:10%;"><input id="txtProduct.*" type="text" style="float:left;width:100%;"  readonly="readonly" /></td>
 					<td style="width:5%;"><input id="txtUnit.*" type="text" style="float:left;width:100%;"  readonly="readonly" /></td>
 					<td style="width:5%;"><input id="txtMount.*" type="text" style="float:left;width:100%;"  readonly="readonly" /></td>
 					<td style="width:5%;"><input id="txtWeight.*" type="text" style="float:left;width:100%;"  readonly="readonly" /></td>
@@ -117,6 +116,10 @@
 					<td style="width:5%;"><input id="txtEmount.*" type="text" style="float:left;width:100%;"  readonly="readonly" /></td>
 					<td style="width:5%;"><input id="txtEweight.*" type="text" style="float:left;width:100%;"  readonly="readonly" /></td>
 					<td style="width:5%;"><input id="txtDatea.*" type="text" style="float:left;width:100%;"  readonly="readonly" /></td>
+					<td style="width:10%;">
+						<input id="txtOrdeno.*" type="text" style="float:left;width:75%;"  readonly="readonly" />
+						<input id="txtNo2.*" type="text" style="float:left;width:20%;"  readonly="readonly" />
+					</td>
 				</tr>
 			</table>
 		</div>
