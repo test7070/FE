@@ -83,6 +83,7 @@
                         var as = _q_appendData("tmp0", "", true, true);
                         if (as[0] != undefined) {
                            $('#txtApv').val(as[0].apv);
+                           $('#vtapv_'+q_recno).text(as[0].apv);
                            abbm[q_recno]['apv']=as[0].apv;
                         }
                         break;
