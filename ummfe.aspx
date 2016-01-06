@@ -1,7 +1,7 @@
 <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
 <html xmlns="http://www.w3.org/1999/xhtml" dir="ltr">
 	<head>
-		<title></title>
+		<title> </title>
 		<script src="../script/jquery.min.js" type="text/javascript"></script>
 		<script src='../script/qj2.js' type="text/javascript"></script>
 		<script src='qset.js' type="text/javascript"></script>
@@ -52,9 +52,6 @@
             	q_cmbParse("cmbPartno", t_part, 's');
                 refresh(q_recno);  /// 第一次需要重新載入
             	
-            	
-            	
-            	
             	//放在mainPost 避免 r_accy抓不到
             	aPop = new Array(
             	['txtCustno', 'lblCust', 'cust', 'noa,nick', 'txtCustno,txtComp', 'cust_b.aspx']
@@ -72,7 +69,8 @@
                 q_mask(bbmMask);
                 bbsMask = [['txtIndate', r_picd], ['txtMon', r_picm]];
 				
-		        q_cmbParse("combAcc1", '@,1111@現金,1112@匯款,1112@信用狀,6206@手續費,1121@支票,4107@現金折讓,4106@折讓金額,6236@佣金支出,7114@佣金收入,8101@利息支出,7103@利息收入,8103@其它支出,7194@其他收入','s');
+		        q_cmbParse("combAcc1", '@,1111@現金,1112@匯款,1112@信用狀,6206@手續費,1121@支票,4107@現金折讓,4106@折讓金額,6236@佣金支出,7114@佣金收入,8101@利息支出,7103@利息收入,8103@其它支出,7194@其他收入,2121@開票','s');
+		        q_cmbParse("cmbRem1", ' ,'+q_getPara('gqb.rem1'),'s');
 				
 		         $('#txtDatea').blur(function() {
 		         	if(!emp($('#txtDatea').val())&&(q_cur==1 || q_cur==2)){
@@ -763,6 +761,10 @@
 								$('#txtAcc1_'+n).val('1111.');
 								$('#txtAcc2_'+n).val('現金');
 								break;
+							case '2121'://應付票據 開票
+								$('#txtAcc1_'+n).val('2121.');
+								$('#txtAcc2_'+n).val('應付票據  ');
+								break;
 							case '1112'://匯款
 								$('#txtAcc1_'+n).val('1112.');
 								$('#txtAcc2_'+n).val('銀行存款');
@@ -887,6 +889,11 @@
             			}else{
             				Unlock(1);
             			}
+            			
+            			if($.trim($('#txtCheckno_'+n).val()).length>0 && $.trim($('#txtTitle_'+n).val()).length==0){
+            				$('#txtTitle_'+n).val('鉅昕鋼鐵股份有限公司');
+            			}
+            			
             		}).bind('contextmenu', function(e) {
                         /*滑鼠右鍵*/
                         e.preventDefault();
@@ -1308,10 +1315,10 @@
 			<div class="dview" id="dview">
 				<table class="tview" id="tview">
 					<tr>
-						<td align="center" style="width:5%"><a id='vewChk'></a></td>
-						<td align="center" style="width:30%"><a id='vewDatea'></a></td>
-						<td align="center" style="width:30%"><a id='vewComp'></a></td>
-						<td align="center" style="width:30%"><a id='vewTotal'></a></td>
+						<td align="center" style="width:5%"><a id='vewChk'> </a></td>
+						<td align="center" style="width:30%"><a id='vewDatea'> </a></td>
+						<td align="center" style="width:30%"><a id='vewComp'> </a></td>
+						<td align="center" style="width:30%"><a id='vewTotal'> </a></td>
 					</tr>
 					<tr>
 						<td >
@@ -1357,7 +1364,7 @@
 							<select id="cmbCno" class="txt c1"> </select>
 							<input id="txtAcomp" type="text" style="display:none;"/>
 						</td>
-						<td class="td3"><span> </span><a id='lblCust' class="lbl btn"></a></td>
+						<td class="td3"><span> </span><a id='lblCust' class="lbl btn"> </a></td>
 						<td class="td4" colspan="2">
 						<input id="txtCustno" type="text" class="txt" style="float:left;width:40%;"/>
 						<input id="txtComp"  type="text" class="txt" style="float:left;width:60%;"/>
@@ -1369,38 +1376,26 @@
 						<td><input id="txtCustno2" type="text" class="txt c1" title='多客戶使用"逗號"分隔'/></td>
 					</tr>
 					<tr class="tr3">
-						<td class="td1"><span> </span><a id='lblSale' class="lbl"></a></td>
-						<td class="td2">
-						<input id="txtSale"  type="text" class="txt num c1"/>
-						</td>
-						<td class="td3"><span> </span><a id='lblTotal' class="lbl"></a></td>
-						<td class="td4">
-						<input id="txtTotal" type="text" class="txt num c1"/>
-						</td>
-						<td class="td5"><span> </span><a id='lblPaysale' class="lbl"></a></td>
-						<td class="td6">
-						<input id="txtPaysale"  type="text" class="txt num c1"/>
-						</td>
-						<td class="td7"><span> </span><a id='lblUnpay' class="lbl"></a></td>
-						<td class="td8">
-						<input id="txtUnpay"  type="text" class="txt num c1"/>
-						</td>
+						<td class="td1"><span> </span><a id='lblSale' class="lbl"> </a></td>
+						<td class="td2"><input id="txtSale"  type="text" class="txt num c1"/></td>
+						<td class="td3"><span> </span><a id='lblTotal' class="lbl"> </a></td>
+						<td class="td4"><input id="txtTotal" type="text" class="txt num c1"/></td>
+						<td class="td5"><span> </span><a id='lblPaysale' class="lbl"> </a></td>
+						<td class="td6"><input id="txtPaysale"  type="text" class="txt num c1"/></td>
+						<td class="td7"><span> </span><a id='lblUnpay' class="lbl"> </a></td>
+						<td class="td8"><input id="txtUnpay"  type="text" class="txt num c1"/></td>
 					</tr>
 					<tr class="tr4">
-						<td class="td1"><span> </span><a id='lblOpay' class="lbl"></a></td>
-						<td class="td2">
-						<input id="txtOpay"  type="text" class="txt num c1"/>
-						</td>
-						<td class="td3"><span> </span><a id='lblUnopay' class="lbl"></a></td>
-						<td class="td4">
-						<input id="txtUnopay"  type="text" class="txt num c1"/>
-						</td>
-						<td class="td5"><span> </span><a id='lblTextopay' class="lbl"></a></td>
+						<td class="td1"><span> </span><a id='lblOpay' class="lbl"> </a></td>
+						<td class="td2"><input id="txtOpay"  type="text" class="txt num c1"/></td>
+						<td class="td3"><span> </span><a id='lblUnopay' class="lbl"> </a></td>
+						<td class="td4"><input id="txtUnopay"  type="text" class="txt num c1"/></td>
+						<td class="td5"><span> </span><a id='lblTextopay' class="lbl"> </a></td>
 						<td class="td6">
-						<input id="textOpay"  type="text" class="txt num c1"/>
-						<input type='hidden' id="textOpayOrg" />
+							<input id="textOpay"  type="text" class="txt num c1"/>
+							<input type='hidden' id="textOpayOrg" />
 						</td>
-						<td><span> </span><a id='lblAccc' class="lbl btn"></a></td>
+						<td><span> </span><a id='lblAccc' class="lbl btn"> </a></td>
 						<td><input id="txtAccno"  type="text" class="txt c1"/></td>
 					</tr>
 					<tr>
@@ -1427,18 +1422,20 @@
 					<td align="center" style="width:30px;">
 						<input class="btn" id="btnPlus" type="button" value='+' style="font-weight: bold;" />
 					</td>
-					<td align="center" style="width:20px;"></td>
-					<td align="center" style="width:150px;"><a id='lblAcc1'></a><br><a id='lblAcc2'></a></td>
-					<td align="center" style="width:120px;"><a id='lblMoney'></a><br><a id='lblAccmemo'></a></td>
-					<td align="center" style="width:150px;"><a id='lblCheckno'></a><br><a id='lblGqbtitle'></a></td>
-					<td align="center" style="width:120px;"><a id='lblAccount'></a></td>
-					<td align="center" style="width:100px;"><a id='lblBankno'></a><br><a id='lblBank'></a></td>
-					<td align="center" style="width:80px;"><a id='lblIndate'></a></td>
-					<td align="center" style="width:80px;"><a id='lblChgsTran'></a><br><a id='lblParts'></a></td>
-					<td align="center" style="width:100px;"><a id='lblMemos'></a></td>
-					<td align="center" style="width:120px;"><a id='lblPaysales'></a></td>
-					<td align="center" style="width:80px;"><a id='lblUnpay_s'></a></td>
-					<td align="center" style="width:80px;"><a id='lblCoins'></a></td>
+					<td align="center" style="width:20px;"> </td>
+					<td align="center" style="width:150px;"><a id='lblAcc1'> </a><br><a id='lblAcc2'> </a></td>
+					<td align="center" style="width:120px;"><a id='lblMoney'> </a><br><a id='lblAccmemo'> </a></td>
+					<td align="center" style="width:150px;"><a id='lblCheckno'> </a><br><a id='lblGqbtitle'> </a></td>
+					<td align="center" style="width:70px;"><a id='lblRem1'> </a><br><a id='lblRem2'> </a></td>
+					<td align="center" style="width:50px;"><a id='lblRem3'> </a><br><a id='lblRem4'> </a></td>
+					<td align="center" style="width:120px;"><a id='lblAccount'> </a></td>
+					<td align="center" style="width:100px;"><a id='lblBankno'> </a><br><a id='lblBank'> </a></td>
+					<td align="center" style="width:80px;"><a id='lblIndate'> </a></td>
+					<td align="center" style="width:80px;"><a id='lblChgsTran'> </a><br><a id='lblParts'> </a></td>
+					<td align="center" style="width:100px;"><a id='lblMemos'> </a></td>
+					<td align="center" style="width:120px;"><a id='lblPaysales'> </a></td>
+					<td align="center" style="width:80px;"><a id='lblUnpay_s'> </a></td>
+					<td align="center" style="width:80px;"><a id='lblCoins'> </a></td>
 				</tr>
 				<tr  style='background:#cad3ff;'>
 					<td align="center">
@@ -1453,24 +1450,29 @@
 						<input type="button" id="btnAcc.*" style="display:none;" />
 					</td>
 					<td>
-					<input type="text" id="txtMoney.*" style="text-align:right;width:95%;"/>
-					<input type="text" id="txtMemo.*" style="width:95%;"/>
+						<input type="text" id="txtMoney.*" style="text-align:right;width:95%;"/>
+						<input type="text" id="txtMemo.*" style="width:95%;"/>
 					</td>
 					<td>
-					<input type="text" id="txtCheckno.*"  style="width:95%;" />
-					<input type="text" id="txtTitle.*" style="width:95%;" />
+						<input type="text" id="txtCheckno.*"  style="width:95%;" />
+						<input type="text" id="txtTitle.*" style="width:95%;" />
 					</td>
 					<td>
-					<input type="text" id="txtAccount.*"  style="width:95%;" />
+						<!--<input type="text" id="txtRem1.*"  style="width:95%;" />-->
+						<select id="cmbRem1.*" style="width:95%;"> </select>
+						<input type="text" id="txtRem2.*" style="width:95%;" />
 					</td>
+					<td>
+						<input type="text" id="txtRem3.*"  style="width:95%;" />
+						<input type="text" id="txtRem4.*" style="width:95%;" />
+					</td>
+					<td><input type="text" id="txtAccount.*"  style="width:95%;" /></td>
 					<td>
                         <input type="text" id="txtBankno.*"  style="width:95%; float:left;" title="點擊滑鼠右鍵，列出明細。"/>
 						<input type="text" id="txtBank.*"  style="width:95%; float:left;"/>
 						<input type="button" id="btnBank.*"  style=" display:none;"/>
 					</td>
-					<td>
-					<input type="text" id="txtIndate.*" style="width:95%;" />
-					</td>
+					<td><input type="text" id="txtIndate.*" style="width:95%;" /></td>
 					<td>
 						<input type="text" id="txtChgs.*" style="text-align:right;width:95%;"/>
 						<select id="cmbPartno.*"  style="float:left;width:95%;" > </select>
@@ -1487,16 +1489,14 @@
 						<input type="text" id="txtPaymon.*" style="display:none;" />
 					</td>
 					<td>
-					<input type="text" id="txtPaysale.*" style="text-align:right;width:95%;"/>
-					<input type="text" id="txtUnpayorg.*" style="text-align:right;width:95%;"/>
+						<input type="text" id="txtPaysale.*" style="text-align:right;width:95%;"/>
+						<input type="text" id="txtUnpayorg.*" style="text-align:right;width:95%;"/>
 					</td>
 					<td>
-					<input type="text" id="txtUnpay.*"  style="width:95%; text-align: right;" />
-					<input type="text" id="txtPart2.*"  style="float:left;width: 95%;"/>
+						<input type="text" id="txtUnpay.*"  style="width:95%; text-align: right;" />
+						<input type="text" id="txtPart2.*"  style="float:left;width: 95%;"/>
 					</td>
-					<td>
-						<input type="text" id="txtCoin.*" style="width:95%;"/>
-					</td>
+					<td><input type="text" id="txtCoin.*" style="width:95%;"/></td>
 				</tr>
 			</table>
 		</div>
