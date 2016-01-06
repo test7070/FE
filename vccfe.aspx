@@ -34,7 +34,7 @@
             brwNowPage = 0;
             brwKey = 'datea';
 
-            aPop = new Array(['txtCustno', 'lblCust', 'cust', 'noa,nick,tel,fax,zip_comp,addr_comp,paytype,trantype,salesno,sales', 'txtCustno,txtComp,txtTel,txtFax,txtPost,txtAddr,txtPaytype,cmbTrantype,txtSalesno,txtSales', 'cust_b.aspx']
+            aPop = new Array(['txtCustno', 'lblCust', 'cust', 'noa,comp,nick,tel,fax,zip_comp,addr_comp,paytype,trantype,salesno,sales', 'txtCustno,txtComp,txtNick,txtTel,txtFax,txtPost,txtAddr,txtPaytype,cmbTrantype,txtSalesno,txtSales', 'cust_b.aspx']
             , ['txtStoreno_', 'btnStore_', 'store', 'noa,store', 'txtStoreno_,txtStore_', 'store_b.aspx']
             , ['txtRackno_', 'btnRackno_', 'rack', 'noa,rack,storeno,store', 'txtRackno_', 'rack_b.aspx']
             , ['txtCardealno', 'lblCardeal', 'cardeal', 'noa,comp', '0txtCardealno,txtCardeal', 'cardeal_b.aspx']
@@ -1485,7 +1485,7 @@
 						<td align="center" id='typea=vcc.typea'>~typea=vcc.typea</td>
 						<td align="center" id='datea'>~datea</td>
 						<td align="center" id='noa'>~noa</td>
-						<td align="center" id='comp,4'>~comp,4</td>
+						<td align="center" id='nick'>~nick</td>
 					</tr>
 				</table>
 			</div>
@@ -1532,6 +1532,7 @@
 						</td>
 						<td class="td2">
 						<input id="txtComp" type="text" class="txt c1"/>
+						<input id="txtNick" type="text" style="display:none;"/>
 						</td>
 						<td class="td4"><span> </span><a id='lblPay' class="lbl"> </a></td>
 						<td class="td5">
