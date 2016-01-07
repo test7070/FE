@@ -197,18 +197,17 @@
                 });
 
                 $('#btnOrdes').click(function() {
-                    var t_custno = trim($('#txtCustno').val());
-                    var t_where = '';
-                    if (t_custno.length > 0) {
-                        t_where = "isnull(notv,0)>0  && isnull(enda,0)!=1 && isnull(cancel,0)!=1 &&" + (t_custno.length > 0 ? q_sqlPara("custno", t_custno) : "");
-                        if (!emp($('#txtOrdeno').val()))
-                            t_where += " && charindex(noa,'" + $('#txtOrdeno').val() + "')>0";
-                        t_where = t_where;
-                    } else {
-                        alert(q_getMsg('msgCustEmp'));
-                        return;
-                    }
-                    q_box("ordes_b.aspx?" + r_userno + ";" + r_name + ";" + q_time + ";" + t_where, 'ordes', "95%", "650px", q_getMsg('popOrde'));
+                	if(!(q_cur==1 || q_cur==2))
+						return;
+					var t_custno = $('#txtCustno').val();
+					var t_noa = $('#txtNoa').val();
+					var t_para = 'vccfe';
+                	var t_where ='';
+                	if(t_custno.length==0){
+                		alert('請輸入客戶編號!');
+                		return;
+                	}
+                	q_box("ordefe_b.aspx?" + r_userno + ";" + r_name + ";" + q_time + ";" + t_where+";"+";"+JSON.stringify({custno:t_custno,vccno:t_noa,para:t_para}), "vcc_orde_fe", "95%", "95%", '');
                 });
 
                 $('#lblOrdeno').click(function() {
@@ -361,36 +360,22 @@
             }
 
             function q_boxClose(s2) {
-                var ret;
-                switch (b_pop) {
-                    case 'ordes':
-                        if (q_cur > 0 && q_cur < 4) {
-                            b_ret = getb_ret();
-                            if (!b_ret || b_ret.length == 0)
-                                return;
-                            ret = q_gridAddRow(bbsHtm, 'tbbs', 'txtProductno,txtProduct,txtSpec,txtSize,txtDime,txtWidth,txtLengthb,txtUnit,txtOrdeno,txtNo2,txtPrice,txtMount,txtWeight,txtMemo', b_ret.length, b_ret, 'productno,product,spec,size,dime,width,lengthb,unit,noa,no2,price,mount,weight,memo', 'txtProductno,txtProduct,txtSpec');
-                            //寫入訂單號碼
-                            var t_oredeno = '';
-                            for (var i = 0; i < b_ret.length; i++) {
-                                if (t_oredeno.indexOf(b_ret[i].noa) == -1)
-                                    t_oredeno = t_oredeno + (t_oredeno.length > 0 ? (',' + b_ret[i].noa) : b_ret[i].noa);
-                            }
-                            //取得訂單備註 + 指定地址
-                            if (t_oredeno.length > 0) {
-                                var t_where = "where=^^ charindex(noa,'" + t_oredeno + "')>0 ^^";
-                                q_gt('orde', t_where, 0, 0, 0, "", r_accy);
-                            }
-
-                            $('#txtOrdeno').val(t_oredeno);
-                            sum();
+				switch (b_pop) {
+					case 'vcc_orde_fe':
+                        if (b_ret != null) {
+                        	as = b_ret;
+                    		q_gridAddRow(bbsHtm, 'tbbs', 'txtOrdeno,txtNo2,txtProductno,txtProduct,txtUnit,txtMount,txtWeight,txtPrice'
+                        	, as.length, as, 'ordeno,no2,productno,product,unit,emount,eweight,price', '','');
+                        }else{
                         }
+                        sum();
                         break;
-                    case q_name + '_s':
-                        q_boxClose2(s2);
-                        break;
-                }
-                b_pop = '';
-            }
+					case q_name + '_s':
+						q_boxClose2(s2);
+						break;
+				}
+				b_pop = '';
+			}
 
             var t_msg = '';
             var focus_addr = '';
