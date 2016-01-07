@@ -894,6 +894,22 @@
             				$('#txtTitle_'+n).val('鉅昕鋼鐵股份有限公司');
             			}
             			
+            			if($.trim($('#txtCheckno_'+n).val()).length>0 && $.trim($('#cmbRem1_'+n).val()).length==0){
+            				$('#cmbRem1_'+n).val('本人');
+            			}
+            			
+            			if($.trim($('#txtCheckno_'+n).val()).length>0 && $.trim($('#txtRem2_'+n).val()).length==0){
+            				$('#txtRem2_'+n).val('Y');
+            			}
+            			
+            			if($.trim($('#txtCheckno_'+n).val()).length>0 && $.trim($('#txtRem3_'+n).val()).length==0){
+            				$('#txtRem3_'+n).val('Y');
+            			}
+            			
+            			if($.trim($('#txtCheckno_'+n).val()).length>0 && $.trim($('#txtRem4_'+n).val()).length==0){
+            				$('#txtRem4_'+n).val('N');
+            			}
+            			
             		}).bind('contextmenu', function(e) {
                         /*滑鼠右鍵*/
                         e.preventDefault();
