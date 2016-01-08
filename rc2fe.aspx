@@ -69,7 +69,7 @@
             	}
                 var t_unit,t_price, t_mount,t_weight, t_weights = 0,t_total,t_totals=0;
                 for (var j = 0; j < q_bbsCount; j++) {
-                    t_unit = $('#txtUnit_' + j).val();
+                    t_unit = $.trim($('#txtUnit_' + j).val());
                     t_price = q_float('txtPrice_' + j);
                     t_mount = q_float('txtMount_' + j);
                     t_weight = q_float('txtWeight_' + j);
@@ -79,7 +79,7 @@
                     	$('#txtDiscount_' + j).val(100);
                     	t_discount = 100;
                     }
-                    if(t_unit=='公斤' || t_unit.toUpperCase()=='KG'){
+                    if(t_unit.length==0 || t_unit=='公斤' || t_unit.toUpperCase()=='KG'){
                         t_total = round(q_mul(t_price, t_weight), 0);
                     }else{
                         t_total = round(q_mul(t_price, t_mount), 0);

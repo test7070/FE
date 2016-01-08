@@ -63,11 +63,11 @@
 			function sum() {
 				var t1 = 0, t_unit, t_mount, t_weight = 0,t_total;
 				for (var j = 0; j < q_bbsCount; j++) {
-					t_unit = $('#txtUnit_' + j).val().toUpperCase();
+					t_unit = $.trim($('#txtUnit_' + j).val().toUpperCase());
 					t_mount = q_float('txtMount_'+j);
 					t_weight = q_float('txtWeight_'+j);
 					t_price = q_float('txtPrice_'+j);
-					t_total = round(q_mul((t_unit.length==0 || t_unit=='KG' || t_unit=='公斤'?t_weight:t_mount),t_price),0)
+					t_total = round(q_mul((t_unit.length==0 || t_unit=='KG' || t_unit=='公斤'?t_weight:t_mount),t_price),0);
 					// 計價量
 					$('#txtTotal_' + j).val(t_total);
 
