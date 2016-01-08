@@ -1,4 +1,4 @@
-﻿<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
 <html xmlns="http://www.w3.org/1999/xhtml" dir="ltr">
 	<head>
 		<title> </title>
@@ -6,9 +6,13 @@
 		<script src='../script/qj2.js' type="text/javascript"></script>
 		<script src='qset.js' type="text/javascript"></script>
 		<script src='../script/qj_mess.js' type="text/javascript"></script>
-		<script src="../script/qbox.js" type="text/javascript"></script>
 		<script src='../script/mask.js' type="text/javascript"></script>
+		<script src="../script/qbox.js" type="text/javascript"></script>
 		<link href="../qbox.css" rel="stylesheet" type="text/css" />
+		<link href="css/jquery/themes/redmond/jquery.ui.all.css" rel="stylesheet" type="text/css" />
+		<script src="css/jquery/ui/jquery.ui.core.js"></script>
+		<script src="css/jquery/ui/jquery.ui.widget.js"></script>
+		<script src="css/jquery/ui/jquery.ui.datepicker_tw.js"></script>
 		<script type="text/javascript">
 		    q_desc = 1;
 		    q_tables = 's';
@@ -29,11 +33,30 @@
 		    //comp 要用全名不然支票有問題
 		    aPop = new Array(
             ['txtTggno', 'lblTgg', 'tgg', 'noa,comp', 'txtTggno,txtComp', 'tgg_b.aspx'],
-             ['txtAcc1_', 'btnAcc_', 'acc', 'acc1,acc2', 'txtAcc1_,txtAcc2_,txtMoney_', "acc_b.aspx?" + r_userno + ";" + r_name + ";" + q_time + "; ;" + r_accy + '_' + r_cno],
+             ['txtAcc1_', '', 'acc', 'acc1,acc2', 'txtAcc1_,txtAcc2_,txtMoney_', "acc_b.aspx?" + r_userno + ";" + r_name + ";" + q_time + "; ;" + r_accy + '_' + r_cno],
              ['txtBankno_', 'btnBank_', 'bank', 'noa,bank', 'txtBankno_,txtBank_', 'bank_b.aspx'],
              ['txtUmmaccno_', '', 'payacc', 'noa,typea', 'txtUmmaccno_,txtTypea_', 'payacc_b.aspx'],
              ['txtPartno', 'lblPart', 'part', 'noa,part', 'txtPartno,txtPart', 'part_b.aspx']);
-
+			
+			var optionAcc={
+            	item:'@,01@現金,02@匯款,03@信用狀,04@手續費,05@收票,06@開票,07@現金折讓-進貨,08@進貨折讓,09@佣金支出,10@佣金收入,11@利息支出,12@利息收入,13@其它支出,14@其他收入,15@同業對扣'
+            	,'01':{acc1:'1111.',acc2:'現金',modify:false}
+            	,'02':{acc1:'1112.',acc2:'匯款',modify:true}
+            	,'03':{acc1:'2703.',acc2:'信用狀',modify:true}
+            	,'04':{acc1:'6206.',acc2:'手續費',modify:false}
+            	,'05':{acc1:'1121.',acc2:'收票',modify:false}
+            	,'06':{acc1:'2121.',acc2:'開票',modify:false}
+            	,'07':{acc1:'5204.',acc2:'現金折讓',modify:false}
+            	,'08':{acc1:'5206.',acc2:'進貨折讓',modify:false}
+            	,'09':{acc1:'6236.',acc2:'佣金支出',modify:false}
+            	,'10':{acc1:'7114.',acc2:'佣金收入',modify:false}
+            	,'11':{acc1:'8101.',acc2:'利息支出',modify:false}
+            	,'12':{acc1:'7103.',acc2:'利息收入',modify:false}
+            	,'13':{acc1:'8103.',acc2:'其它支出',modify:false}
+            	,'14':{acc1:'7149.',acc2:'其他收入',modify:false}
+            	,'15':{acc1:'1123.',acc2:'同業對扣',modify:true}
+            };
+            
 		    $(document).ready(function () {
 		        bbmKey = ['noa'];
 		        bbsKey = ['noa', 'noq'];
@@ -54,8 +77,8 @@
 		        q_gt('acomp', '', 0, 0, 0, "");
 		        
 		        q_cmbParse("cmbPayc2", q_getMsg('payc').split('&').join(),"s");
-		        q_cmbParse("combAcc1", '@,1111@現金,1112@銀行存款,1123@同業對扣,2121@應付票據,5204@現金折扣-進貨,5206@進貨折讓,6206@郵 電 費,7149@其他收入,8103@其他支出','s');
-		        
+		        q_cmbParse("cmbHandle", optionAcc.item,'s');
+		       	 
 		        $('#txtDatea').blur(function() {
 		         	if(!emp($('#txtDatea').val())&&(q_cur==1 || q_cur==2)){
                     	var d='';
@@ -94,7 +117,7 @@
 		        $('#btnGqbPrint').click(function (e) {
 		            var t_noa = '', t_max, t_min;
 		            for (var i = 0; i < q_bbsCount; i++) {
-		                t_noa = $.trim($('#txtCheckno_' + i).val())
+		                t_noa = $.trim($('#txtCheckno_' + i).val());
 		                if (t_noa.length > 0) {
 		                    break;
 		                }
@@ -161,7 +184,7 @@
 		               var t_unpay, t_pay=0;
 		               for (var i = 0; i < q_bbsCount; i++) {
 		               		if (q_float('txtUnpay_' + i) != 0) {
-								t_unpay=q_float('txtUnpayorg_' + i)
+								t_unpay=q_float('txtUnpayorg_' + i);
 		                        if (t_money >= t_unpay) {
 		                            q_tr('txtPaysale_' + i, t_unpay);
 		                            $('#txtUnpay_' + i).val(0);
@@ -198,7 +221,7 @@
                             if (!b_ret || b_ret.length == 0)
                                 return;
                             //將勾選資料存入到vccsno
-                            var t_vccsno=''  
+                            var t_vccsno='' ;
                             for (var i = 0; i < b_ret.length; i++) {
                             	if(i==0)
                             		t_vccsno+=b_ret[i].noa+b_ret[i].noq;
@@ -667,64 +690,30 @@
 		            $('#txtChgs_' + i).change(function (e) {
 		                sum();
 		            });
-		            $('#combAcc1_'+i).change(function(e){
-			        	//@,1111@現金,1112@銀行存款,1123@同業對扣,2121@應付票據,5204@現金折扣-進貨,5206@進貨折讓,6206@郵 電 費,7149@其他收入,8103@其他支出
-						var n = $(this).attr('id').replace('combAcc1_', '');
-						
+		            $('#cmbHandle_'+i).change(function(e){
+						var n = $(this).attr('id').replace('cmbHandle_', '');
 						$('#txtAcc1_'+n).attr('readonly','readonly').css('color','green').css('background','rgb(237,237,237)');
 						$('#txtAcc2_'+n).attr('readonly','readonly').css('color','green').css('background','rgb(237,237,237)');
-						switch($(this).val()){
-							case '1111':
-								//現金
-								$('#txtAcc1_'+n).val('1111.');
-								$('#txtAcc2_'+n).val('現金');
-								break;
-							case '1112':
-								//銀行存款
-								$('#txtAcc1_'+n).val('1112.');
-								$('#txtAcc2_'+n).val('銀行存款');
-								$('#txtAcc1_'+n).removeAttr('disabled').removeAttr('readonly').css('color','black').css('background','white');
-								$('#txtAcc2_'+n).removeAttr('disabled').removeAttr('readonly').css('color','black').css('background','white');
-								break;
-							case '1123':
-								//同業對扣
-								$('#txtAcc1_'+n).val('1123.');
-								$('#txtAcc2_'+n).val('同業對扣');
-								break;
-							case '2121':
-								//同業對扣
-								$('#txtAcc1_'+n).val('2121.');
-								$('#txtAcc2_'+n).val('應付票據');
-								break;
-							case '5204':
-								//同業對扣
-								$('#txtAcc1_'+n).val('5204.');
-								$('#txtAcc2_'+n).val('現金折扣-進貨');
-								break;
-							case '5206':
-								//同業對扣
-								$('#txtAcc1_'+n).val('5206.');
-								$('#txtAcc2_'+n).val('進貨折讓');
-								break;
-							case '6206':
-								//同業對扣
-								$('#txtAcc1_'+n).val('6206.');
-								$('#txtAcc2_'+n).val('郵 電 費');
-								break;
-							case '7149':
-								//同業對扣
-								$('#txtAcc1_'+n).val('7149.');
-								$('#txtAcc2_'+n).val('其他收入');
-								break;
-							case '8103':
-								//同業對扣
-								$('#txtAcc1_'+n).val('8103.');
-								$('#txtAcc2_'+n).val('其他支出');
-								break;
-							default:
-								break;
+						var t_handle = $(this).val();
+						if(t_handle.length==0){
+							$('#txtAcc1_'+n).val('');
+							$('#txtAcc2_'+n).val('');
+						}else{
+							try{
+								$('#txtAcc1_'+n).val(optionAcc[t_handle].acc1);
+								$('#txtAcc2_'+n).val(optionAcc[t_handle].acc2);
+								if(optionAcc[t_handle].modify){
+									$('#txtAcc1_'+n).removeAttr('disabled').removeAttr('readonly').css('color','black').css('background','white');
+									$('#txtAcc2_'+n).removeAttr('disabled').removeAttr('readonly').css('color','black').css('background','white');
+								}
+							}catch(e){
+								$('#txtAcc1_'+n).val('');
+								$('#txtAcc2_'+n).val('');
+							}
 						}
+						
 			        });
+			        
                     $('#txtAcc1_' + i).bind('contextmenu', function(e) {
                         /*滑鼠右鍵*/
                         e.preventDefault();
@@ -781,28 +770,24 @@
 		        }
 
 		        _bbsAssign();
-		        StatusCombAcc1();
+		        StatusAcc1();
 		    }
-			function StatusCombAcc1(){
+			function StatusAcc1(){
 				for(var n=0;n<q_bbsCount;n++){
-					$('#combAcc1_'+n).val($('#txtAcc1_'+n).val().substring(0,4));
 					$('#txtAcc1_'+n).attr('readonly','readonly').css('color','green').css('background','rgb(237,237,237)');
 					$('#txtAcc2_'+n).attr('readonly','readonly').css('color','green').css('background','rgb(237,237,237)');
 				}
 				if(!(q_cur==1 || q_cur==2))
 					return;
 				for(var n=0;n<q_bbsCount;n++){
-					$('#combAcc1_'+n).removeAttr('disabled');
-					switch($('#combAcc1_'+n).val()){
-						case '1112':
-							//銀行存款
-							$('#txtAcc1_'+n).val('1112.');
-							$('#txtAcc2_'+n).val('銀行存款');
+					t_handle = $('#cmbHandle_'+n).val();
+					try{
+						if(t_handle.length>0 && optionAcc[t_handle].modify){
 							$('#txtAcc1_'+n).removeAttr('disabled').removeAttr('readonly').css('color','black').css('background','white');
 							$('#txtAcc2_'+n).removeAttr('disabled').removeAttr('readonly').css('color','black').css('background','white');
-							break;
-						default:
-							break;
+						}
+					}catch(e){
+						
 					}
 				}
 			}
@@ -879,7 +864,6 @@
 
 		    function refresh(recno) {
 		        _refresh(recno);
-		        
 		        if(q_cur==1 || q_cur==2){
 		        	$("#btnVcc").removeAttr("disabled");
 		        	$("#btnMon").removeAttr("disabled");
@@ -889,7 +873,7 @@
 		        	$("#btnMon").attr("disabled","disabled");
 		        	$("#btnAuto").attr("disabled","disabled");
 		        }
-		        StatusCombAcc1();
+		        StatusAcc1();
 		        getOpay();
 		    }
 
@@ -899,21 +883,16 @@
 		        	$("#btnVcc").removeAttr("disabled");
 		        	$("#btnMon").removeAttr("disabled");
 		        	$("#btnAuto").removeAttr("disabled");
-		        	for(var i=0;i<q_bbsCount;i++)
-		        		$('#combAcc1_'+i).removeAttr('disabled');
 		        }else{
 		        	$("#btnVcc").attr("disabled","disabled");
 		        	$("#btnMon").attr("disabled","disabled");
 		        	$("#btnAuto").attr("disabled","disabled");
-		        	for(var i=0;i<q_bbsCount;i++)
-		        		$('#combAcc1_'+i).attr('disabled','disabled');
 		        }
 		        if(q_cur==1){
 		        	$('#txtNoa').css('color','black').css('background','white').removeAttr('readonly');
 		        }else{
 		        	$('#txtNoa').css('color','green').css('background','RGB(237,237,237)').attr('readonly','readonly');
 		        }
-		        
 		    }
 
 		    function btnMinus(id) {
@@ -1299,7 +1278,7 @@
 					</td>
 					<td><a id="lblNo.*" style="font-weight: bold;text-align: center;display: block;"> </a></td>
 					<td>
-						<select id="combAcc1.*" style="width:95%;float:left;"> </select>
+						<select id="cmbHandle.*" style="width:95%;float:left;"> </select>
                         <input type="text" id="txtAcc1.*"  style="width:95%; float:left;" title="點擊滑鼠右鍵，列出明細。"/>
 						<input type="text" id="txtAcc2.*"  style="width:95%; float:left;"/>
 						<input type="button" id="btnAcc.*" style="display:none;" />

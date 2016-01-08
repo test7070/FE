@@ -32,7 +32,25 @@
             brwNowPage = 0;
             brwCount2 = 6;
             brwKey = 'Datea';
-
+			
+            var optionAcc={
+            	item:'@,01@現金,02@匯款,03@信用狀,04@手續費,05@收票,06@開票,07@現金折讓,08@折讓金額,09@佣金支出,10@佣金收入,11@利息支出,12@利息收入,13@其它支出,14@其他收入'
+            	,'01':{acc1:'1111.',acc2:'現金',modify:false}
+            	,'02':{acc1:'1112.',acc2:'匯款',modify:true}
+            	,'03':{acc1:'1112.',acc2:'信用狀',modify:true}
+            	,'04':{acc1:'6206.',acc2:'手續費',modify:false}
+            	,'05':{acc1:'1121.',acc2:'收票',modify:false}
+            	,'06':{acc1:'2121.',acc2:'開票',modify:false}
+            	,'07':{acc1:'4107.',acc2:'現金折讓',modify:false}
+            	,'08':{acc1:'4106.',acc2:'折讓金額',modify:false}
+            	,'09':{acc1:'6236.',acc2:'佣金支出',modify:false}
+            	,'10':{acc1:'7114.',acc2:'佣金收入',modify:false}
+            	,'11':{acc1:'8101.',acc2:'利息支出',modify:false}
+            	,'12':{acc1:'7103.',acc2:'利息收入',modify:false}
+            	,'13':{acc1:'8103.',acc2:'其它支出',modify:false}
+            	,'14':{acc1:'7149.',acc2:'其他收入',modify:false}
+            };
+							
             $(document).ready(function() {
                 bbmKey = ['noa'];
                 bbsKey = ['noa', 'noq'];
@@ -44,7 +62,7 @@
             function main() {
                 mainForm(1);
             }
-			
+
             function mainPost() {
                 q_cmbParse("cmbCno", t_acomp);
             	q_cmbParse("cmbPartno", t_part, 's');
@@ -53,7 +71,7 @@
             	//放在mainPost 避免 r_accy抓不到
             	aPop = new Array(
             	['txtCustno', 'lblCust', 'cust', 'noa,nick', 'txtCustno,txtComp', 'cust_b.aspx']
-            	, ['txtAcc1_', 'btnAcc_', 'acc', 'acc1,acc2', 'txtAcc1_,txtAcc2_,txtMoney_', "acc_b.aspx?" + r_userno + ";" + r_name + ";" + q_time + "; ;" + r_accy + '_' + r_cno]
+            	, ['txtAcc1_', '', 'acc', 'acc1,acc2', 'txtAcc1_,txtAcc2_,txtMoney_', "acc_b.aspx?" + r_userno + ";" + r_name + ";" + q_time + "; ;" + r_accy + '_' + r_cno]
             	, ['txtBankno_', 'btnBank_', 'bank', 'noa,bank', 'txtBankno_,txtBank_', 'bank_b.aspx']
             	, ['txtUmmaccno_', '', 'ummacc', 'noa,typea', 'txtUmmaccno_,txtTypea_', 'ummacc_b.aspx']
             	, ['txtVccno_', '', 'view_vcc', 'noa,comp,unpay,unpay,typea,accy,cno,mon', 'txtVccno_,txtMemo2_,txtUnpayorg_,txtUnpay_,textTypea_,txtAccy_,txtCno_,txtPaymon_', '']);
@@ -67,7 +85,8 @@
                 q_mask(bbmMask);
                 bbsMask = [['txtIndate', r_picd], ['txtMon', r_picm]];
 				
-		        q_cmbParse("combAcc1", '@,1111@現金,1112@匯款,1112@信用狀,6206@手續費,1121@支票,4107@現金折讓,4106@折讓金額,6236@佣金支出,7114@佣金收入,8101@利息支出,7103@利息收入,8103@其它支出,7149@其他收入,2121@開票','s');
+		        q_cmbParse("cmbHandle", optionAcc.item,'s');
+		        
 		        q_cmbParse("cmbRem1", ' ,'+q_getPara('gqb.rem1'),'s');
 				
 		         $('#txtDatea').blur(function() {
@@ -595,94 +614,28 @@
                 	$('#lblNo_'+i).text(i+1);	
                     if ($('#btnMinus_' + i).hasClass('isAssign'))/// 重要
                         continue;
-                    $('#combAcc1_'+i).change(function(e){
-			        	//q_cmbParse("combAcc1", '@ ,1111@現金,匯款,信用狀,手續費,支票,4107@現金折讓,4106@折讓金額,6236@佣金支出,7114@佣金收入,8101@利息支出,7103@利息收入,8103@其它支出,7149@其他收入','s');
-						var n = $(this).attr('id').replace('combAcc1_', '');
-
+                    $('#cmbHandle_'+i).change(function(e){
+						var n = $(this).attr('id').replace('cmbHandle_', '');
 						$('#txtAcc1_'+n).attr('readonly','readonly').css('color','green').css('background','rgb(237,237,237)');
 						$('#txtAcc2_'+n).attr('readonly','readonly').css('color','green').css('background','rgb(237,237,237)');
-	
-						switch($(this).val()){
-							case '':
+						var t_handle = $(this).val();
+						if(t_handle.length==0){
+							$('#txtAcc1_'+n).val('');
+							$('#txtAcc2_'+n).val('');
+						}else{
+							try{
+								$('#txtAcc1_'+n).val(optionAcc[t_handle].acc1);
+								$('#txtAcc2_'+n).val(optionAcc[t_handle].acc2);
+								if(optionAcc[t_handle].modify){
+									$('#txtAcc1_'+n).removeAttr('disabled').removeAttr('readonly').css('color','black').css('background','white');
+									$('#txtAcc2_'+n).removeAttr('disabled').removeAttr('readonly').css('color','black').css('background','white');
+								}
+							}catch(e){
 								$('#txtAcc1_'+n).val('');
 								$('#txtAcc2_'+n).val('');
-								break;
-							case '1111':
-								//現金
-								$('#txtAcc1_'+n).val('1111.');
-								$('#txtAcc2_'+n).val('現金');
-								break;
-							case '2121'://應付票據 開票
-								$('#txtAcc1_'+n).val('2121.');
-								$('#txtAcc2_'+n).val('應付票據  ');
-								break;
-							case '1112'://匯款
-								$('#txtAcc1_'+n).val('1112.');
-								$('#txtAcc2_'+n).val('銀行存款');
-								$('#txtAcc1_'+n).removeAttr('disabled').removeAttr('readonly').css('color','black').css('background','white');
-								$('#txtAcc2_'+n).removeAttr('disabled').removeAttr('readonly').css('color','black').css('background','white');
-								break;
-							case '1112'://信用狀
-								$('#txtAcc1_'+n).val('1112.');
-								$('#txtAcc2_'+n).val('銀行存款');
-								$('#txtAcc1_'+n).removeAttr('disabled').css('color','black').css('background','white');
-								$('#txtAcc2_'+n).removeAttr('disabled').css('color','black').css('background','white');
-								break;
-							case '6206'://手續費
-								$('#txtAcc1_'+n).val('6206.');
-								$('#txtAcc2_'+n).val('郵 電 費');
-								//$('#txtAcc1_'+n).removeAttr('disabled').css('color','black').css('background','white');
-								//$('#txtAcc2_'+n).removeAttr('disabled').css('color','black').css('background','white');
-								break;
-							case '1121'://支票
-								$('#txtAcc1_'+n).val('1121.');
-								$('#txtAcc2_'+n).val('應收票據');
-								//$('#txtAcc1_'+n).removeAttr('disabled').css('color','black').css('background','white');
-								//$('#txtAcc2_'+n).removeAttr('disabled').css('color','black').css('background','white');
-								break;
-							case '4107':
-								//現金折讓
-								$('#txtAcc1_'+n).val('4107.');
-								$('#txtAcc2_'+n).val('現金折讓');
-								break;
-							case '4106':
-								//折讓金額
-								$('#txtAcc1_'+n).val('4106.');
-								$('#txtAcc2_'+n).val('折讓金額');
-								break;
-							case '6236':
-								//佣金支出
-								$('#txtAcc1_'+n).val('6236.');
-								$('#txtAcc2_'+n).val('佣金支出');
-								break;
-							case '7114':
-								//佣金收入
-								$('#txtAcc1_'+n).val('7114.');
-								$('#txtAcc2_'+n).val('佣金收入');
-								break;
-							case '8101':
-								//利息支出
-								$('#txtAcc1_'+n).val('8101.');
-								$('#txtAcc2_'+n).val('利息支出');
-								break;
-							case '7103':
-								//利息收入
-								$('#txtAcc1_'+n).val('7103.');
-								$('#txtAcc2_'+n).val('利息收入');
-								break;
-							case '8103':
-								//其它支出
-								$('#txtAcc1_'+n).val('8103.');
-								$('#txtAcc2_'+n).val('其它支出');
-								break;
-							case '7149':
-								//其他收入 *
-								$('#txtAcc1_'+n).val('7149.');
-								$('#txtAcc2_'+n).val('其他收入');
-								break;
-							default:
-								break;
-						}	
+							}
+						}
+						
 			        });
                     $('#txtAcc1_' + i).bind('contextmenu', function(e) {
                         /*滑鼠右鍵*/
@@ -790,31 +743,25 @@
                  		$('#txtVccno_'+i).css('color','green').css('background','RGB(237,237,237)').attr('readonly','readonly');
                  }
                  
-                 StatusCombAcc1();
+                 StatusAcc1();
                  
             }
-			function StatusCombAcc1(){
+			function StatusAcc1(){
 				for(var n=0;n<q_bbsCount;n++){
-					$('#combAcc1_'+n).val($('#txtAcc1_'+n).val().substring(0,4));
 					$('#txtAcc1_'+n).attr('readonly','readonly').css('color','green').css('background','rgb(237,237,237)');
 					$('#txtAcc2_'+n).attr('readonly','readonly').css('color','green').css('background','rgb(237,237,237)');
 				}
 				if(!(q_cur==1 || q_cur==2))
 					return;
-				
 				for(var n=0;n<q_bbsCount;n++){
-					$('#combAcc1_'+n).removeAttr('disabled');
-					switch($('#combAcc1_'+n).val()){
-						case '1112'://匯款
+					t_handle = $('#cmbHandle_'+n).val();
+					try{
+						if(t_handle.length>0 && optionAcc[t_handle].modify){
 							$('#txtAcc1_'+n).removeAttr('disabled').removeAttr('readonly').css('color','black').css('background','white');
 							$('#txtAcc2_'+n).removeAttr('disabled').removeAttr('readonly').css('color','black').css('background','white');
-							break;
-						case '1112'://信用狀
-							$('#txtAcc1_'+n).removeAttr('disabled').css('color','black').css('background','white');
-							$('#txtAcc2_'+n).removeAttr('disabled').css('color','black').css('background','white');
-							break;
-						default:
-							break;
+						}
+					}catch(e){
+						
 					}
 				}
 			}
@@ -848,7 +795,7 @@
             			var t_where = " where=^^ checkno='"+t_checkno+"'^^";
             			q_gt('chk2s', t_where, 0, 0, 0, "gqb_status1_"+n+"_"+t_checkno, r_accy);
             		}else{
-            			checkGqbStatus_btnModi(n-1)
+            			checkGqbStatus_btnModi(n-1);
             		}
             	}
             }
@@ -862,7 +809,7 @@
             			var t_where = " where=^^ checkno='"+t_checkno+"'^^";
             			q_gt('chk2s', t_where, 0, 0, 0, "gqb_statusA_"+n+"_"+t_checkno, r_accy);
             		}else{
-            			checkGqbStatus_btnDele(n-1)
+            			checkGqbStatus_btnDele(n-1);
             		}
             	}
             }
@@ -899,7 +846,7 @@
 		        	$("#btnMon").attr("disabled","disabled");
 		        	$("#btnAuto").attr("disabled","disabled");
 		        }
-		        StatusCombAcc1();
+		        StatusAcc1();
                 getOpay();
             }
 
@@ -910,14 +857,10 @@
 		        	$("#btnVcc").removeAttr("disabled");
 		        	$("#btnMon").removeAttr("disabled");
 		        	$("#btnAuto").removeAttr("disabled");
-		        	for(var i=0;i<q_bbsCount;i++)
-		        		$('#combAcc1_'+i).removeAttr('disabled');
 		        }else{
 		        	$("#btnVcc").attr("disabled","disabled");
 		        	$("#btnMon").attr("disabled","disabled");
 		        	$("#btnAuto").attr("disabled","disabled");
-		        	for(var i=0;i<q_bbsCount;i++)
-		        		$('#combAcc1_'+i).attr('disabled','disabled');
 		        }
 		        if(q_cur==1){
 		        	$('#txtNoa').css('color','black').css('background','white').removeAttr('readonly');
@@ -1305,7 +1248,7 @@
 					</td>
 					<td><a id="lblNo.*" style="font-weight: bold;text-align: center;display: block;"> </a></td>
 					<td>
-						<select id="combAcc1.*" style="width:95%;float:left;"> </select>
+						<select id="cmbHandle.*" style="width:95%;float:left;"> </select>
                         <input type="text" id="txtAcc1.*"  style="width:95%; float:left;" title="點擊滑鼠右鍵，列出明細。"/>
 						<input type="text" id="txtAcc2.*"  style="width:95%; float:left;"/>
 						<input type="button" id="btnAcc.*" style="display:none;" />
