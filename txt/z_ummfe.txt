@@ -517,6 +517,7 @@ z_ummfe03:--z_ummfe03
 		,price float
 		,moneys float
 	)
+<<<<<<< HEAD
 	
 	--出貨單
 	insert into @tmp(recno,gno,cno,custno,tablea,accy,noa,noq,[money],datea,typea
@@ -566,6 +567,91 @@ z_ummfe03:--z_ummfe03
 	declare @linecount int = 35 --每頁行數
 	declare @endcount int --總計行數
 	declare @mm int
+=======
+	insert into @tmp(gno,rno,rec,custno,comp,addr,tel
+		,datea,typea,noa,stotal
+		,product,unit,mount,price,mtotal,slmoney,bkmoney,tax)
+	select 
+		'2',ROW_NUMBER()over(partition by a.custno order by a.datea,a.noa)
+		,ROW_NUMBER()over(partition by a.noa order by a.noa)
+		,a.*
+	from (	
+		select a.custno,a.comp,a.addr,a.tel,a.datea
+			,case when a.typea = '1' then '出' else '退' end typea
+			,a.noa,a.total stotal,b.product,b.unit,b.mount,b.price,b.total mtotal
+			,case when a.typea = '1' then ISNULL(b.total,0) else 0 end [money]
+			,case when a.typea = '2' then ISNULL(b.total,0) else 0 end [bkmoney]
+			,case when ROW_NUMBER()over(partition by a.noa order by a.noa)=1 then ISNULL(a.tax,0) else 0 end tax
+		from view_vcc a
+		left join view_vccs b on a.noa = b.noa
+		where (len(@t_cno)=0 or a.cno=@t_cno) and (a.custno between @t_bcustno and @t_ecustno) 
+			and (a.mon between @t_bmon and @t_emon) and (a.datea between @t_bzdate and @t_ezdate)
+		union all	
+		select a.custno,a.comp,'',''
+			,a.datea,'稅',noa,null,product,unit,mount,price,a.tax,null,null,a.tax
+ 		from vcca a
+ 		where (len(@t_cno)=0 or a.cno=@t_cno) 
+ 			and (a.custno between @t_bcustno and @t_ecustno) 
+ 			and (a.mon between @t_bmon and @t_emon) 
+ 			and (a.datea between @t_bzdate and @t_ezdate)	
+		) a
+ 	update @tmp set tax = case when typea = '出' or typea='稅' then tax else -1*tax end
+
+	--出貨金額&退貨金額&稅額&單據張數
+	insert into @tmp(gno,rno,custno,slmoney,bkmoney,tax,counts)
+	select '3',MAX(rno),custno,SUM(slmoney),SUM(bkmoney),SUM(tax),COUNT(DISTINCT noa)
+	from @tmp 
+	group by custno
+
+	--重量合計
+	update @tmp set weight = b.mount
+	from @tmp a
+	left join(	
+		select custno,SUM(mount)mount
+		from @tmp
+		where gno = '2' and UPPER(unit) = 'KG'
+		group by custno
+	)b on a.custno = b.custno
+	where gno = '3'
+
+	--已付金額&前期未付
+	update @tmp set pay = ISNULL(b.pay,0),unpay = ISNULL(b.unpay,0)
+	from @tmp a
+	left join(	
+		select noa,SUM(case when mon between @t_bmon and @t_emon then 1 else 0 end *pay)pay
+		,SUM(case when mon<@t_bmon then unpay else 0 end)unpay
+		from cust_2s
+		where (noa between @t_bcustno and @t_ecustno) and(mon <= @t_emon)
+		group by noa
+	)b on a.custno = b.noa
+	where gno = '3'
+
+
+	--本期應收(出貨金額+退貨金額+稅額)
+	update @tmp set money = slmoney - bkmoney +tax 
+
+	--應收總計(本期應收+前期未收-已付金額)
+	update @tmp set total = money + unpay - pay 
+	---------------------------------------------------------------------------------
+	if LEN(@t_bdate)>0 and LEN(@t_edate)>0
+	begin
+		insert into @tmp(gno,rno,custno,comp,dateb,acc2,moneyb,checkno,bank,indate)
+		select '6',ROW_NUMBER()over(partition by a.custno order by a.noa),a.custno,comp,a.datea,b.acc2,b.money,b.checkno,b.bank,b.indate
+		from umm a
+		left join umms b on a.noa=b.noa
+		where a.datea between @t_bdate and @t_edate and ISNULL(a.custno,'') between @t_bcustno and @t_ecustno and isnull(b.money,0)!=0
+	end
+	---------------------------------------------------------------------------------
+	--排版&換頁
+	update @tmp set datea='',typea='',noa='',stotal=null where rec > 1
+
+	declare @custno nvarchar(30)
+	declare @cnt1 int
+	declare @cnt2 int 
+	declare @max  int
+	declare @min  int
+	declare @i int
+>>>>>>> 9ecb3ab84f17a225fbf42bcb016810c7255b98ff
 
 	declare cursor_table cursor for
 	select cno,custno from @tmp group by cno,custno
