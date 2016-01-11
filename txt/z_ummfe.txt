@@ -579,9 +579,10 @@ declare @t_ezdate nvarchar(20) = case when '#non' = [16] then CHAR(255) else [16
 	update @tmp set pay = ISNULL(b.pay,0),unpay = ISNULL(b.unpay,0)
 	from @tmp a
 	left join(	
-		select noa,SUM(case when mon between @t_bmon and @t_emon then 1 else 0 end *pay)pay,SUM(case when mon>@t_bmon then unpay else 0 end)unpay
+		select noa,SUM(case when mon between @t_bmon and @t_emon then 1 else 0 end *pay)pay
+		,SUM(case when mon<@t_bmon then unpay else 0 end)unpay
 		from cust_2s
-		where (noa between @t_bcustno and @t_ecustno) and(mon <= @t_bmon)
+		where (noa between @t_bcustno and @t_ecustno) and(mon <= @t_emon)
 		group by noa
 	)b on a.custno = b.noa
 	where gno = '3'
