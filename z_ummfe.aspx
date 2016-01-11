@@ -87,7 +87,10 @@
                         type : '8', //[19]       11
                         name : 'zoption01',
                         value : ['依業務']
-                    }]
+                    }, {
+						type : '6', //[20]     12
+						name : 'edate'
+					}]
 				});
 				q_popAssign();
 				q_langShow();
@@ -106,6 +109,8 @@
 				$('#txtZdate1').datepicker();
 				$('#txtZdate2').mask('999/99/99');
 				$('#txtZdate2').datepicker();
+				$('#txtEdate').mask('999/99/99');
+				$('#txtEdate').datepicker();
 				
 				$('#txtYmon').mask('999/99');
 				
