@@ -865,6 +865,10 @@
 					return;
 				_btnModi();
 				$('#txtOdate').focus();
+				
+				if(dec($('#txtVcce').val())>0){
+					alert('已轉派車單!!')
+				}
 
 				if (!emp($('#txtCustno').val())) {
 					var t_where = "where=^^ noa='" + $('#txtCustno').val() + "'  ^^";
@@ -1205,7 +1209,10 @@
 					</tr>
 					<tr class="tr1">
 						<td class="td1"><span> </span><a id='lblOdate' class="lbl"> </a></td>
-						<td class="td2"><input id="txtOdate" type="text" class="txt c1"/></td>
+						<td class="td2">
+							<input id="txtOdate" type="text" class="txt c1"/>
+							<input id="txtVcce" type="hidden"/>
+						</td>
 						<td class="td3"><span> </span><a id='lblStype' class="lbl" style="display:none;"> </a></td>
 						<td class="td4"><select id="cmbStype" class="txt c1" style="display:none;"></select></td>
 						<td class="td5"><span> </span><a id='lblNoa' class="lbl"> </a></td>
