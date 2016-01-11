@@ -733,7 +733,7 @@
 				                			$('#txtLengthb_'+n).val(ar[i].lengthb);
 				                			t_cmount = ar[i].cmount.split(',');
 				                			t_cweight = ar[i].cweight.split(',');
-				                			$('#txtMemo').val()
+				                			$('#txtMemo').val();
 				                			$('#txtMount_'+n).val(t_cmount[string[t_para.uno.substring(17,18)]-1]);
 		                					$('#txtWeight_'+n).val(t_cweight[string[t_para.uno.substring(17,18)]-1]);
 		                					t_mechno = eval('ar[i].mech'+t_para.uno.substring(16,17));
@@ -823,11 +823,12 @@
             		n--;
             		t_productno = $.trim($('#txtProductno_'+n).val());
                     t_mount = q_float('txtMount_' + n);
-                    if(t_productno.length>0 && t_mount!=0){
-                    	q_gt('ucc', "where=^^noa='"+t_productno+"'^^", 0, 0, 0,JSON.stringify({action:"getWeight_sum",n:n,mount:t_mount}));	
-                    }else{
+                    //2016/01/11 只有在修改數量當下才重新計算重量,存檔時不必
+                    //if(t_productno.length>0 && t_mount!=0){
+                    //	q_gt('ucc', "where=^^noa='"+t_productno+"'^^", 0, 0, 0,JSON.stringify({action:"getWeight_sum",n:n,mount:t_mount}));	
+                    //}else{
                     	btnOk_sum(n);
-                    }
+                    //}
             	}           		
             }
             function checkPrice(n){
@@ -954,18 +955,6 @@
                             }    
                         });
 
-                        $('#txtMount_' + i).focusin(function() {
-                            if (q_cur == 1 || q_cur == 2) {
-                                t_IdSeq = -1;
-                                q_bodyId($(this).attr('id'));
-                                b_seq = t_IdSeq;
-                                /*if (!emp($('#txtProductno_' + b_seq).val())) {
-                                    //庫存
-                                    var t_where = "where=^^ ['" + q_date() + "','','" + $('#txtProductno_' + b_seq).val() + "')  ^^";
-                                    q_gt('calstk', t_where, 0, 0, 0, "msg_stk", r_accy);
-                                }*/
-                            }
-                        });
                         $('#txtPrice_' + i).focusin(function() {
                             if (q_cur == 1 || q_cur == 2) {
                                 t_IdSeq = -1;
