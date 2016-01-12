@@ -188,6 +188,8 @@
 			function btnModi() {
 				if (emp($('#txtNoa').val()))
                     return;
+                if (q_chkClose())
+					return;
                 _btnModi();
                 $('#txtDatea').focus();
 			}
@@ -275,6 +277,8 @@
 			}
 
 			function btnDele() {
+				if (q_chkClose())
+					return;
 				_btnDele();
 			}
 

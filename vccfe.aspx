@@ -1014,6 +1014,8 @@
             function btnModi() {
                 if (emp($('#txtNoa').val()))
                     return;
+                if (q_chkClose())
+					return;
                 Lock(1, {
                     opacity : 0
                 });
@@ -1184,6 +1186,8 @@
             function btnDele() {
                 if (q_chkClose())
                     return;
+                if (q_chkClose())
+					return;
                 Lock(1, {
                     opacity : 0
                 });

@@ -1173,9 +1173,9 @@
 						<td colspan="2">
 							<input type="button" id="btnVcc" class="txt c1 " style="width: 95px;"/>
 							<input type="button" id="btnMon" class="txt c1 " style="width: 95px;"/>
-						</td>
-						<td style="display:none;">
 							<span> </span><a id='lblCust2' class="lbl btn"> </a>
+						</td>
+						<td >
 							<input id="txtCustno2" type="text" class="txt c1" title='多客戶使用"逗號"分隔'/>
 						</td>
 					</tr>

@@ -863,11 +863,13 @@
 			function btnModi() {
 				if (emp($('#txtNoa').val()))
 					return;
+				if (q_chkClose())
+					return;
 				_btnModi();
 				$('#txtOdate').focus();
 				
 				if(dec($('#txtVcce').val())>0){
-					alert('已轉派車單!!')
+					alert('已轉派車單!!');
 				}
 
 				if (!emp($('#txtCustno').val())) {
@@ -1000,6 +1002,8 @@
 			}
 
 			function btnDele() {
+				if (q_chkClose())
+					return;
 				_btnDele();
 			}
 
