@@ -36,30 +36,33 @@
 				$('#q_report').q_report({
 					fileName : 'z_payfe',
 					options : [{
-						type : '5', //[1]
+						type : '5', //[1]              1
 						name : 'xcno',
 						value : t_acomp.split(',')
 					}, {
-						type : '2', //[2][3]
+						type : '2', //[2][3]           2
 						name : 'xtgg',
 						dbf : 'tgg',
 						index : 'noa,comp',
 						src : 'tgg_b.aspx'
 					}, {
-						type : '1', //[4][5]
+						type : '1', //[4][5]           3
 						name : 'xdate'
 					}, {
-						type : '1', //[6][7]
+						type : '1', //[6][7]            4
 						name : 'xmon'
 					}, {
-                        type : '8', //[8]
+                        type : '8', //[8]               5
                         name : 'xoption01',
                         value : ['明細']
                     }, {
-                        type : '0', //[9]
+                        type : '0', //[9]            
                         name : 'xname',
                         value : r_name 
-                    }]
+                    }, {
+						type : '6', //[10]               6
+						name : 'edate'
+					}]
 				});
 				q_popAssign();
 				q_langShow();
@@ -70,6 +73,8 @@
 				$('#txtXdate2').datepicker();
 				$('#txtXmon1').mask('999/99');
 				$('#txtXmon2').mask('999/99');
+				$('#txtEdate').mask('999/99/99');
+				$('#txtEdate').datepicker();
 
 				var t_date, t_year, t_month, t_day;
 				t_date = new Date();
@@ -92,6 +97,17 @@
 				t_day = t_date.getUTCDate();
 				t_day = t_day > 9 ? t_day + '' : '0' + t_day;
 				$('#txtXdate2').val(t_year + '/' + t_month + '/' + t_day);
+				
+				t_date = new Date();
+				t_date.setDate(1);
+				t_date.setDate(-1);
+				t_year = t_date.getUTCFullYear() - 1911;
+				t_year = t_year > 99 ? t_year + '' : '0' + t_year;
+				t_month = t_date.getUTCMonth() + 1;
+				t_month = t_month > 9 ? t_month + '' : '0' + t_month;
+				
+				$('#txtXmon1').val(t_year + '/' + t_month);
+				$('#txtXmon2').val(t_year + '/' + t_month);
 
 			}
 
