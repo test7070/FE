@@ -1090,7 +1090,7 @@
 				margin: -1px;
 			}
 			.dbbs {
-				width: 1300px;
+				width: 1350px;
 			}
 			.tbbs a {
 				font-size: medium;
@@ -1171,7 +1171,7 @@
 						<input id="txtComp"  type="text" class="txt" style="float:left;width:60%;"/>
 						</td>
 						<td colspan="2">
-							<input type="button" id="btnVcc" class="txt c1 " style="width: 95px;"/>
+							<input type="button" id="btnVcc" class="txt c1 " style="display:none;"/>
 							<input type="button" id="btnMon" class="txt c1 " style="width: 95px;"/>
 							<span> </span><a id='lblCust2' class="lbl btn"> </a>
 						</td>
@@ -1236,7 +1236,7 @@
 					<td align="center" style="width:100px;"><a id='lblBankno'> </a><br><a id='lblBank'> </a></td>
 					<td align="center" style="width:80px;"><a id='lblIndate'> </a></td>
 					<td align="center" style="width:80px;"><a id='lblChgsTran'> </a><br><a id='lblParts'> </a></td>
-					<td align="center" style="width:100px;"><a id='lblMemos'> </a></td>
+					<td align="center" style="width:150px;"><a id='lblMemos'> </a></td>
 					<td align="center" style="width:120px;"><a id='lblPaysales'> </a></td>
 					<td align="center" style="width:80px;"><a id='lblUnpay_s'> </a></td>
 					<td align="center" style="width:80px;"><a id='lblCoins'> </a></td>
