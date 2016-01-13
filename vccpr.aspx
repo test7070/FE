@@ -32,8 +32,8 @@
             brwNowPage = 0;
             brwKey = 'Noa';
             q_desc = 1;
-            brwCount2 = 10;
-            q_bbsLen = 20;
+            brwCount2 = 6;
+            q_bbsLen = 15;
             aPop = new Array(['txtCustno', 'lblCust', 'cust', 'noa,comp,nick', 'txtCustno,txtCust,txtCust', 'cust_b.aspx']
             , ['txtSalesno', 'lblSales', 'sss', 'noa,namea', 'txtSalesno,txtSales', 'sss_b.aspx']
             , ['txtCno', 'lblAcomp', 'acomp', 'noa,acomp', 'txtCno,txtAcomp', 'acomp_b.aspx']
@@ -372,7 +372,7 @@
                 margin: -1px;
             }
             .dbbs {
-                width: 1500px;
+                width: 2000px;
             }
             .tbbs a {
                 font-size: medium;
@@ -420,6 +420,9 @@
                         <td></td>
                         <td></td>
                         <td></td>
+                        <td></td>
+                        <td></td>
+                        <td></td>
                         <td class="tdZ"></td>
                     </tr>
                     <tr>
@@ -427,10 +430,7 @@
                         <td><input id="txtNoa" type="text" class="txt c1"/></td>
                         <td><span> </span><a id="lblDatea" class="lbl">登錄日期</a></td>
                         <td><input id="txtDatea" type="text" class="txt c1"/></td>
-                        <td><input type="button" id="btnImport" value="匯入" class="txt c1"></td>
-                    </tr>
-                    <tr>
-                    	<td><span> </span><a id="lblBdate" class="lbl">出貨日期</a></td>
+                        <td><span> </span><a id="lblBdate" class="lbl">出貨日期</a></td>
                         <td colspan="2">
                         	<input id="txtBdate" type="text" class="txt" style="width:45%;"/>
                         	<span style="float:left; display:block; width:20px;">～</span>
@@ -448,15 +448,15 @@
                         	<input id="txtSalesno" type="text" class="txt" style="float:left;width:50%;"/>
                         	<input id="txtSales" type="text" class="txt" style="float:left;width:50%;"/>
                         </td>
+                        <td> </td>
+                        <td><input type="button" id="btnImport" value="匯入" class="txt c1"></td>
                     </tr>
                     <tr>
                     	<td><span> </span><a id="lblProfit" class="lbl">毛利合計</a></td>
                         <td><input id="txtProfit" type="text" class="txt c1 num"/></td>
                         <td><span> </span><a id="lblTotal" class="lbl">銷售合計</a></td>
                         <td><input id="txtTotal" type="text" class="txt c1 num"/></td>
-                    </tr>
-                    <tr>
-                      	<td><span> </span><a id="lblSprice" class="lbl">基價成本</a></td>
+                        <td><span> </span><a id="lblSprice" class="lbl">基價成本</a></td>
                         <td><input id="txtSprice" type="text" class="txt c1 num"/></td>
                         <td><span> </span><a id="lblWcost" class="lbl">加工費</a></td>
                         <td><input id="txtWcost" type="text" class="txt c1 num"/></td>
@@ -466,17 +466,16 @@
                         <td><input id="txtTranmoney" type="text" class="txt c1 num"/></td>
                         <td><span> </span><a id="lblTranmoney2" class="lbl">補運費</a></td>
                         <td><input id="txtTranmoney2" type="text" class="txt c1 num"/></td>
-                    </tr>
-                    <td><span> </span><a id="lblInte" class="lbl">預估利息</a></td>
+                        <td><span> </span><a id="lblInte" class="lbl">預估利息</a></td>
                         <td><input id="txtInte" type="text" class="txt c1 num"/>
-                    </td>
-                    <tr>
-                        <td><span> </span><a id="lblCost_a" class="lbl">佣金合計</a></td>
+                    	<td><span> </span><a id="lblCost_a" class="lbl">佣金合計</a></td>
                         <td><input id="txtCost_a" type="text" class="txt c1 num"/></td>
+                    </td>
+                    </tr>
+                    
+                    <tr>
                         <td><span> </span><a id="lblCost_b" class="lbl">其他費用</a></td>
                         <td><input id="txtCost_b" type="text" class="txt c1 num"/></td>
-                    </tr>
-                    <tr>
                         <td><span> </span><a id="lblCash" class="lbl">資金使用率</a></td>
                         <td><input id="txtCash" type="text" class="txt c1 num"/></td>
                     </tr>
@@ -500,12 +499,12 @@
                     <input class="btn"  id="btnPlus" type="button" value='+' style="font-weight: bold;"  />
                     </td>
                     <td align="center" style="width:20px;"></td>
-                    <td align="center" style="width:200px;"><a id='lblDatea_s'> </a></td>
+                    <td align="center" style="width:180px;"><a id='lblDatea_s'> </a></td>
   					<td align="center" style="width:150px;"><a id='lblCust_s'> </a></td>
-					<td align="center" style="width:100px;"><a id='lblLengthb_s'> </a></td>
+					<td align="center" style="width:250px;"><a id='lblProduct_s'> </a></td>
 					<td align="center" style="width:100px;"><a id='lblUnit_s'> </a></td>	
 					<td align="center" style="width:100px;"><a id='lblMount_s'> </a></td>	
-					<td align="center" style="width:100px;"><a id='lblWeight_s'> </a></td>	
+					<td align="center" style="width:120px;"><a id='lblWeight_s'> </a></td>	
 					<td align="center" style="width:100px;"><a id='lblRate_s'> </a></td>	
 					<td align="center" style="width:100px;"><a id='lblApv_s'> </a></td>	
 					<td align="center" style="width:100px;"><a id='lblTranmoney_s'> </a></td>	
@@ -517,16 +516,17 @@
 					<td align="center" style="width:100px;"><a id='lblSprice_s'> </a></td>	
 					<td align="center" style="width:100px;"><a id='lblSprice2_s'> </a></td>	
 					<td align="center" style="width:100px;"><a id='lblTranmoney2_s'> </a></td>	
-					<td align="center" style="width:100px;"><a id='lblTrantype_s'> </a></td>	
+					<td align="center" style="width:150px;"><a id='lblTrantype_s'> </a></td>	
 					<td align="center" style="width:100px;"><a id='lblTranaddr_s'> </a></td>	
-					<td align="center" style="width:100px;"><a id='lblTranmoney3_s'> </a></td>	
-					<td align="center" style="width:100px;"><a id='lblVccno_s'> </a></td>	
+					<td align="center" style="width:150px;"><a id='lblTranmoney3_s'> </a></td>	
+					<td align="center" style="width:200px;"><a id='lblVccno_s'> </a></td>	
 					<td align="center" style="width:100px;"><a id='lblWorker_s'> </a></td>	
 					<td align="center" style="width:100px;"><a id='lblProfit_s'> </a></td>	
 					<td align="center" style="width:100px;"><a id='lblTotal_s'> </a></td>	
-					<td align="center" style="width:200px;"><a id='lblProduct_s'> </a></td>
+					
 					<td align="center" style="width:100px;"><a id='lblInte_s'> </a></td>	
-					<td align="center" style="width:100px;"><a id='lblDaya_s'> </a></td>		
+					<td align="center" style="width:100px;"><a id='lblDaya_s'> </a></td>	
+					<td align="center" style="display:none;"><a id='lblLengthb_s'> </a></td>	
                 </tr>
                 
                 <tr style='background:#cad3ff;'>
@@ -538,19 +538,23 @@
                     <td><input type="text" id="txtDatea.*" style="width:95%;"/></td>
                     <td>
                     	<input type="text" id="txtCustno.*" style="width:95%;"/>
-                    	<input type="text" id="txtCust.*" style="display:none;"/>
+                    	<input type="text" id="txtCust.*" style="width:95%;"/>
                     	<input type="text" id="txtNick.*" style="display:none;"/>
                     	
                     	<input type="text" id="txtCash.*" style="display:none;"/>
                     	<input type="text" id="txtTypea.*" style="display:none;"/>
                     </td>
-                    <td><input type="text" id="txtLengthb.*" style="width:95%;"/></td>
+                    <td>
+						<input type="text" id="txtProductno.*" style="width:95%;"/>
+						<input type="text" id="txtProduct.*" style="width:95%;"/>
+						<input id="btnProduct.*" type="button" style="display:none;">
+					</td>
                     <td><input type="text" id="txtUnit.*" style="width:95%;"/></td>
-                    <td><input type="text" id="txtMount.*" style="width:95%;"/></td>
-                    <td><input type="text" id="txtWeight.*" style="width:95%;"/></td>
-                    <td><input type="text" id="txtRate.*" style="width:95%;"/></td>
+                    <td><input type="text" id="txtMount.*" style="width:95%;text-align: right;"/></td>
+                    <td><input type="text" id="txtWeight.*" style="width:95%;text-align: right;"/></td>
+                    <td><input type="text" id="txtRate.*" style="width:95%;text-align: right;"/></td>
                     <td><input type="text" id="txtApv.*" style="width:95%;"/></td>
-                    <td><input type="text" id="txtTranmoney.*" style="width:95%;"/></td>
+                    <td><input type="text" id="txtTranmoney.*" style="width:95%;text-align: right;"/></td>
                     <td><input type="text" id="txtPrice.*" style="width:95%;text-align: right;"/></td>
 					<td><input type="text" id="txtHprice.*" style="width:95%;text-align: right;"/></td>
 					<td><input type="text" id="txtPprice.*" style="width:95%;text-align: right;"/></td>
@@ -569,16 +573,11 @@
 						<input type="text" id="txtVccnoq.*" style="display:none;"/>
 					</td>
 					<td><input type="text" id="txtWorker.*" style="width:95%;"/></td>
-					<td><input type="text" id="txtProfit.*" style="width:95%;"/></td>
-					<td><input type="text" id="txtTotal.*" style="width:95%;"/></td>
-					
-					<td>
-						<input type="text" id="txtProductno.*" style="width:95%;"/>
-						<input type="text" id="txtProduct.*" style="width:95%;"/>
-						<input id="btnProduct.*" type="button" style="display:none;">
-					</td>
-					<td><input type="text" id="txtInte.*" style="width:95%;"/></td>
-					<td><input type="text" id="txtDaya.*" style="width:95%;"/></td>
+					<td><input type="text" id="txtProfit.*" style="width:95%;text-align: right;"/></td>
+					<td><input type="text" id="txtTotal.*" style="width:95%;text-align: right;"/></td>
+					<td><input type="text" id="txtInte.*" style="width:95%;text-align: right;"/></td>
+					<td><input type="text" id="txtDaya.*" style="width:95%;text-align: right;"/></td>
+					<td style="display:none;"><input type="text" id="txtLengthb.*" /></td>
                 </tr>
             </table>
         </div>
