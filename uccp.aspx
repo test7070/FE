@@ -53,10 +53,14 @@
                 
                 $('#btnImport').click(function(e){
                 	var t_date = $('#txtDatea').val();
-                	var t_bdate = $('#txtEdate').val();
+                	var t_bdate = $('#txtBdate').val();
                 	var t_edate = $('#txtEdate').val();
-                	if(t_date.length==0 || t_edate.length==0){
-                		alert('請輸入日期。');
+                	if(t_date.length==0){
+                		alert('請輸入基價日期。');
+                		return;
+                	}
+                	if(t_bdate.length==0 || t_edate.length==0){
+                		alert('請輸入庫存運算截止日。');
                 		return;
                 	}
                 	Lock(1, {
@@ -418,9 +422,9 @@
                     </td>
                     <td><input type="text" id="txtProduct.*" style="width:95%;"/></td>
                     <td class="rk" style="display:none;"><input type="text" id="txtDime.*" style="width:95%;"/></td>
-                    <td><input type="text" id="txtSprice.*" style="width:95%;"/></td>
-                    <td><input type="text" id="txtLprice.*" style="width:95%;"/></td>
-                    <td><input type="text" id="txtLdate.*" style="width:95%;"/></td>
+                    <td><input type="text" id="txtSprice.*" style="width:95%;text-align: right;"/></td>
+                    <td><input type="text" id="txtLprice.*" style="width:95%;text-align: right;"/></td>
+                    <td><input type="text" id="txtLdate.*" style="width:95%;text-align: right;"/></td>
                 </tr>
             </table>
         </div>

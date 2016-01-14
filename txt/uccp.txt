@@ -1,7 +1,26 @@
 import:--uccp import 
-	declare @t_datea nvarchar(10) = [1] --基價日期
-	declare @t_edate nvarchar(10) = [2] --運算截止日
+	declare @t_datea nvarchar(10) = [1]
+	declare @t_bdate nvarchar(10) = [2]
+	declare @t_edate nvarchar(10) = [3]
 	---------------------------------------------------------------------------------------
+	declare @tmp table(
+		productno nvarchar(20)
+	)
+	insert into @tmp(productno)
+	select ISNULL(ltrim(rtrim(a.productno)),'') productno 
+	from view_vccs a 
+	left join view_vcc b on a.accy=b.accy and a.noa=b.noa
+	where ISNULL(b.datea,'') between @t_bdate and @t_edate
+	and len(ISNULL(ltrim(rtrim(a.productno)),''))>0 
+	group by ISNULL(ltrim(rtrim(a.productno)),'')
+	insert into @tmp(productno)
+	select ISNULL(ltrim(rtrim(a.productno)),'') productno 
+	from view_rc2s a 
+	left join view_rc2 b on a.accy=b.accy and a.noa=b.noa
+	where ISNULL(b.datea,'') between @t_bdate and @t_edate
+	and len(ISNULL(ltrim(rtrim(a.productno)),''))>0 
+	group by ISNULL(ltrim(rtrim(a.productno)),'')
+	
 	IF OBJECT_ID('tempdb..#uccp_import')is not null
 	BEGIN
 		drop table #uccp_import
@@ -15,16 +34,30 @@ import:--uccp import
 		lprice float,
 		ldate nvarchar(10)
 	)
-
-	insert into #uccp_import(productno,product,mount,[weight])
-	select productno,product,SUM(isnull(mount,0)),SUM(isnull([weight],0)) 
-	from dbo.stkucc(@t_edate,'','') 
-	group by productno,product
-	having not(SUM(isnull(mount,0))=0 and SUM(isnull([weight],0))=0)
+	--insert into #uccp_import(productno,product,mount,[weight])
+	--select productno,product,SUM(isnull(mount,0)),SUM(isnull([weight],0)) 
+	--from dbo.stkucc(@t_edate,'','') 
+	--group by productno,product
+	--having not(SUM(isnull(mount,0))=0 and SUM(isnull([weight],0))=0)
+	--delete #uccp_import
+	--from #uccp_import a
+	--left join (select productno from @tmp group by productno) b on a.productno=b.productno
+	--where b.productno is null	
+	
+	insert into #uccp_import(productno,product)
+	select a.productno,b.product
+	from (select productno from @tmp group by productno) a
+	left join ucc b on a.productno=b.noa
+	order by a.productno
 	
 	update #uccp_import set lprice=isnull(b.sprice,0),ldate=isnull(b.datea,'')
 	from #uccp_import a
-	outer apply(select top 1 uccps.productno,uccps.sprice,uccp.datea from uccp left join uccps on uccp.noa=uccps.noa where uccp.datea<@t_datea and uccps.productno=a.productno and isnull(uccps.sprice,0)!=0 order by uccp.datea desc) b
+	outer apply(select top 1 uccps.productno,uccps.sprice,uccp.datea 
+		from uccp 
+		left join uccps on uccp.noa=uccps.noa 
+		where uccp.datea<@t_datea 
+		and uccps.productno=a.productno 
+		and isnull(uccps.sprice,0)!=0 order by uccp.datea desc) b
 	
 	select * from #uccp_import order by productno
 	drop table #uccp_import;
