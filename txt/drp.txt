@@ -2,17 +2,20 @@ import:--import
 	declare @t_date nvarchar(10) = [1]
 	declare @t_driverno nvarchar(20) = [2]
 	
-	select carno,sum(isnull([money],0))[money] 
-	from(
-		select carno,sum(isnull([money],0))[money] 
-		from view_vcc 
-		where datea=@t_date and driverno=@t_driverno
-		group by carno
-		union all
-		select carno,sum(isnull([money],0))[money] 
-		from view_rc2
-		where datea=@t_date and driverno=@t_driverno
-		group by carno
-		)a
-	group by carno
-	order by carno;
+	declare @tmp table(
+		carno nvarchar(20)
+		,[money] float
+		,tablea nvarchar(20)
+		,accy nvarchar(20)
+		,noa nvarchar(20)
+		,datea nvarchar(20)
+	)
+	insert into @tmp(carno,[money],tablea,accy,noa,datea)
+	select carno,isnull([money],0) [money],'vcc',accy,noa,datea
+	from view_vcc 
+	where datea=@t_date and driverno=@t_driverno
+	union all
+	select carno,isnull([money],0) [money],'rc2',accy,noa,datea 
+	from view_rc2
+	where datea=@t_date and driverno=@t_driverno
+	select * from @tmp order by datea desc;
