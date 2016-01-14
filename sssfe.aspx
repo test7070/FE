@@ -1,11 +1,12 @@
-<!-- *2016/01/13 -->
+<!-- *2016/01/14* -->
 <%@ Page Language="C#" Debug="true"%>
     <script language="c#" runat="server">  
 		protected void Page_Load(object sender, EventArgs e)
 		{
 		    jwcf wcf = new jwcf();
-		
-		    wcf.q_content("sss", " (noa=$r_userno or $r_rank >= 8 or exists(select * from authority where noa='sss' and sssno=$r_userno and isnull(pr_modi,0)=1))  ");
+			//2016/01/14  先不用限定誰可以看
+		    //wcf.q_content("sss", " (noa=$r_userno or $r_rank >= 8 or exists(select * from authority where noa='sss' and sssno=$r_userno and isnull(pr_modi,0)=1))  ");
+			wcf.q_content("sss", " 1=1 ");
 		}
 	</script>
 
