@@ -756,11 +756,12 @@ z_ummfe03:--z_ummfe03
 		,tel=ISNULL(c.tel,'')
 		,addr=ISNULL(c.addr_comp,'')
 		,page=ISNULL(d.page,0)
-		,tweight=ISNULL(d.[weight],0)
+		,tweight=ISNULL(e.[weight],0)
 	from @tmp a
 	left join acomp b on a.cno=b.noa
 	left join cust c on a.custno=c.noa
-	left join (select cno,custno,count(1) page,SUM(ISNULL([weight],0)) [weight] from @tmp where recno=1 and (typea='出' or typea='退') group by cno,custno) d on a.cno=d.cno and a.custno=d.custno
+	left join (select cno,custno,count(1) page from @tmp where recno=1 and (typea='出' or typea='退') group by cno,custno) d on a.cno=d.cno and a.custno=d.custno
+	left join (select cno,custno,SUM(ISNULL([weight],0)) [weight] from @tmp where (typea='出' or typea='退') group by cno,custno) e on a.cno=e.cno and a.custno=e.custno
 
 	select gno
 		,paytype

@@ -279,13 +279,15 @@ z_payfe03:--z_payfe03
 		,tel=ISNULL(c.tel,'')
 		,addr=ISNULL(c.addr_comp,'')
 		,page=ISNULL(d.page,0)
-		,tmount=ISNULL(d.[mount],0)
-		,tweight=ISNULL(d.[weight],0)
+		,tmount=ISNULL(e.[mount],0)
+		,tweight=ISNULL(e.[weight],0)
 	from @tmp a
 	left join acomp b on a.cno=b.noa
 	left join tgg c on a.tggno=c.noa
-	left join (select cno,tggno,count(1) page,SUM(ISNULL([mount],0)) [mount],SUM(ISNULL([weight],0)) [weight] 
+	left join (select cno,tggno,count(1) page
 		from @tmp where recno=1 and (typea='進' or typea='退') group by cno,tggno) d on a.cno=d.cno and a.tggno=d.tggno
+	left join (select cno,tggno,SUM(ISNULL([mount],0)) [mount],SUM(ISNULL([weight],0)) [weight] 
+		from @tmp where (typea='進' or typea='退') group by cno,tggno) e on a.cno=e.cno and a.tggno=e.tggno
 
 	select gno
 		,paytype
