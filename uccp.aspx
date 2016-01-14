@@ -20,7 +20,7 @@
             var q_readonlys = [];
             var bbmNum = [];
             var bbsNum = [['txtSprice',10,3,1],['txtLprice',10,3,1]];
-            var bbmMask = [['txtDatea', '999/99/99'],['txtEdate', '999/99/99']];
+            var bbmMask = [['txtDatea', '999/99/99'],['txtEdate', '999/99/99'],['txtBdate', '999/99/99']];
             var bbsMask = [['txtLdate', '999/99/99']];
             q_sqlCount = 6;
             brwCount = 6;
@@ -48,9 +48,12 @@
                 q_mask(bbmMask);
                 
                 $('.'+q_getPara('sys.project')).show();
+                $('#txtBdate').datepicker();
+                $('#txtEdate').datepicker();
                 
                 $('#btnImport').click(function(e){
                 	var t_date = $('#txtDatea').val();
+                	var t_bdate = $('#txtEdate').val();
                 	var t_edate = $('#txtEdate').val();
                 	if(t_date.length==0 || t_edate.length==0){
                 		alert('請輸入日期。');
@@ -59,7 +62,7 @@
                 	Lock(1, {
 	                    opacity : 0
 	                });
-                	q_func('qtxt.query.uccp', 'uccp.txt,import,' + encodeURI(t_date) + ';' + encodeURI(t_edate)); 	
+                	q_func('qtxt.query.uccp', 'uccp.txt,import,' + encodeURI(t_date) + ';' + encodeURI(t_bdate) + ';' + encodeURI(t_edate)); 	
                 });
             }
             function q_funcPost(t_func, result) {
@@ -243,7 +246,7 @@
             }
             .dbbm {
                 float: left;
-                width: 800px;
+                width: 600px;
                 /*margin: -1px;
                  border: 1px black solid;*/
                 border-radius: 5px;
@@ -370,8 +373,12 @@
                         <td><input id="txtDatea" type="text" class="txt c1"/></td>
                     </tr>
                     <tr>
-                    	<td><span> </span><a id="lblEdate" class="lbl">庫存運算截止日</a></td>
-                        <td><input id="txtEdate" type="text" class="txt c1"/></td>
+                    	<td><span> </span><a id="lblEdate" class="lbl">庫存運算區間</a></td>
+                        <td colspan="2">
+                        	<input id="txtBdate" type="text" class="txt" style="width:40%;"/>
+                        	<span style="display:block;width:25px;float:left;">～</span>
+                        	<input id="txtEdate" type="text" class="txt" style="width:40%;"/>
+                        </td>
                         <td style="text-align: center;display:none;" class="fe"><input type="button" id="btnImport" value="匯入" class="txt" style="width:75%;"></td>
                     </tr>
                     <tr>

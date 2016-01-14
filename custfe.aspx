@@ -4,7 +4,7 @@
 		{
 		    jwcf wcf = new jwcf();
 		
-		    wcf.q_content("cust", " salesno=$r_userno or $r_rank >= 8 ");
+		    wcf.q_content("cust", " left( $r_userno,1)!='B' or ( salesno=$r_userno or $r_rank >= 8 )");
 		    
 		}
 	</script>

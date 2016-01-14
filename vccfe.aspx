@@ -1306,14 +1306,14 @@
 		<style type="text/css">
             #dmain {
                 overflow: hidden;
+                width:1600px;
             }
             .dview {
                 float: left;
-                width: 30%;
+                width: 400px;
                 border-width: 0px;
             }
             .tview {
-                width: 100%;
                 border: 5px solid gray;
                 font-size: medium;
                 background-color: black;
@@ -1330,7 +1330,9 @@
             }
             .dbbm {
                 float: left;
-                width: 70%;
+                width: 1000px;
+                /*margin: -1px;
+                 border: 1px black solid;*/
                 border-radius: 5px;
             }
             .tbbm {
@@ -1345,6 +1347,15 @@
             }
             .tbbm tr {
                 height: 35px;
+            }
+            .tbbm tr td {
+                width: 10%;
+            }
+            .tbbm .trX {
+                background-color: #FFEC8B;
+            }
+            .tbbm .trY {
+                background-color: #DAA520;
             }
             .tbbm .tdZ {
                 width: 1%;
@@ -1368,23 +1379,8 @@
                 color: #FF8F19;
             }
             .txt.c1 {
-                width: 98%;
+                width: 100%;
                 float: left;
-            }
-            .txt.c2 {
-                width: 30%;
-                float: left;
-            }
-            .txt.c3 {
-                width: 68%;
-                float: left;
-            }
-            .txt.c4 {
-                width: 49%;
-                float: left;
-            }
-            .txt.c6 {
-                width: 25%;
             }
             .txt.num {
                 text-align: right;
@@ -1405,7 +1401,7 @@
                 margin: -1px;
             }
             .dbbs {
-                width: 100%;
+                width: 1700px;
             }
             .tbbs a {
                 font-size: medium;
@@ -1444,9 +1440,8 @@
 				</tr>
 			</table>
 		</div>
-		<div id="dmain" style="width: 1260px;">
-			<!--#include file="../inc/toolbar.inc"-->
-			
+		<!--#include file="../inc/toolbar.inc"-->
+		<div id="dmain">
 			<div class="dview" id="dview" >
 				<table class="tview" id="tview">
 					<tr>
@@ -1468,21 +1463,27 @@
 				</table>
 			</div>
 			<div class='dbbm'>
-				<table class="tbbm"  id="tbbm" style="width: 872px;">
+				<table class="tbbm"  id="tbbm">
+					<tr style="height:1px;">
+                        <td> </td>
+                        <td> </td>
+                        <td> </td>
+                        <td> </td>
+                        <td> </td>
+                        <td> </td>
+                        <td> </td>
+                        <td> </td>
+                        <td class="tdZ"> </td>
+                    </tr>
 					<tr>
-						<td class="td1" style="width: 108px;"><span> </span><a id='lblType' class="lbl"> </a></td>
-						<td class="td2" style="width: 108px;"><select id="cmbTypea"></select></td>
-						<td class="td3" style="width: 108px;"><a id='lblStype' class="lbl" style="float: left;"> </a><span style="float: left;"> </span><select id="cmbStype"></select></td>
-						<td class="td4" style="width: 108px;"><span> </span><a id='lblDatea' class="lbl"> </a></td>
-						<td class="td5" style="width: 108px;">
-						<input id="txtDatea" type="text"  class="txt c1"/>
-						</td>
-						<td class="td6" style="width: 108px;"></td>
-						<td class="td7" style="width: 108px;"><span> </span><a id='lblNoa' class="lbl"> </a></td>
-						<td class="td8" style="width: 108px;">
-						<input id="txtNoa" type="text" class="txt c1" />
-						</td>
-						<td style="width: 5px;"></td>
+						<td><span> </span><a id='lblType' class="lbl"> </a></td>
+						<td><select id="cmbTypea"></select></td>
+						<td><a id='lblStype' class="lbl" style="float: left;"> </a><span style="float: left;"> </span><select id="cmbStype"></select></td>
+						<td><span> </span><a id='lblDatea' class="lbl"> </a></td>
+						<td><input id="txtDatea" type="text"  class="txt c1"/></td>
+						<td></td>
+						<td><span> </span><a id='lblNoa' class="lbl"> </a></td>
+						<td><input id="txtNoa" type="text" class="txt c1" /></td>
 					</tr>
 					<tr>
 						<td class="td1"><span> </span><a id="lblAcomp" class="lbl btn"> </a></td>
@@ -1669,8 +1670,8 @@
 				</table>
 			</div>
 		</div>
-		<div class='dbbs' style="width: 2200px;">
-			<table id="tbbs" class='tbbs'>
+		<div class='dbbs'>
+            <table id="tbbs" class='tbbs' style=' text-align:center'>
 				<tr style='color:white; background:#003366;' >
 					<td align="center" style="width:40px;">
 					<input class="btn"  id="btnPlus" type="button" value='＋' style="font-weight: bold;width:" />
@@ -1713,53 +1714,53 @@
 					<input id="txtSpec.*" type="text" style="display:none;" />
 					</td>
 					<td class="isStyle">
-					<input id="txtStyle.*" type="text" class="txt c1 isStyle"/>
+					<input id="txtStyle.*" type="text" class="txt isStyle" style="width:95%;"/>
 					</td>
 					<td class="isFe">
-					<input id="txtLengthb.*" type="text" class="txt c1 isFe"/>
+					<input id="txtLengthb.*" type="text" class="txt isFe" style="width:95%;"/>
 					</td>
 					<td>
-					<input id="txtUnit.*" type="text" class="txt c1"/>
+					<input id="txtUnit.*" type="text" class="txt" style="width:95%;"/>
 					</td>
 					<td>
-					<input id="txtMount.*" type="text" class="txt num c1"/>
+					<input id="txtMount.*" type="text" class="txt num" style="width:95%;"/>
 					</td>
 					<td>
-					<input id="txtWeight.*" type="text" class="txt num c1"/>
+					<input id="txtWeight.*" type="text" class="txt num" style="width:95%;"/>
 					</td>
 					<td class="isGweight" style="display:none;background-color: burlywood;">
-					<input id="txtGmount.*" type="text" class="txt num c1"/>
+					<input id="txtGmount.*" type="text" class="txt num" style="width:95%;"/>
 					</td>
 					<td class="isGweight" style="display:none;background-color: burlywood;">
-					<input id="txtGweight.*" type="text" class="txt num c1"/>
+					<input id="txtGweight.*" type="text" class="txt num"style="width:95%;"/>
 					</td>
 					<td>
-					<input id="txtPrice.*" type="text" class="txt num c1"/>
+					<input id="txtPrice.*" type="text" class="txt num"style="width:95%;"/>
 					</td>
 					<td>
-					<input id="txtTotal.*" type="text" class="txt num c1"/>
+					<input id="txtTotal.*" type="text" class="txt num"style="width:95%;"/>
 					</td>
 					<td>
-					<input id="txtWcost.*" type="text" class="txt num c1"/>
+					<input id="txtWcost.*" type="text" class="txt num"style="width:95%;"/>
 					</td>
 					<td>
-					<input id="txtTranmoney.*" type="text" class="txt num c1"/>
+					<input id="txtTranmoney.*" type="text" class="txt num"style="width:95%;"/>
 					</td>
 					<td>
-					<input id="txtProfit.*" type="text" class="txt num c1"/>
+					<input id="txtProfit.*" type="text" class="txt num"style="width:95%;"/>
 					</td>
 					<td>
-					<input id="txtChecker.*" type="text" class="txt num c1"/>
+					<input id="txtChecker.*" type="text" class="txt num"style="width:95%;"/>
 					</td>
 					<td>
-					<input id="txtSprice.*" type="text" class="txt num c1"/>
+					<input id="txtSprice.*" type="text" class="txt num"style="width:95%;"/>
 					</td>
 					<td>
-					<input id="txtSprice2.*" type="text" class="txt num c1"/>
+					<input id="txtSprice2.*" type="text" class="txt num"style="width:95%;"/>
 					</td>
 					<td>
-					<input id="txtStoreno.*" type="text" class="txt c1"/>
-					<input id="txtStore.*" type="text" class="txt c1"/>
+					<input id="txtStoreno.*" type="text" class="txt"style="width:95%;"/>
+					<input id="txtStore.*" type="text" class="txt"style="width:95%;"/>
 					<input class="btn"  id="btnStore.*" type="button" style="display:none;" />
 					</td>
 					<td class="isRack">
@@ -1767,7 +1768,7 @@
 					<input id="txtRackno.*" type="text" class="txt c1 isRack" style="width: 70%"/>
 					</td>
 					<td>
-					<input id="txtMemo.*" type="text" class="txt c1"/>
+					<input id="txtMemo.*" type="text" class="txt"style="width:95%;"/>
 					<select id="combOrdelist.*" style="width: 10%;"></select>
 					<input id="txtOrdeno.*" type="text"  class="txt" style="width:60%;"/>
 					<input id="txtNo2.*" type="text" class="txt" style="width:18%;"/>
@@ -1779,7 +1780,7 @@
 					<input class="btn"  id="btnStk.*" type="button" value='.' style="width:1%;"/>
 					</td>
 					<td>
-					<input id="txtUno.*" type="text" class="txt c1"/>
+					<input id="txtUno.*" type="text" class="txt"style="width:95%;"/>
 					</td>
 				</tr>
 			</table>
