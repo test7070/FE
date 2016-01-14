@@ -552,11 +552,12 @@
             		n--;
             		t_productno = $.trim($('#txtProductno_'+n).val());
                     t_mount = q_float('txtMount_' + n);
-                    if(t_productno.length>0 && t_mount!=0){
-                    	q_gt('ucc', "where=^^noa='"+t_productno+"'^^", 0, 0, 0,JSON.stringify({action:"getWeight_sum",n:n,mount:t_mount}));	
-                    }else{
+                    //2016/01/11 只有在修改數量當下才重新計算重量,存檔時不必
+                    //if(t_productno.length>0 && t_mount!=0){
+                    //	q_gt('ucc', "where=^^noa='"+t_productno+"'^^", 0, 0, 0,JSON.stringify({action:"getWeight_sum",n:n,mount:t_mount}));	
+                    //}else{
                     	btnOk_sum(n);
-                    }
+                    //}
             	}           		
             }
 			function save(){

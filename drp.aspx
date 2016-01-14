@@ -21,7 +21,7 @@
             q_tables = 's';
             var q_name = "drp";
             var q_readonly = ['txtWorker2', 'txtWorker','txtNoa'];
-            var q_readonlys = [];
+            var q_readonlys = ['txtNo2'];
             var bbmNum = [['txtPrice',10,0,1]];
             var bbsNum = [['txtPrice',10,0,1]];
             var bbmMask = [];
@@ -79,8 +79,8 @@
                            /* q_gridAddRow(bbsHtm, 'tbbs', 'txtMoney,txtTranmoney,txtTranmoney2,txtOuttime,txtBacktime,txtMount,txtCost,txtWeight,txtPrice'
                         	, as.length, as, 'money,tranmoney,tranmoney2,outtime,backtime,mount,cost,weight,price', '','');
                         	*/
-                        	q_gridAddRow(bbsHtm, 'tbbs', 'txtCarno,txtMoney'
-                        	, as.length, as, 'carno,money', '','');
+                        	q_gridAddRow(bbsHtm, 'tbbs', 'txtCarno,txtMoney,txtAccy,txtTablea,txtNoa'
+                        	, as.length, as, 'carno,money,accy,tablea,noa', '','');
                         } else {
                             alert('無資料!');
 
@@ -152,6 +152,17 @@
                         $('#txtBacktime_'+j).focusout(function(e){
                             sum();
                         });
+                        $('#txtNo2_'+i).bind('contextmenu',function(e) {
+	                    	/*滑鼠右鍵*/
+	                    	e.preventDefault();
+	                    	var n = $(this).attr('id').replace('txtNo2_','');
+	                    	var t_accy = $('#txtAccy_'+n).val();
+	                    	var t_tablea = $('#txtTablea_'+n).val().toUpperCase()=='RC2'?'rc2fe':'vccfe';
+	                    	var t_noa = $.trim($(this).val());
+	                    	if(t_noa.length>0){
+	                    		q_box(t_tablea+".aspx?" + r_userno + ";" + r_name + ";" + q_time + ";noa='" + t_noa + "';" + t_accy, t_tablea, "95%", "95%", q_getMsg("pop"+t_tablea));
+	                    	}
+	                    });
                     }
                 }
                 _bbsAssign();
@@ -376,7 +387,7 @@
                 margin: -1px;
             }
             .dbbs {
-                width: 1200px;
+                width: 1400px;
             }
             .tbbs a {
                 font-size: medium;
@@ -463,7 +474,7 @@
                     <td  align="center" style="width:30px;">
                     <input class="btn"  id="btnPlus" type="button" value='+' style="font-weight: bold;"  />
                     </td>
-                    <td align="center" style="width:20px;"></td>
+                    <td align="center" style="width:20px;"> </td>
                     <td align="center" style="width:100px;"><a id='lblCarno_s'> </a></td>
                     <td align="center" style="width:100px;"><a id='lblMoney_s'> </a></td>
                     <td align="center" style="width:100px;"><a id='lblTranmoney_s'> </a></td>
@@ -474,14 +485,12 @@
 					<td align="center" style="width:100px;"><a id='lblCost_s'> </a></td>
 					<td align="center" style="width:100px;"><a id='lblWeight_s'> </a></td>
 					<td align="center" style="width:100px;"><a id='lblPrice_s'> </a></td>
+					<td align="center" style="width:150px;"><a>單據編號</a></td>
                 </tr>
                 <tr style='background:#cad3ff;'>
                     <td align="center">
 	                    <input class="btn" id="btnMinus.*" type="button" value='-' style=" font-weight: bold;" />
 	                    <input id="txtNoq.*" type="text" style="display: none;"/>
-	                    <input id="txtAccy.*" type="text" style="display: none;"/>
-	                    <input id="txtTablea.*" type="text" style="display: none;"/>
-	                    <input id="txtNo2.*" type="text" style="display: none;"/>
                     </td>
                     <td><a id="lblNo.*" style="font-weight: bold;text-align: center;display: block;"> </a></td>
                     <td><input type="text" id="txtCarno.*" style="width:95%;"/></td>
@@ -494,6 +503,11 @@
                     <td><input type="text" id="txtCost.*" style="width:95%;text-align: right;"/></td>
                     <td><input type="text" id="txtWeight.*" style="width:95%;text-align: right;"/></td>
                     <td><input type="text" id="txtPrice.*" style="width:95%;text-align: right;"/></td>
+               		<td>
+               			<input id="txtAccy.*" type="text" style="display: none;"/>
+	                    <input id="txtTablea.*" type="text" style="display: none;"/>
+	                    <input id="txtNo2.*" type="text" style="width:95%;"/>
+               		</td>
                 </tr>
             </table>
         </div>
