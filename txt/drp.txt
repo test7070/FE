@@ -1,4 +1,175 @@
+drp_save:--drp_save	
+	SET QUOTED_IDENTIFIER OFF 
+	declare @cmd nvarchar(max) 
+	declare @t_noa nvarchar(20) = [1] -- drpno
+	-----------------------------------------------------
+	declare @tablea nvarchar(20)
+	declare @accy nvarchar(20)
+	declare @noa nvarchar(20)
+	declare @noq nvarchar(10)
+	declare @datea nvarchar(20)
+	
+	declare @productno nvarchar(20)
+	declare @total float
+	
+	declare @money float
+	declare @moneys float
+	declare @tranmoney float
+	declare @tranmoney2 float
+	declare @sprice float
+	declare @sprice2 float
+	
+	declare @tmp table(
+		tablea nvarchar(20)
+		,accy nvarchar(20)
+		,noa nvarchar(20)
+		,noq nvarchar(10)
+		,productno nvarchar(30)
+		,unit nvarchar(20)
+		,styleno nvarchar(20)
+		,uweight float
+		,post nvarchar(20)
+		,tranmoney float
+		,sprice float
+		,datea nvarchar(20)
+		,sprice2 float
+		,mount float
+		,[weight] float
+	)
+	insert into @tmp(tablea,accy,noa,noq,productno,unit,styleno,uweight
+		,post,sprice,sprice2,datea,mount,[weight],tranmoney)
+	select 'vcc',a.accy,a.noa,c.noq,c.productno,c.unit,d.styleno,d.uweight 
+		,b.post,c.sprice,c.sprice2,b.datea,c.mount,c.[weight],0
+	from drps a
+	left join view_vcc b on a.accy=b.accy and a.no2=b.noa
+	left join view_vccs c on b.accy=c.accy and b.noa=c.noa
+	left join ucc d on c.productno=d.noa
+	where upper(a.tablea)='VCC' 
+	and a.noa=@t_noa
+	and c.noa is not null
+	and len(ISNULL(c.productno,''))>0
+	and CHARINDEX('送達',b.trantype)>0
+	
+	insert into @tmp(tablea,accy,noa,noq,productno,styleno,post,sprice
+		,tranmoney,datea)
+	select 'rc2',a.accy,a.noa,c.noq,c.productno,d.styleno,b.post,c.sprice
+		,case when d.styleno between 'A' and 'H' then c.mount*d.uweight 
+		when d.styleno between 'I' and 'NZ' then c.mount*case when c.sprice2>0 then c.sprice2 else c.sprice end
+		when d.styleno between 'O' and 'TZ' or d.styleno between '0' and '9Z' then case when c.sprice2>0 then c.sprice2 else c.sprice end * case when upper(c.unit)='KG' or c.unit='公斤' or len(ISNULL(c.unit,''))=0 then c.[weight] else c.mount end
+		when d.styleno between 'U' and 'ZZ' then c.[weight]
+		end
+		,b.datea
+	from drps a
+	left join view_rc2 b on a.accy=b.accy and a.no2=b.noa
+	left join view_rc2s c on b.accy=c.accy and b.noa=c.noa
+	left join ucc d on c.productno=d.noa
+	where upper(a.tablea)='RC2' 
+	and a.noa=@t_noa
+	and c.noa is not null
+	and len(ISNULL(c.productno,''))>0
+	
+	update @tmp set tranmoney=round(a.tranmoney*isnull(b.price,0),0)
+	from @tmp a
+	outer apply(select top 1 * from carp where noa=a.styleno and addrno=a.post)b
+	
+	------------------------------------------------------------------------------
+	DECLARE @chk tinyint = 0
+	Begin Transaction [Trans_Name]
+	
+	--回寫運費
+	--drps
+	update drps set tranmoney=ISNULL(b.tranmoney,0),tranmoney2=round(ISNULL(a.cost,0)-ISNULL(b.tranmoney,0),0)
+	from drps a
+	left join (select accy,noa,SUM(ISNULL(tranmoney,0)) tranmoney from @tmp group by accy,noa) b on a.accy=b.accy and a.noa=b.noa
+	IF @@Error <> 0 BEGIN SET @chk = 1 END
+	
+	--vccs
+	declare cursor_table cursor for
+	select accy,noa,noq,productno,datea,sprice2 from @tmp where upper(tablea)='VCC'
+	open cursor_table
+	fetch next from cursor_table
+	into @accy,@noa,@noq,@productno,@datea,@sprice2
+	while(@@FETCH_STATUS <> -1)
+	begin	
+		--回寫物品基價
+		if @sprice2<0.05 --and @datea>='093/11/01'
+		begin
+			select @sprice=0
+			select top 1 @sprice=sprice from uccps where productno=@productno and datea<=@datea and sprice!=0 order by datea desc
+			set @cmd = "update vccs"+@accy+" set sprice=@sprice where noa=@noa and noq=@noq"
+			execute sp_executesql @cmd,N'@sprice float,@noa nvarchar(20),@noq nvarchar(10)'
+				,@sprice=@sprice,@noa=@noa,@noq=@noq
+			IF @@Error <> 0 BEGIN SET @chk = 1 END
+			
+			update @tmp set sprice=@sprice where upper(tablea)='VCC' and accy=@accy and noa=@noa and noq=@noq
+		end
+		
+		--update @tmp set tranmoney=round(case when styleno between 'A' and 'H' then mount*uweight 
+		--when styleno between 'I' and 'NZ' then mount*case when sprice2>0 then sprice2 else sprice end
+		--when styleno between 'O' and 'TZ' or styleno between '0' and '9Z' then case when sprice2>0 then sprice2 else sprice end * case when upper(unit)='KG' or unit='公斤' or len(ISNULL(unit,''))=0 then [weight] else mount end
+		--when styleno between 'U' and 'ZZ' then [weight]
+		--end,0)
+			
+		select @tranmoney2 = 0
+		select @tranmoney2 = ISNULL(tranmoney2,0) from drps where noa=@t_noa and upper(tablea)='VCC' and @accy=accy and @noa=no2
+		if @tranmoney2<=0
+		begin
+			set @tranmoney2 = 0
+		end
+		else
+		begin
+			select @money =0,@moneys =0
+			select @money=ISNULL([money],0) from view_vcc where accy=@accy and noa=@noa
+			select @moneys=ISNULL([total],0) from view_vccs where accy=@accy and noa=@noa and noq=@noq
+			set @tranmoney2 = case when @money=0 then 0 else ROUND(@moneys*@tranmoney2/@money,0) end
+		end
 
+		set @cmd = "update vccs"+@accy+" set tranmoney2=@tranmoney2 where noa=@noa and noq=@noq"
+		execute sp_executesql @cmd,N'@tranmoney2 float,@noa nvarchar(20),@noq nvarchar(10)'
+			,@tranmoney2=@tranmoney2,@noa=@noa,@noq=@noq
+		IF @@Error <> 0 BEGIN SET @chk = 1 END
+
+		fetch next from cursor_table
+		into @accy,@noa,@noq,@productno,@datea,@sprice2
+	end
+	close cursor_table
+	deallocate cursor_table
+	--rc2
+	declare cursor_table cursor for
+	select accy,no2,sum(ISNULL(tranmoney2,0)) from drps where noa=@t_noa and upper(tablea)='RC2' group by accy,no2
+	open cursor_table
+	fetch next from cursor_table
+	into @accy,@noa,@tranmoney2
+	while(@@FETCH_STATUS <> -1)
+	begin		
+		set @cmd = "update rc2"+@accy+" set tranmoney=@tranmoney2 where noa=@noa"
+		execute sp_executesql @cmd,N'@tranmoney2 float,@noa nvarchar(20)'
+			,@tranmoney2=@tranmoney2,@noa=@noa
+		IF @@Error <> 0 BEGIN SET @chk = 1 END
+		
+		fetch next from cursor_table
+		into @accy,@noa,@tranmoney2
+	end
+	close cursor_table
+	deallocate cursor_table
+	
+-----------------------------------------------------------------------------------------------------------	
+	--檢查補運費再回寫 drps
+	update drps set tranmoney2=isnull(b.tranmoney2,0)
+	from drps a
+	outer apply(select sum(ISNULL(tranmoney2,0)) tranmoney2 from view_vccs where accy=a.accy and noa=a.no2) b
+	where upper(a.tablea)='VCC'
+	IF @@Error <> 0 BEGIN SET @chk = 1 END
+	update drps set tranmoney2= case when ISNULL(tranmoney,0)+ISNULL(tranmoney2,0)<ISNULL(cost,0) then ISNULL(cost,0)-ISNULL(tranmoney,0) else ISNULL(tranmoney2,0) end
+	IF @@Error <> 0 BEGIN SET @chk = 1 END
+	
+	---------------------------------------------------------------------------------
+	IF @chk <> 0 BEGIN -- 若是新增資料發生錯誤
+		Rollback Transaction [Trans_Name] -- 復原所有操作所造成的變更
+	END
+	ELSE BEGIN
+		Commit Transaction [Trans_Name] -- 提交所有操作所造成的變更
+	END;
 
 import:--import
 	declare @t_date nvarchar(10) = [1]

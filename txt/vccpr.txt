@@ -147,7 +147,7 @@ import:--vccpr import
 	--客戶毛利
 	update #vccpr_import set price=case when a.sprice2 !=0 then a.sprice2 else a.sprice end + a.wcost 
 		+ case when case when UPPER(a.unit)='KG' or len(ISNULL(a.unit,''))=0 then a.[weight] else a.mount end = 0 then 0
-			else (a.tranmoney+a.tranmoney2+a.tranmoney3)/case when UPPER(a.unit)='KG' or len(ISNULL(a.unit,''))=0 then a.[weight] else a.mount end end
+			else (a.tranmoney+a.tranmoney2+a.tranmoney3)/case when UPPER(a.unit)='KG' or c.unit='公斤' or len(ISNULL(a.unit,''))=0 then a.[weight] else a.mount end end
 	from #vccpr_import a
 	left join cust b on a.custno=b.noa
 	where isnull(b.profit,0)!=0

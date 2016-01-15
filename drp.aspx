@@ -57,6 +57,9 @@
                 bbmMask = [['txtDatea', r_picd]];
                 q_mask(bbmMask);
                 
+                $('#txtPrice').change(function(e){
+                	sum();
+                });
                 $('#btnImport').click(function(e){
                 	var t_date = $('#txtDatea').val();
                 	var t_driverno = $('#txtDriverno').val();
@@ -76,15 +79,15 @@
                     case 'qtxt.query.drp':
                         var as = _q_appendData("tmp0", "", true, true);
                         if (as[0] != undefined) {
-                           /* q_gridAddRow(bbsHtm, 'tbbs', 'txtMoney,txtTranmoney,txtTranmoney2,txtOuttime,txtBacktime,txtMount,txtCost,txtWeight,txtPrice'
-                        	, as.length, as, 'money,tranmoney,tranmoney2,outtime,backtime,mount,cost,weight,price', '','');
-                        	*/
-                        	q_gridAddRow(bbsHtm, 'tbbs', 'txtCarno,txtMoney,txtAccy,txtTablea,txtNoa'
+                        	q_gridAddRow(bbsHtm, 'tbbs', 'txtCarno,txtMoney,txtAccy,txtTablea,txtNo2'
                         	, as.length, as, 'carno,money,accy,tablea,noa', '','');
                         } else {
                             alert('無資料!');
 
                         }
+                        Unlock(1);
+                        break;
+                   case 'qtxt.query.drp_save': 
                         Unlock(1);
                         break;
                     default:
@@ -102,7 +105,8 @@
             function q_stPost() {
                 if (!(q_cur == 1 || q_cur == 2))
                     return false;
-                Unlock(1);
+                var t_noa = $('#txtNoa').val();
+                q_func('qtxt.query.drp_save', 'drp.txt,drp_save,' + encodeURI(t_noa)); 	
             }
             function btnOk() {
                 Lock(1, {
@@ -197,14 +201,16 @@
             function sum() {
                 if (!(q_cur == 1 || q_cur == 2))
                     return;
-                var t_money = 0, t_moneys = 0, t_total = 0,t_outdate,t_backdate,t_h,t_m,t_s;
+                var t_money = 0, t_moneys = 0, t_total = 0,t_outdate,t_backdate,t_h,t_m,t_s,t_price2;
+                var t_price = q_float('txtPrice');
                 for ( i = 0; i < q_bbsCount; i++) {
                     t_moneys = q_float('txtTotal_'+i);
+                    t_price2 = q_float('txtPrice_'+i);
                     t_money += t_moneys;
                 	//-------------------------------------------
                 	if($('#txtBacktime_'+i).val()>'12:00' && $('#txtBacktime_'+i).val()<'13:00' )
                 		$('#txtBacktime_'+i).val('12:00');                 
-                		
+                	t_h=0;	
                 	if($('#txtDatea').val().length>0 && $('#txtOuttime_'+i).val().length>0 && $('#txtBacktime_'+i).val().length>0){
                 		t_outdate=new Date();
                 		t_outdate.setFullYear(parseInt($('#txtDatea').val().substring(0,3))+1911);
@@ -230,6 +236,7 @@
                 		$('#txtMount_'+i).val('');
                 	}
                 	//-------------------------------------------
+                	$('#txtCost_'+i).val(round(q_mul(t_h,t_price2==0?t_price:t_price2),0));
                 }
                 t_plusmoney = q_float('txtPlusmoney');
                 t_minusmoney = q_float('txtMinusmoney');
@@ -244,10 +251,15 @@
             function readonly(t_para, empty) {
                 _readonly(t_para, empty);
                 
-                if(t_para)
+                if(t_para){
                 	$('#btnImport').attr('disabled', 'disabled');
-                else
+                	$('#txtDatea').datepicker('destroy');
+                }
+                else{
                 	$('#btnImport').removeAttr('disabled');
+                	$('#txtDatea').datepicker();
+                }
+                	
             }
             function btnMinus(id) {
                 _btnMinus(id);
