@@ -7,7 +7,7 @@ z_payfe03:--z_payfe03
 	declare @t_bmon nvarchar(20) = case when '#non' = [6] then '' else [6] end
 	declare @t_emon nvarchar(20) = case when '#non' = [7] then CHAR(255) else [7] end
 	declare @curdate nvarchar(max) = convert(nvarchar,getDate(),120) 
-	declare @t_datea nvarchar(20) = case when '#non' = '#non' then '' else '#non' end --預付截止日 
+	declare @t_datea nvarchar(20) = case when '#non' = [10] then '' else [10] end --預付截止日 
 	declare @t_userno nvarchar(20) = '' 
 	declare @t_user nvarchar(20) = N'[9]' 
 	---------------------------------------------------------------------------------
