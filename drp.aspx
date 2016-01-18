@@ -21,7 +21,7 @@
             q_tables = 's';
             var q_name = "drp";
             var q_readonly = ['txtWorker2', 'txtWorker','txtNoa'];
-            var q_readonlys = ['txtNo2','txtNick'];
+            var q_readonlys = ['txtNo2','txtNick','txtCartrips'];
             var bbmNum = [['txtPrice',10,0,1]];
             var bbsNum = [['txtPrice',10,0,1]];
             var bbmMask = [];
@@ -79,8 +79,8 @@
                     case 'qtxt.query.drp':
                         var as = _q_appendData("tmp0", "", true, true);
                         if (as[0] != undefined) {
-                        	q_gridAddRow(bbsHtm, 'tbbs', 'txtCarno,txtMoney,txtAccy,txtTablea,txtNo2,txtNick'
-                        	, as.length, as, 'carno,money,accy,tablea,noa,nick', '','');
+                        	q_gridAddRow(bbsHtm, 'tbbs', 'txtCarno,txtMoney,txtAccy,txtTablea,txtNo2,txtNick,txtCartrips'
+                        	, as.length, as, 'carno,money,accy,tablea,noa,nick,cartrips', '','');
                         } else {
                             alert('無資料!');
 
@@ -488,6 +488,7 @@
                     </td>
                     <td align="center" style="width:20px;"> </td>
                     <td align="center" style="width:100px;"><a id='lblCarno_s'> </a></td>
+                    <td align="center" style="width:50px;"><a>車趟</a></td>
                     <td align="center" style="width:100px;"><a>客戶/廠商</a></td>
                     <td align="center" style="width:100px;"><a id='lblMoney_s'> </a></td>
                     <td align="center" style="width:100px;"><a id='lblTranmoney_s'> </a></td>
@@ -507,6 +508,7 @@
                     </td>
                     <td><a id="lblNo.*" style="font-weight: bold;text-align: center;display: block;"> </a></td>
                     <td><input type="text" id="txtCarno.*" style="width:95%;"/></td>
+                    <td><input type="text" id="txtCartrips.*" style="width:95%;"/></td>
                     <td><input type="text" id="txtNick.*" style="width:95%;"/></td>
                     <td><input type="text" id="txtMoney.*" style="width:95%;text-align: right;"/></td>
                     <td><input type="text" id="txtTranmoney.*" style="width:95%;text-align: right;"/></td>

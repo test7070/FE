@@ -35,11 +35,12 @@ drp_save:--drp_save
 		,sprice2 float
 		,mount float
 		,[weight] float
+		,cartrips float
 	)
 	insert into @tmp(tablea,accy,noa,noq,productno,unit,styleno,uweight
-		,post,sprice,sprice2,datea,mount,[weight],tranmoney)
+		,post,sprice,sprice2,datea,mount,[weight],tranmoney,cartrips)
 	select 'vcc',a.accy,a.noa,c.noq,c.productno,c.unit,d.styleno,d.uweight 
-		,b.post,c.sprice,c.sprice2,b.datea,c.mount,c.[weight],0
+		,b.post,c.sprice,c.sprice2,b.datea,c.mount,c.[weight],0,b.cartrips
 	from drps a
 	left join view_vcc b on a.accy=b.accy and a.no2=b.noa
 	left join view_vccs c on b.accy=c.accy and b.noa=c.noa
@@ -51,14 +52,14 @@ drp_save:--drp_save
 	and CHARINDEX('送達',b.trantype)>0
 	
 	insert into @tmp(tablea,accy,noa,noq,productno,styleno,post,sprice
-		,tranmoney,datea)
+		,tranmoney,datea,cartrips)
 	select 'rc2',a.accy,a.noa,c.noq,c.productno,d.styleno,b.post,c.sprice
 		,case when d.styleno between 'A' and 'H' then c.mount*d.uweight 
 		when d.styleno between 'I' and 'NZ' then c.mount*case when c.sprice2>0 then c.sprice2 else c.sprice end
 		when d.styleno between 'O' and 'TZ' or d.styleno between '0' and '9Z' then case when c.sprice2>0 then c.sprice2 else c.sprice end * case when upper(c.unit)='KG' or c.unit='公斤' or len(ISNULL(c.unit,''))=0 then c.[weight] else c.mount end
 		when d.styleno between 'U' and 'ZZ' then c.[weight]
 		end
-		,b.datea
+		,b.datea,b.cartrips
 	from drps a
 	left join view_rc2 b on a.accy=b.accy and a.no2=b.noa
 	left join view_rc2s c on b.accy=c.accy and b.noa=c.noa
@@ -183,13 +184,14 @@ import:--import
 		,noa nvarchar(20)
 		,datea nvarchar(20)
 		,nick nvarchar(50)
+		,cartrips float
 	)
-	insert into @tmp(carno,[money],tablea,accy,noa,datea,nick)
-	select carno,isnull([money],0) [money],'vcc',accy,noa,datea,nick
+	insert into @tmp(carno,[money],tablea,accy,noa,datea,nick,cartrips)
+	select carno,isnull([money],0) [money],'vcc',accy,noa,datea,nick,cartrips
 	from view_vcc 
 	where datea=@t_date and driverno=@t_driverno
 	union all
-	select carno,isnull([money],0) [money],'rc2',accy,noa,datea,nick 
+	select carno,isnull([money],0) [money],'rc2',accy,noa,datea,nick ,cartrips
 	from view_rc2
 	where datea=@t_date and driverno=@t_driverno
-	select * from @tmp order by datea desc;
+	select * from @tmp order by datea desc,cartrips;
