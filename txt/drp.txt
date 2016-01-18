@@ -182,13 +182,14 @@ import:--import
 		,accy nvarchar(20)
 		,noa nvarchar(20)
 		,datea nvarchar(20)
+		,nick nvarchar(50)
 	)
-	insert into @tmp(carno,[money],tablea,accy,noa,datea)
-	select carno,isnull([money],0) [money],'vcc',accy,noa,datea
+	insert into @tmp(carno,[money],tablea,accy,noa,datea,nick)
+	select carno,isnull([money],0) [money],'vcc',accy,noa,datea,nick
 	from view_vcc 
 	where datea=@t_date and driverno=@t_driverno
 	union all
-	select carno,isnull([money],0) [money],'rc2',accy,noa,datea 
+	select carno,isnull([money],0) [money],'rc2',accy,noa,datea,nick 
 	from view_rc2
 	where datea=@t_date and driverno=@t_driverno
 	select * from @tmp order by datea desc;
