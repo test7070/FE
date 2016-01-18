@@ -24,6 +24,7 @@ declare @tmp table(
 	mon nvarchar(7),
 	tggno nvarchar(20),
 	comp nvarchar(40),
+	nick nvarchar(50),
 	productno nvarchar(30),
 	product nvarchar(40),
 	unit nvarchar(8),
@@ -40,7 +41,7 @@ declare @tmp table(
 )
 insert into @tmp
 	select '0' gno, a.noa noa, b.noq noq, (case when a.typea='2' then '退' else '進' end) typea
-		, a.datea datea, (case when a.mon='' then left(a.datea,6) else a.mon end), a.tggno, a.tgg, b.productno, b.product, b.unit
+		, a.datea datea, (case when a.mon='' then left(a.datea,6) else a.mon end), a.tggno, a.tgg,a.nick, b.productno, b.product, b.unit
 		,b.lengthb,b.mount,b.weight,b.price,b.total
 		,case when isnull(a.invono,'')!='' and (select count(*) from ucca)>0 then (select tax from rc2a where noa=a.invono) else  a.tax end
 		,(case when a.typea='2' then 0 else 1 end)*b.total
@@ -57,11 +58,16 @@ begin
 	select '1',sum(mount),sum(total),sum(ttotal),sum(btotal),(select sum(tax) from (select noa,tax from @tmp group by noa,tax)tmp ) 
 	from @tmp
 end
+
+update @tmp set nick = case when len(ISNULL(b.nick,''))>0 then b.nick else LEFT(b.comp,4) end
+from @tmp a
+left join tgg b on a.tggno=b.noa 	
+	
 	
 update @tmp 
 set qhref = substring(qhref,0,len(qhref)-2)+@qhcno+'?left(noa,'+cast(len(noa) as nvarchar)+')=$noa?'+substring(qhref,len(qhref)-2,len(qhref))
 
-select gno, noa, noq,typea, datea, LEFT(datea,6) xdatea, mon, tggno, left(comp,4) comp, productno, product,unit,memo
+select gno, noa, noq,typea, datea, LEFT(datea,6) xdatea, mon, tggno, nick comp, productno, product,unit,memo
 ,dbo.getComma(lengthb,2)  lengthb
 ,dbo.getComma(mount,[2])  mount
 ,dbo.getComma(weight,[3])  weight

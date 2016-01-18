@@ -804,167 +804,168 @@ declare @t_option nvarchar(max) = case when '#non' = [19] then '' else [19] end
 --前2個月
 declare @b2mon nvarchar(max) = LEFT(dbo.AD2ChineseEraName(CONVERT(char, DATEADD(MONTH,-2,dbo.ChineseEraName2AD(@t_bmon+'/01')), 111)),6)
 ---------------------------------------------------------------------------------
-declare @tmp table(
-	gno nvarchar(1),
-	rec int,
-	custno nvarchar(20),
-	nick nvarchar(90),
-	salesno nvarchar(20),
-	sales nvarchar(30), 
-	unpaydata nvarchar(max), --前2個月(ex:@t_bmon='104/09 @b2mon=104/07,104/08')
-	unpay float,
-	bdmoney float, --呆帳(前3個月以前 ex:@t_bmon='104/09 '' ~ 104/06)
-	sale float,    --銷售金額
-	tax float,     --稅額
-	pay float,     --已收金額
-	total float    --應收總計
-)
-insert into @tmp
-select
-	'2',ROW_NUMBER()over(order by a.noa),a.noa,b.nick,'','','',0,0,
-	SUM(case when ISNULL(a.mon,'') between @t_bmon and @t_emon then ISNULL(a.sale,0) else 0 end),
-	SUM(case when ISNULL(a.mon,'') between @t_bmon and @t_emon then ISNULL(a.tax ,0) else 0 end),
-	SUM(case when ISNULL(a.mon,'') between @t_bmon and @t_emon then ISNULL(a.pay ,0) else 0 end),0
-from cust_2s a
-left join cust b on a.noa = b.noa
-where (a.noa between @t_bcustno and @t_ecustno) and 
-	  ((a.mon between @t_bmon and @t_emon) or (ISNULL(a.mon,'') < @t_bmon and ISNULL(a.unpay,0) != 0))
-group by a.noa,b.nick
+	declare @tmp table(
+		gno nvarchar(1),
+		rec int,
+		custno nvarchar(20),
+		nick nvarchar(90),
+		salesno nvarchar(20),
+		sales nvarchar(30), 
+		unpaydata nvarchar(max), --前2個月(ex:@t_bmon='104/09 @b2mon=104/07,104/08')
+		unpay float,
+		bdmoney float, --呆帳(前3個月以前 ex:@t_bmon='104/09 '' ~ 104/06)
+		sale float,    --銷售金額
+		tax float,     --稅額
+		pay float,     --已收金額
+		total float    --應收總計
+	)
+	insert into @tmp
+	select
+		'2',ROW_NUMBER()over(order by a.noa),a.noa,b.nick,'','','',0,0,
+		SUM(case when ISNULL(a.mon,'') between @t_bmon and @t_emon then ISNULL(a.sale,0) else 0 end),
+		SUM(case when ISNULL(a.mon,'') between @t_bmon and @t_emon then ISNULL(a.tax ,0) else 0 end),
+		SUM(case when ISNULL(a.mon,'') between @t_bmon and @t_emon then ISNULL(a.pay ,0) else 0 end),0
+	from cust_2s a
+	left join cust b on a.noa = b.noa
+	where (a.noa between @t_bcustno and @t_ecustno) 
+	and isnull(b.salesno,'') between @t_bsssno and @t_esssno
+	and ((a.mon between @t_bmon and @t_emon) or (ISNULL(a.mon,'') < @t_bmon and ISNULL(a.unpay,0) != 0))
+	group by a.noa,b.nick
 
---業務
-update @tmp set salesno = b.salesno,sales = b.sales
-from @tmp a
-left join (
-	select noa,salesno,sales
-	from cust
-)b on a.custno = b.noa
-
---前期未收明細
-declare @custno nvarchar(20)
-declare @str nvarchar(max)
-declare @mon nvarchar(20)
-declare @unpay float
-declare @line int
-
-declare cursor_table1 cursor for 
-select custno from @tmp
-open cursor_table1
-fetch next from cursor_table1
-into @custno
-while(@@FETCH_STATUS <> -1) 
-begin
-	set @str = ''
-	set @line = 0
-	
-	declare cursor_table2 cursor for 
-	select mon,unpay from cust_2s where noa = @custno and (mon >= @b2mon and mon < @t_bmon) and unpay !=0
-	open cursor_table2
-	fetch next from cursor_table2 
-	into @mon,@unpay
-	while(@@FETCH_STATUS <> -1) 
-	begin
-		set @line = @line + 1
-		set @str = @str + RIGHT(@mon,2) + '月' +'：<a style="color:darkblue'+CHAR(59)+'">'+dbo.getComma(@unpay,0)+'</a>' +'&nbsp&nbsp&nbsp' 
-		
-		fetch next from cursor_table2 
-		into @mon,@unpay
-	end 
-	close cursor_table2
-	deallocate cursor_table2
-	
-	update @tmp set unpaydata = @str where custno = @custno
-	
-	fetch next from cursor_table1
-	into @custno
-end 
-close cursor_table1
-deallocate cursor_table1
-
---前期未收金額
-update @tmp set unpay = ISNULL(b.unpay,0)
-from @tmp a
-left join (
-	select noa,SUM(isnull(unpay,0))unpay 
-	from cust_2s 
-	where (mon >= @b2mon and mon < @t_bmon) 
-	group by noa
-)b on a.custno = b.noa
-
---呆帳
-update @tmp set bdmoney = ISNULL(b.unpay,0)
-from @tmp a
-left join (
-	select noa,SUM(isnull(unpay,0))unpay 
-	from cust_2s 
-	where mon < @b2mon 
-	group by noa
-)b on a.custno = b.noa
-
---應付總計(前期未付+呆帳+銷售金額+稅額-已付金額)
-update @tmp set total = unpay + bdmoney + sale + tax - pay
-
---總計
-insert into @tmp(gno,rec,unpay,bdmoney,sale,tax,pay,total)
-select '3',MAX(rec),SUM(unpay),SUM(bdmoney),SUM(sale),SUM(tax),SUM(pay),SUM(total) 
-from @tmp where gno = '2'
-
-declare @max int = (select MAX(rec) from @tmp where gno = '2')
-
-if(CHARINDEX('業務',@t_option) > 0)
-begin
-	insert into @tmp(gno,salesno,sales,bdmoney,sale,tax,pay,total)
-	select '6',ISNULL(salesno,''),ISNULL(sales,''),SUM(bdmoney),SUM(sale),SUM(tax),SUM(pay),SUM(total) 
-	from @tmp 
-	where gno = '2'
-	group by ISNULL(salesno,''),ISNULL(sales,'')
-	
-	update @tmp set rec = b.rec 
+	--業務
+	update @tmp set salesno = b.salesno,sales = b.sales
 	from @tmp a
 	left join (
-		select salesno,ROW_NUMBER()over(order by salesno) rec 
-		from @tmp 
-		where gno = '6'
-	)b
-	on a.salesno = b.salesno
-	
+		select noa,salesno,sales
+		from cust
+	)b on a.custno = b.noa
+
+	--前期未收明細
+	declare @custno nvarchar(20)
+	declare @str nvarchar(max)
+	declare @mon nvarchar(20)
+	declare @unpay float
+	declare @line int
+
+	declare cursor_table1 cursor for 
+	select custno from @tmp
+	open cursor_table1
+	fetch next from cursor_table1
+	into @custno
+	while(@@FETCH_STATUS <> -1) 
+	begin
+		set @str = ''
+		set @line = 0
+		
+		declare cursor_table2 cursor for 
+		select mon,unpay from cust_2s where noa = @custno and (mon >= @b2mon and mon < @t_bmon) and unpay !=0
+		open cursor_table2
+		fetch next from cursor_table2 
+		into @mon,@unpay
+		while(@@FETCH_STATUS <> -1) 
+		begin
+			set @line = @line + 1
+			set @str = @str + RIGHT(@mon,2) + '月' +'：<a style="color:darkblue'+CHAR(59)+'">'+dbo.getComma(@unpay,0)+'</a>' +'&nbsp&nbsp&nbsp' 
+			
+			fetch next from cursor_table2 
+			into @mon,@unpay
+		end 
+		close cursor_table2
+		deallocate cursor_table2
+		
+		update @tmp set unpaydata = @str where custno = @custno
+		
+		fetch next from cursor_table1
+		into @custno
+	end 
+	close cursor_table1
+	deallocate cursor_table1
+
+	--前期未收金額
+	update @tmp set unpay = ISNULL(b.unpay,0)
+	from @tmp a
+	left join (
+		select noa,SUM(isnull(unpay,0))unpay 
+		from cust_2s 
+		where (mon >= @b2mon and mon < @t_bmon) 
+		group by noa
+	)b on a.custno = b.noa
+
+	--呆帳
+	update @tmp set bdmoney = ISNULL(b.unpay,0)
+	from @tmp a
+	left join (
+		select noa,SUM(isnull(unpay,0))unpay 
+		from cust_2s 
+		where mon < @b2mon 
+		group by noa
+	)b on a.custno = b.noa
+
+	--應付總計(前期未付+呆帳+銷售金額+稅額-已付金額)
+	update @tmp set total = unpay + bdmoney + sale + tax - pay
+
+	--總計
 	insert into @tmp(gno,rec,unpay,bdmoney,sale,tax,pay,total)
-	select '7',MAX(rec),SUM(unpay),SUM(bdmoney),SUM(sale),SUM(tax),SUM(pay),SUM(total) 
-	from @tmp where gno = '6'
+	select '3',MAX(rec),SUM(unpay),SUM(bdmoney),SUM(sale),SUM(tax),SUM(pay),SUM(total) 
+	from @tmp where gno = '2'
 
-	set @max = (select MAX(rec) from @tmp where gno = '6')
-	
-	delete @tmp where gno = '2' or gno = '3'
-end
+	declare @max int = (select MAX(rec) from @tmp where gno = '2')
 
---換頁
-if(CHARINDEX('業務',@t_option) > 0)
-begin
-insert into @tmp(gno,rec)
-	select '5',1
-	insert into @tmp(gno,rec)
-	select '5',rec+1 from @tmp where rec % 40 = 0 and rec != @max
-	insert into @tmp(gno,rec)
-	select '8',rec   from @tmp where rec % 40 = 0 and rec != @max
-end
-else
-begin
-	insert into @tmp(gno,rec)
-	select '1',1
-	insert into @tmp(gno,rec)
-	select '1',rec+1 from @tmp where rec % 40 = 0 and rec != @max
-	insert into @tmp(gno,rec)
-	select '4',rec   from @tmp where rec % 40 = 0 and rec != @max
-end
+	if(CHARINDEX('業務',@t_option) > 0)
+	begin
+		insert into @tmp(gno,salesno,sales,bdmoney,sale,tax,pay,total)
+		select '6',ISNULL(salesno,''),ISNULL(sales,''),SUM(bdmoney),SUM(sale),SUM(tax),SUM(pay),SUM(total) 
+		from @tmp 
+		where gno = '2'
+		group by ISNULL(salesno,''),ISNULL(sales,'')
+		
+		update @tmp set rec = b.rec 
+		from @tmp a
+		left join (
+			select salesno,ROW_NUMBER()over(order by salesno) rec 
+			from @tmp 
+			where gno = '6'
+		)b
+		on a.salesno = b.salesno
+		
+		insert into @tmp(gno,rec,unpay,bdmoney,sale,tax,pay,total)
+		select '7',MAX(rec),SUM(unpay),SUM(bdmoney),SUM(sale),SUM(tax),SUM(pay),SUM(total) 
+		from @tmp where gno = '6'
 
-select 
-	gno,rec,custno,nick,salesno,sales,unpaydata,
-	dbo.getComma(unpay  ,0)mny1,
-	dbo.getComma(bdmoney,0)mny2,
-	dbo.getComma(sale   ,0)mny3,
-	dbo.getComma(tax    ,0)mny4,
-	dbo.getComma(pay    ,0)mny5,
-	dbo.getComma(total  ,0)mny6	
-from @tmp order by rec,gno;
+		set @max = (select MAX(rec) from @tmp where gno = '6')
+		
+		delete @tmp where gno = '2' or gno = '3'
+	end
+
+	--換頁
+	if(CHARINDEX('業務',@t_option) > 0)
+	begin
+	insert into @tmp(gno,rec)
+		select '5',1
+		insert into @tmp(gno,rec)
+		select '5',rec+1 from @tmp where rec % 40 = 0 and rec != @max
+		insert into @tmp(gno,rec)
+		select '8',rec   from @tmp where rec % 40 = 0 and rec != @max
+	end
+	else
+	begin
+		insert into @tmp(gno,rec)
+		select '1',1
+		insert into @tmp(gno,rec)
+		select '1',rec+1 from @tmp where rec % 40 = 0 and rec != @max
+		insert into @tmp(gno,rec)
+		select '4',rec   from @tmp where rec % 40 = 0 and rec != @max
+	end
+
+	select 
+		gno,rec,custno,nick,salesno,sales,unpaydata,
+		dbo.getComma(unpay  ,0)mny1,
+		dbo.getComma(bdmoney,0)mny2,
+		dbo.getComma(sale   ,0)mny3,
+		dbo.getComma(tax    ,0)mny4,
+		dbo.getComma(pay    ,0)mny5,
+		dbo.getComma(total  ,0)mny6	
+	from @tmp order by rec,gno;
 --*******************************************************************************
 z_ummfe01:--z_ummfe01
 SET QUOTED_IDENTIFIER OFF
