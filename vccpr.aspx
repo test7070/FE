@@ -372,7 +372,7 @@
                 margin: -1px;
             }
             .dbbs {
-                width: 2000px;
+                width: 2300px;
             }
             .tbbs a {
                 font-size: medium;
@@ -501,7 +501,7 @@
                     <td align="center" style="width:20px;"></td>
                     <td align="center" style="width:180px;"><a id='lblDatea_s'> </a></td>
   					<td align="center" style="width:150px;"><a id='lblCust_s'> </a></td>
-					<td align="center" style="width:250px;"><a id='lblProduct_s'> </a></td>
+					<td align="center" style="width:400px;"><a id='lblProduct_s'> </a></td>
 					<td align="center" style="width:100px;"><a id='lblUnit_s'> </a></td>	
 					<td align="center" style="width:100px;"><a id='lblMount_s'> </a></td>	
 					<td align="center" style="width:120px;"><a id='lblWeight_s'> </a></td>	

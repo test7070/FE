@@ -812,8 +812,16 @@
                     $('#txtWorker').val(r_name);
                 else
                     $('#txtWorker2').val(r_name);
-               
-               	btnOk_sum(q_bbsCount);  
+               	
+               	var t_item = '';
+               	for(var i=0;i<q_bbsCount;i++){
+               		t_item += (t_item.length>0?'|':'') + $('#txtNoq_'+i).val()+'@'+q_float('txtTotal_'+i);
+               	}
+               	if($('#btnModi').data('guid')==undefined){
+               		btnOk_sum(q_bbsCount);
+               	}else{
+               		q_func('qtxt.query.vccfe', 'vccfe.txt,check,vccfe;' + $('#btnModi').data('guid')+';'+t_item); 
+               	} 
             }
             function btnOk_sum(n){
             	if(n==0){
@@ -1092,9 +1100,9 @@
                 }
 
                 if (q_getPara('sys.menu').substr(0, 3) == 'qfe')
-                    $('.isFe').show()
+                    $('.isFe').show();
                 else
-                    $('.isFe').hide()
+                    $('.isFe').hide();
             }
 
             function stype_chang() {
