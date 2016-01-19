@@ -39,6 +39,84 @@
             , ['txtEndaddrno','','addr2','noa,addr','txtEndaddrno,txtEndaddr','addr2_b.aspx']
             , ['txtBoatno', 'lblBoat', 'boat', 'noa,boat', 'txtBoatno,txtBoat', 'boat_b.aspx']
             , ['txtDriverno', 'lblDriver', 'driver', 'noa,namea','txtDriverno,txtDriver', 'driver_b.aspx']);
+            
+            function sum() {
+                if (!(q_cur == 1 || q_cur == 2))
+                    return;
+                
+                var t_data = new Array();  //記錄各趟次的時間  
+                    
+                var t_money = 0, t_moneys = 0, t_total = 0,t_outdate,t_backdate,t_h,t_m,t_s,t_price2;
+                var t_price = q_float('txtPrice');
+                for ( i = 0; i < q_bbsCount; i++) {
+                    t_moneys = q_float('txtMoney_'+i);
+                    t_price2 = q_float('txtPrice_'+i);
+                    t_money += t_moneys;
+                	//-------------------------------------------
+                	if($('#txtBacktime_'+i).val()>'12:00' && $('#txtBacktime_'+i).val()<'13:00' )
+                		$('#txtBacktime_'+i).val('12:00');                 
+                	t_h=0;	
+                	if($('#txtDatea').val().length>0 && $('#txtOuttime_'+i).val().length>0 && $('#txtBacktime_'+i).val().length>0){
+                		t_outdate=new Date();
+                		t_outdate.setFullYear(parseInt($('#txtDatea').val().substring(0,3))+1911);
+                		t_outdate.setMonth(parseInt($('#txtDatea').val().substring(5,6))-1);
+                		t_outdate.setDate(parseInt($('#txtDatea').val().substring(8,9)));
+                		t_outdate.setHours(parseInt($('#txtOuttime_'+i).val().substring(0,2)));
+                		t_outdate.setMinutes(parseInt($('#txtOuttime_'+i).val().substring(3,5)));
+                		t_backdate=new Date();
+                		t_backdate.setFullYear(parseInt($('#txtDatea').val().substring(0,3))+1911);
+                		t_backdate.setMonth(parseInt($('#txtDatea').val().substring(5,6))-1);
+                		t_backdate.setDate(parseInt($('#txtDatea').val().substring(8,9)));
+                		t_backdate.setHours(parseInt($('#txtBacktime_'+i).val().substring(0,2)));
+                		t_backdate.setMinutes(parseInt($('#txtBacktime_'+i).val().substring(3,5)));
+
+                		t_s = t_backdate.getTime()-t_outdate.getTime();
+                		t_m = Math.floor(t_s/60000);
+                		t_h = round(t_m/60,2);
+                		//跨中午時間
+                		if($('#txtOuttime_'+i).val()<'12:00' && $('#txtBacktime_'+i).val()>'13:00')
+                			t_h--;
+                		$('#txtMount_'+i).val(t_h);
+                	}else{
+                		$('#txtMount_'+i).val('');
+                	}
+                	//-------------------------------------------
+                	t_cartrips = q_float('txtCartrips_'+i);
+                	var t_isexist = false;
+                	for(var j=0;j<t_data.length;j++){
+                		if(t_cartrips==t_data[j].cartrips){
+                			t_data[j].total+=t_moneys;
+                			t_isexist = true;
+                		}
+                	}
+                	if(!t_isexist){
+                		t_data.push({cartrips:t_cartrips
+            				,outtime:$('#txtOuttime_'+i).val()
+            				,backtime:$('#txtBacktime_'+i).val()
+            				,mount:t_h
+            				,price:t_price2==0?t_price:t_price2
+            				,total:t_moneys//總載貨額
+        				});
+                	}
+                }
+                for(var i=0;i<q_bbsCount;i++){
+                	t_cartrips = q_float('txtCartrips_'+i);
+                	t_moneys = q_float('txtMoney_'+i);
+                	$('#txtCost_'+i).val(0);
+                	if(t_moneys>0){
+                		for(var j=0;j<t_data.length;j++){
+	                		if(t_cartrips==t_data[j].cartrips){
+	                			$('#txtOuttime_'+i).val(t_data[j].outtime);
+	                			$('#txtBacktime_'+i).val(t_data[j].backtime);
+	                			$('#txtMount_'+i).val(t_data[j].mount);
+	                			$('#txtCost_'+i).val(round(q_mul(q_mul(t_data[j].mount,q_div(t_moneys,t_data[j].total)),t_data[j].price),0));
+	                			break;
+	                		}
+	                	}
+                	}
+                }
+            }
+            
             $(document).ready(function() {
                 bbmKey = ['noa'];
                 bbsKey = ['noa', 'noq'];
@@ -146,6 +224,9 @@
                             q_box("trans_tb.aspx?" + r_userno + ";" + r_name + ";" + q_time + ";noa='" + $(this).val() + "';" + t_accy, 'trans', "95%", "95%", q_getMsg("popTrans"));
                             
                         });*/
+						$('#txtCartrips_'+j).change(function(e){
+							sum();
+						});
                         $('#txtPrice_'+j).change(function(e){
                             sum();
                         });
@@ -198,53 +279,7 @@
                 q_nowf();
                 return true;
             }
-            function sum() {
-                if (!(q_cur == 1 || q_cur == 2))
-                    return;
-                var t_money = 0, t_moneys = 0, t_total = 0,t_outdate,t_backdate,t_h,t_m,t_s,t_price2;
-                var t_price = q_float('txtPrice');
-                for ( i = 0; i < q_bbsCount; i++) {
-                    t_moneys = q_float('txtTotal_'+i);
-                    t_price2 = q_float('txtPrice_'+i);
-                    t_money += t_moneys;
-                	//-------------------------------------------
-                	if($('#txtBacktime_'+i).val()>'12:00' && $('#txtBacktime_'+i).val()<'13:00' )
-                		$('#txtBacktime_'+i).val('12:00');                 
-                	t_h=0;	
-                	if($('#txtDatea').val().length>0 && $('#txtOuttime_'+i).val().length>0 && $('#txtBacktime_'+i).val().length>0){
-                		t_outdate=new Date();
-                		t_outdate.setFullYear(parseInt($('#txtDatea').val().substring(0,3))+1911);
-                		t_outdate.setMonth(parseInt($('#txtDatea').val().substring(5,6))-1);
-                		t_outdate.setDate(parseInt($('#txtDatea').val().substring(8,9)));
-                		t_outdate.setHours(parseInt($('#txtOuttime_'+i).val().substring(0,2)));
-                		t_outdate.setMinutes(parseInt($('#txtOuttime_'+i).val().substring(3,5)));
-                		t_backdate=new Date();
-                		t_backdate.setFullYear(parseInt($('#txtDatea').val().substring(0,3))+1911);
-                		t_backdate.setMonth(parseInt($('#txtDatea').val().substring(5,6))-1);
-                		t_backdate.setDate(parseInt($('#txtDatea').val().substring(8,9)));
-                		t_backdate.setHours(parseInt($('#txtBacktime_'+i).val().substring(0,2)));
-                		t_backdate.setMinutes(parseInt($('#txtBacktime_'+i).val().substring(3,5)));
-
-                		t_s = t_backdate.getTime()-t_outdate.getTime();
-                		t_m = Math.floor(t_s/60000);
-                		t_h = round(t_m/60,2);
-                		//跨中午時間
-                		if($('#txtOuttime_'+i).val()<'12:00' && $('#txtBacktime_'+i).val()>'13:00')
-                			t_h--;
-                		$('#txtMount_'+i).val(t_h);
-                	}else{
-                		$('#txtMount_'+i).val('');
-                	}
-                	//-------------------------------------------
-                	$('#txtCost_'+i).val(round(q_mul(t_h,t_price2==0?t_price:t_price2),0));
-                }
-                t_plusmoney = q_float('txtPlusmoney');
-                t_minusmoney = q_float('txtMinusmoney');
-                t_tax = q_float('txtTax');
-                t_total = t_money + t_tax + t_plusmoney - t_minusmoney;
-                $('#txtMoney').val(t_money);
-                $('#txtTotal').val(t_total);
-            }
+            
             function refresh(recno) {
                 _refresh(recno);
             }
