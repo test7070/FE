@@ -545,6 +545,7 @@ z_ummfe03:--z_ummfe03
 	where (len(@t_cno)=0 or cno=@t_cno)
 	and ISNULL(custno,'') between @t_bcustno and @t_ecustno
 	and ISNULL(mon,'') between @t_bmon and @t_emon
+	and not(noa like '退貨[0-9]%')
 	--折讓單
 	insert into @tmp(recno,gno,cno,custno,tablea,accy,noa,noq,tax,datea,typea,moneys,product)
 	select 1,'3',a.cno,a.custno,'vcca','',a.noa,'',a.tax,a.datea,'折',a.total,ISNULL(b.acomp,'')+' '+ISNULL(a.comp,'')

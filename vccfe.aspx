@@ -706,7 +706,7 @@
                         } else {
                             var t_date = $('#txtDatea').val();
                             var nextdate = new Date(dec(t_date.substr(0, 3)) + 1911, dec(t_date.substr(4, 2)) - 1, dec(t_date.substr(7, 2)));
-                            nextdate.setMonth(nextdate.getMonth() + 1)
+                            nextdate.setMonth(nextdate.getMonth() + 1);
                             t_date = '' + (nextdate.getFullYear() - 1911) + '/' + (nextdate.getMonth() < 9 ? '0' : '') + (nextdate.getMonth() + 1);
                             $('#txtMon').val(t_date);
                         }
@@ -764,9 +764,9 @@
                      				}
                      			}else{
                      				if((t_para.ordeno+t_para.no2).length==0)
-                     					alert((t_para.n+1)+'：無訂單禁止存檔。')
+                     					alert((t_para.n+1)+'：無訂單禁止存檔。');
                      				else
-                     					alert((t_para.n+1)+'：查無訂單【'+t_para.ordeno+'-'+t_para.no2+'】。')
+                     					alert((t_para.n+1)+'：查無訂單【'+t_para.ordeno+'-'+t_para.no2+'】。');
                      				return;
                      			}
                      		}else if(t_para.action == 'getWeight'){
@@ -936,14 +936,14 @@
                             }
                             $(this).val('');
                         });
-                        $('#txtUnit_' + i).focusout(function() {
-                            sum();
+                        $('#txtUnit_' + i).changed(function(e){
+                        	sum();
                         });
-                        $('#txtPrice_' + i).focusout(function() {
-                            sum();
+                        $('#txtPrice_' + i).changed(function(e){
+                        	sum();
                         });
-                        $('#txtWeight_' + i).focusout(function() {
-                            sum();
+                        $('#txtWeight_' + i).changed(function(e){
+                        	sum();
                         });
                         $('#txtMount_' + i).focusout(function() {
                             if (q_cur == 1 || q_cur == 2){
@@ -956,17 +956,6 @@
                             }    
                         });
 
-                        $('#txtPrice_' + i).focusin(function() {
-                            if (q_cur == 1 || q_cur == 2) {
-                                t_IdSeq = -1;
-                                q_bodyId($(this).attr('id'));
-                                b_seq = t_IdSeq;
-                                /*if (!emp($('#txtProductno_' + b_seq).val())) {
-                                    var t_where = "where=^^ noa='" + $('#txtProductno_' + b_seq).val() + "' ^^ stop=1";
-                                    q_gt('ucc', t_where, 0, 0, 0, "msg_ucc", r_accy);
-                                }*/
-                            }
-                        });
 
                         $('#btnRecord_' + i).click(function() {
                             t_IdSeq = -1;
@@ -1020,6 +1009,8 @@
                 Lock(1, {
                     opacity : 0
                 });
+                //產生guid,送簽核用
+              	$('#btnModi').data('guid',guid());
                 //取得車號下拉式選單
                 var thisVal = $('#txtCardealno').val();
                 var t_where = "where=^^ noa=N'" + thisVal + "' ^^";
