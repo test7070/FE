@@ -651,6 +651,12 @@
                             }
                         }
                         _btnModi();
+                        if(r_rank<8){
+		                	$('#btnPlus').attr('disabled','disabled');
+		                	for(var i=0;i<q_bbsCount;i++){
+		                		$('#btnMinus_'+i).attr('disabled','disabled');	
+		                	}
+		                }
                         Unlock(1);
                         $('#txtDatea').focus();
 
@@ -804,10 +810,15 @@
                 	case 'qtxt.query.vccfe':
                 		var as = _q_appendData("tmp0", "", true);
                         if (as[0] != undefined) {
-                        	btnOk_sum(q_bbsCount);
+                        	if(as[0].val==1){
+                        		btnOk_sum(q_bbsCount);
+                        	}else{
+                        		alert(as[0].msg);
+                        		return;
+                        	}
                         }else{
-                        	
-                        	btnOk_sum(q_bbsCount);
+                    		alert('出貨單檢查異常，無法儲存。');
+                        	return;
                         }
                 		break;
                 	case 'qtxt.query.vccfe_save':
@@ -1031,6 +1042,7 @@
                 Lock(1, {
                     opacity : 0
                 });
+                
                 //產生guid,送簽核用
               	$('#btnModi').data('guid',guid());
                 //取得車號下拉式選單

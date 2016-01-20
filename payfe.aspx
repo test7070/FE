@@ -549,6 +549,12 @@
 		            Unlock(1);
 		            return false;
 		        }
+		        for(var i=0;i<q_bbsCount;i++){
+		        	if($('#txtIndate_'+i).val().length>0 && !q_cd($('#txtIndate_'+i).val())){
+		        		alert('到期日錯誤:'+$('#txtIndate_'+i).val());
+		        		return;
+		        	}
+		        }
 
 		        var t_money = 0, t_chgs = 0, t_paysale,t_mon='';
 		        for (var i = 0; i < q_bbsCount; i++) {
