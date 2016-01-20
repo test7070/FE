@@ -794,11 +794,7 @@
                	for(var i=0;i<q_bbsCount;i++){
                		t_item += (t_item.length>0?'|':'') + $('#txtNoq_'+i).val()+'@'+q_float('txtTotal_'+i);
                	}
-               	
-               	var parser = document.createElement('a');
-				parser.href = document.URL;
-
-               	if(q_cur==2 && parser.host=='59.125.143.171'){
+               	if(q_cur==2){
                		//修改需檢查金額(金額只可以改大不可以改小，改小要"特別權限")
                		q_func('qtxt.query.vccfe', 'vccfe.txt,check,'+r_userno+';vccfe;' + $('#btnModi').data('guid')+';'+$('#txtNoa').val()+';'+t_item); 
                	}else{
@@ -808,6 +804,8 @@
             function q_funcPost(t_func, result) {
                 switch(t_func) {
                 	case 'qtxt.query.vccfe':
+                		//BBS TEXTBOX全部鎖定
+                		$('#tbbs').children().find('input[type="text"]').attr('disabled','disabled');
                 		var as = _q_appendData("tmp0", "", true);
                         if (as[0] != undefined) {
                         	if(as[0].val==1){

@@ -1,15 +1,20 @@
+<!--2016/01/20-->
 <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
 <html xmlns="http://www.w3.org/1999/xhtml" dir="ltr">
-    <head>
-        <title></title>
-        <script src="../script/jquery.min.js" type="text/javascript"></script>
-        <script src='../script/qj2.js' type="text/javascript"></script>
-        <script src='qset.js' type="text/javascript"></script>
-        <script src='../script/qj_mess.js' type="text/javascript"></script>
-        <script src="../script/qbox.js" type="text/javascript"></script>
-        <script src='../script/mask.js' type="text/javascript"></script>
-        <link href="../qbox.css" rel="stylesheet" type="text/css" />
-        <script type="text/javascript">
+	<head>
+		<title></title>
+		<script src="../script/jquery.min.js" type="text/javascript"></script>
+		<script src='../script/qj2.js' type="text/javascript"></script>
+		<script src='qset.js' type="text/javascript"></script>
+		<script src='../script/qj_mess.js' type="text/javascript"></script>
+		<script src="../script/qbox.js" type="text/javascript"></script>
+		<script src='../script/mask.js' type="text/javascript"></script>
+		<link href="../qbox.css" rel="stylesheet" type="text/css" />
+		<link href="css/jquery/themes/redmond/jquery.ui.all.css" rel="stylesheet" type="text/css" />
+		<script src="css/jquery/ui/jquery.ui.core.js"></script>
+		<script src="css/jquery/ui/jquery.ui.widget.js"></script>
+		<script src="css/jquery/ui/jquery.ui.datepicker_tw.js"></script>
+		<script type="text/javascript">
             this.errorHandler = null;
             function onPageError(error) {
                 alert("An error occurred:\r\n" + error.Message);
@@ -317,6 +322,12 @@
                             }
                         }
                         _btnModi();
+                        if(r_rank<8){
+		                	$('#btnPlus').attr('disabled','disabled');
+		                	for(var i=0;i<q_bbsCount;i++){
+		                		$('#btnMinus_'+i).attr('disabled','disabled');	
+		                	}
+		                }
                         Unlock(1);
                         $('#txtDatea').focus();
                         if (!emp($('#txtTggno').val())) {
@@ -424,12 +435,47 @@
                     $('#txtMon').val($('#txtDatea').val().substr(0, 6));*/
                 
                 sum();
-                
                 if (q_cur == 1)
                     $('#txtWorker').val(r_name);
                 if (q_cur == 2)
                     $('#txtWorker2').val(r_name);
-                var s1 = $('#txt' + bbmKey[0].substr(0, 1).toUpperCase() + bbmKey[0].substr(1)).val();
+                    
+                var t_item = '';
+               	for(var i=0;i<q_bbsCount;i++){
+               		t_item += (t_item.length>0?'|':'') + $('#txtNoq_'+i).val()+'@'+q_float('txtTotal_'+i);
+               	}
+               	
+                if(q_cur==2){
+               		//修改需檢查金額(金額只可以改小不可以改大，改大要"特別權限")
+               		q_func('qtxt.query.rc2fe', 'rc2fe.txt,check,'+r_userno+';rc2fe;' + $('#btnModi').data('guid')+';'+$('#txtNoa').val()+';'+t_item); 
+               	}else{
+               		save();
+               	} 
+            }
+            function q_funcPost(t_func, result) {
+                switch(t_func) {
+                	case 'qtxt.query.rc2fe':
+                		//BBS TEXTBOX全部鎖定
+                		$('#tbbs').children().find('input[type="text"]').attr('disabled','disabled');
+                		var as = _q_appendData("tmp0", "", true);
+                        if (as[0] != undefined) {
+                        	if(as[0].val==1){
+                        		save();
+                        	}else{
+                        		alert(as[0].msg);
+                        		return;
+                        	}
+                        }else{
+                    		alert('進貨單檢查異常，無法儲存。');
+                        	return;
+                        }
+                		break;
+                    default:
+                       break;
+                }
+            }
+            function save(){
+            	var s1 = $('#txt' + bbmKey[0].substr(0, 1).toUpperCase() + bbmKey[0].substr(1)).val();
                 if (s1.length == 0 || s1 == "AUTO")
                     q_gtnoa(q_name, replaceAll(q_getPara('sys.key_rc2') + $('#txtDatea').val(), '/', ''));
                 else
@@ -545,7 +591,10 @@
                 var t_where = "where=^^ 1=1 ^^";
                 q_gt('custaddr', t_where, 0, 0, 0, "");
             }
-
+			var guid = (function() {
+				function s4() {return Math.floor((1 + Math.random()) * 0x10000).toString(16).substring(1);}
+				return function() {return s4() + s4() + '-' + s4() + '-' + s4() + '-' +s4() + '-' + s4() + s4() + s4();};
+			})();
             function btnModi() {
                 if (emp($('#txtNoa').val()))
                     return;
@@ -554,7 +603,9 @@
                 Lock(1, {
                     opacity : 0
                 });
-                
+                //產生guid,送簽核用
+              	$('#btnModi').data('guid',guid());
+              	
                 var t_where = " where=^^ rc2no='" + $('#txtNoa').val() + "'^^";
                 q_gt('pays', t_where, 0, 0, 0, 'btnModi', r_accy);
             }
