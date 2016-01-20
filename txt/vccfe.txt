@@ -1,0 +1,21 @@
+check:--check
+	declare @t_userno nvarchar(max) = [1]
+	declare @t_form nvarchar(max) = [2]
+	declare @t_guid nvarchar(max) = [3]
+	declare @t_noa nvarchar(max) = [4]
+	declare @t_item nvarchar(max) = [5]
+	-----------------------------------------------------------------
+	declare @previous table(
+		noq nvarchar(max)
+		,unit nvarchar(20)
+		,mount float
+		,[weight] float
+		,[money] float
+	)
+	insert into @previous(noq,unit,mount,[weight],[money])
+	select noq,unit,mount,[weight],[total] 
+	from view_vccs
+	where noa=@t_noa
+	order by noq
+	
+	select * from @previous;
