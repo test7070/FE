@@ -507,14 +507,14 @@
 					<td align="center" style="width:120px;"><a id='lblWeight_s'> </a></td>	
 					<td align="center" style="width:100px;"><a id='lblRate_s'> </a></td>	
 					<td align="center" style="width:100px;"><a id='lblApv_s'> </a></td>	
-					<td align="center" style="width:100px;"><a id='lblTranmoney_s'> </a></td>	
+					<td align="center" style="width:100px;background-color: pink;"><a id='lblTranmoney_s' style="color:black;"> </a></td>	
 					<td align="center" style="width:100px;"><a id='lblPrice_s'> </a></td>	
 					<td align="center" style="width:100px;"><a id='lblHprice_s'> </a></td>	
 					<td align="center" style="width:100px;"><a id='lblPprice_s'> </a></td>	
 					<td align="center" style="width:100px;"><a id='lblLprice_s'> </a></td>
 					<td align="center" style="width:100px;"><a id='lblWcost_s'> </a></td>	
 					<td align="center" style="width:100px;"><a id='lblSprice_s'> </a></td>	
-					<td align="center" style="width:100px;"><a id='lblSprice2_s'> </a></td>	
+					<td align="center" style="width:100px;background-color: pink;"><a id='lblSprice2_s' style="color:black;"> </a></td>	
 					<td align="center" style="width:100px;"><a id='lblTranmoney2_s'> </a></td>	
 					<td align="center" style="width:150px;"><a id='lblTrantype_s'> </a></td>	
 					<td align="center" style="width:100px;"><a id='lblTranaddr_s'> </a></td>	
@@ -554,14 +554,14 @@
                     <td><input type="text" id="txtWeight.*" style="width:95%;text-align: right;"/></td>
                     <td><input type="text" id="txtRate.*" style="width:95%;text-align: right;"/></td>
                     <td><input type="text" id="txtApv.*" style="width:95%;"/></td>
-                    <td><input type="text" id="txtTranmoney.*" style="width:95%;text-align: right;"/></td>
+                    <td style="background-color: pink;"><input type="text" id="txtTranmoney.*" style="width:95%;text-align: right;"/></td>
                     <td><input type="text" id="txtPrice.*" style="width:95%;text-align: right;"/></td>
 					<td><input type="text" id="txtHprice.*" style="width:95%;text-align: right;"/></td>
 					<td><input type="text" id="txtPprice.*" style="width:95%;text-align: right;"/></td>
 					<td><input type="text" id="txtLprice.*" style="width:95%;text-align: right;"/></td>
 					<td><input type="text" id="txtWcost.*" style="width:95%;text-align: right;"/></td>
 					<td><input type="text" id="txtSprice.*" style="width:95%;text-align: right;"/></td>
-					<td><input type="text" id="txtSprice2.*" style="width:95%;text-align: right;"/></td>
+					<td style="background-color: pink;"><input type="text" id="txtSprice2.*" style="width:95%;text-align: right;"/></td>
 					<td><input type="text" id="txtTranmoney2.*" style="width:95%;text-align: right;"/></td>
 					<td><input type="text" id="txtTrantype.*" style="width:95%;"/></td>
 					<td><input type="text" id="txtTranaddr.*" style="width:95%;"/></td>
