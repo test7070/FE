@@ -538,7 +538,7 @@ z_ummfe03:--z_ummfe03
 	and ISNULL(b.custno,'') between @t_bcustno and @t_ecustno
 	and ISNULL(b.mon,'') between @t_bmon and @t_emon
 	--退貨  VCCD有的才算
-	and (b.typea='2' and exists(select * from vccd where noa=a.noa))
+	and (b.typea='1' or (b.typea='2' and exists(select * from vccd where noa=a.noa)))
 	
 	--發票
 	insert into @tmp(recno,gno,cno,custno,tablea,accy,noa,noq,tax,datea,typea,moneys,product)
