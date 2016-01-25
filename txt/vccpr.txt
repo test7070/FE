@@ -91,7 +91,7 @@ import:--vccpr import
 			,post,[floata],[paytype],daya)
 		select a.accy,'vccs',a.noa,b.noq,a.typea,a.datea,a.custno,a.custno,a.nick,a.apv,a.trantype,a.addr2
 			,b.productno,b.product,b.lengthb,b.unit,b.mount,b.[weight],b.price,b.total,b.tranmoney,b.tranmoney2,b.tranmoney3,b.sprice,b.sprice2,b.wcost
-			,a.post,a.[floata],a.paytype
+			,a.transtartno,a.[floata],a.paytype
 			,case when patindex('%[0-9]%',ISNULL(a.paytype,''))>0 then CAST(substring(ISNULL(a.paytype,''),patindex('%[0-9]%',ISNULL(a.paytype,'')),len(ISNULL(a.paytype,''))-patindex('%[0-9]%',ISNULL(a.paytype,''))- patindex('%[0-9%]',reverse(ISNULL(a.paytype,'')))) as int) else 0 end
 		from view_vcc a
 		left join view_vccs b on a.accy=b.accy and a.noa=b.noa
@@ -120,10 +120,6 @@ import:--vccpr import
 		order by ISNULL(y.price,0) desc) b
 	
 	--基價
-	--update @tmp set sprice = b.sprice
-	--from @tmp a
-	--outer apply(select top 1 y.sprice from uccp x left join uccps y on x.noa=y.noa where y.productno=a.productno and x.datea<=a.datea and y.sprice!=0 order by x.datea desc) b
-	
 	update #vccpr_import set sprice = b.sprice
 	from #vccpr_import a
 	outer apply(select top 1 sprice from uccps where productno=a.productno and datea<=a.datea and sprice!=0 order by datea desc) b
@@ -138,10 +134,11 @@ import:--vccpr import
 	from #vccpr_import a
 	left join ucc b on a.productno=b.noa
 	where len(ISNULL(a.productno,''))>0 and CHARINDEX('送達',a.trantype)>0
-	
-	update #vccpr_import set tranmoney=round(a.tranmoney*isnull(b.price,0),0)
+
+	update #vccpr_import set tranmoney=round(a.tranmoney*isnull(c.price,0),0)
 	from #vccpr_import a
-	outer apply(select top 1 * from carp where noa=a.styleno and addrno=a.post)b
+	left join addr2 b on a.post=b.noa
+	outer apply(select top 1 * from carp where noa=a.styleno and addrno=b.p_post)c
 	where len(ISNULL(a.productno,''))>0 and CHARINDEX('送達',a.trantype)>0
 
 	--客戶毛利

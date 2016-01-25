@@ -58,17 +58,26 @@
 			}
 
 			function sum() {
-				var t_unit, t_count, t_moneys,t_weight = 0, t_money= 0;
-				for (var j = 0; j < q_bbsCount; j++) {
-					
-					t_unit = $('#txtUnit_' + j).val().toUpperCase();
-					t_count = t_unit.length==0 || t_unit=='KG' || t_unit=='公斤'?q_float('txtWeight_'+j):q_float('txtMount_'+j); 
-					t_moneys = round(q_mul(q_float('txtPrice_'+j),t_count),0);
-					t_money += t_moneys;
-					$('#txtTotal_'+j).val(t_moneys);
-				}
-				$('#txtMoney').val(t_money);
-				$('#txtTotal').val(t_money);
+				var t_unit, t_price, t_mount, t_weight, t_weights = 0, t_total, t_totals = 0;
+                for (var j = 0; j < q_bbsCount; j++) {
+                	
+                    t_unit = $.trim($('#txtUnit_' + j).val());
+                    t_price = q_float('txtPrice_' + j);
+                    t_mount = q_float('txtMount_' + j);
+                    t_weight = q_float('txtWeight_' + j);
+                    
+                    t_weights = q_add(t_weights, t_weight);
+
+                    if (t_unit == '公斤' || t_unit.toUpperCase() == 'KG' || t_unit.length == 0) {
+                        t_total = round(q_mul(t_price, t_weight), 0);
+                    } else {
+                        t_total = round(q_mul(t_price, t_mount), 0);
+                    }
+                    t_totals = q_add(t_totals, t_total);
+                    $('#txtTotal_' + j).val(t_total);
+                }
+                $('#txtMoney').val(t_totals);
+                $('#txtWeight').val(t_weights);
 				calTax();
 				q_tr('txtTotalus', q_mul(q_float('txtTotal'), q_float('txtFloata')));
 			}
@@ -262,6 +271,19 @@
 						if (q_cur == 4)
 							q_Seek_gtPost();
 						break;
+					default:
+                     	try{
+                     		t_para = JSON.parse(t_name);
+                     		if(t_para.action == 'getWeight'){
+                     			var as = _q_appendData('ucc', '', true);
+                     			if (as[0] != undefined && parseFloat(as[0].uweight)!=0) {
+                     				$('#txtWeight_'+t_para.n).val(round(parseFloat(as[0].uweight)*t_para.mount,3));
+                     			}
+                     			sum();
+                     		}
+                     	}catch(e){
+                     	}
+                     	break;
 				}
 			}
 			
@@ -284,7 +306,7 @@
 						if($('#chkEnda').prop('checked'))
 							$('#chkEnda_'+j).prop('checked','true');
 						if($('#chkCancel').prop('checked'))
-							$('#chkCancel_'+j).prop('checked','true')
+							$('#chkCancel_'+j).prop('checked','true');
 					}
 				}
 
@@ -323,16 +345,31 @@
 				for (var j = 0; j < q_bbsCount; j++) {
 					$('#lblNo_'+j).text(j+1);
 					if (!$('#btnMinus_' + j).hasClass('isAssign')) {
-						$('#txtUnit_' + j).change(function() {
-							sum();
-						});
-						$('#txtMount_' + j).change(function() {
-							sum();
-						});
-						$('#txtWeight_' + j).change(function () {sum();});
-						$('#txtPrice_' + j).change(function() {
-							sum();
-						});
+						$('#txtProductno_' + i).bind('contextmenu', function(e) {
+                            /*滑鼠右鍵*/
+                            e.preventDefault();
+                            var n = $(this).attr('id').replace('txtProductno_', '');
+                            $('#btnProduct_' + n).click();
+                        });
+						$('#txtUnit_' + i).change(function(e){
+                        	sum();
+                        });
+                        $('#txtPrice_' + i).change(function(e){
+                        	sum();
+                        });
+                        $('#txtWeight_' + i).change(function(e){
+                        	sum();
+                        });
+                        $('#txtMount_' + i).focusout(function() {
+                            if (q_cur == 1 || q_cur == 2){
+                            	var n = $(this).attr('id').split('_')[$(this).attr('id').split('_').length - 1];
+                            	t_productno = $.trim($('#txtProductno_'+n).val());
+			                    t_mount = q_float('txtMount_' + n);
+			                    if(t_productno.length>0 && t_mount!=0){
+			                    	q_gt('ucc', "where=^^noa='"+t_productno+"'^^", 0, 0, 0,JSON.stringify({action:"getWeight",n:n,mount:t_mount}));	
+			                    }
+                            }    
+                        });
 						$('#btnVccrecord_' + j).click(function() {
 							t_IdSeq = -1;
 							/// 要先給 才能使用 q_bodyId()

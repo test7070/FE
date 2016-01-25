@@ -331,35 +331,6 @@
                 q_gt('addr', t_where, 0, 0, 0, "GetTranPrice");
             }
 
-            function q_funcPost(t_func, result) {
-                switch(t_func) {
-                	case 'qtxt.query.vccfe_save':
-                		var as = _q_appendData("tmp0", "", true);
-                        if (as[0] != undefined) {
-                        	if(as[0].msg.length>0){
-                        		alert(as[0].msg);
-                        		$('#txtApvname').val(as[0].memo);
-                        		$('#txtApv').val('');
-                        		$('#txtNoa').val(as[0].noa);
-                        		return;
-                        	}else{
-                        		$('#txtApvname').val(as[0].memo);
-                        		$('#txtApv').val(as[0].checker);
-                        		q_gtnoa(q_name, replaceAll(q_getPara('sys.key_vcc') + $('#txtDatea').val(), '/', ''));	
-                        	}
-                        }
-                		break;
-                    default:
-                       /* if (result.substr(0, 5) == '<Data') {
-                            var Asss = _q_appendData('sss', '', true);
-                            var Acar = _q_appendData('car', '', true);
-                            var Acust = _q_appendData('cust', '', true);
-                            alert(Asss[0]['namea'] + '^' + Acar[0]['car'] + '^' + Acust[0]['comp']);
-                        } else
-                            alert(t_func + '\r' + result);*/
-                }
-            }
-
             function q_boxClose(s2) {
 				switch (b_pop) {
 					case 'vcc_orde_fe':
@@ -680,6 +651,12 @@
                             }
                         }
                         _btnModi();
+                        if(r_rank<8){
+		                	$('#btnPlus').attr('disabled','disabled');
+		                	for(var i=0;i<q_bbsCount;i++){
+		                		$('#btnMinus_'+i).attr('disabled','disabled');	
+		                	}
+		                }
                         Unlock(1);
                         $('#txtDatea').focus();
 
@@ -817,12 +794,58 @@
                	for(var i=0;i<q_bbsCount;i++){
                		t_item += (t_item.length>0?'|':'') + $('#txtNoq_'+i).val()+'@'+q_float('txtTotal_'+i);
                	}
-               	if($('#btnModi').data('guid')==undefined){
-               		btnOk_sum(q_bbsCount);
+               	if(q_cur==2){
+               		//修改需檢查金額(金額只可以改大不可以改小，改小要"特別權限")
+               		q_func('qtxt.query.vccfe', 'vccfe.txt,check,'+r_userno+';vccfe;' + $('#btnModi').data('guid')+';'+$('#txtNoa').val()+';'+t_item); 
                	}else{
-               		q_func('qtxt.query.vccfe', 'vccfe.txt,check,vccfe;' + $('#btnModi').data('guid')+';'+t_item); 
+               		btnOk_sum(q_bbsCount);
                	} 
             }
+            function q_funcPost(t_func, result) {
+                switch(t_func) {
+                	case 'qtxt.query.vccfe':
+                		//BBS TEXTBOX全部鎖定
+                		$('#tbbs').children().find('input[type="text"]').attr('disabled','disabled');
+                		var as = _q_appendData("tmp0", "", true);
+                        if (as[0] != undefined) {
+                        	if(as[0].val==1){
+                        		btnOk_sum(q_bbsCount);
+                        	}else{
+                        		alert(as[0].msg);
+                        		return;
+                        	}
+                        }else{
+                    		alert('出貨單檢查異常，無法儲存。');
+                        	return;
+                        }
+                		break;
+                	case 'qtxt.query.vccfe_save':
+                		var as = _q_appendData("tmp0", "", true);
+                        if (as[0] != undefined) {
+                        	if(as[0].msg.length>0){
+                        		alert(as[0].msg);
+                        		$('#txtApvname').val(as[0].memo);
+                        		$('#txtApv').val('');
+                        		$('#txtNoa').val(as[0].noa);
+                        		return;
+                        	}else{
+                        		$('#txtApvname').val(as[0].memo);
+                        		$('#txtApv').val(as[0].checker);
+                        		q_gtnoa(q_name, replaceAll(q_getPara('sys.key_vcc') + $('#txtDatea').val(), '/', ''));	
+                        	}
+                        }
+                		break;
+                    default:
+                       /* if (result.substr(0, 5) == '<Data') {
+                            var Asss = _q_appendData('sss', '', true);
+                            var Acar = _q_appendData('car', '', true);
+                            var Acust = _q_appendData('cust', '', true);
+                            alert(Asss[0]['namea'] + '^' + Acar[0]['car'] + '^' + Acust[0]['comp']);
+                        } else
+                            alert(t_func + '\r' + result);*/
+                }
+            }
+            
             function btnOk_sum(n){
             	if(n==0){
             		sum();
@@ -944,13 +967,13 @@
                             }
                             $(this).val('');
                         });
-                        $('#txtUnit_' + i).changed(function(e){
+                        $('#txtUnit_' + i).change(function(e){
                         	sum();
                         });
-                        $('#txtPrice_' + i).changed(function(e){
+                        $('#txtPrice_' + i).change(function(e){
                         	sum();
                         });
-                        $('#txtWeight_' + i).changed(function(e){
+                        $('#txtWeight_' + i).change(function(e){
                         	sum();
                         });
                         $('#txtMount_' + i).focusout(function() {
@@ -1017,6 +1040,7 @@
                 Lock(1, {
                     opacity : 0
                 });
+                
                 //產生guid,送簽核用
               	$('#btnModi').data('guid',guid());
                 //取得車號下拉式選單

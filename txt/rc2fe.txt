@@ -29,7 +29,7 @@ check:--check
 	)
 	insert into @previous(noq,productno,product,unit,mount,[weight],[money])
 	select noq,productno,product,unit,mount,[weight],[total] 
-	from view_vccs
+	from view_rc2s
 	where noa=@t_noa
 	order by noq
 		
@@ -88,7 +88,7 @@ check:--check
 		select 0 val,'錯誤：資料不一致。' msg
 		return
 	end
-	--檢查金額(金額只可以改大不可以改小，改小要"特別權限")
+	--檢查金額(金額只可以改小不可以改大，改大要"特別權限")
 	declare @t_date nvarchar(20) = dbo.AD2ChineseEraName(getdate())
 	declare @t_time nvarchar(20) = left(CONVERT(nvarchar,getdate(),108),5)
 	declare @number nvarchar(max)
@@ -98,7 +98,7 @@ check:--check
 	declare @noa nvarchar(20) = ''
 	--
 	declare @t_receiver nvarchar(max) = ''
-	declare @t_memo nvarchar(max) = '出貨單號：'+@t_noa
+	declare @t_memo nvarchar(max) = '進貨單號：'+@t_noa
 	declare @productno nvarchar(max)
 	declare @product nvarchar(max)
 	declare @money1 float
@@ -114,7 +114,7 @@ check:--check
 		select 0 val,'簽核已送，尚未核准，請稍後！' msg
 		return
 	end
-	else if exists(select * from @previous a left join @current b on a.noq=b.noq where a.[money]>b.[money])
+	else if exists(select * from @previous a left join @current b on a.noq=b.noq where a.[money]<b.[money])
 	begin
 		select top 1 @noa = case when noa>isnull(@noa,'') then noa else @noa end from [sign] where noa like REPLACE(@t_date,'/','')+'[0-9,A-Z][0-9][0-9]' order by noa desc
 		if LEN(ISNULL(@noa,'')) = 0
@@ -128,7 +128,7 @@ check:--check
 		select a.productno,a.product,a.[money],b.[money]
 		from @previous a 
 		left join @current b on a.noq=b.noq 
-		where a.[money]>b.[money]
+		where a.[money]<b.[money]
 		open cursor_table
 		fetch next from cursor_table
 		into @productno,@product,@money1,@money2
@@ -143,7 +143,7 @@ check:--check
 		deallocate cursor_table
 		
 		begin try
-			select @t_receiver=receiver from signform where noa='vccfe'
+			select @t_receiver=receiver from signform where noa='rc2fe'
 			insert into [sign](noa,datea,timea,form,sender,receiver,zno,memo)
 			select @noa,@t_date,@t_time,@t_form,@t_user,@t_receiver,@t_guid,@t_memo
 			select 0 val,'簽核已送，請稍後！' msg
