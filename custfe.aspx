@@ -111,9 +111,6 @@
 				}
 				
 				bbmMask = [['txtChkdate', r_picd], ['txtDueday', '999'], ['txtStartdate', '99'],['txtGetdate', '99']];
-				if (q_getPara('sys.project').toUpperCase()=='RB'){
-					bbmMask = [['txtChkdate', r_picd], ['txtDueday', '999'], ['txtStartdate', '99'],['txtGetdate', '99'],['txtNoa','AAAA']];
-				}
 				
 				q_mask(bbmMask);
 				q_gt('custtype', '', 0, 0, 0, "custtype");
@@ -130,34 +127,6 @@
 						['txtGrpno', 'lblGrp', 'cust', 'noa,comp', 'txtGrpno,txtGrpname', 'cust_b.aspx']
 					);
 				}
-				if (q_getPara('sys.project').toUpperCase()=='XY'){
-					aPop = new Array(
-						['txtSalesno', 'lblSales', 'sss', 'noa,namea', 'txtSalesno,txtSales', 'sss_b.aspx'],
-						['txtInvestdate', 'lblInvest', 'invest', 'datea,investmemo', 'txtInvestdate,txtInvestmemo', 'invest_b.aspx'],
-						['txtGrpno', 'lblGrp', 'cust', 'noa,comp', 'txtGrpno,txtGrpname', 'cust_b.aspx'],
-						['txtCustno2', 'lblCustno2', 'cust', 'noa,comp', 'txtCustno2,txtCust2', 'cust_b.aspx'],
-						['txtAddr_fact', '', 'view_road', 'memo,zipcode', '0txtAddr_fact,txtZip_fact', 'road_b.aspx'],
-						['txtAddr_fact2', '', 'view_road', 'memo,zipcode', '0txtAddr_fact2,txtZip_fact2', 'road_b.aspx'],
-						['txtAddr_comp', '', 'view_road', 'memo,zipcode', '0txtAddr_comp,txtZip_comp', 'road_b.aspx'],
-						['txtAddr_invo', '', 'view_road', 'memo,zipcode', '0txtAddr_invo,txtZip_invo', 'road_b.aspx'],
-						['txtAddr_home', '', 'view_road', 'memo,zipcode', '0txtAddr_home,txtZip_home', 'road_b.aspx'],
-						['txtXyNoa1', '', 'cust', 'noa,comp', '0txtXyNoa1,txtXyComp1,txtXyComp2', 'cust_b.aspx']
-					);
-				}
-				
-				if (q_getPara('sys.project').toUpperCase()=='YC'){
-					aPop = new Array(
-						['txtSalesno', 'lblSales', 'sss', 'noa,namea', 'txtSalesno,txtSales', 'sss_b.aspx'],
-						['txtInvestdate', 'lblInvest', 'invest', 'datea,investmemo', 'txtInvestdate,txtInvestmemo', 'invest_b.aspx'],
-						['txtGrpno', 'lblGrp', 'cust', 'noa,comp', 'txtGrpno,txtGrpname', 'cust_b.aspx'],
-						['txtCustno2', 'lblCustno2', 'cust', 'noa,comp', 'txtCustno2,txtCust2', 'cust_b.aspx'],
-						['txtZip_fact', '', 'view_road', 'zipcode,memo', '0txtZip_fact,txtAddr_fact', 'road_b.aspx'],
-						['txtZip_fact2', '', 'view_road', 'zipcode,memo', '0txtZip_fact2,txtAddr_fact2', 'road_b.aspx'],
-						['txtZip_comp', '', 'view_road', 'zipcode,memo', '0txtZip_comp,txtAddr_comp', 'road_b.aspx'],
-						['txtZip_invo', '', 'view_road', 'zipcode,memo', '0txtZip_invo,txtAddr_invo', 'road_b.aspx'],
-						['txtZip_home', '', 'view_road', 'zipcode,memo', '0txtZip_home,txtAddr_home', 'road_b.aspx']
-					);
-				}
 				
 				q_cmbParse("combPaytype", q_getPara('vcc.paytype'));
 				q_cmbParse("cmbTrantype", q_getPara('sys.tran'));
@@ -169,16 +138,6 @@
 					$('.btnUcam').show();
 				}
 				$('#btnCustm').hide();//稅務資料
-				if (q_getPara('sys.project').toUpperCase()=='XY' || q_getPara('sys.project').toUpperCase()=='YC'){
-					$('#btnCustm').show();
-				}
-				if (q_getPara('sys.project').toUpperCase()=='VU'){
-					$('#btnCustm').val('工地名稱');
-					$('#btnCustm').show();
-				}
-				if (q_getPara('sys.project').toUpperCase()=='RB'){
-					$('.isRB').show();
-				}
 				
 				$('#btnUcam').click(function() {
 					t_where = "custno='" + $('#txtNoa').val() + "'";
@@ -200,21 +159,12 @@
 						return;
 					} else {
 						t_where = "noa='" + $('#txtNoa').val() + "'";
-						if (q_getPara('sys.project').toUpperCase()=='XY'){
-							q_box("custm_xy.aspx?" + r_userno + ";" + r_name + ";" + q_time + ";" + t_where, 'custm', "600px", "700px", $('#btnCustm').val());
-						}else if (q_getPara('sys.project').toUpperCase()=='VU'){
-							q_box("custm_vu.aspx?" + r_userno + ";" + r_name + ";" + q_time + ";" + t_where, 'custm', "600px", "700px", $('#btnCustm').val());
-						}else{
-							q_box("custm_b.aspx?" + r_userno + ";" + r_name + ";" + q_time + ";" + t_where, 'custm', "600px", "700px", $('#btnCustm').val());
-						}
+						q_box("custm_b.aspx?" + r_userno + ";" + r_name + ";" + q_time + ";" + t_where, 'custm', "600px", "700px", $('#btnCustm').val());
 					}
 				});
 				
 				$('#txtNoa').change(function(e) {
 					$(this).val($.trim($(this).val()).toUpperCase());
-					if (q_getPara('sys.project').toUpperCase()=='RB'){
-						return;//彩虹不判斷後面四碼由電腦產生
-					}
 					if ($(this).val().length > 0){
 						if ((/^(\w+|\w+\u002D\w+)$/g).test($(this).val())) {
 							t_where = "where=^^ noa='" + $(this).val() + "'^^";
@@ -240,51 +190,8 @@
 					var t_where = " noa='"+t_custno+"'";
 					q_box("usecrd.aspx?" + r_userno + ";" + r_name + ";" + q_time + ";" +t_where, JSON.stringify({action:'usecrd',custno:t_custno}), "95%", "95%", q_getMsg('usecrd'));					
 				});
-				
-				$('#txtXyNoa1').click(function(){
-					if (q_cur==1 )
-						q_msg($('#txtXyNoa1'), "請輸入客戶拼音前兩碼或客戶總店編號");
-				});
-				
-				$('#txtXyNoa2').click(function(){
-					if (q_cur==1)
-						q_msg($('#txtXyNoa2'), "請輸入客戶分店編號或流水號(空白)");
-				});
-				
-				$('#txtXyComp1').change(function(){
-					if (q_cur==1 && $('#txtXyNoa1').val().length<=2 && $('#txtXyComp1').val().length>0){
-						//讀羅馬拼音
-						var t_comp=$('#txtXyComp1').val();
-						t_comp=replaceAll(t_comp,"'","");
-						t_comp=replaceAll(t_comp," ","");
-						t_comp=replaceAll(t_comp,".","");
-						t_comp=replaceAll(t_comp,"(","");
-						t_comp=replaceAll(t_comp,"+","");
-						t_comp=replaceAll(t_comp,"-","");
-						t_comp=replaceAll(t_comp,"*","");
-						t_comp=replaceAll(t_comp,"/","");
-						t_comp=replaceAll(t_comp,"~","");
-						t_comp=replaceAll(t_comp,"!","");
-						t_comp=replaceAll(t_comp,"@","");
-						t_comp=replaceAll(t_comp,"#","");
-						t_comp=replaceAll(t_comp,"$","");
-						t_comp=replaceAll(t_comp,"%","");
-						t_comp=replaceAll(t_comp,"^","");
-						t_comp=replaceAll(t_comp,"&","");
-						var t_where = "where=^^ ['"+t_comp +"')  ^^";
-						q_gt('cust_xy', t_where, 0, 0, 0, "XY_cust_getpy", r_accy);
-					}
-				});
-				
-				/*$('#btnTmpcustno_xy').click(function(){
-					xy_newnoa='';
-					//讀羅馬拼音>產生最新編號>最後更換noa
-					var t_where = "where=^^ ['"+$('#txtComp').val() +"')  ^^";
-					q_gt('cust_xy', t_where, 0, 0, 0, "XY_newcust_getpy", r_accy);
-				});*/
 			}
 			
-			var xy_newnoa=''; 
 			function q_boxClose(s2) {
 				var ret;
 				switch (b_pop) {
@@ -342,115 +249,6 @@
 						} else {
 							wrServer($('#txtNoa').val());
 						}
-						break;
-					case 'XY_cust_getpy':
-						var as = _q_appendData("cust", "", true);
-						if(as[0] != undefined){
-							var tmp=as[0].Column1;
-							//排除特殊字元
-							tmp=replaceAll(as[0].Column1,"'","");
-							tmp=replaceAll(as[0].Column1," ","");
-							tmp=replaceAll(as[0].Column1,".","");
-							tmp=replaceAll(as[0].Column1,"(","");
-							tmp=replaceAll(as[0].Column1,"+","");
-							tmp=replaceAll(as[0].Column1,"-","");
-							tmp=replaceAll(as[0].Column1,"*","");
-							tmp=replaceAll(as[0].Column1,"/","");
-							tmp=replaceAll(as[0].Column1,"~","");
-							tmp=replaceAll(as[0].Column1,"!","");
-							tmp=replaceAll(as[0].Column1,"@","");
-							tmp=replaceAll(as[0].Column1,"#","");
-							tmp=replaceAll(as[0].Column1,"$","");
-							tmp=replaceAll(as[0].Column1,"%","");
-							tmp=replaceAll(as[0].Column1,"^","");
-							tmp=replaceAll(as[0].Column1,"&","");
-							
-							if(tmp.length==1)
-								tmp=tmp+'Z';
-							
-							$('#txtXyNoa1').val(tmp.substr(0,2));
-						}
-						break;
-					/*case 'XY_newcust_getpy':
-						var as = _q_appendData("cust", "", true);
-						if(as[0] != undefined){
-							xy_newnoa=as[0].Column1.substr(0,2);
-							//讀取最新的流水號
-							t_where = "where=^^ charindex('" + xy_newnoa + "',noa)=1 and len(noa)<=5 ^^";
-							q_gt('cust', t_where, 0, 0, 0, "XY_newcust_Autonumber", r_accy);
-						}else{
-							alert('轉正式客戶資料錯誤請通知工程師維護!!');
-						}
-						break;
-					case 'XY_newcust_Autonumber':
-						var as = _q_appendData("cust", "", true);
-						if(as[0] != undefined){
-							var noa_seq=('000'+((isNaN(dec(as[as.length-1].noa.slice(-3)))?0:dec(as[as.length-1].noa.slice(-3)))+1)).slice(-3);
-							xy_newnoa=xy_newnoa+noa_seq;
-						}else{
-							xy_newnoa=xy_newnoa+'001';
-						}
-						//更換noa
-						if(!emp($('#txtNoa').val()) && $('#txtNoa').val().substr(0,2)=='##'){
-							var t_paras = $('#txtNoa').val()+ ';'+xy_newnoa;
-							q_func('qtxt.query.change_tmpcustno', 'cust_ucc_xy.txt,change_tmpcustno,' + t_paras);
-							$('#btnTmpcustno_xy').attr('disabled', 'disabled');
-						}
-						break;*/
-					case 'XY_AutoCustno1'://總店流水號 沒有分店
-						var as = _q_appendData("cust", "", true);
-						if(as[0] != undefined){
-							var noa_seq=('000'+((isNaN(dec(as[as.length-1].noa.slice(-3)))?0:dec(as[as.length-1].noa.slice(-3)))+1)).slice(-3);
-							$('#txtXyNoa1').val($('#txtXyNoa1').val()+noa_seq);
-						}else{
-							$('#txtXyNoa1').val($('#txtXyNoa1').val()+'001');
-						}
-						btnOk();
-						break;
-					case 'XY_AutoCustno2'://總店 分店流水號
-						var as = _q_appendData("cust", "", true);
-						if(as[0] != undefined){
-							var noa_seq=('000'+((isNaN(dec(as[as.length-1].noa.slice(-3)))?0:dec(as[as.length-1].noa.slice(-3)))+1)).slice(-3);
-							$('#txtXyNoa1').val($('#txtXyNoa1').val()+noa_seq);
-							$('#txtXyNoa2').val('001');
-						}else{
-							$('#txtXyNoa1').val($('#txtXyNoa1').val()+'001');
-							$('#txtXyNoa2').val('001');
-						}
-						btnOk();
-						break;
-					case 'XY_AutoCustno3'://分店流水號
-						var as = _q_appendData("cust", "", true);
-						if(as[0] != undefined){
-							var noa_seq=('000'+((isNaN(dec(as[as.length-1].noa.slice(-3)))?0:dec(as[as.length-1].noa.slice(-3)))+1)).slice(-3);
-							$('#txtXyNoa2').val(noa_seq);
-						}else{
-							$('#txtXyNoa2').val('001');
-						}
-						btnOk();
-						break;
-					case 'GetMaxCustno_yc':
-						var as = _q_appendData("cust", "", true);
-						if(as[0] != undefined){
-							maxno=isNaN(dec(as[0].noa.slice(-4)))?'0':as[0].noa.slice(-4);
-							maxno=('0000'+(dec(maxno)+1)).slice(-4);
-							$('#txtNoa').val('C'+maxno);
-						}else{
-							$('#txtNoa').val('C0001');
-						}
-						
-						break;
-					case 'RB_AutoCustno':
-						var as = _q_appendData("cust", "", true);
-						if($('#txtNoa').val().length==4){
-							if(as[0] != undefined){
-								var noa_seq=('0000'+((isNaN(dec(as[as.length-1].noa.slice(-4)))?0:dec(as[as.length-1].noa.slice(-4)))+1)).slice(-4);
-								$('#txtNoa').val($('#txtNoa').val()+noa_seq);
-							}else{	
-								$('#txtNoa').val($('#txtNoa').val()+'0001');
-							}
-						}
-						btnOk();
 						break;
 					case q_name:
 						if (q_cur == 4)
@@ -515,38 +313,6 @@
 				
 				$('#txtNoa').focus();
 				refreshBbm();
-				
-				if (q_getPara('sys.project').toUpperCase()=='YC'){
-					t_where = "where=^^ noa=(select MAX(noa) from cust where left(noa,1)='C' ) ^^";
-					q_gt('cust', t_where, 0, 0, 0, "GetMaxCustno_yc", r_accy);
-				}
-				
-				if (q_getPara('sys.project').toUpperCase()=='XY'){
-					var t_noa='',t_comp='',t_comp2='';
-					if($('#txtNoa').val()!=''){
-						t_noa=$('#txtNoa').val();
-						if(t_noa.indexOf('-')>-1 && t_noa.length>5){
-							t_comp=$('#txtComp').val().split('-')[0];
-							if($('#txtComp').val().indexOf('-')>-1)
-								t_comp2=$('#txtComp').val().split('-')[1];	
-							t_noa=t_noa.split('-')[0];
-						}else{
-							t_noa=$('#txtNoa').val();
-							t_comp=$('#txtComp').val();
-						}
-					}
-					
-					$('#txtNoa').val('').hide();
-					$('#txtComp').val('').hide();
-					$('#txtXyNoa1').val(t_noa).show();
-					$('#txtXyNoa2').val('').show();
-					$('#txtXyComp1').val(t_comp).show();
-					$('#txtXyComp2').val(t_comp2).show();
-					$('#lblXyNoa2').val('').show();
-					$('#lblXyComp2').val('').show();
-					$('#txtSalesno').val(r_userno);
-					$('#txtSales').val(r_name);
-				}
 			}
 
 			function btnModi() {
@@ -569,39 +335,6 @@
 			}
 			
 			function btnOk() {
-				if (q_getPara('sys.project').toUpperCase()=='XY' && q_cur==1){
-					if($('#txtXyNoa1').val().length==0){
-						alert('請輸入客戶編號!!');
-						return;
-					}
-					
-					if($('#txtXyNoa1').val().length<5 && $('#txtXyNoa2').val().length==0 && $('#txtXyComp2').val().length==0 ){//總店流水號 沒有分店
-						t_where = "where=^^ charindex('" + $('#txtXyNoa1').val() + "',noa)=1 and len(noa)<=5 ^^";
-						q_gt('cust', t_where, 0, 0, 0, "XY_AutoCustno1", r_accy);
-						return;
-					}else if($('#txtXyNoa1').val().length<5 && $('#txtXyNoa2').val().length==0 && $('#txtXyComp2').val().length>0){//總店 分店流水號
-						t_where = "where=^^ charindex('" + $('#txtXyNoa1').val() + "',noa)=1 and len(noa)<=5^^";
-						q_gt('cust', t_where, 0, 0, 0, "XY_AutoCustno2", r_accy);
-						return;
-					}else if($('#txtXyNoa1').val().length>=5 && $('#txtXyNoa2').val().length==0 && $('#txtXyComp2').val().length>0){//分店流水號
-						t_where = "where=^^ charindex('" + $('#txtXyNoa1').val() + "',noa)=1 and len(noa)>5^^";
-						q_gt('cust', t_where, 0, 0, 0, "XY_AutoCustno3", r_accy);
-						return;
-					}else if($('#txtXyNoa1').val().length>=5 && $('#txtXyNoa2').val().length==0 && $('#txtXyComp2').val().length==0){//只有總店編號
-						$('#txtNoa').val($('#txtXyNoa1').val());
-						$('#txtComp').val($('#txtXyComp1').val());
-					}else if($('#txtXyNoa1').val().length>=5 && $('#txtXyNoa2').val().length>0){//總店與分店編號 都有打
-						$('#txtNoa').val($('#txtXyNoa1').val()+'-'+$('#txtXyNoa2').val());
-						$('#txtComp').val($('#txtXyComp1').val()+'-'+$('#txtXyComp2').val());
-					}
-				}
-				
-				if (q_getPara('sys.project').toUpperCase()=='RB' && $('#txtNoa').val().length==4){
-					//彩虹後面四碼由電腦產生
-					t_where = "where=^^ noa=(select MAX(noa) from cust where charindex('" + $('#txtNoa').val() + "',noa)=1 and len(noa)=8 ) ^^";
-					q_gt('cust', t_where, 0, 0, 0, "RB_AutoCustno", r_accy);
-					return;
-				}
 				
 				Lock();
 				$('#txtNoa').val($.trim($('#txtNoa').val()));
@@ -662,20 +395,6 @@
 			function refresh(recno) {
 				_refresh(recno);
 				refreshBbm();
-				if (q_getPara('sys.comp').indexOf('英特瑞') > -1 || q_getPara('sys.comp').indexOf('安美得') > -1)
-					$('.it').css('text-align', 'left');
-				
-				if (q_getPara('sys.project').toUpperCase()=='XY'){
-					$('.isXY').show();
-					/*if($('#txtNoa').val().substr(0,2)=='##'){
-						$('#btnTmpcustno_xy').show();
-					}else{
-						$('#btnTmpcustno_xy').hide();
-					}*/
-				}else{
-					$('.isXY').hide();
-					//$('#btnTmpcustno_xy').hide();
-				}
 				
 				if (q_getPara('sys.project').toUpperCase()=='FE'){
 					$('.isFE').show();
@@ -690,55 +409,20 @@
 				} else {
 					$('#txtNoa').css('color', 'green').css('background', 'RGB(237,237,237)').attr('readonly', 'readonly');
 				}
-				
-				if (q_getPara('sys.project').toUpperCase()=='XY'){
-					if (q_cur == 1) {
-						$('#txtNoa').hide();
-						$('#txtComp').hide();
-						$('#txtXyNoa1').show();
-						$('#txtXyNoa2').show();
-						$('#txtXyComp1').show();
-						$('#txtXyComp2').show();
-						$('#lblXyNoa2').show();
-						$('#lblXyComp2').show();
-					}else{
-						$('#txtNoa').show();
-						$('#txtComp').show();
-						$('#txtXyNoa1').hide();
-						$('#txtXyNoa2').hide();
-						$('#txtXyComp1').hide();
-						$('#txtXyComp2').hide();
-						$('#lblXyNoa2').hide();
-						$('#lblXyComp2').hide();
-					}
-				}
 			}
 
-			var vccitopen = true;
-			var xyopen = true;
 			function readonly(t_para, empty) {
 				_readonly(t_para, empty);
 				refreshBbm();
-				if (vccitopen && t_para && window.parent.q_name == 'vcc' && (q_getPara('sys.comp').indexOf('英特瑞') > -1 || q_getPara('sys.comp').indexOf('安美得') > -1)) {
-					btnIns();
-					vccitopen = false;
-					$('#txtNoa').val(window.parent.post_custno);
-				}
-				if (xyopen && t_para && (window.parent.q_name == 'quat' || window.parent.q_name == 'orde') && q_getPara('sys.project').toUpperCase()=='XY' && window.parent.q_cur==1) {
-					btnIns();
-					xyopen = false;
-				}
 				if(t_para){
 					$('#btnConn').removeAttr('disabled');
 					$('#btnCustm').removeAttr('disabled');
-					//$('#btnTmpcustno_xy').removeAttr('disabled');
 					//$('#btnUsecrd').attr('disabled', 'disabled');
 					
 					
 				}else{
 					$('#btnConn').attr('disabled', 'disabled');
 					$('#btnCustm').attr('disabled', 'disabled');
-					//$('#btnTmpcustno_xy').attr('disabled', 'disabled');	
 					//$('#btnUsecrd').removeAttr('disabled');
 				}
 				
@@ -796,49 +480,8 @@
 				_btnCancel();
 			}
 
-			function returnparent() {
-				if (window.parent.q_name == 'vcc' && (q_getPara('sys.comp').indexOf('英特瑞') > -1 || q_getPara('sys.comp').indexOf('安美得') > -1) && (window.parent.q_cur==1 || window.parent.q_cur==2)) {
-					var wParent = window.parent.document;
-					wParent.getElementById("txtCustno").value = $('#txtNoa').val();
-					wParent.getElementById("txtComp").value = $('#txtComp').val();
-					wParent.getElementById("txtPaytype").value = $('#txtPaytype').val();
-					wParent.getElementById("txtTel").value = $('#txtTel').val();
-					wParent.getElementById("txtFax").value = $('#txtFax').val();
-					wParent.getElementById("cmbTrantype").value = $('#cmbTrantype').val();
-					wParent.getElementById("txtZipcode").value = $('#txtZip_comp').val();
-					wParent.getElementById("txtAddr").value = $('#txtAddr_comp').val();
-					wParent.getElementById("txtSalesno").value = $('#txtSalesno').val();
-					wParent.getElementById("txtSales").value = $('#txtSales').val();
-					wParent.getElementById("txtSalesno2").value = $('#txtSalesno').val();
-					wParent.getElementById("txtSales2").value = $('#txtSales').val();
-				}
-				if ((window.parent.q_name == 'quat' || window.parent.q_name == 'orde' ) && (q_getPara('sys.project').toUpperCase()=='XY' || q_getPara('sys.project').toUpperCase()=='RB') && window.parent.q_cur==1) {
-					var wParent = window.parent.document;
-					wParent.getElementById("txtCustno").value = $('#txtNoa').val();
-					wParent.getElementById("txtComp").value = $('#txtComp').val();
-					wParent.getElementById("txtNick").value = $('#txtNick').val();
-					wParent.getElementById("txtPaytype").value = $('#txtPaytype').val();
-					wParent.getElementById("txtTel").value = $('#txtTel').val();
-					wParent.getElementById("txtFax").value = $('#txtFax').val();
-					wParent.getElementById("cmbTrantype").value = $('#cmbTrantype').val();
-					wParent.getElementById("txtPost").value = $('#txtZip_comp').val();
-					wParent.getElementById("txtAddr").value = $('#txtAddr_comp').val();
-					wParent.getElementById("txtSalesno").value = $('#txtSalesno').val();
-					wParent.getElementById("txtSales").value = $('#txtSales').val();
-				}
-			}
-			
 			function q_funcPost(t_func, result) {
                 switch(t_func) {
-                	/*case 'qtxt.query.change_tmpcustno':
-                		$('#btnTmpcustno_xy').removeAttr('disabled');
-						alert('已轉正式客戶!!。');
-						var s2=[];
-						s2[0]=q_name + '_s';
-						s2[1]="where=^^ noa='"+xy_newnoa+"' ^^"
-						q_boxClose2(s2);
-						xy_newnoa='';
-						break;*/
 				}
 			}
 		</script>
@@ -962,7 +605,7 @@
 			}
 		</style>
 	</head>
-	<body onunload='returnparent()' ondragstart="return false" draggable="false"
+	<body ondragstart="return false" draggable="false"
 	ondragenter="event.dataTransfer.dropEffect='none'; event.stopPropagation(); event.preventDefault();"
 	ondragover="event.dataTransfer.dropEffect='none';event.stopPropagation(); event.preventDefault();"
 	ondrop="event.dataTransfer.dropEffect='none';event.stopPropagation(); event.preventDefault();"
@@ -987,12 +630,7 @@
 				<table class="tbbm" id="tbbm" border="0" cellpadding='2' cellspacing='5'>
 					<tr>
 						<td><span> </span><a id='lblNoa' class="lbl"> </a></td>
-						<td>
-							<input id="txtNoa" type="text" class="txt c1"/>
-							<input id="txtXyNoa1" type="text" class="txt c6" style="width:60px;display:none;"/>
-							<a id='lblXyNoa2' class="lbl" style="display:none;float: left;"> 分店<span> </span></a>
-							<input id="txtXyNoa2" type="text" class="txt c6" style="width:40px;display:none;"/>
-						</td>
+						<td><input id="txtNoa" type="text" class="txt c1"/></td>
 						<td><span> </span><a id='lblSerial' class="lbl"> </a></td>
 						<td><input id="txtSerial" type="text" class="txt c1"/></td>
 						<td>
@@ -1010,12 +648,7 @@
 					</tr>
 					<tr>
 						<td><span> </span><a id='lblComp' class="lbl"> </a></td>
-						<td colspan='3'>
-							<input id="txtComp" type="text" class="txt c7"/>
-							<input id="txtXyComp1" type="text" class="txt c6" style="display:none;"/>
-							<a id='lblXyComp2' class="lbl" style="display:none;float: left;">　分店<span> </span></a>
-							<input id="txtXyComp2" type="text" class="txt c2" style="display:none;"/>
-						</td>
+						<td colspan='3'><input id="txtComp" type="text" class="txt c7"/></td>
 						<td><span> </span><a id='lblNick' class="lbl"> </a></td>
 						<td><input id="txtNick" type="text" class="txt c1"/></td>
 					</tr>
@@ -1027,7 +660,6 @@
 						<td colspan="2">
 							<input id="btnConn" type="button" />
 							<input id="btnCustm" type="button" />
-							<!--<input id="btnTmpcustno_xy" type="button" value="轉正式客戶" style="display: none;"/>-->
 						</td>						
 					</tr>
 					<tr>
@@ -1035,15 +667,8 @@
 						<td><select id="cmbTypea" class="txt c1"> </select></td>
 						<td><span> </span><a id='lblStatus' class="lbl"> </a></td>
 						<td><select id="cmbStatus" class="txt c1"> </select></td>
-						<td>
-							<span> </span><a id='lblProfit' class="lbl isFE"> </a>
-							<a id="lblCustno2" class="lbl isXY isRB btn" style="display: none;">收款客戶</a>
-						</td>
-						<td>
-							<input id="txtProfit" type="text" class="txt c1 num isFE"/>
-							<input id="txtCustno2" type="text" class="txt c6 isXY isRB" style="display: none;"/>
-							<input id="txtCust2" type="text" class="txt c6 isXY isRB" style="display: none;"/>
-						</td>
+						<td><span> </span><a id='lblProfit' class="lbl isFE"> </a></td>
+						<td><input id="txtProfit" type="text" class="txt c1 num isFE"/></td>
 					</tr>
 					<tr>
 						<td><span> </span><a id="lblGrp" class="lbl btn"> </a></td>
