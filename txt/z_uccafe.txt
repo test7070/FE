@@ -358,6 +358,9 @@ z_uccafe01:--z_uccafe01 銷售分析表(業務)
 		,productno,product,unit,mount,[weight],price,sprice,sprice2
 	from @tmpa
 			
+	update @tmp set recno=b.recno
+	from @tmp a
+	outer apply (select recno from @tmp where a.accy=accy and a.vccno=vccno and gno='2') b
 	
 	insert into @tmp(gno,salesno,sales,total,tranmoney1,tranmoney2,tranmoney3,spricemoney,wcost,inte,profit)
 	select '4',CHAR(255),''
