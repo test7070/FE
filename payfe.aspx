@@ -34,7 +34,7 @@
 		    aPop = new Array(
             ['txtTggno', 'lblTgg', 'tgg', 'noa,comp', 'txtTggno,txtComp', 'tgg_b.aspx'],
              ['txtAcc1_', '', 'acc', 'acc1,acc2', 'txtAcc1_,txtAcc2_,txtMoney_', "acc_b.aspx?" + r_userno + ";" + r_name + ";" + q_time + "; ;" + r_accy + '_' + r_cno],
-             ['txtBankno_', 'btnBank_', 'bank', 'noa,bank', 'txtBankno_,txtBank_', 'bank_b.aspx'],
+             ['txtBankno_', 'btnBank_', 'bank', 'noa,bank,account', 'txtBankno_,txtBank_,txtAccount_', 'bank_b.aspx'],
              ['txtUmmaccno_', '', 'payacc', 'noa,typea', 'txtUmmaccno_,txtTypea_', 'payacc_b.aspx'],
              ['txtPartno', 'lblPart', 'part', 'noa,part', 'txtPartno,txtPart', 'part_b.aspx']);
 			
@@ -1267,10 +1267,10 @@
 					</td>
 					<td align="center" style="width:1%;"> </td>
 					<td align="center" style="width:6%;"><a id='lblAcc1'> </a><br><a id='lblAcc2'> </a></td>
-					<td align="center" style="width:8%;"><a id='lblMoney'> </a><br><a id='lblAccmemo'> </a></td>
+					<td align="center" style="width:7%;"><a id='lblMoney'> </a><br><a id='lblAccmemo'> </a></td>
 					<td align="center" style="width:4%;"><a id='lblPaycs'> </a><br><a id='lblIndate'> </a></td>
-					<td align="center" style="width:8%;"><a id='lblCheckno'> </a><br><a id='lblAccount_s'> </a><br><a id='lblGqbtitle'> </a></td>
-					<td align="center" style="width:5%;"><a id='lblBankno'> </a><br><a id='lblBank'> </a></td>
+					<td align="center" style="width:8%;"><a id='lblCheckno'> </a><br><a id='lblGqbtitle'> </a></td>
+					<td align="center" style="width:6%;"><a id='lblBankno'> </a><br><a id='lblBank'> </a><br><a id='lblAccount_s'> </a></td>
 					<td align="center" style="width:3%;"><a id='lblChgsTran'> </a><br><a id='lblPart_s'> </a></td>
 					<td align="center" style="width:5%;"><a id='lblMemos'> </a></td>
 					<td align="center" style="width:4%;"><a id='lblPaysales'> </a></td>
@@ -1300,12 +1300,12 @@
 					</td>
 					<td>
 						<input type="text" id="txtCheckno.*"  style="width:95%;" />
-						<input type="text" id="txtAccount.*"  style="width:95%;" />
 						<input type="text" id="txtTitle.*"  style="width:95%;" />
 					</td>
 					<td>
                         <input type="text" id="txtBankno.*"  style="width:95%; float:left;" title="點擊滑鼠右鍵，列出明細。"/>
 						<input type="text" id="txtBank.*"  style="width:95%; float:left;"/>
+						<input type="text" id="txtAccount.*"  style="width:95%;" />
 						<input type="button" id="btnBank.*"  style=" display:none;"/>
 					</td>
 					<td>
