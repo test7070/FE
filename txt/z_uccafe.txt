@@ -219,28 +219,37 @@ z_uccafe01:--z_uccafe01 銷售分析表(業務)
 	declare @t_esalesno nvarchar(20) = case when '#non' = [4] then CHAR(255) else [4] end
 	-----------------------------------------------------------------
 	declare @tmpa table(
-		salesno nvarchar(20),
-		sales nvarchar(20),
-		accy nvarchar(20),
-		vccno nvarchar(20),
-		vccnoq nvarchar(10),
-		typea nvarchar(10),
-		datea nvarchar(20),
-		custno nvarchar(20),
-		cust nvarchar(50),
+		salesno nvarchar(20)
+		,sales nvarchar(20)
+		,accy nvarchar(20)
+		,vccno nvarchar(20)
+		,vccnoq nvarchar(10)
+		,typea nvarchar(10)
+		,datea nvarchar(20)
+		,custno nvarchar(20)
+		,cust nvarchar(50)
 		
-		total float,
-		tranmoney1 float,
-		tranmoney2 float,
-		tranmoney3 float,
+		,total float
+		,tranmoney1 float
+		,tranmoney2 float
+		,tranmoney3 float
 		
-		spricemoney float,
-		wcost float,
-		inte float,
-		profit float
+		,spricemoney float
+		,wcost float
+		,inte float
+		,profit float
+		,productno nvarchar(30)
+		,product nvarchar(50)
+		,unit nvarchar(20)
+		,mount float
+		,[weight] float
+		,price float
+		,sprice float
+		,sprice2 float
 	)
 	insert into @tmpa(salesno,sales,accy,vccno,vccnoq,typea,datea,total,tranmoney1,tranmoney2,tranmoney3,spricemoney,wcost
-		,custno,cust)
+		,custno,cust
+		,productno,product,unit,mount,[weight],price,sprice,sprice2)
 	select a.salesno,c.namea,a.accy,a.noa,b.noq,isnull(a.typea,''),a.datea
 		,b.total --* case when isnull(a.typea,'')='1' then 1 else -1 end
 		,b.tranmoney --* case when isnull(a.typea,'')='1' then 1 else -1 end
@@ -249,6 +258,7 @@ z_uccafe01:--z_uccafe01 銷售分析表(業務)
 		,round(case when ISNULL(b.sprice2,0)>0 then b.sprice2 else b.sprice end*case when UPPER(b.unit)='KG' or len(ISNULL(b.unit,''))=0 then b.[weight] else b.mount end,0)--* case when isnull(a.typea,'')='1' then 1 else -1 end
 		,round(ISNULL(b.wcost,0)*case when UPPER(b.unit)='KG' or len(ISNULL(b.unit,''))=0 then b.[weight] else b.mount end,0)--* case when isnull(a.typea,'')='1' then 1 else -1 end
 		,a.custno,d.nick
+		,b.productno,b.product,b.unit,b.mount,b.[weight],b.price,b.sprice,b.sprice2
 	from view_vcc a
 	left join view_vccs b on a.accy=b.accy and a.noa=b.noa
 	left join sss c on a.salesno=c.noa
@@ -269,7 +279,8 @@ z_uccafe01:--z_uccafe01 銷售分析表(業務)
 		sel int identity(1,1)
 		,rr int
 		,gno nvarchar(10)
-		,recno int
+		,recno int --出貨單
+		,recno2 int --出貨單明細 
 		,salesno nvarchar(20)
 		,sales nvarchar(20)
 		,total float
@@ -284,6 +295,15 @@ z_uccafe01:--z_uccafe01 銷售分析表(業務)
 		,accy nvarchar(20)
 		,vccno nvarchar(20)
 		,cust nvarchar(50)
+		
+		,productno nvarchar(30)
+		,product nvarchar(50)
+		,unit nvarchar(20)
+		,mount float
+		,[weight] float
+		,price float
+		,sprice float
+		,sprice2 float
 	)
 	insert into @tmp(recno,gno,salesno,sales,total,tranmoney1,tranmoney2,tranmoney3,spricemoney,wcost,inte,profit)
 	select 0,'1',salesno,sales
@@ -302,9 +322,10 @@ z_uccafe01:--z_uccafe01 銷售分析表(業務)
 	from @tmp a
 	left join (select sel,ROW_NUMBER()over(order by salesno) recno from @tmp ) b on a.sel=b.sel
 	
-	insert into @tmp(recno,gno,salesno,sales,total,tranmoney1,tranmoney2,tranmoney3,spricemoney,wcost,inte,profit
+	--出貨單
+	insert into @tmp(recno,recno2,gno,salesno,sales,total,tranmoney1,tranmoney2,tranmoney3,spricemoney,wcost,inte,profit
 		,datea,accy,vccno,cust)
-	select ROW_NUMBER()over(partition by salesno order by datea,accy,vccno)
+	select ROW_NUMBER()over(partition by salesno order by datea,accy,vccno),0
 		,'2',salesno,sales
 		,SUM(case when typea='1' then 1 else -1 end*isnull(total,0)) total
 		,SUM(case when typea='1' then 1 else -1 end*isnull(tranmoney1,0)) tranmoney1
@@ -317,10 +338,29 @@ z_uccafe01:--z_uccafe01 銷售分析表(業務)
 		,datea,accy,vccno,cust
 	from @tmpa
 	group by salesno,sales,datea,accy,vccno,cust
-
+	--出貨單明細 
+	insert into @tmp(recno,recno2,gno,salesno,sales
+		,total,tranmoney1,tranmoney2,tranmoney3,spricemoney,wcost,inte,profit
+		,datea,accy,vccno,cust
+		,productno,product,unit,mount,[weight],price,sprice,sprice2)
+	select ROW_NUMBER()over(partition by salesno order by datea,accy,vccno)
+		,ROW_NUMBER()over(partition by accy,vccno order by vccnoq)
+		,'3',salesno,sales
+		,case when typea='1' then 1 else -1 end*isnull(total,0) total
+		,case when typea='1' then 1 else -1 end*isnull(tranmoney1,0) tranmoney1
+		,case when typea='1' then 1 else -1 end*isnull(tranmoney2,0) tranmoney2
+		,case when typea='1' then 1 else -1 end*isnull(tranmoney3,0) tranmoney3
+		,case when typea='1' then 1 else -1 end*isnull(spricemoney,0) spricemoney
+		,case when typea='1' then 1 else -1 end*isnull(wcost,0) wcost
+		,case when typea='1' then 1 else -1 end*isnull(inte,0) inte
+		,case when typea='1' then 1 else -1 end*isnull(profit,0) profit
+		,datea,accy,vccno,cust
+		,productno,product,unit,mount,[weight],price,sprice,sprice2
+	from @tmpa
+			
 	
 	insert into @tmp(gno,salesno,sales,total,tranmoney1,tranmoney2,tranmoney3,spricemoney,wcost,inte,profit)
-	select '3',CHAR(255),''
+	select '4',CHAR(255),''
 		,SUM(case when typea='1' then 1 else -1 end*isnull(total,0)) total
 		,SUM(case when typea='1' then 1 else -1 end*isnull(tranmoney1,0)) tranmoney1
 		,SUM(case when typea='1' then 1 else -1 end*isnull(tranmoney2,0)) tranmoney2
@@ -330,7 +370,6 @@ z_uccafe01:--z_uccafe01 銷售分析表(業務)
 		,SUM(case when typea='1' then 1 else -1 end*isnull(inte,0)) inte
 		,SUM(case when typea='1' then 1 else -1 end*isnull(profit,0)) profit
 	from @tmpa
-
 	select * 
 		,"<a href="+CHAR(34)+"JavaScript:q_box('vccfe.aspx',' "+char(59)+"noa="+vccno+char(59)+accy+"','95%','95%','"+accy+"')"+CHAR(34)+">"+vccno+"</a>" xvccno
 		,salesno a01
@@ -342,4 +381,20 @@ z_uccafe01:--z_uccafe01 銷售分析表(業務)
 		,dbo.getComma(wcost,0) a07
 		,dbo.getComma(inte,0) a08
 		,dbo.getComma(profit,0) a09
-	from @tmp order by salesno,recno;
+		
+		,productno b01
+		,product b02
+		,unit b03
+		,dbo.getComma(mount,-1) b04
+		,dbo.getComma([weight],-1) b05
+		,dbo.getComma(price,-1) b06
+		,dbo.getComma(sprice,-1) b07
+		,dbo.getComma(sprice2,-1) b08
+		,dbo.getComma(total,0) b09
+		,dbo.getComma(tranmoney1,0) b10
+		,dbo.getComma(isnull(tranmoney2,0)+isnull(tranmoney3,0),0) b11
+		,dbo.getComma(spricemoney,0) b12
+		,dbo.getComma(wcost,0) b13
+		,dbo.getComma(inte,0) b14
+		,dbo.getComma(profit,0) b15
+	from @tmp order by salesno,recno,recno2;
