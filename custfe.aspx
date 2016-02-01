@@ -102,7 +102,7 @@
 				}
 				
 				if (q_getPara('sys.project').toUpperCase()=='FE'){
-					q_readonly = ['txtCredit','txtWorker', 'txtKdate', 'txtSales', 'txtGrpname', 'txtUacc1', 'txtUacc2', 'txtUacc3','txtCust2'];
+					q_readonly = ['txtCredit','txtWorker', 'txtKdate', 'txtSales', 'txtGrpname', 'txtCust2'];
 					$('#lblConn').css("display","");
 					$('#txtConn').css("display","");
 					$('#lblConn').text("接洽人");					
