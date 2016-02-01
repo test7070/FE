@@ -2,7 +2,12 @@ import:--uccp import
 	declare @t_datea nvarchar(10) = [1]
 	declare @t_bdate nvarchar(10) = [2]
 	declare @t_edate nvarchar(10) = [3]
+	declare @t_bproductno nvarchar(30) = [4]
+	declare @t_eproductno nvarchar(30) = [5]
 	---------------------------------------------------------------------------------------
+	set @t_edate = case when len(@t_edate)=0 then CHAR(255) else @t_edate end
+	set @t_eproductno = case when len(@t_eproductno)=0 then CHAR(255) else @t_eproductno end
+	
 	declare @tmp table(
 		productno nvarchar(20)
 	)
@@ -11,6 +16,7 @@ import:--uccp import
 	from view_vccs a 
 	left join view_vcc b on a.accy=b.accy and a.noa=b.noa
 	where ISNULL(b.datea,'') between @t_bdate and @t_edate
+	and ISNULL(a.productno,'') between @t_bproductno and @t_eproductno
 	and len(ISNULL(ltrim(rtrim(a.productno)),''))>0 
 	group by ISNULL(ltrim(rtrim(a.productno)),'')
 	insert into @tmp(productno)
@@ -18,6 +24,7 @@ import:--uccp import
 	from view_rc2s a 
 	left join view_rc2 b on a.accy=b.accy and a.noa=b.noa
 	where ISNULL(b.datea,'') between @t_bdate and @t_edate
+	and ISNULL(a.productno,'') between @t_bproductno and @t_eproductno
 	and len(ISNULL(ltrim(rtrim(a.productno)),''))>0 
 	group by ISNULL(ltrim(rtrim(a.productno)),'')
 	

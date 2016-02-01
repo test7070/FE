@@ -29,7 +29,9 @@
             brwKey = 'Noa';
             q_desc = 1;
             brwCount2 = 5;
-            aPop = new Array(['txtProductno_', 'btnProductno_', 'ucc', 'noa,product', 'txtProductno_,txtProduct_', 'ucc_b.aspx']);
+            aPop = new Array(['txtProductno_', 'btnProductno_', 'ucc', 'noa,product', 'txtProductno_,txtProduct_', 'ucc_b.aspx']
+            	,['txtBproductno', 'btnBproductno', 'ucc', 'noa,product', 'txtBproductno', 'ucc_b.aspx']
+            	,['txtEproductno', 'btnEproductno', 'ucc', 'noa,product', 'txtEproductno', 'ucc_b.aspx']);
             $(document).ready(function() {
                 bbmKey = ['noa'];
                 bbsKey = ['noa', 'noq'];
@@ -51,10 +53,28 @@
                 $('#txtBdate').datepicker();
                 $('#txtEdate').datepicker();
                 
+                $('#txtBproductno').bind('contextmenu', function(e) {
+					/*滑鼠右鍵*/
+					e.preventDefault();
+					if(!(q_cur==1 || q_cur==2))
+						return;
+					$('#btnBproductno').click();
+				});
+				$('#txtEproductno').bind('contextmenu', function(e) {
+					/*滑鼠右鍵*/
+					e.preventDefault();
+					if(!(q_cur==1 || q_cur==2))
+						return;
+					$('#btnEproductno').click();
+				});
+						
                 $('#btnImport').click(function(e){
-                	var t_date = $('#txtDatea').val();
-                	var t_bdate = $('#txtBdate').val();
-                	var t_edate = $('#txtEdate').val();
+                	var t_date = $.trim($('#txtDatea').val());
+                	var t_bdate = $.trim($('#txtBdate').val());
+                	var t_edate = $.trim($('#txtEdate').val());
+                	var t_bproductno = $.trim($('#txtBproductno').val());
+                	var t_eproductno = $.trim($('#txtEproductno').val());
+                	
                 	if(t_date.length==0){
                 		alert('請輸入基價日期。');
                 		return;
@@ -66,7 +86,7 @@
                 	Lock(1, {
 	                    opacity : 0
 	                });
-                	q_func('qtxt.query.uccp', 'uccp.txt,import,' + encodeURI(t_date) + ';' + encodeURI(t_bdate) + ';' + encodeURI(t_edate)); 	
+                	q_func('qtxt.query.uccp', 'uccp.txt,import,' + encodeURI(t_date) + ';' + encodeURI(t_bdate) + ';' + encodeURI(t_edate)+ ';' + encodeURI(t_bproductno)+ ';' + encodeURI(t_eproductno)); 	
                 });
             }
             function q_funcPost(t_func, result) {
@@ -132,6 +152,8 @@
                         $('#txtProductno_' + j).bind('contextmenu', function(e) {
 							/*滑鼠右鍵*/
 							e.preventDefault();
+							if(!(q_cur==1 || q_cur==2))
+								return;
 							var n = $(this).attr('id').replace('txtProductno_', '');
 							$('#btnProductno_'+n).click();
 						});
@@ -375,6 +397,16 @@
                     <tr>
                     	<td><span> </span><a id="lblDatea" class="lbl">基價日期</a></td>
                         <td><input id="txtDatea" type="text" class="txt c1"/></td>
+                    </tr>
+                    <tr>
+                    	<td><span> </span><a id="lblEdate" class="lbl">物品區間</a></td>
+                        <td colspan="2">
+                        	<input id="txtBproductno" type="text" class="txt" style="width:40%;"/>
+                        	<input id='btnBproductno' type='button' style='display:none'/>
+                        	<span style="display:block;width:25px;float:left;">～</span>
+                        	<input id="txtEproductno" type="text" class="txt" style="width:40%;"/>
+                       		<input id='btnEproductno' type='button' style='display:none'/>
+                        </td>
                     </tr>
                     <tr>
                     	<td><span> </span><a id="lblEdate" class="lbl">庫存運算區間</a></td>
