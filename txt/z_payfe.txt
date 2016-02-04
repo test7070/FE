@@ -296,7 +296,7 @@ z_payfe03:--z_payfe03
 		,case when recno=1 then noa else '' end a03
 		,case when recno=1 then dbo.getComma([money],0) else '' end a04
 		,case when recno=1 then dbo.getComma([tax],0) else '' end a04_1
-		,product a05
+		,replace(product,'~#$',"'") a05
 		,unit a06
 		,dbo.getComma([mount],-1) a07
 		,dbo.getComma([weight],-1) a07_1
