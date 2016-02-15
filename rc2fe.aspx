@@ -574,6 +574,11 @@
                             var n = replaceAll($(this).attr('id'), 'btnRecord_', '');
                             q_box("z_rc2record.aspx?" + r_userno + ";" + r_name + ";" + q_time + ";tgg=" + $('#txtTggno').val() + "&product=" + $('#txtProductno_' + n).val() + ";" + r_accy, 'z_vccstp', "95%", "95%", q_getMsg('popPrint'));
                         });
+                        
+                        $('#btnRecord2_' + j).click(function() {
+                            var n = replaceAll($(this).attr('id'), 'btnRecord2_', '');
+                            q_box("rc2tfe.aspx?" + r_userno + ";" + r_name + ";" + q_time + ";rc2no='" + $('#txtNoa').val() + "' and rc2noq='" + $('#txtNoq_' + n).val() + "';" + r_accy, 'rc2tfe', "95%", "95%", q_getMsg('popPrint'));
+                        });
                     }
                 }
                 _bbsAssign();
@@ -1105,6 +1110,7 @@
                     <td align="center" style="width:180px;"><a id='lblMemos'> </a></td>
                     <td align="center" style="width:40px;"><a id='lblRecord_s'> </a></td>
                     <td align="center" style="width:150px;"><a id='lblUno2s'> </a></td>
+                    <td align="center" style="width:50px;"><a>客戶<BR>出貨</a></td>
                 </tr>
                 <tr style='background:#cad3ff;'>
                     <td>
@@ -1151,6 +1157,9 @@
                         <input class="btn" id="btnRecord.*" type="button" value='.' style=" font-weight: bold;" />
                     </td>
                     <td><input id="txtUno2.*" type="text" class="txt c1"/></td>
+                    <td align="center">
+                        <input class="btn" id="btnRecord2.*" type="button" value='.' style=" font-weight: bold;" />
+                    </td>
                 </tr>
             </table>
         </div>
