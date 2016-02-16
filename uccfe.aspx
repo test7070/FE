@@ -30,7 +30,7 @@
             brwCount2 = 10;
            	aPop = new Array(['txtTggno', 'lblTggno', 'tgg', 'noa,comp', 'txtTggno,txtTgg', 'tgg_b.aspx']);
            	
-           	t_groupano = "";
+           	t_groupano = "",t_groupbno = "";
            	q_copy = 1;
             $(document).ready(function() {
                 q_bbsShow = -1;
@@ -53,9 +53,13 @@
                 q_mask(bbmMask);
                 if(t_groupano.length>0)
                 	q_cmbParse("cmbGroupano", t_groupano);
-				if (abbm[q_recno] != undefined) {
+				if (abbm[q_recno] != undefined) 
 					$("#cmbGroupano").val(abbm[q_recno].groupano);
-				}
+				if(t_groupbno.length>0)
+                	q_cmbParse("cmbGroupbno", t_groupbno);
+				if (abbm[q_recno] != undefined) 
+					$("#cmbGroupbno").val(abbm[q_recno].groupbno);
+					
                 $('#btnImport').click(function(e){
                 	
                 });
@@ -79,6 +83,16 @@
 								t_groupano = t_groupano + (t_groupano.length > 0 ? ',' : '') + as[i].noa + '@' + as[i].noa+' . '+as[i].namea;
 							}
 						}
+						q_gt('uccgb', '', 0, 0, 0, "");
+						break;
+					case 'uccgb':
+						var as = _q_appendData("uccgb", "", true);
+						if (as[0] != undefined) {
+							t_groupbno = " @ ";
+							for ( i = 0; i < as.length; i++) {
+								t_groupbno = t_groupbno + (t_groupbno.length > 0 ? ',' : '') + as[i].noa + '@' + as[i].noa+' . '+as[i].namea;
+							}
+						}
 						q_gt(q_name, q_content, q_sqlCount, 1, 0, '', r_accy);
 						break;
                     case q_name:
@@ -99,7 +113,7 @@
                 if($.trim($('#txtNoa').val()).length==0){
                 	alert('請輸入物品編號。');
                 	Unlock(1);
-                	return
+                	return;
                 }
                 
                /* if ($('#txtDatea').val().length == 0 || !q_cd($('#txtDatea').val())) {
