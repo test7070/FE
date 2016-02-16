@@ -21,9 +21,9 @@
 			q_desc = 1;
 			q_tables = 's';
 			var q_name = "orde";
-			var q_readonly = ['txtNoa', 'txtWorker', 'txtWorker2', 'txtComp', 'txtAcomp', 'txtMoney', 'txtTax', 'txtTotal', 'txtTotalus', 'txtSales', 'txtOrdbno', 'txtOrdcno'];
+			var q_readonly = ['txtNoa', 'txtWorker', 'txtWorker2', 'txtComp', 'txtAcomp', 'txtMoney', 'txtTax', 'txtTotal', 'txtTotalus', 'txtSales', 'txtOrdbno', 'txtOrdcno', 'txtWeight'];
 			var q_readonlys = ['txtTotal', 'txtQuatno', 'txtNo2', 'txtNo3', 'txtC1', 'txtNotv'];
-			var bbmNum = [['txtTotal', 10, 0, 1], ['txtMoney', 10, 0, 1], ['txtTax', 10, 0, 1],['txtFloata', 10, 5, 1], ['txtTotalus', 15, 2, 1]];
+			var bbmNum = [['txtTotal', 10, 0, 1],['txtWeight', 10, 2, 1], ['txtMoney', 10, 0, 1], ['txtTax', 10, 0, 1],['txtFloata', 10, 5, 1], ['txtTotalus', 15, 2, 1]];
 			var bbsNum = [];
 			var bbmMask = [];
 			var bbsMask = [];
@@ -547,6 +547,11 @@
 			function btnOk_sum(n){
             	if(n==0){
             		sum();
+            		var t_weight=0;
+            		for(var i=0;i<q_bbsCount;i++){
+            			t_weight+=q_float('txtWeight_'+i);
+            		}
+            		$('#txtWeight').val(t_weight);
             		q_func('qtxt.query.credit', 'credit.txt,fe,'+ encodeURI($('#txtCustno').val()) + ';' + encodeURI($('#txtNoa').val()));
             	}else{
             		n--;
@@ -1203,14 +1208,15 @@
 			<div class='dbbm'>
 				<table class="tbbm" id="tbbm" style="width: 872px;">
 					<tr class="tr1" style="height: 0px">
-						<td class="td1" style="width: 108px;"></td>
-						<td class="td2" style="width: 108px;"></td>
-						<td class="td3" style="width: 108px;"></td>
-						<td class="td4" style="width: 108px;"></td>
-						<td class="td5" style="width: 108px;"></td>
-						<td class="td6" style="width: 108px;"></td>
-						<td class="td7" style="width: 108px;"></td>
-						<td class="td7" style="width: 108px;"></td>
+						<td class="td1" style="width: 10%;"></td>
+						<td class="td2" style="width: 10%;"></td>
+						<td class="td3" style="width: 10%;"></td>
+						<td class="td4" style="width: 10%;"></td>
+						<td class="td5" style="width: 10%;"></td>
+						<td class="td6" style="width: 10%;"></td>
+						<td class="td7" style="width: 10%;"></td>
+						<td class="td8" style="width: 10%;"></td>
+						<td class="tdZ" style="width: 1%;"></td>
 					</tr>
 					<tr class="tr1">
 						<td class="td1"><span> </span><a id='lblOdate' class="lbl"> </a></td>
@@ -1330,6 +1336,8 @@
 						<td><span> </span><a class="lbl">接單日期</a></td>
 						<td><input id="txtGdate" type="text" class="txt c1"/></td>
 						<td><input id="txtGtime" type="text" class="txt c1"/></td>
+						<td><span> </span><a class="lbl">總重量</a></td>
+						<td><input id="txtWeight" type="text" class="txt c1 num"/></td>
 					</tr>
 				</table>
 			</div>
