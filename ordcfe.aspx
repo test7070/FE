@@ -271,6 +271,7 @@
                 $('#txtDatea').val(q_date());
                 $('#txtOdate').val(q_date());
                 $('#txtDatea').focus();
+                $('#chkIsproj').prop('checked',true);
 			}
 
 			function btnModi() {
