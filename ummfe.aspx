@@ -560,6 +560,10 @@
                 //先檢查BBS沒問題才存檔      
                 checkGqb_bbs(q_bbsCount-1);
             }
+            var guid = (function() {
+				function s4() {return Math.floor((1 + Math.random()) * 0x10000).toString(16).substring(1);}
+				return function() {return s4() + s4() + '-' + s4() + '-' + s4() + '-' +s4() + '-' + s4() + s4() + s4();};
+			})();
 			function checkGqb_bbs(n){
             	if(n<0){
             		for (var i = 0; i < q_bbsCount; i++) {
@@ -580,14 +584,18 @@
 		            }else if(q_cur ==2){
 		            	$('#txtWorker2').val(r_name);
 		            }else{
-		            	alert("error: btnok!")
+		            	alert("error: btnok!");
 		            }
-            		var t_noa = trim($('#txtNoa').val());
-	                var t_date = trim($('#txtDatea').val());
-	                if (t_noa.length == 0 || t_noa == "AUTO")
-	                    q_gtnoa(q_name, replaceAll(q_getPara('sys.key_umm') + (t_date.length == 0 ? q_date() : t_date), '/', ''));
-	                else
-	                    wrServer(t_noa);
+		            //檢查票期
+		            var t_item = '';
+	               	for(var i=0;i<q_bbsCount;i++){
+	               		t_item += (t_item.length>0?'|':'') + $('#txtCheckno_'+i).val()+'@'+$('#txtIndate_'+i).val();
+	               		if(q_float('txtPaysale_'+i)!=0)
+	               			t_item += '@'+$('#txtCustno_'+i).val()+'@'+$('#txtPaymon_'+i).val();
+	               		else
+	               			t_item += '@@';
+	               	}
+		            q_func('qtxt.query.ummfe', 'ummfe.txt,check,'+r_userno+';ummfe;' + $('#btnOk').data('guid')+';'+t_item); 
             	}else{
             		if($.trim($('#txtCheckno_'+n).val()).length>0 && $('#txtAcc1_'+n).val().substring(0,4)=='1121' && q_float('txtMoney_'+n)<0){
             			//收退  ,1121 , 金額負
@@ -602,6 +610,34 @@
             		}
             	}
             }
+            function q_funcPost(t_func, result) {
+                switch(t_func) {
+                	case 'qtxt.query.ummfe':
+                		var as = _q_appendData("tmp0", "", true);
+                        if (as[0] != undefined) {
+                        	if(as[0].val==1){
+                        		var t_noa = trim($('#txtNoa').val());
+				                var t_date = trim($('#txtDatea').val());
+				                if (t_noa.length == 0 || t_noa == "AUTO")
+				                    q_gtnoa(q_name, replaceAll(q_getPara('sys.key_umm') + (t_date.length == 0 ? q_date() : t_date), '/', ''));
+				                else
+				                    wrServer(t_noa);
+                        	}else{
+                        		alert(as[0].msg);
+                        		Unlock(1);
+                        		return;
+                        	}
+                        }else{
+                    		alert('檢查異常，無法儲存。');
+                    		Unlock(1);
+                        	return;
+                        }
+                		break;
+                    default:
+                       break;
+                }
+            }
+            
             function _btnSeek() {
                 if (q_cur > 0 && q_cur < 4)// 1-3
                     return;
@@ -773,6 +809,9 @@
                 
                 $('#cmbCno').val(r_cno);
                 $('#txtAcomp').val(r_comp);
+                
+                //產生guid,送簽核用
+               $('#btnOk').data('guid',guid());
             }
 
             function btnModi() {
@@ -781,6 +820,9 @@
                 if (q_chkClose())
              		return;
                Lock(1,{opacity:0});
+               //產生guid,送簽核用
+               $('#btnOk').data('guid',guid());
+              	
                checkGqbStatus_btnModi(q_bbsCount-1);
             }
             
