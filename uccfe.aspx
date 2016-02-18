@@ -428,6 +428,12 @@
 						<td><select id="cmbGroupano" class="txt c1"></select></td>
                     </tr>
                     <tr>
+                    	<td> </td>
+                        <td> </td>
+                        <td><span> </span><a id='lblGroupbno' class="lbl">中類群組</a></td>
+						<td><select id="cmbGroupbno" class="txt c1"></select></td>
+                    </tr>
+                    <tr>
 						<td><span> </span><a id='lblTggno' class="lbl btn"> </a></td>
 						<td><input id="txtTggno" type="text" class="txt c1"/></td>
 						<td colspan='3'><input id="txtTgg"	type="text" class="txt c1" style="width: 95%;"></td>
