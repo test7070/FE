@@ -1,6 +1,7 @@
 import:--rc2t import 
 	declare @rc2no nvarchar(20) = [1]
 	declare @rc2noq nvarchar(10) = [2]
+	declare @custno nvarchar(max) = [3]
 	--------------------------------------------------------------
 	declare @productno nvarchar(50) = ''
 	declare @datea nvarchar(20) = ''
@@ -31,5 +32,6 @@ import:--rc2t import
 	where a.productno=@productno
 	and b.datea>=@datea
 	and (d.noa is null or (d.rc2no=@rc2no and d.rc2noq=@rc2noq))
+	and (len(@custno)=0 or CHARINDEX('~'+b.custno+'~','~'+@custno+'~')>0)
 	order by b.custno,a.noa,a.noq
 	select * from @tmp;

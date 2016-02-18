@@ -30,7 +30,7 @@
             brwList = [];
             brwNowPage = 0;
             brwKey = 'datea';
-            aPop = new Array();
+            aPop = new Array(['txtCustno', 'lblCust', 'cust', 'noa,comp', '0txtCustno', 'cust_b.aspx']);
             $(document).ready(function() {
                 bbmKey = ['noa'];
                 bbsKey = ['noa', 'noq'];
@@ -63,6 +63,7 @@
              	$('#btnImport').click(function(e){
              		var t_rc2no = $.trim($('#txtRc2no').val());
                 	var t_rc2noq = $.trim($('#txtRc2noq').val());
+                	var t_custno = $.trim($('#txtCustno').val()).replace(',','~');
                 	if(t_rc2no.length==0 || t_rc2noq.length==0){
                 		alert('請輸入進貨單號。');
                 		return;
@@ -70,7 +71,7 @@
                 	Lock(1, {
 	                    opacity : 0
 	                });
-                	q_func('qtxt.query.rc2t', 'rc2t.txt,import,' + encodeURI(t_rc2no) + ';' + encodeURI(t_rc2noq)); 	
+                	q_func('qtxt.query.rc2t', 'rc2t.txt,import,' + encodeURI(t_rc2no) + ';' + encodeURI(t_rc2noq)+ ';' + encodeURI(t_custno)); 	
              	});
             }
 
