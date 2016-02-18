@@ -118,6 +118,7 @@ check:--check
 	declare @product nvarchar(max)
 	declare @money1 float
 	declare @money2 float
+	declare @cust nvarchar(50)
 	
 	if exists(select * from [sign] where zno=@t_guid and LTRIM(RTRIM(isnull(enda,'')))='Y')
 	begin
@@ -139,7 +140,11 @@ check:--check
 		set @mm = substring(@sign,floor(@nn/100)+1,1)
 		set @noa =  REPLACE(@t_date,'/','')+@mm+RIGHT('00'+cast(@nn as nvarchar),2)
 		
-		set @t_memo = '到期日不可大於 '+@bdate
+		select @custno='',@cust=''
+		select @custno=custno from @item  where len(ltrim(rtrim(paytype)))>0 and len(custno)>0
+		select @cust=nick from cust where noa=@custno
+		
+		set @t_memo = isnull(@custno,'')+' '+isnull(@cust,'')+ '  到期日不可大於 '+@bdate
 
 		begin try
 			select @t_receiver=receiver from signform where noa='ummfe'

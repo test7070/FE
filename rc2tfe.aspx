@@ -437,7 +437,10 @@
                         	<input id="txtRc2no" type="text" class="txt" style="width:70%;"/>
                         	<input id="txtRc2noq" type="text" class="txt" style="width:25%;"/>
                     	</td>
-                    	<td> </td>
+                    	<td><span> </span><a id='lblCustno' class="lbl">客戶編號</a></td>
+                        <td>
+                        	<input id="txtCustno" type="text" class="txt c1"/>
+                        </td>
                     	<td><input type="button" id="btnImport" value="匯入" /></td>
                     </tr>
                 </table>
