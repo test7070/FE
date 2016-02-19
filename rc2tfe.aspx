@@ -413,12 +413,14 @@
                     <tr>
                         <td align="center" style="width:5%"><a id='vewChk'> </a></td>
                         <td align="center" style="width:20%"><a id='vewDatea'>日期</a></td>
-                        <td align="center" style="width:25%"><a id='vewUno'>批號</a></td>
+                        <td align="center" style="width:25%"><a id='vewRc2no'>進貨單號</a></td>
+                        <td align="center" style="width:5%"><a id='vewRc2noq'>序</a></td>
                     </tr>
                     <tr>
                         <td><input id="chkBrow.*" type="checkbox" style=''/></td>
                         <td align="center" id='datea'>~datea</td>
-                        <td align="center" id='uno'>~uno</td>
+                        <td align="center" id='rc2no'>~rc2no</td>
+                        <td align="center" id='rc2noq'>~rc2noq</td>
                     </tr>
                 </table>
             </div>

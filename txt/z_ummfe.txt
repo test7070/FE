@@ -663,12 +663,13 @@ z_ummfe03:--z_ummfe03
 		insert into @tmp(gno,cno,custno,datea,typea,[money])
 		select '13',@cno,@custno,CHAR(255),'應收總計',@a05
 		--支票請開
-		select @money=0
-		select @money=sum(isnull([money],0)*case when typea='稅' then 1 else -1 end) 
+		select @money=0,@tax=0
+		select @money=sum(isnull([moneys],0)*case when typea='稅' then 1 else -1 end) 
+			,@tax=sum(isnull([tax],0))
 		from @tmp 
 		where (typea='稅' or typea='折') 
 		and cno=@cno and custno=@custno
-		if @money!=0
+		if @money!=0 and @tax!=0
 		begin
 			select @string=''
 			select @string=acomp from acomp where noa=@cno
@@ -676,12 +677,14 @@ z_ummfe03:--z_ummfe03
 			select '14',@cno,@custno,CHAR(255),'支票請開：'+@string+'　＄'+dbo.getComma(@money,0) 
 			set @endcount = @endcount + 1
 		end
-	
-		if isnull(@a01,0)-isnull(@money,0)>50
+		else
 		begin
-			insert into @tmp(gno,cno,custno,datea,memo)
-			select '14',@cno,@custno,CHAR(255),'支票請不開抬頭：　＄'+dbo.getComma(isnull(@a01,0)-isnull(@money,0),0)
-			set @endcount = @endcount + 1
+			if isnull(@a01,0)-isnull(@money,0)>50
+			begin
+				insert into @tmp(gno,cno,custno,datea,memo)
+				select '14',@cno,@custno,CHAR(255),'支票請不開抬頭：　＄'+dbo.getComma(isnull(@a01,0)-isnull(@money,0),0)
+				set @endcount = @endcount + 1
+			end
 		end
 		
 		--到期日
