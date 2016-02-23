@@ -76,7 +76,7 @@
             }
 
             function sum() {
-                var t_unit, t_price, t_mount, t_weight, t_weights = 0, t_total, t_totals = 0;
+                var t_unit, t_price, t_mount, t_weight, t_weights = 0, t_total, t_totals = 0,t_tranmoney=0;
                 for (var j = 0; j < q_bbsCount; j++) {
                 	
                     t_unit = $.trim($('#txtUnit_' + j).val());
@@ -93,17 +93,17 @@
                     }
                     t_totals = q_add(t_totals, t_total);
                     $('#txtTotal_' + j).val(t_total);
+                    
+                    t_tranmoney = q_add(t_tranmoney,q_float('txtTranmoney_' + j));
                 }
                 $('#txtMoney').val(t_totals);
                 $('#txtWeight').val(t_weights);
                 var price = dec($('#txtPrice').val());
-                var total = 0;
                 var transtyle = $.trim($('#cmbTranstyle').val());
                 if (transtyle == '4' || transtyle == '9') {
                     price = 0;
                 }
-                total = price;
-                q_tr('txtTranmoney', total);
+                q_tr('txtTranmoney', t_tranmoney);
                 calTax();
                 q_tr('txtTotalus', round(q_mul(q_float('txtTotal'), q_float('txtFloata')), 0));
             }
@@ -803,6 +803,11 @@
             }
             function q_funcPost(t_func, result) {
                 switch(t_func) {
+                	case 'qtxt.query.vcc_tranmoney':
+                		var as = _q_appendData("tmp0", "", true);
+                        if (as[0] != undefined) {
+                        }else{}
+                		break;
                 	case 'qtxt.query.vccfe':
                 		//BBS TEXTBOX全部鎖定
                 		$('#tbbs').children().find('input[type="text"]').attr('disabled','disabled');
@@ -970,6 +975,9 @@
                         $('#txtUnit_' + i).change(function(e){
                         	sum();
                         });
+                        $('#txtTranmoney_' + i).change(function(e){
+                        	sum();
+                        });
                         $('#txtPrice_' + i).change(function(e){
                         	sum();
                         });
@@ -1094,8 +1102,7 @@
 
             function q_stPost() {
                 if (q_cur == 1 || q_cur == 2) {
-                    var s2 = xmlString.split(';');
-                    abbm[q_recno]['accno'] = s2[0];
+                    q_func('qtxt.query.vcc_tranmoney', 'vccfe.txt,vcc_tranmoney,'+$('#txtNoa').val()); 
                 }
             }
 

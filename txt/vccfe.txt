@@ -1,3 +1,100 @@
+vcc_tranmoney:--vccfe.txt	 vcc_tranmoney
+	SET QUOTED_IDENTIFIER OFF
+	declare @cmd nvarchar(max)
+	declare @t_noa nvarchar(max) = [1]
+	----------------------------------------------------------------------------------------------------
+	IF OBJECT_ID('tempdb..#vcc_tranmoney')is not null
+	BEGIN
+		drop table #vcc_tranmoney
+	END
+	create  table #vcc_tranmoney(
+		accy nvarchar(10)
+		,noa nvarchar(20)
+		,noq nvarchar(10)
+		,productno nvarchar(20)
+		,mount float
+		,[weight] float
+		,sprice float
+		,sprice2 float
+		,unit nvarchar(20)
+		,styleno nvarchar(20)
+		,tranmoney float
+		,transtartno nvarchar(20)
+		,trantype nvarchar(50)
+	)
+	insert into #vcc_tranmoney(accy,noa,noq,productno,mount,[weight],sprice,sprice2,unit
+		,tranmoney,transtartno,trantype)
+	select a.accy,a.noa,a.noq,a.productno,a.mount,a.[weight],a.sprice,a.sprice2,a.unit
+		,0,b.transtartno,b.trantype
+	from view_vccs a
+	left join view_vcc b on a.accy=b.accy and a.noa=b.noa
+	where a.noa=@t_noa
+	
+	--運費
+	update #vcc_tranmoney set styleno =isnull(b.styleno,'') 
+		,tranmoney=case when b.styleno between 'A' and 'H' then a.mount*b.uweight 
+		when b.styleno between 'I' and 'NZ' then a.mount*case when a.sprice2>0 then a.sprice2 else a.sprice end
+		when b.styleno between 'O' and 'TZ' or b.styleno between '0' and '9Z' then case when a.sprice2>0 then a.sprice2 else a.sprice end * case when upper(a.unit)='KG' or len(ISNULL(a.unit,''))=0 then a.[weight] else a.mount end
+		when b.styleno between 'U' and 'ZZ' then a.[weight]
+		end	
+	from #vcc_tranmoney a
+	left join ucc b on a.productno=b.noa
+	where len(ISNULL(a.productno,''))>0
+	and CHARINDEX('送達',a.trantype)>0
+	
+	update #vcc_tranmoney set tranmoney=round(a.tranmoney*isnull(c.price,0),0)
+	from #vcc_tranmoney a
+	left join addr2 b on a.transtartno=b.noa
+	outer apply(select top 1 * from carp where noa=a.styleno and addrno=b.p_post)c
+	
+	--update
+	declare @accy nvarchar(20)
+	declare @tranmoney float
+	
+	DECLARE @chk tinyint = 0
+	Begin Transaction [Trans_Name]
+	
+	
+	declare cursor_table cursor for
+	select accy from #vcc_tranmoney group by accy
+	open cursor_table
+	fetch next from cursor_table
+	into @accy
+	while(@@FETCH_STATUS <> -1)
+	begin		
+		select @tranmoney =0
+		select @tranmoney=SUM(ISNULL(tranmoney,0)) from #vcc_tranmoney where accy=@accy
+		
+		set @cmd = "update vcc"+@accy+" set tranmoney=@tranmoney where noa=@t_noa"
+		execute sp_executesql @cmd,N'@t_noa nvarchar(20),@tranmoney float',@t_noa=@t_noa,@tranmoney=@tranmoney
+		IF @@Error <> 0 BEGIN SET @chk = 1 END
+		
+		set @cmd = "update vccs"+@accy+" set tranmoney=isnull(b.tranmoney,0)
+		from vccs"+@accy+" a
+		left join #vcc_tranmoney b on a.noa=b.noa and a.noq=b.noq
+		where b.accy=@accy and b.noa is not null"	
+		execute sp_executesql @cmd,N'@accy nvarchar(20)',@accy=@accy
+		IF @@Error <> 0 BEGIN SET @chk = 1 END
+		
+		fetch next from cursor_table
+		into @accy
+	end
+	close cursor_table
+	deallocate cursor_table;
+	
+	IF @chk <> 0 BEGIN -- 若是新增資料發生錯誤
+		Rollback Transaction [Trans_Name] -- 復原所有操作所造成的變更
+	END
+	ELSE BEGIN
+		Commit Transaction [Trans_Name] -- 提交所有操作所造成的變更
+	END
+		
+	drop table #vcc_tranmoney
+	
+	declare @tmp table(msg nvarchar(max))
+	insert into @tmp(noa)values('done!')
+	select * from @tmp;
+
 check:--check
 	declare @t_userno nvarchar(max) = [1]
 	declare @t_form nvarchar(max) = [2]
