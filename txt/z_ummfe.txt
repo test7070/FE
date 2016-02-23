@@ -962,7 +962,15 @@ declare @b2mon nvarchar(max) = LEFT(dbo.AD2ChineseEraName(CONVERT(char, DATEADD(
 		insert into @tmp(gno,rec)
 		select '4',rec   from @tmp where rec % 40 = 0 and rec != @max
 	end
-
+	
+	if @t_bsssno=@t_esssno
+	begin
+		update @tmp set salesno=b.salesno,sales=b.sales
+		from @tmp a
+		outer apply (select top 1 salesno,sales from @tmp where gno='2') b
+		where gno='1'
+	end
+	
 	select 
 		gno,rec,custno,nick,salesno,sales,unpaydata,
 		dbo.getComma(unpay  ,0)mny1,
