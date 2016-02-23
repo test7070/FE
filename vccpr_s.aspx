@@ -14,10 +14,10 @@
         <script src="css/jquery/ui/jquery.ui.datepicker_tw.js"> </script>
         <script type="text/javascript">
             var q_name = "vccpr_s";
-            aPop = new Array(['txtCustno', 'lblCust', 'cust', 'noa,nick', 'txtCustno', 'cust_b.aspx'],
-            ['txtDriverno', 'lblDriver', 'driver', 'noa,namea', 'txtDriverno', 'driver_b.aspx'], 
-            ['txtStraddrno', 'lblStraddr', 'addr', 'noa,addr', 'txtStraddrno', 'addr_b.aspx'],
-            ['txtCarno', 'lblCarno', 'car2', 'a.noa,driverno,driver', 'txtCarno', 'car2_b.aspx']);
+            aPop = new Array(['txtCustno', 'lblCust', 'cust', 'noa,nick', 'txtCustno', 'cust_b.aspx']
+            ,['txtDriverno', 'lblDriver', 'driver', 'noa,namea', 'txtDriverno', 'driver_b.aspx']
+            //,['txtCarno', 'lblCarno', 'car2', 'a.noa,driverno,driver', 'txtCarno', 'car2_b.aspx']
+            );
             $(document).ready(function() {
                 main();
             });
@@ -34,60 +34,32 @@
                 bbmMask = [['txtBdate', r_picd], ['txtEdate', r_picd],['txtBtrandate', r_picd], ['txtEtrandate', r_picd]
                 	,['txtProductno_', 'btnProduct_', 'ucc', 'noa,product', 'txtProductno_,txtProduct_', 'ucc_b.aspx']];
                 q_mask(bbmMask);
-                //q_gt('carteam', '', 0, 0, 0, "");
-                //q_gt('calctype2', '', 0, 0, 0, "calctypes");
+                
                 $('#txtBdate').datepicker();
                 $('#txtEdate').datepicker(); 
-                $('#txtBtrandate').datepicker();
-                $('#txtEtrandate').datepicker(); 
                 $('#txtNoa').focus();
             }
 
             function q_gtPost(t_name) {
                 switch (t_name) {
-                    case 'carteam':
-                        var t_carteam = '@全部';
-                        var as = _q_appendData("carteam", "", true);
-                        for ( i = 0; i < as.length; i++) {
-                            t_carteam += (t_carteam.length > 0 ? ',' : '') + as[i].noa + '@' + as[i].team;
-                        }
-                        q_cmbParse("cmbCarteam", t_carteam);
-                        break;
-                    case 'calctypes':
-                        var as = _q_appendData("calctypes", "", true);
-                        var t_item = '@全部';
-                        var item = new Array();
-                        for ( i = 0; i < as.length; i++) {
-                            t_item = t_item + (t_item.length > 0 ? ',' : '') + as[i].noa + as[i].noq + '@' + as[i].typea;
-                        }
-                        q_cmbParse("cmbCalctype", t_item);
-                        break;
                 }
             }
 
             function q_seekStr() {
                 t_noa = $.trim($('#txtNoa').val());
-                t_datea = $.trim($('#txDatea').val());
-                t_noa = $.trim($('#txtNoa').val());
-                
-                
-                t_ucheckno = $('#txtCheckno').val(),
-                t_productno = $('#txtProductno').val()
-                t_product = $('#txtProduct').val()
-                
+                t_bdate = $.trim($('#txtBdate').val());
+                t_edate = $.trim($('#txtEdate').val());
+                t_custno = $.trim($('#txtCustno').val());
+                t_vccno = $.trim($('#txtVccno').val());
                 
                 var t_where = " 1=1 " 
                 + q_sqlPara2("noa", t_noa) 
                 + q_sqlPara2("datea", t_bdate, t_edate) 
-                + q_sqlPara2("driverno", t_driverno) 
-                + q_sqlPara2("custno", t_custno) 
-                + q_sqlPara2("carno", t_carno);
-                
-                
-                
-               if (t_productno.length>0)
-                    t_where += " and exists(select noa from fixas where fixas.noa=fixa.noa and patindex('%" + t_productno + "%',fixas.productno)>0)";
-  
+                + q_sqlPara2("custno", t_custno);
+				
+				if(t_vccno.length>0)
+                    t_where += " and exists(select noa from vccprs where vccprs.noa=vccpr.noa and vccprs.vccno='"+t_vccno+"')";
+                    
                 t_where = ' where=^^' + t_where + '^^ ';
                 return t_where;
             }
@@ -109,13 +81,13 @@
         <div style='width:400px; text-align:center;padding:15px;' >
             <table id="seek"  border="1"   cellpadding='3' cellspacing='2' style='width:100%;' >
                 <tr class='seek_tr'>
-                    <td class='seek'  style="width:20%;"><a id='lblNoa'></a></td>
+                    <td class='seek'  style="width:20%;"><a id='lblNoa'>單據編號</a></td>
                     <td>
                     <input class="txt" id="txtNoa" type="text" style="width:215px; font-size:medium;" />
                     </td>
                 </tr>
                 <tr class='seek_tr'>
-                    <td   style="width:35%;" ><a id='lblDatea'></a></td>
+                    <td   style="width:35%;" ><a id='lblDatea'>日期</a></td>
                     <td style="width:65%;  ">
                     <input class="txt" id="txtBdate" type="text" style="width:90px; font-size:medium;" />
                     <span style="display:inline-block; vertical-align:middle">&sim;</span>
@@ -123,35 +95,15 @@
                     </td>
                 </tr>
                 <tr class='seek_tr'>
-                    <td   style="width:35%;" ><a id='lblTrandate'></a></td>
-                    <td style="width:65%;  ">
-                    <input class="txt" id="txtBtrandate" type="text" style="width:90px; font-size:medium;" />
-                    <span style="display:inline-block; vertical-align:middle">&sim;</span>
-                    <input class="txt" id="txtEtrandate" type="text" style="width:93px; font-size:medium;" />
-                    </td>
-                </tr>
-                <tr class='seek_tr'>
-                    <td class='seek'  style="width:20%;"><a id='lblCarno'></a></td>
-                    <td>
-                    <input class="txt" id="txtCarno" type="text" style="width:215px; font-size:medium;" />
-                    </td>
-                </tr>
-                <tr class='seek_tr'>
-                    <td class='seek'  style="width:20%;"><a id='lblDriverno'></a></td>
-                    <td>
-                    <input class="txt" id="txtDriverno" type="text" style="width:215px; font-size:medium;" />
-                    </td>
-                </tr>
-                <tr class='seek_tr'>
-                    <td class='seek'  style="width:20%;"><a id='lblDriver'></a></td>
-                    <td>
-                    <input class="txt" id="txtDriver" type="text" style="width:215px; font-size:medium;" />
-                    </td>
-                </tr>
-                <tr class='seek_tr'>
-                    <td class='seek'  style="width:20%;"><a id='lblCustno'></a></td>
+                    <td class='seek'  style="width:20%;"><a id='lblCustno'>客戶編號</a></td>
                     <td>
                     <input class="txt" id="txtCustno" type="text" style="width:215px; font-size:medium;" />
+                    </td>
+                </tr>
+                <tr class='seek_tr'>
+                    <td class='seek'  style="width:20%;"><a id='lblVccno'>出貨單號</a></td>
+                    <td>
+                    <input class="txt" id="txtVccno" type="text" style="width:215px; font-size:medium;" />
                     </td>
                 </tr>
             </table>
