@@ -1,3 +1,23 @@
+getPrice:--vccfe.txt getPrice 找上一次出貨單價 	
+	declare @t_noa nvarchar(max) = [1]
+	declare @t_bdate nvarchar(max) = [2]
+	declare @t_productno nvarchar(max) = [3]
+	--------------------------------------
+	declare @price float = 0
+	
+	select @price=max(a.price)
+	from view_vccs a
+	left join view_vcc b on a.accy=b.accy and a.noa=b.noa
+	where a.productno=@t_productno 
+	and b.datea<=@t_bdate
+	and a.noa!=@t_noa
+	
+	declare @tmp table(
+		price float
+	)
+	insert into @tmp(price)values(@price)
+	select * from @tmp;
+	
 vcc_tranmoney:--vccfe.txt	 vcc_tranmoney
 	SET QUOTED_IDENTIFIER OFF
 	declare @cmd nvarchar(max)

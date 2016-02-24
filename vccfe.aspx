@@ -789,18 +789,33 @@
                     $('#txtWorker').val(r_name);
                 else
                     $('#txtWorker2').val(r_name);
-               	
-               	var t_item = '';
-               	for(var i=0;i<q_bbsCount;i++){
-               		t_item += (t_item.length>0?'|':'') + $('#txtNoq_'+i).val()+'@'+q_float('txtTotal_'+i);
-               	}
-               	if(q_cur==2){
-               		//修改需檢查金額(金額只可以改大不可以改小，改小要"特別權限")
-               		q_func('qtxt.query.vccfe', 'vccfe.txt,check,'+r_userno+';vccfe;' + $('#btnModi').data('guid')+';'+$('#txtNoa').val()+';'+t_item); 
-               	}else{
-               		btnOk_sum(q_bbsCount);
-               	} 
+               	chkPrice(0);
             }
+            function chkPrice(n){
+            	
+            	//如果是有產品編號的東西    出貨單價如無打 應該要自動跳最高單價
+            	if(n>=q_bbsCount){
+            		var t_item = '';
+	               	for(var i=0;i<q_bbsCount;i++){
+	               		t_item += (t_item.length>0?'|':'') + $('#txtNoq_'+i).val()+'@'+q_float('txtTotal_'+i);
+	               	}
+	               	if(q_cur==2){
+	               		//修改需檢查金額(金額只可以改大不可以改小，改小要"特別權限")
+	               		q_func('qtxt.query.vccfe', 'vccfe.txt,check,'+r_userno+';vccfe;' + $('#btnModi').data('guid')+';'+$('#txtNoa').val()+';'+t_item); 
+	               	}else{
+	               		btnOk_sum(q_bbsCount);
+	               	} 	
+            	}else if($.trim($('#txtProductno_'+n).val()).length>0 && q_float('txtPrice_'+n)==0){
+            		t_noa = $.trim($('#txtNoa').val());
+            		t_datea = $.trim($('#txtDatea').val());
+            		t_productno = $.trim($('#txtProductno_'+n).val());
+            		
+            		q_func('qtxt.query.vccfe_'+n, 'vccfe.txt,getPrice,'+t_noa+';'+t_datea+';' + t_productno); 
+            	}else{
+            		chkPrice(n+1);
+            	}
+            }
+            
             function q_funcPost(t_func, result) {
                 switch(t_func) {
                 	case 'qtxt.query.vcc_tranmoney':
@@ -841,13 +856,19 @@
                         }
                 		break;
                     default:
-                       /* if (result.substr(0, 5) == '<Data') {
-                            var Asss = _q_appendData('sss', '', true);
-                            var Acar = _q_appendData('car', '', true);
-                            var Acust = _q_appendData('cust', '', true);
-                            alert(Asss[0]['namea'] + '^' + Acar[0]['car'] + '^' + Acust[0]['comp']);
-                        } else
-                            alert(t_func + '\r' + result);*/
+                    	try{
+                    		if(t_func.substring(0,17)=='qtxt.query.vccfe_'){
+	                    		var n = parseInt(t_func.substring(17,t_func.length));
+	                    		var as = _q_appendData("tmp0", "", true);
+	                    		if (as[0] != undefined) {
+	                    			$('#txtPrice_'+n).val(as[0].price);
+	                    		}
+	                    		chkPrice(n+1);
+	                    	}
+                    	}catch(e){
+                    		
+                    	}
+                    	break;
                 }
             }
             
