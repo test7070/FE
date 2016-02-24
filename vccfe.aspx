@@ -807,6 +807,7 @@
 	               	} 	
             	}else if($.trim($('#txtProductno_'+n).val()).length>0 && q_float('txtPrice_'+n)==0){
             		t_noa = $.trim($('#txtNoa').val());
+            		t_noa = t_noa.length==0?'AUTO':t_noa;
             		t_datea = $.trim($('#txtDatea').val());
             		t_productno = $.trim($('#txtProductno_'+n).val());
             		
