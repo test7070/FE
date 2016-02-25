@@ -37,7 +37,7 @@
 			brwNowPage = 0;
 			brwKey = 'Datea';
 			aPop = new Array(
-				['txtProductno_', 'btnProduct_', 'ucaucc', 'noa,product,unit,spec', 'txtProductno_,txtProduct_,txtUnit_,txtSpec_', 'ucaucc_b.aspx'],
+				['txtProductno_', 'btnProduct_', 'ucaucc', 'noa,product,unit', 'txtProductno_,txtProduct_,txtUnit_', 'ucaucc_b.aspx'],
 				['txtCustno', 'lblCust', 'cust', 'noa,comp,nick,paytype,trantype,tel,fax,zip_comp,addr_fact', 'txtCustno,txtComp,txtNick,txtPaytype,cmbTrantype,txtTel,txtFax,txtPost,txtAddr', 'cust_b.aspx'],
 				['txtSalesno', 'lblSales', 'sss', 'noa,namea', 'txtSalesno,txtSales', 'sss_b.aspx']
 			);
@@ -309,7 +309,7 @@
 							$('#chkCancel_'+j).prop('checked','true');
 					}
 				}
-
+				sum();
 				if (q_cur == 1)
 					$('#txtWorker').val(r_name);
 				if (q_cur == 2)
@@ -342,9 +342,9 @@
 			}
 
 			function bbsAssign() {
-				for (var j = 0; j < q_bbsCount; j++) {
-					$('#lblNo_'+j).text(j+1);
-					if (!$('#btnMinus_' + j).hasClass('isAssign')) {
+				for (var i = 0; i < q_bbsCount; i++) {
+					$('#lblNo_'+i).text(i+1);
+					if (!$('#btnMinus_' + i).hasClass('isAssign')) {
 						$('#txtProductno_' + i).bind('contextmenu', function(e) {
                             /*滑鼠右鍵*/
                             e.preventDefault();
@@ -370,7 +370,7 @@
 			                    }
                             }    
                         });
-						$('#btnVccrecord_' + j).click(function() {
+						$('#btnVccrecord_' + i).click(function() {
 							t_IdSeq = -1;
 							/// 要先給 才能使用 q_bodyId()
 							q_bodyId($(this).attr('id'));
