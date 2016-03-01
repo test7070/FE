@@ -93,10 +93,7 @@
 					t_where +="and isnull(outdate,'')='' ";
 				if (t_end=='N')
 					t_where +="and isnull(outdate,'')!='' ";
-				
-				if(r_rank <7)
-					t_where+="and noa = '"+q_getId()[0]+"' ";
-			
+							
 				t_where = ' where=^^' + t_where + '^^ ';
 				return t_where;
 			}
