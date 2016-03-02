@@ -1342,7 +1342,7 @@
 				</table>
 			</div>
 		</div>
-		<div class='dbbs' style="width: 1600px;">
+		<div class='dbbs' style="width: 1700px;">
 			<table id="tbbs" class='tbbs' border="1" cellpadding='2' cellspacing='1'>
 				<tr style='color:white; background:#003366;' >
 					<td align="center" style="width:45px;">
@@ -1350,7 +1350,7 @@
 					</td>
 					<td align="center" style="width:20px;"> </td>
 					<td align="center" style="width:40px;"><a id='lblNo2'>訂序</a></td>
-					<td align="center" style="width:160px;"><a id='lblProduct_s'> </a></td>
+					<td align="center" style="width:250px;"><a id='lblProduct_s'> </a></td>
 					<td align="center" style="width:95px;" class="isStyle"><a id='lblStyle'> </a></td>
 					<td align="center" style="width:55px;"><a id='lblUnit'> </a></td>
 					<!--<td align="center" style="width:85px;"><a >米數</a></td>-->
