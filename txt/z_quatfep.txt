@@ -11,6 +11,7 @@ z_quatfep01:--	z_quatfep01
 		comp nvarchar(50),
 		tel nvarchar(50),
 		fax nvarchar(50),
+		conn nvarchar(20),
 		trantype nvarchar(50),
 		paytype nvarchar(50),
 		serial nvarchar(20),
@@ -33,10 +34,10 @@ z_quatfep01:--	z_quatfep01
 		price float,
 		moneys float
 	)
-	insert into @tmp(gno,pno,noa,cno,custno,comp,tel,fax,trantype,paytype
+	insert into @tmp(gno,pno,noa,cno,custno,comp,tel,fax,trantype,paytype,conn
 		,serial,post,addr,post2,addr2,[money],tax,total,memo
 		,recno,productno,product,[weight],mount,unit,price,moneys)
-	select '1','1',a.noa,a.cno,a.custno,a.comp,a.tel,a.fax,a.trantype,a.paytype
+	select '1','1',a.noa,a.cno,a.custno,a.comp,a.tel,a.fax,a.trantype,a.paytype,a.conn
 		,c.serial,a.post,a.addr,a.post2,a.addr2,a.[money],a.tax,a.total,a.memo
 		,ROW_NUMBER()over(order by b.noq),b.productno,b.product,b.[weight],b.mount,b.unit,b.price,b.total
 	from view_quat a
@@ -92,7 +93,7 @@ z_quatfep01:--	z_quatfep01
 	end
 	
 	select '<a style="font-family:'+ "'Times New Roman','標楷體', serif"+char(59)+'">'+a.comp+'</a>' a01
-		,'' a02
+		,'<a style="font-family:'+ "'Times New Roman','標楷體', serif"+char(59)+'">'+a.conn+'</a>' a02
 		,a.noa a03
 		,'<a style="font-family:'+ "'Times New Roman','標楷體', serif"+char(59)+'">'+a.addr2+'</a>' a04
 		,'<a style="font-family:'+ "'Times New Roman','標楷體', serif"+char(59)+'">'+a.trantype+'</a>' a05

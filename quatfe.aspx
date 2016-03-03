@@ -40,6 +40,7 @@
 				['txtProductno_', 'btnProduct_', 'ucaucc', 'noa,product,unit', 'txtProductno_,txtProduct_,txtUnit_', 'ucaucc_b.aspx'],
 				['txtCustno', 'lblCust', 'cust', 'noa,comp,nick,paytype,trantype,tel,fax,zip_comp,addr_fact', 'txtCustno,txtComp,txtNick,txtPaytype,cmbTrantype,txtTel,txtFax,txtPost,txtAddr', 'cust_b.aspx'],
 				['txtSalesno', 'lblSales', 'sss', 'noa,namea', 'txtSalesno,txtSales', 'sss_b.aspx']
+				, ['txtCno', 'lblAcomp', 'acomp', 'noa,acomp', 'txtCno,txtAcomp', 'acomp_b.aspx']
 			);
 			$(document).ready(function() {
 				bbmKey = ['noa'];
@@ -719,8 +720,8 @@
 						<td><span> </span><a id='lblAddr' class="lbl"> </a></td>
 						<td><input id="txtPost" type="text" class="txt c1"></td>
 						<td colspan='4' ><input id="txtAddr" type="text" class="txt c1" /></td>
-						<td align="right" >&nbsp;</td>
-						<td>&nbsp;</td>
+						<td><span> </span><a id='lblConn' class="lbl"> </a></td>
+						<td><input id="txtConn" type="text" class="txt c1" /></td>
 					</tr>
 					<tr>
 						<td><span> </span><a id='lblAddr2' class="lbl"> </a></td>
