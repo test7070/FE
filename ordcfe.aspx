@@ -705,7 +705,7 @@
 						<input class="btn" id="btnPlus" type="button" value='+' style="font-weight: bold;" />
 					</td>
 					<td align="center" style="width:20px;"> </td>
-					<td align="center" style="width:250px;"><a id='lblProduct_s'> </a></td>
+					<td align="center" style="width:300px;"><a id='lblProduct_s'> </a></td>
 					<td align="center" style="width:80px;"><a id='lblLengthb_s'> </a></td>
 					<td align="center" style="width:80px;"><a id='lblUnit_s'> </a></td>
 					<td align="center" style="width:80px;"><a id='lblMount_s'> </a></td>
@@ -723,8 +723,8 @@
 					</td>
 					<td><a id="lblNo.*" style="font-weight: bold;text-align: center;display: block;"> </a></td>
 					<td>
-						<input class="txt" id="txtProductno.*" type="text" style="width:45%;float:left;"/>
-						<input class="txt" id="txtProduct.*" type="text" style="width:45%;float:left;"/>
+						<input class="txt" id="txtProductno.*" type="text" style="width:25%;float:left;"/>
+						<input class="txt" id="txtProduct.*" type="text" style="width:65%;float:left;"/>
 						<input id="btnProduct.*" type="button" style="display:none;">
 					</td>
 					<td><input class="txt" id="txtLengthb.*" type="text" style="width:95%;text-align: right;"/></td>

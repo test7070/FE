@@ -215,7 +215,8 @@
                             q_gt('ordc', t_where, 0, 0, 0, "", r_accy);
 
                             $('#txtOrdcno').val(b_ret[0].noa);
-                            ret = q_gridAddRow(bbsHtm, 'tbbs', 'txtUno,txtProductno,txtSpec,txtProduct,txtUnit,txtMount,txtOrdeno,txtNo2,txtPrice,txtTotal,txtMemo', b_ret.length, b_ret, 'uno,productno,spec,product,unit,mount,noa,no2,price,total,memo', 'txtProductno,txtProduct');
+                            ret = q_gridAddRow(bbsHtm, 'tbbs', 'txtUno,txtProductno,txtSpec,txtProduct,txtUnit,txtMount,txtWeight,txtOrdeno,txtNo2,txtPrice,txtTotal,txtMemo'
+                            , b_ret.length, b_ret, 'uno,productno,spec,product,unit,mount,weight,noa,no2,price,total,memo', 'txtProductno,txtProduct');
                             bbsAssign();
                             sum();
                         }
@@ -1094,7 +1095,7 @@
                     <td align="center" style="width:20px;"> </td>
                     <td align="center" style="width:150px;"><a id='lblUno_s'> </a></td>
                     <td align="center" style="width:100px;"><a id='lblProductno'> </a></td>
-                    <td align="center" style="width:180px;"><a id='lblProduct'> </a></td>
+                    <td align="center" style="width:200px;"><a id='lblProduct'> </a></td>
                     <td align="center" style="width:95px;" class="isStyle"><a id='lblStyle'> </a></td>
                     <td align="center" style="width:80px;" class="isFe"><a id='lblLengthb_fe_s'> </a></td>
                     <td align="center" style="width:40px;"><a id='lblUnit'> </a></td>
