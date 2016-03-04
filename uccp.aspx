@@ -49,9 +49,7 @@
                 q_getFormat();
                 q_mask(bbmMask);
                 
-                $('.'+q_getPara('sys.project')).show();
-                $('#txtBdate').datepicker();
-                $('#txtEdate').datepicker();
+                $('.'+q_getPara('sys.project')).show();              
                 
                 $('#txtBproductno').bind('contextmenu', function(e) {
 					/*滑鼠右鍵*/
@@ -203,7 +201,15 @@
             }
             function readonly(t_para, empty) {
                 _readonly(t_para, empty);
-                
+                if (t_para) {
+                	$('#txtDatea').datepicker('destroy');
+                    $('#txtBdate').datepicker('destroy');
+                    $('#txtEdate').datepicker('destroy');
+                } else {	
+                	$('#txtDatea').datepicker();
+                    $('#txtBdate').datepicker();
+                    $('#txtEdate').datepicker();
+                }
             }
             function btnMinus(id) {
                 _btnMinus(id);
@@ -415,7 +421,7 @@
                         	<span style="display:block;width:25px;float:left;">～</span>
                         	<input id="txtEdate" type="text" class="txt" style="width:40%;"/>
                         </td>
-                        <td style="text-align: center;display:none;" class="fe"><input type="button" id="btnImport" value="匯入" class="txt" style="width:75%;"></td>
+                        <td style="text-align: center;display:none;" class="fe rk"><input type="button" id="btnImport" value="匯入" class="txt" style="width:75%;"></td>
                     </tr>
                     <tr>
                         <td><span> </span><a id="lblWorker" class="lbl"> </a></td>
