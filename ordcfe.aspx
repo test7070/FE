@@ -66,6 +66,7 @@
 				for (var j = 0; j < q_bbsCount; j++) {
 					
 					t_unit = $.trim($('#txtUnit_' + j).val().toUpperCase());
+					$('#txtUnit_' + j).val(t_unit);
 					t_count = t_unit.length==0 || t_unit=='KG' || t_unit=='公斤'?q_float('txtWeight_'+j):q_float('txtMount_'+j); 
 					t_moneys = round(q_mul(q_float('txtPrice_'+j),t_count),0);
 					t_money += t_moneys;

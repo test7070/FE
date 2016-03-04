@@ -64,6 +64,7 @@
 				var t1 = 0, t_unit, t_mount, t_weight = 0,t_total;
 				for (var j = 0; j < q_bbsCount; j++) {
 					t_unit = $.trim($('#txtUnit_' + j).val().toUpperCase());
+					$('#txtUnit_' + j).val(t_unit);
 					t_mount = q_float('txtMount_'+j);
 					t_weight = q_float('txtWeight_'+j);
 					t_price = q_float('txtPrice_'+j);
