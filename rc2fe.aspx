@@ -551,7 +551,7 @@
                         $('#txtUnit_' + j).focusout(function() {
                            sum();
                         });
-                        $('#txtMount_' + i).focusout(function() {
+                        $('#txtMount_' + j).focusout(function() {
                             if (q_cur == 1 || q_cur == 2){
                             	var n = $(this).attr('id').split('_')[$(this).attr('id').split('_').length - 1];
                             	t_productno = $.trim($('#txtProductno_'+n).val());
