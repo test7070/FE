@@ -214,7 +214,7 @@ check:--check
 	declare @mm nvarchar(max)
 	declare @noa nvarchar(20) = ''
 	--
-	declare @t_receiver nvarchar(max) = ''
+	declare @t_checker nvarchar(max) = ''
 	declare @t_memo nvarchar(max) = '出貨單號：'+@t_noa
 	declare @productno nvarchar(max)
 	declare @product nvarchar(max)
@@ -260,9 +260,9 @@ check:--check
 		deallocate cursor_table
 		
 		begin try
-			select @t_receiver=receiver from signform where noa='vccfe'
-			insert into [sign](noa,datea,timea,form,sender,receiver,zno,memo)
-			select @noa,@t_date,@t_time,@t_form,@t_user,@t_receiver,@t_guid,@t_memo
+			select @t_checker=checker from signform where noa='vccfe'
+			insert into [sign](noa,datea,timea,form,sender,checker,zno,memo,enda,memochecker)
+			select @noa,@t_date,@t_time,@t_form,@t_user,@t_checker,@t_guid,@t_memo,'N',''
 			select 0 val,'簽核已送，請稍後！' msg
 			return
 		end try
