@@ -177,19 +177,21 @@
                 });
                 
                 $('#btnMon').click(function(e) {
-                	var t_noa = $.trim($('#txtNoa').val());
-                	var t_custno = $.trim($('#txtCustno').val());
-                	var t_custno2 = $.trim($('#txtCustno2').val()).replace(/\,/g,'@');
-                	var t_mon = $.trim($('#txtMon').val());
-                	if(t_custno.length==0){
-                		alert('請先輸入'+q_getMsg('lblCust')+'!!');
-                		return;
+                	if(q_cur==1 || q_cur==2){
+                		var t_noa = $.trim($('#txtNoa').val());
+	                	var t_custno = $.trim($('#txtCustno').val());
+	                	var t_custno2 = $.trim($('#txtCustno2').val()).replace(/\,/g,'@');
+	                	var t_mon = $.trim($('#txtMon').val());
+	                	if(t_custno.length==0){
+	                		alert('請先輸入'+q_getMsg('lblCust')+'!!');
+	                		return;
+	                	}
+	                	if(t_mon.length==0){
+	                		alert('請先輸入'+q_getMsg('lblMon')+'!!');
+	                		return;
+	                	}
+	                	q_gt('umm_import',"where=^^['"+t_noa+"','"+t_custno+"','"+t_custno2+"','"+t_mon+"','mon')^^", 0, 0, 0, "umm_import");
                 	}
-                	if(t_mon.length==0){
-                		alert('請先輸入'+q_getMsg('lblMon')+'!!');
-                		return;
-                	}
-                	q_gt('umm_import',"where=^^['"+t_noa+"','"+t_custno+"','"+t_custno2+"','"+t_mon+"','mon')^^", 0, 0, 0, "umm_import");
                 });
             }
 			
@@ -881,11 +883,11 @@
                 _refresh(recno);
                  if(q_cur==1 || q_cur==2){
 		        	$("#btnVcc").removeAttr("disabled");
-		        	$("#btnMon").removeAttr("disabled");
+		        	//$("#btnMon").removeAttr("disabled");
 		        	$("#btnAuto").removeAttr("disabled");
 		        }else{
 		        	$("#btnVcc").attr("disabled","disabled");
-		        	$("#btnMon").attr("disabled","disabled");
+		        	//$("#btnMon").attr("disabled","disabled");
 		        	$("#btnAuto").attr("disabled","disabled");
 		        }
 		        StatusAcc1();
@@ -897,11 +899,11 @@
                 _readonly(t_para, empty);
                  if(q_cur==1 || q_cur==2){
 		        	$("#btnVcc").removeAttr("disabled");
-		        	$("#btnMon").removeAttr("disabled");
+		        	//$("#btnMon").removeAttr("disabled");
 		        	$("#btnAuto").removeAttr("disabled");
 		        }else{
 		        	$("#btnVcc").attr("disabled","disabled");
-		        	$("#btnMon").attr("disabled","disabled");
+		        	//$("#btnMon").attr("disabled","disabled");
 		        	$("#btnAuto").attr("disabled","disabled");
 		        }
 		        if(q_cur==1){
