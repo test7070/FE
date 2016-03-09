@@ -550,8 +550,8 @@
                     <td><input type="text" id="txtBrand.*" style="width:95%;"/></td>
 					<td>
 						<input type="button" id="btnProduct.*" style="display:none;"/>
-                  		<input type="text" id="txtProductno.*" style="width:80px;float:left;"/>
-          				<input type="text" id="txtProduct.*" style="width:160px;float:left;"/>
+                  		<input type="text" id="txtProductno.*" style="width:95%;"/>
+          				<input type="text" id="txtProduct.*" style="width:95%;"/>
           			</td>
                     <td><input type="text" id="txtLengthb.*" style="width:95%;text-align:right;"/></td>
                     <td><input type="text" id="txtUnit.*" style="width:95%;"/></td>

@@ -1086,7 +1086,7 @@
                 </table>
             </div>
         </div>
-        <div class='dbbs' style="width: 1830px;">
+        <div class='dbbs' style="width: 1900px;">
             <table id="tbbs" class='tbbs' border="1" cellpadding='2' cellspacing='1' >
                 <tr style='color:White; background:#003366;' >
                     <td align="center" style="width:1%;">
@@ -1095,7 +1095,7 @@
                     <td align="center" style="width:20px;"> </td>
                     <td align="center" style="width:150px;"><a id='lblUno_s'> </a></td>
                     <td align="center" style="width:100px;"><a id='lblProductno'> </a></td>
-                    <td align="center" style="width:200px;"><a id='lblProduct'> </a></td>
+                    <td align="center" style="width:250px;"><a id='lblProduct'> </a></td>
                     <td align="center" style="width:95px;" class="isStyle"><a id='lblStyle'> </a></td>
                     <td align="center" style="width:80px;" class="isFe"><a id='lblLengthb_fe_s'> </a></td>
                     <td align="center" style="width:40px;"><a id='lblUnit'> </a></td>

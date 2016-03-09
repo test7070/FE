@@ -626,7 +626,7 @@
                 font-size:medium;
             }
             .dbbs {
-                width: 1200px;
+                width: 1250px;
             }
             .tbbs a {
                 font-size: medium;
@@ -783,7 +783,7 @@
                     </td>
                     <td align="center" style="width:20px;"></td>
                     <td align="center" style="width:40px;"><a id='lblNo3_s'> </a></td>
-					<td align="center" style="width:200px;"><a id='lblProductno'> </a></td>
+					<td align="center" style="width:250px;"><a id='lblProductno'> </a></td>
 					<td align="center" style="width:40px;"><a id='lblUnit'> </a></td>
 					<td align="center" style="width:100px;"><a id='lblMount'> </a></td>
 					<td align="center" style="width:100px;"><a id='lblWeight_s'> </a></td>
@@ -802,8 +802,8 @@
                     <td><a id="lblNo.*" style="font-weight: bold;text-align: center;display: block;"> </a></td>
                     <td><input id="txtNo3.*" type="text" class="txt" style="float:left;width:95%;"/></td>
 					<td align="center">
-						<input id="txtProductno.*" type="text" class="txt" style="float:left;width:35%;"/>
-						<input id="txtProduct.*" type="text" class="txt" style="float:left;width:60%;"/>
+						<input id="txtProductno.*" type="text" class="txt" style="float:left;width:95%;"/>
+						<input id="txtProduct.*" type="text" class="txt" style="float:left;width:95%;"/>
 						<input id="btnProduct.*" type="button" style="display:none;" />
 					</td>
 					<td><input id="txtUnit.*" type="text" class="txt" style="float:left;width:95%;"/></td>
