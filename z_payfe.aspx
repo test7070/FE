@@ -97,6 +97,7 @@
 				t_day = t_date.getUTCDate();
 				t_day = t_day > 9 ? t_day + '' : '0' + t_day;
 				$('#txtXdate2').val(t_year + '/' + t_month + '/' + t_day);
+				$('#txtEdate').val(t_year + '/' + t_month + '/' + t_day);
 				
 				t_date = new Date();
 				t_date.setDate(1);
