@@ -23,8 +23,8 @@ declare @tmp table(
 	rankd nvarchar(50),
 	salesno nvarchar(30),
 	custno nvarchar(30),
-	grp nvarchar(10),
-	productno nvarchar(30),
+	grp nvarchar(20),
+	productno nvarchar(50),
 	mount float,
 	weight float,
 	salemoney float,
@@ -408,6 +408,7 @@ if(@t_project='yc')
 	
 	declare @recno int
 	declare @productno nvarchar(30)
+	declare @storeno nvarchar(30)
 	declare @typea nvarchar(10)
 	declare @datea nvarchar(10)
 	declare @mount float
@@ -425,6 +426,7 @@ if(@t_project='yc')
 	declare @pt_totweight float
 	
 	set @t_productno = '##########'
+	set @t_storeno = '##########'
 	set @t_mount = 0
 	set @t_weight = 0
 	set @t_totmount = 0
@@ -435,10 +437,10 @@ if(@t_project='yc')
 	set @pt_totweight = 0
 	
 	declare cursor_table cursor for
-	select recno,productno,typea,datea,mount,weight from @tmp order by productno,recno
+	select recno,productno,storeno,typea,datea,mount,weight from @tmp order by productno,storeno,recno
 	open cursor_table
 	fetch next from cursor_table
-	into @recno,@productno,@typea,@datea,@mount,@weight
+	into @recno,@productno,@storeno,@typea,@datea,@mount,@weight
 	while(@@FETCH_STATUS <> -1)
 	begin
 		if @t_productno!=@productno and @t_productno!='##########'
@@ -471,6 +473,30 @@ if(@t_project='yc')
 			set @t_totweight = 0
 			set @tt_totmount = 0
 			set @tt_totweight = 0
+			set @pt_totmount = 0
+			set @pt_totweight = 0
+		end
+		else if @t_storeno!=@storeno and @t_storeno!='##########'
+		begin
+		
+			if not(@t_totmount=0 and @t_totweight=0 ) or (select count(*) from @result where storeno=@t_storeno and productno=@t_productno)>0
+			begin
+				insert into @result
+				select '0' gno,@t_storeno,(select top 1 store from store where noa=@t_storeno),@t_productno,(select top 1 product from view_ucaucc where noa=@t_productno) xproduct,'' datea,'02' typea,'前期' typec, 
+				'' noa,'' comp, '' unit, null mount, null weight,null price,'', @pt_totmount totmount, @pt_totweight totweight,''
+					  
+				insert into @result
+				select '1' gno,@t_storeno,(select top 1 store from store where noa=@t_storeno),@t_productno,(select top 1 product from view_ucaucc where noa=@t_productno) xproduct,CHAR(255) datea,'zz' typea,'小計' typec, 
+				'' noa,'' comp, '' unit, null mount, null weight,null price,'', @t_totmount totmount, @t_totweight totweight,''
+			end
+			
+			set @tt_totmount = @tt_totmount+@t_totmount
+			set @tt_totweight = @tt_totweight+@t_totweight
+			
+			set @t_mount = 0
+			set @t_weight = 0
+			set @t_totmount = 0
+			set @t_totweight = 0
 			set @pt_totmount = 0
 			set @pt_totweight = 0
 		end
@@ -524,9 +550,10 @@ if(@t_project='yc')
 			end
 		
 		set @t_productno = @productno
+		set @t_storeno = @storeno
 
 		fetch next from cursor_table
-		into @recno,@productno,@typea,@datea,@mount,@weight
+		into @recno,@productno,@storeno,@typea,@datea,@mount,@weight
 	end
 	close cursor_table
 	deallocate cursor_table
@@ -578,19 +605,18 @@ if(@t_project='yc')
 	close cursor_table
 	deallocate cursor_table
 	
-	
 	delete @result where productno in (select noa from uca)
 	
 	--*****************************************************************************************	
 	
 	select gno,recno,storeno,case when ISNULL(stores,'')='' then storeno else left(stores,7) end stores,productno
 	,replace(xproduct,'~#$',char(39)) xproduct,datea,typea,typec,noa,left(comp,11) comp,unit,ucctype,qhref
-	,dbo.getComma((case when typea='A0' or typea='B0' or typea='C0' then -1 else 1 end)*round(mount,0),2)	mount
-	,dbo.getComma((case when typea='A0' or typea='B0' or typea='C0' then -1 else 1 end)*weight,2) weight
-	,dbo.getComma(totmount,2)	totmount
-	,dbo.getComma(totweight,2)	totweight
-	,dbo.getComma(price,2)	price
-	from @result order by productno, gno,datea, recno;
+	,dbo.getComma((case when typea='A0' or typea='B0' or typea='C0' then -1 else 1 end)*round(mount,0),[11])	mount
+	,dbo.getComma((case when typea='A0' or typea='B0' or typea='C0' then -1 else 1 end)*weight,[12]) weight
+	,dbo.getComma(totmount,[11])	totmount
+	,dbo.getComma(totweight,[12])	totweight
+	,dbo.getComma(price,[13]) price
+	from @result order by productno,storeno, gno,datea, recno;
 --*****************************************************************************
 z_uccfe5:--z_uccfe5  批號庫存表
 	declare @t_bdate nvarchar(20) = '103/01/01'  --103/01/01後 的資料才看
