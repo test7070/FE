@@ -117,5 +117,6 @@ z_quatfep01:--	z_quatfep01
 		,dbo.getComma(total,-1) c02
 		,memo c03
 		,worker c04
+		,'' c05
 	from @tmp 
 	order by pno,sel;
