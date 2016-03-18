@@ -75,7 +75,7 @@
                 $('#btnImport').click(function(e){
                 	var t_date = $.trim($('#txtDatea_import').val());
                 	var t_groupbno = $.trim($('#cmbGroupbno_import').val());
-                	var t_price = $.trim($('#txtPrice_import').val());
+                	var t_price = $.trim($('#txtPrice_import').val()).replace(',','');
                 	
                 	if(t_date.length==0){
                 		alert('請輸入基價日期。');
@@ -85,10 +85,16 @@
                 		alert('請選擇中類。');
                 		return;
                 	}
+                	try{
+                		t_price = parseFloat(t_price);
+                	}catch(e){
+                		alert('單價錯誤。');
+                		return;
+                	}
                 	Lock(1, {
 	                    opacity : 0
 	                });
-                	q_func('qtxt.query.uccp', 'uccp.txt,import,' + encodeURI(t_date) + ';' + encodeURI(t_bdate) + ';' + encodeURI(t_edate)+ ';' + encodeURI(t_bproductno)+ ';' + encodeURI(t_eproductno)); 	
+                	q_func('qtxt.query.uccp_groupb', 'uccp.txt,groupb,' + encodeURI(t_date) + ';' + encodeURI(t_groupbno) + ';' + encodeURI(t_price)); 	
                 });
                 
                 $('#divImport').mousedown(function(e) {
@@ -113,6 +119,13 @@
             }
             function q_funcPost(t_func, result) {
                 switch(t_func) {
+                	case 'qtxt.query.uccp_groupb':
+                		var as = _q_appendData("tmp0", "", true, true);
+                        if (as[0] != undefined) {
+                        } else {
+                        }
+                        Unlock(1);
+                        break;
                     case 'qtxt.query.uccp':
                         var as = _q_appendData("tmp0", "", true, true);
                         if (as[0] != undefined) {
