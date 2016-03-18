@@ -15,7 +15,7 @@ vccpr_vcc: -- update vcc
 	begin		
 		set @cmd =
 		"update vccs"+@accy+" set sprice = case when isnull(b.sprice2,0)>0 then b.sprice2 when isnull(b.sprice,0)>0 then b.sprice else a.sprice end
-			, price = b.price
+			--, price = b.price   回寫到VCC有點問題
 			, sprice2 = b.sprice2
 			, profit = b.rate
 			, wcost = b.wcost
