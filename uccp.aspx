@@ -18,9 +18,9 @@
             var q_name = "uccp";
             var q_readonly = ['txtWorker2', 'txtWorker','txtNoa'];
             var q_readonlys = [];
-            var bbmNum = [];
+            var bbmNum = [['txtPrice_import',10,3,1]];
             var bbsNum = [['txtSprice',10,3,1],['txtLprice',10,3,1]];
-            var bbmMask = [['txtDatea', '999/99/99'],['txtEdate', '999/99/99'],['txtBdate', '999/99/99']];
+            var bbmMask = [['txtDatea', '999/99/99'],['txtEdate', '999/99/99'],['txtBdate', '999/99/99'],['txtDatea_import','999/99/99']];
             var bbsMask = [['txtLdate', '999/99/99']];
             q_sqlCount = 6;
             brwCount = 6;
@@ -29,14 +29,17 @@
             brwKey = 'Noa';
             q_desc = 1;
             brwCount2 = 5;
+            q_bbsLen = 5;
+
             aPop = new Array(['txtProductno_', 'btnProductno_', 'ucc', 'noa,product', 'txtProductno_,txtProduct_', 'ucc_b.aspx']
             	,['txtBproductno', 'btnBproductno', 'ucc', 'noa,product', 'txtBproductno', 'ucc_b.aspx']
             	,['txtEproductno', 'btnEproductno', 'ucc', 'noa,product', 'txtEproductno', 'ucc_b.aspx']);
+            t_groupbno = "";
             $(document).ready(function() {
                 bbmKey = ['noa'];
                 bbsKey = ['noa', 'noq'];
                 q_brwCount();
-                q_gt(q_name, q_content, q_sqlCount, 1, 0, '', r_accy);
+                q_gt('uccgb', '', 0, 0, 0, "");
             });
             function main() {
                 if (dataErr) {
@@ -50,7 +53,10 @@
                 q_mask(bbmMask);
                 
                 $('.'+q_getPara('sys.project')).show();              
-                
+                if(t_groupbno.length>0)
+                	q_cmbParse("cmbGroupbno_import", t_groupbno);
+            	$('#txtDatea_import').datepicker();
+                	
                 $('#txtBproductno').bind('contextmenu', function(e) {
 					/*滑鼠右鍵*/
 					e.preventDefault();
@@ -67,24 +73,42 @@
 				});
 						
                 $('#btnImport').click(function(e){
-                	var t_date = $.trim($('#txtDatea').val());
-                	var t_bdate = $.trim($('#txtBdate').val());
-                	var t_edate = $.trim($('#txtEdate').val());
-                	var t_bproductno = $.trim($('#txtBproductno').val());
-                	var t_eproductno = $.trim($('#txtEproductno').val());
+                	var t_date = $.trim($('#txtDatea_import').val());
+                	var t_groupbno = $.trim($('#cmbGroupbno_import').val());
+                	var t_price = $.trim($('#txtPrice_import').val());
                 	
                 	if(t_date.length==0){
                 		alert('請輸入基價日期。');
                 		return;
                 	}
-                	if(t_bdate.length==0 || t_edate.length==0){
-                		alert('請輸入庫存運算截止日。');
+                	if(t_groupbno.length==0){
+                		alert('請選擇中類。');
                 		return;
                 	}
                 	Lock(1, {
 	                    opacity : 0
 	                });
                 	q_func('qtxt.query.uccp', 'uccp.txt,import,' + encodeURI(t_date) + ';' + encodeURI(t_bdate) + ';' + encodeURI(t_edate)+ ';' + encodeURI(t_bproductno)+ ';' + encodeURI(t_eproductno)); 	
+                });
+                
+                $('#divImport').mousedown(function(e) {
+                    if (e.button == 2) {
+                        $(this).data('xtop', parseInt($(this).css('top')) - e.clientY);
+                        $(this).data('xleft', parseInt($(this).css('left')) - e.clientX);
+                    }
+                }).mousemove(function(e) {
+                    if (e.button == 2 && e.target.nodeName != 'INPUT') {
+                        $(this).css('top', $(this).data('xtop') + e.clientY);
+                        $(this).css('left', $(this).data('xleft') + e.clientX);
+                    }
+                }).bind('contextmenu', function(e) {
+                    if (e.target.nodeName != 'INPUT')
+                        e.preventDefault();
+                });
+
+                $('#btnImport2').click(function() {
+                    $('#divImport').toggle();
+                    $('#txtDatea_import').focus();
                 });
             }
             function q_funcPost(t_func, result) {
@@ -106,6 +130,16 @@
             }
             function q_gtPost(t_name) {
                 switch (t_name) {
+                	case 'uccgb':
+						var as = _q_appendData("uccgb", "", true);
+						if (as[0] != undefined) {
+							t_groupbno = " @ ";
+							for ( i = 0; i < as.length; i++) {
+								t_groupbno = t_groupbno + (t_groupbno.length > 0 ? ',' : '') + as[i].noa + '@' + as[i].noa+' . '+as[i].namea;
+							}
+						}
+						q_gt(q_name, q_content, q_sqlCount, 1, 0, '', r_accy);
+						break;
                     case q_name:
                         if (q_cur == 4)
                             q_Seek_gtPost();
@@ -372,6 +406,45 @@
     ondrop="event.dataTransfer.dropEffect='none';event.stopPropagation(); event.preventDefault();"
     >
         <!--#include file="../inc/toolbar.inc"-->
+        <div id="divImport" style="position:absolute; top:200px; left:500px; display:none; width:400px; height:200px; background-color: #cad3ff; border: 5px solid gray;">
+			<table style="width:100%;">
+				<tr style="height:1px;">
+					<td style="width:150px;"></td>
+					<td style="width:80px;"></td>
+					<td style="width:80px;"></td>
+					<td style="width:80px;"></td>
+					<td style="width:80px;"></td>
+				</tr>
+				<tr style="height:35px;">
+					<td><span> </span><a id="lblDatea_import" style="float:right; color: blue; font-size: medium;">日期</a></td>
+					<td colspan="4">
+					<input id="txtDatea_import"  type="text" style="float:left; width:100px; font-size: medium;"/>
+					</td>
+				</tr>
+				<tr style="height:35px;">
+					<td><span> </span><a id='lblGroupbno_import' style="float:right; color: blue; font-size: medium;">中類群組</a></td>
+					<td colspan="4"><select id="cmbGroupbno_import" class="txt c1"></select> </td>
+				</tr>
+				<tr style="height:35px;">
+					<td><span> </span><a id="lblPrice_import" style="float:right; color: blue; font-size: medium;">基價</a></td>
+					<td colspan="4">
+						<input id="txtPrice_import"  type="text" class="num" style="float:left; width:100px; font-size: medium;"/>
+					</td>
+				</tr>
+				<tr style="height:35px;">
+					<td> </td>
+					<td>
+					<input id="btnImport_trans" type="button" value="修改"/>
+					</td>
+					<td></td>
+					<td></td>
+					<td>
+					<input id="btnCancel_import" type="button" value="關閉"/>
+					</td>
+				</tr>
+			</table>
+		</div>
+        
         <div id="dmain">
             <div class="dview" id="dview">
                 <table class="tview" id="tview">
@@ -413,6 +486,7 @@
                         	<input id="txtEproductno" type="text" class="txt" style="width:40%;"/>
                        		<input id='btnEproductno' type='button' style='display:none'/>
                         </td>
+                        <td style="text-align: center;display:none;" class="fe rk"><input id="btnImport2" type="button" class="txt c1" value="群組修改"/></td>
                     </tr>
                     <tr>
                     	<td><span> </span><a id="lblEdate" class="lbl">庫存運算區間</a></td>
@@ -421,7 +495,7 @@
                         	<span style="display:block;width:25px;float:left;">～</span>
                         	<input id="txtEdate" type="text" class="txt" style="width:40%;"/>
                         </td>
-                        <td style="text-align: center;display:none;" class="fe rk"><input type="button" id="btnImport" value="匯入" class="txt" style="width:75%;"></td>
+                        <td style="text-align: center;display:none;" class="fe rk"><input type="button" id="btnImport" value="匯入" class="txt c1"></td>
                     </tr>
                     <tr>
                         <td><span> </span><a id="lblWorker" class="lbl"> </a></td>
