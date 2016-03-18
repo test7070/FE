@@ -137,7 +137,9 @@
 				$('#btnUcf').click(function() {
 					q_box('ucf.aspx' + "?;;;;" + r_accy, '', "450px", "200px", $('#btnUcf').val());
 				});*/
-				
+				if (q_getPara('sys.project').toUpperCase()=='YC'){
+					$('#q_report .report div').eq(6).hide();
+				}
 				if (q_getPara('sys.project').toUpperCase()=='YC' && r_rank<8){
 					$('#Xshowprice').hide();
 				}
