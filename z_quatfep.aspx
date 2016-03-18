@@ -22,12 +22,20 @@
             });
             function q_gfPost() {
                 $('#q_report').q_report({
-                    fileName : 'z_quatfep',
-                    options : [{
-                        type : '6',
-                        name : 'xnoa'
-                    }]
-                });
+					fileName : 'z_quatfep',
+					options : [{
+						type : '0', //[1]
+						name : 'path',
+						value : location.protocol + '//' +location.hostname + location.pathname.toLowerCase().replace('z_quatfep.aspx','')
+					},{
+						type : '0', //[2]
+						name : 'db',
+						value : q_db
+					},{
+						type : '6', //[3]
+						name : 'xnoa'
+					}]
+				});
                 var t_para = new Array();
 	            try{
 	            	t_para = JSON.parse(q_getId()[3]);

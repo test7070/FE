@@ -1,121 +1,121 @@
 z_quatfep01:--	z_quatfep01
 	SET QUOTED_IDENTIFIER OFF
-	declare @t_noa nvarchar(20) = case when '#non'=[1] then '' else [1] end
-	--================================================================
+	declare @t_path nvarchar(max) = '[1]'
+	declare @t_db nvarchar(max) = '[2]'
+	declare @t_noa nvarchar(max) = case when '#non' = [3] then '' else [3] end
+	----------------------------------------------------------------------------------
 	declare @tmp table(
-		gno nvarchar(20),
-		pno nvarchar(20),
-		noa nvarchar(20),
-		cno nvarchar(20),
-		custno nvarchar(20),
-		comp nvarchar(50),
-		tel nvarchar(50),
-		fax nvarchar(50),
-		conn nvarchar(20),
-		trantype nvarchar(50),
-		paytype nvarchar(50),
-		serial nvarchar(20),
-		post nvarchar(10),
-		addr nvarchar(max),
-		post2 nvarchar(10),
-		addr2 nvarchar(max),
-		[money] float,
-		tax float,
-		total float,
-		memo nvarchar(max),
-		smemo nvarchar(max),
+		sel int identity(1,1)
+		,gno nvarchar(10)
+		,pno int
+		,custno nvarchar(20)
+		,cust nvarchar(50)
+		,tel nvarchar(50)
+		,fax nvarchar(50)
+		,addr nvarchar(max)
+		,con nvarchar(20)
+		,acomp nvarchar(50)
+		,atel nvarchar(50)
+		,afax nvarchar(50)
 		
-		recno int,
-		productno nvarchar(20),
-		product nvarchar(50),
-		[weight] float,
-		mount float,
-		unit nvarchar(20),
-		price float,
-		moneys float
+		,datea nvarchar(20)
+		,quatno nvarchar(20)
+		,paytype nvarchar(20)
+		,trantype nvarchar(20)
+		
+		,noq nvarchar(20)
+		,productno nvarchar(30)
+		,product nvarchar(50)
+		,unit nvarchar(20)
+		,mounts float
+		,[weights] float
+		,price float
+		,[moneys] float
+		,memos nvarchar(max)
+		
+		,[money] float
+		,tax float
+		,total float
+		,memo nvarchar(max)
+		,worker nvarchar(20)
 	)
-	insert into @tmp(gno,pno,noa,cno,custno,comp,tel,fax,trantype,paytype,conn
-		,serial,post,addr,post2,addr2,[money],tax,total,memo
-		,recno,productno,product,[weight],mount,unit,price,moneys)
-	select '1','1',a.noa,a.cno,a.custno,a.comp,a.tel,a.fax,a.trantype,a.paytype,a.conn
-		,c.serial,a.post,a.addr,a.post2,a.addr2,a.[money],a.tax,a.total,a.memo
-		,ROW_NUMBER()over(order by b.noq),b.productno,b.product,b.[weight],b.mount,b.unit,b.price,b.total
+	insert into @tmp(gno,pno,quatno,noq,productno,product,unit,mounts,weights,price,moneys,memos)
+	select '1',1,a.noa,b.noq,b.productno,b.product,b.unit,b.mount,b.[weight],b.price,b.total,b.memo
 	from view_quat a
 	left join view_quats b on a.accy=b.accy and a.noa=b.noa
-	left join cust c on a.custno=c.noa
 	where a.noa=@t_noa
-	--------------------------------------------------------------------------------------
-	declare @t_memoline int = 7--備註最多分成7行
-	declare @n int = 0
-	declare @string nvarchar(max) =''
-	declare @memo nvarchar(max) = ''
-	select top 1 @string = memo from @tmp
 	
-	while @n<@t_memoline
+	--稅額
+	insert into @tmp (gno,pno,quatno,tax)
+	select '2',2,@t_noa,round(SUM(ISNULL(moneys,0))*0.05,0) 
+	from @tmp 
+	where gno='1'
+	--總計
+	insert into @tmp (gno,pno,quatno,tax)
+	select '3',3,@t_noa,SUM(ISNULL(moneys,0)+ISNULL(tax,0)) 
+	from @tmp 
+	where gno='1' or gno='2'
+	
+	declare @n int 
+	declare @memo nvarchar(max) = ''
+	declare @worker nvarchar(max) = ''
+	select @memo = isnull(memo,''),@worker = ISNULL(worker,'') from view_quat where noa=@t_noa
+	--備註
+	insert into @tmp (gno,pno,quatno)select '4',4,@t_noa
+	--備註
+	while LEN(@memo)>0
 	begin
-		if CHARINDEX('chr(10)',@string)>0
+		if CHARINDEX('chr(10)',@memo)=0
 		begin
-			set @memo = SUBSTRING(@string,0,CHARINDEX('chr(10)',@string))
-			set @string = SUBSTRING(@string,LEN(@memo)+8,len(@string))
+			insert into @tmp (gno,pno,quatno,memo)select '5',5,@t_noa,@memo
+			set @memo = ''
 		end
 		else
 		begin
-			set @memo = @string
-			set @string = '' 
+			set @n = CHARINDEX('chr(10)',@memo)
+			insert into @tmp (gno,pno,quatno,memo)select '5',5,@t_noa,LEFT(@memo,@n-1)
+			set @memo = SUBSTRING(@memo,@n+7,LEN(@memo))
 		end
-		insert into @tmp(gno,pno,noa,cno,custno,comp,tel,fax,trantype,paytype
-		,serial,post,addr,post2,addr2,[money],tax,total,smemo)
-		select top 1 CAST(@n+3 as nvarchar),'3',noa,cno,custno,comp,tel,fax,trantype,paytype
-		,serial,post,addr,post2,addr2,[money],tax,total,@memo
-		from @tmp
-		set @n = @n +1
 	end
-	
-	-----------------------------------------------------------------------------
-	declare @t_pageline int = 30 -- 一頁幾行
-	
-	set @n = 0
-	select @n = COUNT(1) from @tmp
-	
-	set @memo=''
-	if(@t_pageline-@n!=@t_memoline)
-		set @memo = '---以下空白---'
-		
-	while @n%@t_pageline != 0
-	begin
-		insert into @tmp(gno,pno,noa,cno,custno,comp,tel,fax,trantype,paytype
-		,serial,post,addr,post2,addr2,[money],tax,total,smemo,recno)
-		select top 1 '2','2',noa,cno,custno,comp,tel,fax,trantype,paytype
-		,serial,post,addr,post2,addr2,[money],tax,total,@memo,@n
-		from @tmp
-		set @memo=''
-		set @n = @n + 1
-	end
-	
-	select '<a style="font-family:'+ "'Times New Roman','標楷體', serif"+char(59)+'">'+a.comp+'</a>' a01
-		,'<a style="font-family:'+ "'Times New Roman','標楷體', serif"+char(59)+'">'+a.conn+'</a>' a02
-		,a.noa a03
-		,'<a style="font-family:'+ "'Times New Roman','標楷體', serif"+char(59)+'">'+a.addr2+'</a>' a04
-		,'<a style="font-family:'+ "'Times New Roman','標楷體', serif"+char(59)+'">'+a.trantype+'</a>' a05
-		,'<a style="font-family:'+ "'Times New Roman','標楷體', serif"+char(59)+'">'+a.paytype+'</a>' a06
-		
-		,a.recno b01
-		,'<a style="font-family:'+ "'Times New Roman','標楷體', serif"+char(59)+'">'+a.product+'</a>' b02
-		,dbo.getComma(a.[weight],2) b03
-		,dbo.getComma(a.[mount],0) b04
-		,'<a style="font-family:'+ "'Times New Roman','標楷體', serif"+char(59)+'">'+a.unit+'</a>' b05
-		,dbo.getComma(a.[price],2) b06
-		,dbo.getComma(a.[moneys],0) b07
-		,dbo.getComma(a.[money],0) c01
-		,dbo.getComma(a.[tax],0) c02
-		,dbo.getComma(a.[total],0) c03
-		,'<a style="font-family:'+ "'Times New Roman','標楷體', serif"+char(59)+'">'+a.smemo+'</a>' smm
-		,a.* 
-		
-		,'<a style="font-family:'+ "'Times New Roman','標楷體', serif"+char(59)+'">'+isnull(b.acomp,'')+'</a>' acomp
-		,'<a style="font-family:'+ "'Times New Roman','標楷體', serif"+char(59)+'">'+case when len(isnull(b.tel,''))>0 then 'TEL：'+isnull(b.tel,'')+'&nbsp'+char(59)+'&nbsp'+char(59) else '' end
-			+case when len(isnull(b.fax,''))>0 then'FAX：'+isnull(b.fax,'')+'</a>' else '' end atel
-		,'<a style="font-family:'+ "'Times New Roman','標楷體', serif"+char(59)+'">'+isnull(b.addr,'')+'</a>' aaddr
+	--
+	insert into @tmp (gno,pno,quatno)select '6',6,@t_noa
+	insert into @tmp (gno,pno,quatno)select '7',7,@t_noa
+	insert into @tmp (gno,pno,quatno)select '8',8,@t_noa
+	insert into @tmp (gno,pno,quatno,worker)select '9',9,@t_noa,@worker
+	--------------------------------------------------------------------
+	update @tmp set custno=isnull(b.custno,''),cust=isnull(b.comp,''),tel=b.tel,fax=b.fax
+		,addr=case when len(ISNULL(b.addr2,''))>0 then ISNULL(b.post2,'')+ISNULL(b.addr2,'') else ISNULL(b.post,'')+ISNULL(b.addr,'') end
+		,acomp = c.acomp,atel=isnull(c.tel,''),afax=isnull(c.fax,'')
+		,datea=b.odate,paytype=b.paytype,trantype=b.trantype
 	from @tmp a
-	left join acomp b on a.cno=b.noa
-	order by a.noa,a.pno,a.recno;
+	left join view_quat b on a.quatno=b.noa
+	left join acomp c on b.cno=c.noa
+	
+	
+	select gno
+		,acomp a01
+		,case when len(atel)>0 then 'TEL：'+atel else '' end
+			+ case when len(atel)>0 and len(afax)>0 then '　FAX：'+afax when len(afax)>0 then 'FAX：'+afax else '' end a02
+		,custno+'　'+cust a03
+		,tel a04
+		,fax a05
+		,addr a06
+		,datea a07
+		,quatno a08
+		,paytype a09
+		,trantype a10
+		
+		,CAST(sel as nvarchar) b01
+		,product b02
+		,unit b03
+		,dbo.getComma(mounts,-1) b04
+		,dbo.getComma(weights,-1) b05
+		,dbo.getComma(price,-1) b06
+		,dbo.getComma(moneys,-1) b07
+		,memos b08
+		,dbo.getComma(tax,-1) c01
+		,dbo.getComma(total,-1) c02
+		,memo c03
+		,worker c04
+	from @tmp 
+	order by pno,sel;
