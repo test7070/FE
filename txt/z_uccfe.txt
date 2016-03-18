@@ -824,8 +824,8 @@ z_uccfe3:--z_uccfe3
 		update @tmp set gno=CAST(CAST(gno as int )+1 as nvarchar(10))
 		
 		--插入表頭分頁
-		insert @tmp(gno,pp,qq,storeno,recno,pno)
-		select '1',pp,MAX(qq),storeno,MIN(recno)-1,MIN(pno)
+		insert @tmp(gno,pp,qq,storeno,store,recno,pno)
+		select '1',pp,MAX(qq),storeno,MAX(store),MIN(recno)-1,MIN(pno)
 		from @tmp where gno!='4' group by pp,storeno
 		
 		insert @tmp(gno,pp,qq,storeno,recno,pno)
