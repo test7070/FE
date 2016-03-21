@@ -51,7 +51,7 @@ z_quatfep01:--	z_quatfep01
 	from @tmp 
 	where gno='1'
 	--總計
-	insert into @tmp (gno,pno,quatno,tax)
+	insert into @tmp (gno,pno,quatno,total)
 	select '3',3,@t_noa,SUM(ISNULL(moneys,0)+ISNULL(tax,0)) 
 	from @tmp 
 	where gno='1' or gno='2'
@@ -117,6 +117,6 @@ z_quatfep01:--	z_quatfep01
 		,dbo.getComma(total,-1) c02
 		,memo c03
 		,worker c04
-		,'' c05
+		,dbo.AD2ChineseEraName(GETDATE()) c05
 	from @tmp 
 	order by pno,sel;
