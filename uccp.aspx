@@ -72,7 +72,7 @@
 					$('#btnEproductno').click();
 				});
 						
-                $('#btnImport').click(function(e){
+                $('#btnImport_import').click(function(e){
                 	var t_date = $.trim($('#txtDatea_import').val());
                 	var t_groupbno = $.trim($('#cmbGroupbno_import').val());
                 	var t_price = $.trim($('#txtPrice_import').val()).replace(',','');
@@ -124,6 +124,7 @@
                         if (as[0] != undefined) {
                         } else {
                         }
+                        location.reload();
                         Unlock(1);
                         break;
                     case 'qtxt.query.uccp':
@@ -252,10 +253,15 @@
                 	$('#txtDatea').datepicker('destroy');
                     $('#txtBdate').datepicker('destroy');
                     $('#txtEdate').datepicker('destroy');
+                    $('#btnImport_import').removeAttr('disabled');
+                    $('#btnImport2').removeAttr('disabled');
+                    
                 } else {	
                 	$('#txtDatea').datepicker();
                     $('#txtBdate').datepicker();
                     $('#txtEdate').datepicker();
+                    $('#btnImport_import').attr('disabled','disabled');
+                    $('#btnImport2').attr('disabled','disabled');
                 }
             }
             function btnMinus(id) {
@@ -447,7 +453,7 @@
 				<tr style="height:35px;">
 					<td> </td>
 					<td>
-					<input id="btnImport_trans" type="button" value="修改"/>
+					<input id="btnImport_import" type="button" value="修改"/>
 					</td>
 					<td></td>
 					<td></td>

@@ -1,4 +1,4 @@
-groupb:--uccp.txt groupb 
+﻿groupb:--uccp.txt groupb  
 	declare @t_date nvarchar(20) = [1]
 	declare @t_groupbno nvarchar(20) = [2]
 	declare @t_price float = cast([3] as float) 
