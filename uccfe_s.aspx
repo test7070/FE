@@ -12,18 +12,50 @@
 		<script type="text/javascript">
             var q_name = "uccfe_s";
             aPop = new Array(['txtNoa', '', 'ucc', 'noa,product', 'txtNoa', "ucc_b.aspx"]);
+            var t_groupano='',t_groupbno='';
+            
             $(document).ready(function() {
                 main();
             });
 
             function main() {
                 mainSeek();
-                q_gf('', q_name);
+                q_gt('uccga', '', 0, 0, 0, "");
             }
-
+			function q_gtPost(t_name) {
+                switch (t_name) {
+                	case 'uccga':
+						var as = _q_appendData("uccga", "", true);
+						if (as[0] != undefined) {
+							t_groupano = " @ ";
+							for ( i = 0; i < as.length; i++) {
+								t_groupano = t_groupano + (t_groupano.length > 0 ? ',' : '') + as[i].noa + '@' + as[i].noa+' . '+as[i].namea;
+							}
+						}
+						q_gt('uccgb', '', 0, 0, 0, "");
+						break;
+					case 'uccgb':
+						var as = _q_appendData("uccgb", "", true);
+						if (as[0] != undefined) {
+							t_groupbno = " @ ";
+							for ( i = 0; i < as.length; i++) {
+								t_groupbno = t_groupbno + (t_groupbno.length > 0 ? ',' : '') + as[i].noa + '@' + as[i].noa+' . '+as[i].namea;
+							}
+						}
+						q_gf('', q_name);
+						break;
+                    default:
+                        break;
+                }
+            }
             function q_gfPost() {
                 q_getFormat();
                 q_langShow();
+                
+                if(t_groupano.length>0)
+                	q_cmbParse("cmbGroupano", t_groupano);
+				if(t_groupbno.length>0)
+                	q_cmbParse("cmbGroupbno", t_groupbno);
 
                 $('#txtNoa').focus();
             }
@@ -31,8 +63,13 @@
             function q_seekStr() {
                 t_noa = $.trim($('#txtNoa').val());
                 t_product = $.trim($('#txtProduct').val());
-
-                var t_where = " 1=1 " + q_sqlPara2("noa", t_noa);
+				t_groupano = $.trim($('#cmbGroupano').val());
+				t_groupbno = $.trim($('#cmbGroupbno').val());
+				
+                var t_where = " 1=1 " 
+                	+ q_sqlPara2("noa", t_noa)
+                	+ q_sqlPara2("groupano", t_groupano)
+                	+ q_sqlPara2("groupbno", t_groupbno);
 				if (t_product.length>0)
                     t_where += " and charindex('" + t_product + "',product)>0";
                 t_where = ' where=^^' + t_where + '^^ ';
@@ -65,6 +102,14 @@
 					<td>
 					<input class="txt" id="txtProduct" type="text" style="width:215px; font-size:medium;" />
 					</td>
+				</tr>
+				<tr class='seek_tr'>
+					<td class='seek'  style="width:20%;"><a id='lblGroupano'>大類群組</a></td>
+					<td><select id="cmbGroupano" style="width:215px; font-size:medium;"></select></td>
+				</tr>
+				<tr class='seek_tr'>
+					<td class='seek'  style="width:20%;"><a id='lblGroupbno'>中類群組</a></td>
+					<td><select id="cmbGroupbno" style="width:215px; font-size:medium;"></select></td>
 				</tr>
 			</table>
 			<!--#include file="../inc/seek_ctrl.inc"-->
