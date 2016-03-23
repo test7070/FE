@@ -250,7 +250,7 @@ select
 left(datea,3) year,right(left(datea,6),2) mon,right(datea,2) day,@nowtime timea
 ,dbo.getComma(mount,case when mw ='W' then [7] else [6] end) mount
 ,dbo.getComma(counta,case when mw ='W' then [6] else 0 end) counta
-,dbo.getComma(price,[8]) price
+,dbo.getComma(price,3) price
 ,dbo.getComma(total,0) total
 ,dbo.getComma(atotal,0) atotal
 ,*
