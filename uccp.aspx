@@ -71,6 +71,26 @@
 						return;
 					$('#btnEproductno').click();
 				});
+				$('#btnImport').click(function(e){
+                	var t_date = $.trim($('#txtDatea').val());
+                	var t_bdate = $.trim($('#txtBdate').val());
+                	var t_edate = $.trim($('#txtEdate').val());
+                	var t_bproductno = $.trim($('#txtBproductno').val());
+                	var t_eproductno = $.trim($('#txtEproductno').val());
+                	
+                	if(t_date.length==0){
+                		alert('請輸入基價日期。');
+                		return;
+                	}
+                	if(t_bdate.length==0 || t_edate.length==0){
+                		alert('請輸入庫存運算截止日。');
+                		return;
+                	}
+                	Lock(1, {
+	                    opacity : 0
+	                });
+                	q_func('qtxt.query.uccp', 'uccp.txt,import,' + encodeURI(t_date) + ';' + encodeURI(t_bdate) + ';' + encodeURI(t_edate)+ ';' + encodeURI(t_bproductno)+ ';' + encodeURI(t_eproductno)); 	
+                });
 						
                 $('#btnImport_import').click(function(e){
                 	var t_date = $.trim($('#txtDatea_import').val());
