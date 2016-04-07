@@ -187,6 +187,19 @@
 						if (q_cur == 4)
 							q_Seek_gtPost();
 						break;
+					default:
+                     	try{
+                     		t_para = JSON.parse(t_name);
+                     		if(t_para.action == 'getWeight'){
+                     			var as = _q_appendData('ucc', '', true);
+                     			if (as[0] != undefined && parseFloat(as[0].uweight)!=0) {
+                     				$('#txtWeight_'+t_para.n).val(round(parseFloat(as[0].uweight)*t_para.mount,3));
+                     			}
+                     			sum();
+                     		}
+                     	}catch(e){
+                     	}
+                     	break;
 				}
 			}
 			
@@ -250,7 +263,14 @@
 							sum();
 						});
 						$('#txtMount_' + j).change(function() {
-							sum();
+							if (q_cur == 1 || q_cur == 2){
+                            	var n = $(this).attr('id').split('_')[$(this).attr('id').split('_').length - 1];
+                            	t_productno = $.trim($('#txtProductno_'+n).val());
+			                    t_mount = q_float('txtMount_' + n);
+			                    if(t_productno.length>0 && t_mount!=0){
+			                    	q_gt('ucc', "where=^^noa='"+t_productno+"'^^", 0, 0, 0,JSON.stringify({action:"getWeight",n:n,mount:t_mount}));	
+			                    }
+                            }   
 						});
 						$('#txtWeight_' + j).change(function() {
 							sum();
