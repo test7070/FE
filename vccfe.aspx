@@ -80,10 +80,22 @@
                 for (var j = 0; j < q_bbsCount; j++) {
                 	
                     t_unit = $.trim($('#txtUnit_' + j).val());
-                    t_price = q_float('txtPrice_' + j);
-                    t_mount = q_float('txtMount_' + j);
-                    t_weight = q_float('txtWeight_' + j);
-                    
+                    try{
+            	 		t_price = q_float('txtPrice_' + j);
+                    }catch(e){
+                    	t_price = 0;
+                    }
+                    try{
+            	 		t_mount = q_float('txtMount_' + j);
+                    }catch(e){
+                    	t_mount = 0;
+                    }
+                    try{
+            	 		t_weight = q_float('txtWeight_' + j);
+                    }catch(e){
+                    	t_weight = 0;
+                    }
+                   
                     t_weights = q_add(t_weights, t_weight);
 
                     if (t_unit == '公斤' || t_unit.toUpperCase() == 'KG' || t_unit.length == 0) {
