@@ -56,7 +56,7 @@
 	                    },{
 	                        type : '0',
 	                        name : 'priceprecision',
-	                        value : q_getPara('rc2.pricePrecision')
+	                        value : 3//q_getPara('rc2.pricePrecision')
 	                    },{
 	                        type : '1',
 	                        name : 'xnoa'
