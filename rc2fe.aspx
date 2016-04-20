@@ -107,7 +107,7 @@
                 bbmMask = [['txtDatea', r_picd], ['txtMon', r_picm]];
                 q_mask(bbmMask);
                 bbmNum = [['txtMoney', 15, 0, 1], ['txtTax', 10, 0, 1], ['txtTotal', 15, 0, 1], ['txtTotalus', 15, 0, 1], ['txtFloata', 10, 2, 1],['txtCartrips',10,0,1]];
-                bbsNum = [['txtLengthb', 15, 2, 1],['txtMount', 15, q_getPara('rc2.mountPrecision'), 1],['txtWeight', 15, q_getPara('rc2.weightPrecision'), 1], ['txtPrice', 15, q_getPara('rc2.pricePrecision'), 1], ['txtTotal', 15, 0, 1], ['txtDiscount', 5, 2, 1], ['txtCounta', 5, 0, 1]];
+                bbsNum = [['txtLengthb', 15, 2, 1],['txtMount', 15, q_getPara('rc2.mountPrecision'), 1],['txtWeight', 15, q_getPara('rc2.weightPrecision'), 1], ['txtPrice', 15, 3, 1], ['txtTotal', 15, 0, 1], ['txtDiscount', 5, 2, 1], ['txtCounta', 5, 0, 1]];
                 
                 q_cmbParse("cmbTypea", q_getPara('rc2.typea'));
                 //q_cmbParse("cmbCoin", q_getPara('sys.coin'));
