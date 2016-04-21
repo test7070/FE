@@ -96,7 +96,7 @@ drp_save:--drp_save
 		if @sprice2<0.05 --and @datea>='093/11/01'
 		begin
 			select @sprice=0
-			select top 1 @sprice=sprice from uccps where productno=@productno and datea<=@datea and sprice!=0 order by datea desc
+			select top 1 @sprice=sprice from uccps where productno=@productno and datea<=@datea and sprice!=0 order by datea desc,noa desc
 			set @cmd = "update vccs"+@accy+" set sprice=@sprice where noa=@noa and noq=@noq"
 			execute sp_executesql @cmd,N'@sprice float,@noa nvarchar(20),@noq nvarchar(10)'
 				,@sprice=@sprice,@noa=@noa,@noq=@noq

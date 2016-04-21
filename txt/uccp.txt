@@ -138,7 +138,7 @@ import:--uccp import
 		left join uccps on uccp.noa=uccps.noa 
 		where uccp.datea<@t_datea 
 		and uccps.productno=a.productno 
-		and isnull(uccps.sprice,0)!=0 order by uccp.datea desc) b
+		and isnull(uccps.sprice,0)!=0 order by uccp.datea desc,uccp.noa desc) b
 	
 	select * from #uccp_import order by productno
 	drop table #uccp_import;

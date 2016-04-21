@@ -1411,7 +1411,7 @@ z_uccfe1:--z_uccfe1
 			from uccp x
 			left join uccps y on x.noa=y.noa
 			where y.productno=a.productno and x.datea<=@t_enddate
-			order by x.datea desc) b
+			order by x.datea desc,x.noa desc) b
 	end
 	else
 	begin

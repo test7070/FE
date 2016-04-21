@@ -122,7 +122,7 @@ import:--vccpr import
 	--基價
 	update #vccpr_import set sprice = b.sprice
 	from #vccpr_import a
-	outer apply(select top 1 sprice from uccps where productno=a.productno and datea<=a.datea and sprice!=0 order by datea desc) b
+	outer apply(select top 1 sprice from uccps where productno=a.productno and datea<=a.datea and sprice!=0 order by datea desc,noa desc) b
 	
 	--運費
 	update #vccpr_import set styleno=isnull(b.styleno,''),pprice=isnull(b.saleprice,0),tranmoney=
