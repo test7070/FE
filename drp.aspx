@@ -237,7 +237,7 @@
                         $('#txtBacktime_'+j).focusout(function(e){
                             sum();
                         });
-                        $('#txtNo2_'+i).bind('contextmenu',function(e) {
+                        $('#txtNo2_'+j).bind('contextmenu',function(e) {
 	                    	/*滑鼠右鍵*/
 	                    	e.preventDefault();
 	                    	var n = $(this).attr('id').replace('txtNo2_','');

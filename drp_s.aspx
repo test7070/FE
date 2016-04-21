@@ -1,5 +1,3 @@
-還沒改好!!
-
 <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
 <html xmlns="http://www.w3.org/1999/xhtml">
     <head>
@@ -16,7 +14,7 @@
         <script src="css/jquery/ui/jquery.ui.datepicker_tw.js"> </script>
         <script type="text/javascript">
             var q_name = "drp_s";
-            aPop = new Array(['txtTggno', 'lblTggno', 'tgg', 'noa,nick', 'txtTggno', 'tgg_b.aspx']);
+            aPop = new Array(['txtDriverno', 'lblDriver', 'driver', 'noa,namea','txtDriverno', 'driver_b.aspx']);
             $(document).ready(function() {
                 main();
             });
@@ -37,27 +35,18 @@
             }
 
             function q_seekStr() {
-                t_kind = $.trim($('#cmbKind').val());
                 t_noa = $.trim($('#txtNoa').val());
-                t_tggno = $.trim($('#txtTggno').val());
-                t_comp = $.trim($('#txtComp').val());
-                t_ordbno = $.trim($('#txtOrdbno').val());
                 t_bdate = $('#txtBdate').val();
                 t_edate = $('#txtEdate').val();
-                t_bodate = $('#txtBodate').val();
-                t_eodate = $('#txtEodate').val();
+                t_driverno = $.trim($('#txtDriverno').val());
+                t_driver = $.trim($('#txtDriver').val());
                 
                 var t_where = " 1=1 " 
                 + q_sqlPara2("noa", t_noa) 
                 + q_sqlPara2("datea", t_bdate, t_edate)    
-                + q_sqlPara2("odate", t_bodate, t_eodate)              
-                + q_sqlPara2("tggno", t_tggno);
-                if (t_kind.length>0)
-                    t_where += " and kind='"+t_kind+"'";
-                if (t_comp.length>0)
-                    t_where += " and charindex('" + t_comp + "',tgg)>0";
-                if(t_ordbno.length>0)
-                    t_where += " and exists(select noa from ordct"+r_accy+" where ordct"+r_accy+".noa=ordc"+r_accy+".noa and ordct"+r_accy+".ordbno='"+t_ordbno+"')";
+                + q_sqlPara2("driverno", t_driverno);
+                if (t_driver.length>0)
+                    t_where += " and charindex('" + t_driver + "',driver)>0";
                 t_where = ' where=^^' + t_where + '^^ ';
                 return t_where;
             }
