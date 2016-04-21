@@ -40,7 +40,7 @@ z_uccafe03:--z_uccafe03 銷售分析表(產品)
 	
 	
 	update @tmpa set inte = isnull(round(a.total
-		*case when patindex('%[0-9]%',ISNULL(b.paytype,''))>0 then CAST(substring(ISNULL(b.paytype,''),patindex('%[0-9]%',ISNULL(b.paytype,'')),len(ISNULL(b.paytype,''))-patindex('%[0-9]%',ISNULL(b.paytype,''))- patindex('%[0-9%]',reverse(ISNULL(b.paytype,'')))) as int) else 0 end
+		*case when patindex('%[0-9]%',ISNULL(b.paytype,''))>0 then CAST(substring(ISNULL(b.paytype,''),patindex('%[0-9]%',ISNULL(b.paytype,'')),len(ISNULL(b.paytype,''))+2-patindex('%[0-9]%',ISNULL(b.paytype,''))- patindex('%[0-9]%',reverse(ISNULL(b.paytype,'')))) as int) else 0 end
 		*0.0004*(case when a.typea='2' then -1 else 1 end),0),0)
 	from @tmpa a
 	left join view_vcc b on a.accy=b.accy and a.vccno=b.noa
@@ -151,7 +151,7 @@ z_uccafe02:--z_uccafe02 銷售分析表(客戶)
 	and isnull(a.custno,'') between @t_bcustno and @t_ecustno
 	--------------------------------------------------------------------------
 	update @tmpa set inte = isnull(round(a.total
-		*case when patindex('%[0-9]%',ISNULL(b.paytype,''))>0 then CAST(substring(ISNULL(b.paytype,''),patindex('%[0-9]%',ISNULL(b.paytype,'')),len(ISNULL(b.paytype,''))-patindex('%[0-9]%',ISNULL(b.paytype,''))- patindex('%[0-9%]',reverse(ISNULL(b.paytype,'')))) as int) else 0 end
+		*case when patindex('%[0-9]%',ISNULL(b.paytype,''))>0 then CAST(substring(ISNULL(b.paytype,''),patindex('%[0-9]%',ISNULL(b.paytype,'')),len(ISNULL(b.paytype,''))+2-patindex('%[0-9]%',ISNULL(b.paytype,''))- patindex('%[0-9]%',reverse(ISNULL(b.paytype,'')))) as int) else 0 end
 		*0.0004*(case when a.typea='2' then -1 else 1 end),0),0)
 	from @tmpa a
 	left join view_vcc b on a.accy=b.accy and a.vccno=b.noa

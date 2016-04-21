@@ -92,7 +92,7 @@ import:--vccpr import
 		select a.accy,'vccs',a.noa,b.noq,a.typea,a.datea,a.custno,a.custno,a.nick,a.apv,a.trantype,a.addr2
 			,b.productno,b.product,b.lengthb,b.unit,b.mount,b.[weight],b.price,b.total,b.tranmoney,b.tranmoney2,b.tranmoney3,b.sprice,b.sprice2,b.wcost
 			,a.transtartno,a.[floata],a.paytype
-			,case when patindex('%[0-9]%',ISNULL(a.paytype,''))>0 then CAST(substring(ISNULL(a.paytype,''),patindex('%[0-9]%',ISNULL(a.paytype,'')),len(ISNULL(a.paytype,''))-patindex('%[0-9]%',ISNULL(a.paytype,''))- patindex('%[0-9%]',reverse(ISNULL(a.paytype,'')))) as int) else 0 end
+			,case when patindex('%[0-9]%',ISNULL(a.paytype,''))>0 then CAST(substring(ISNULL(a.paytype,''),patindex('%[0-9]%',ISNULL(a.paytype,'')),len(ISNULL(a.paytype,''))+2-patindex('%[0-9]%',ISNULL(a.paytype,''))- patindex('%[0-9]%',reverse(ISNULL(a.paytype,'')))) as int) else 0 end
 		from view_vcc a
 		left join view_vccs b on a.accy=b.accy and a.noa=b.noa
 		where a.datea between @t_bdate and @t_edate
