@@ -78,7 +78,7 @@ z_vccap_fe01:--z_vccap_fe01
 	begin		
 		update @tmp set recno=@n where sel=@sel
 		set @n=@n+1	
-		if @sel%8=0 and @m%8!=0
+		if @sel%8=0 --and @m%8!=0
 		begin
 			insert into @tmp(gno,recno)values('2',@n)
 			set @n=@n+1	
