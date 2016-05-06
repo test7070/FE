@@ -670,8 +670,8 @@
 			function _btnSeek() {
 				if (q_cur > 0 && q_cur < 4)
 					return;
-				alert('暫無列印');
-				//q_box('orde_s.aspx', q_name + '_s', "500px", "450px", q_getMsg("popSeek"));
+				
+				q_box('orde_s.aspx', q_name + '_s', "500px", "450px", q_getMsg("popSeek"));
 			}
 
 			function combPaytype_chg() {
@@ -873,7 +873,8 @@
 			}
 
 			function btnPrint() {
-               q_box("z_ordefep.aspx?" + r_userno + ";" + r_name + ";" + q_time + ";" + JSON.stringify({noa:trim($('#txtNoa').val())}) + ";" + r_accy + "_" + r_cno, 'orde', "95%", "95%", m_print);
+				alert('暫無列印');
+               //q_box("z_ordefep.aspx?" + r_userno + ";" + r_name + ";" + q_time + ";" + JSON.stringify({noa:trim($('#txtNoa').val())}) + ";" + r_accy + "_" + r_cno, 'orde', "95%", "95%", m_print);
 			}
 
 			function wrServer(key_value) {
