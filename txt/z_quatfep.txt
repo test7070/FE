@@ -118,7 +118,7 @@ z_quatfep01:--	z_quatfep01
 		,dbo.getComma(total,-1) c02
 		,memo c03
 		,worker c04
-		,dbo.AD2ChineseEraName(GETDATE())--+' '+left(CONVERT(nvarchar,GETDATE(),108),5) c05
-		,'報價有效日期：'+ISNULL(datea,'')+' '+ISNULL(timea,'') xxdatea
+		,dbo.AD2ChineseEraName(GETDATE()) c05--+' '+left(CONVERT(nvarchar,GETDATE(),108),5) c05
+		,'報價有效日期：'+ISNULL(datea,'')+' '+ISNULL(timea,'') xxdate
 	from @tmp 
 	order by pno,sel;
