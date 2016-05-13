@@ -36,32 +36,39 @@
 				$('#q_report').q_report({
 					fileName : 'z_vcc2fep',
 					options : [{
-						type : '6', //[1]        1
+                        type : '0', //[1]
+                        name : 'xname',
+                        value : r_name 
+                    },{
+						type : '6', //[2]        1
 						name : 'xnoa'
 					},{
-						type : '8', //[2]        2
+						type : '8', //[3]        2
 						name : 'showprice',
 						value : "1@顯示單價".split(',')
 					},{
-						type : '5', //[3]         3
+						type : '5', //[4]         3
 						name : 'xcno',
 						value : t_acomp.split(',')
 					}, {
-						type : '2', //[4][5]       4
+						type : '2', //[5][6]       4
 						name : 'xcust',
 						dbf : 'cust',
 						index : 'noa,comp',
 						src : 'cust_b.aspx'
 					}, {
-						type : '1', //[6][7]       5
-						name : 'xdate'
-					}, {
-						type : '1', //[8][9]       6
+						type : '1', //[7][8]       5
 						name : 'xmon'
+					}, {
+						type : '6', //[9]        6
+						name : 'edate'
 					}]
 				});
 				q_popAssign();
-                	
+				q_langShow();
+            	
+            	$('#txtXmon1').mask('999/99');
+				$('#txtXmon2').mask('999/99');
 				$('#txtXdate1').mask('999/99/99');
 				$('#txtXdate1').datepicker();
 				$('#txtXdate2').mask('999/99/99');
