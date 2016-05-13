@@ -18,7 +18,9 @@ z_quatfep01:--	z_quatfep01
 		,atel nvarchar(50)
 		,afax nvarchar(50)
 		
+		,odate nvarchar(20)
 		,datea nvarchar(20)
+		,timea nvarchar(10)
 		,quatno nvarchar(20)
 		,paytype nvarchar(20)
 		,trantype nvarchar(20)
@@ -86,11 +88,10 @@ z_quatfep01:--	z_quatfep01
 	update @tmp set custno=isnull(b.custno,''),cust=isnull(b.comp,''),tel=b.tel,fax=b.fax
 		,addr=case when len(ISNULL(b.addr2,''))>0 then ISNULL(b.post2,'')+ISNULL(b.addr2,'') else ISNULL(b.post,'')+ISNULL(b.addr,'') end
 		,acomp = c.acomp,atel=isnull(c.tel,''),afax=isnull(c.fax,'')
-		,datea=b.odate,paytype=b.paytype,trantype=b.trantype
+		,odate=b.odate,datea=b.datea,timea=b.timea,paytype=b.paytype,trantype=b.trantype
 	from @tmp a
 	left join view_quat b on a.quatno=b.noa
 	left join acomp c on b.cno=c.noa
-	
 	
 	select gno
 		,acomp a01
@@ -100,7 +101,7 @@ z_quatfep01:--	z_quatfep01
 		,tel a04
 		,fax a05
 		,addr a06
-		,datea a07
+		,odate a07
 		,quatno a08
 		,paytype a09
 		,trantype a10
@@ -117,6 +118,7 @@ z_quatfep01:--	z_quatfep01
 		,dbo.getComma(total,-1) c02
 		,memo c03
 		,worker c04
-		,dbo.AD2ChineseEraName(GETDATE())+' '+left(CONVERT(nvarchar,GETDATE(),108),5) c05
+		,dbo.AD2ChineseEraName(GETDATE())--+' '+left(CONVERT(nvarchar,GETDATE(),108),5) c05
+		,'報價有效日期：'+ISNULL(datea,'')+' '+ISNULL(timea,'') xxdatea
 	from @tmp 
 	order by pno,sel;

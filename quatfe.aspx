@@ -85,7 +85,7 @@
 
 			function mainPost() {
 				q_getFormat();
-				bbmMask = [['txtDatea', r_picd], ['txtOdate', r_picd]];
+				bbmMask = [['txtDatea', r_picd], ['txtOdate', r_picd], ['txtTimea', '99:99']];
 				q_mask(bbmMask);
 				bbmNum = [['txtMoney', 15, 0, 1], ['txtTax', 10, 0, 1], ['txtTotal', 15, 0, 1],['txtTotalus', 15, 2, 1], ['txtFloata', 15, 3, 1]];
 				bbsNum = [['txtWeight', 10, q_getPara('vcc.weightPrecision'), 1],['txtMount', 10, q_getPara('vcc.mountPrecision'), 1], ['txtPrice', 10, q_getPara('vcc.pricePrecision'), 1], ['txtTotal', 15, 0, 1]];
@@ -555,7 +555,7 @@
             }
             .dbbm {
                 float: left;
-                width: 800px;
+                width: 1000px;
                 /*margin: -1px;        
                 border: 1px black solid;*/
                 border-radius: 5px;
@@ -628,10 +628,31 @@
             .dbbs {
                 width: 1250px;
             }
-            .tbbs a {
+            .dbbs .tbbs {
+                margin: 0;
+                padding: 2px;
+                border: 2px lightgrey double;
+                border-spacing: 1;
+                border-collapse: collapse;
+                font-size: medium;
+                color: blue;
+                /*background: #cad3ff;*/
+                background: lightgrey;
+                width: 100%;
+            }
+            .dbbs .tbbs tr {
+                height: 35px;
+            }
+            .dbbs .tbbs tr td {
+                text-align: center;
+                border: 2px lightgrey double;
+            }
+            .dbbs .tbbs select {
+                border-width: 1px;
+                padding: 0px;
+                margin: -1px;
                 font-size: medium;
             }
-            
             .num {
                 text-align: right;
             }
@@ -642,7 +663,7 @@
 	</head>
 	<body>
 		<!--#include file="../inc/toolbar.inc"-->
-		<div id='dmain'>
+		<div id='dmain' style="overflow:visible;width: 1500px;">
             <div class="dview" id="dview" >
                 <table class="tview" id="tview">
 					<tr>
@@ -677,8 +698,11 @@
 						<td><select id="cmbStype" class="txt c1"></select></td>
 						<td><input id="txtOdate" type="text" class="txt c1"/></td>
 						<td><span> </span><a id='lblDatea' class="lbl"> </a></td>
-						<td><input id="txtDatea" type="text" class="txt c1"/></td>
-						<td><input id="chkIsproj" type="checkbox"/><span> </span><a id='lblIsproj'> </a></td>
+						<td colspan="2">
+							<input id="txtDatea" type="text" class="txt" style="float:left;width:45%;"/>
+							<input id="txtTimea" type="text" class="txt" style="float:left;width:30%;"/>
+							<input id="chkIsproj" type="checkbox"/><span> </span><a id='lblIsproj'> </a>
+						</td>
 						<td><span> </span><a id='lblNoa' class="lbl"> </a></td>
 						<td><input id="txtNoa" type="text" class="txt c1"/></td>
 					</tr>
