@@ -199,7 +199,7 @@
                 });
 
                 $('#btnOrdes').click(function() {
-                	if(!(q_cur==1 || q_cur==2))
+                	/*if(!(q_cur==1 || q_cur==2))
 						return;
 					var t_custno = $('#txtCustno').val();
 					var t_noa = $('#txtNoa').val();
@@ -210,6 +210,7 @@
                 		return;
                 	}
                 	q_box("ordefe_b.aspx?" + r_userno + ";" + r_name + ";" + q_time + ";" + t_where+";"+";"+JSON.stringify({custno:t_custno,vccno:t_noa,para:t_para}), "vcc_orde_fe", "95%", "95%", '');
+                	*/
                 });
 
                 $('#lblOrdeno').click(function() {
@@ -350,7 +351,7 @@
 
             var t_msg = '';
             var focus_addr = '';
-            var z_cno = r_cno, z_acomp = r_comp, z_nick = r_comp.substr(0, 2);
+            var z_nick = r_comp.substr(0, 2);
             var carnoList = [];
             var thisCarSpecno = '';
             function q_gtPost(t_name) {
@@ -765,13 +766,19 @@
                 /*if (emp($('#txtMon').val()))
                  $('#txtMon').val($('#txtDatea').val().substr(0, 6));*/
 
-                check_startdate = false;
+                //check_startdate = false;
 
                 if (q_cur == 1)
                     $('#txtWorker').val(r_name);
                 else
                     $('#txtWorker2').val(r_name);
-               	chkPrice(0);
+               	//chkPrice(0);
+               	sum();
+               	var s1 = $('#txtNoa').val();
+				if (s1.length == 0 || s1 == "AUTO")
+					q_gtnoa(q_name, replaceAll('X' + (!emp($('#txtDatea').val())?$('#txtDatea').val():q_date()), '/', ''));
+				else
+					wrServer(s1);
             }
             function chkPrice(n){
             	
@@ -897,9 +904,7 @@
 		                var t_other = '';
 		                for(var i=0;i<q_bbsCount;i++){
 		                	
-		                	
 		                }
-		                
 		                q_func('qtxt.query.vccfe_save', 'vcc.txt,vccfe_save,' 
 		                	+ encodeURI(r_accy) 
 		                	+ ';' + encodeURI(t_noa)
@@ -910,7 +915,7 @@
 		                	+ ';' + encodeURI(r_name)
 		                	+ ';' + t_total);
 					}else{
-						var s1 = $('#txt' + bbmKey[0].substr(0, 1).toUpperCase() + bbmKey[0].substr(1)).val();
+						var s1 = $('#txtNoa').val();
 		                wrServer(s1);
 					}
             	}
@@ -1030,14 +1035,14 @@
             function btnIns() {
                 _btnIns();
                 $('#txtNoa').val('');//一定要空白  //r_userno+(new Date()).getTime()
-                $('#txtCno').val(z_cno);
-                $('#txtAcomp').val(z_acomp);
+                if(t_acomp.length>0){
+                	$('#txtCno').val(t_acomp[0].noa);
+           	 		$('#txtAcomp').val(t_acomp[0].acomp);
+                }
                 $('#txtDatea').val(q_date());
                 $('#cmbTypea').val('1');
                 $('#txtDatea').focus();
                 $('#cmbTaxtype').val('1');
-                var t_where = "where=^^ 1=1  ^^";
-                q_gt('custaddr', t_where, 0, 0, 0, "");
             }
 			var guid = (function() {
 				function s4() {return Math.floor((1 + Math.random()) * 0x10000).toString(16).substring(1);}
@@ -1065,7 +1070,7 @@
             }
 
             function btnPrint() {
-                q_box("z_vccfep.aspx?" + r_userno + ";" + r_name + ";" + q_time + ";" + JSON.stringify({
+                q_box("z_vcc2fep.aspx?" + r_userno + ";" + r_name + ";" + q_time + ";" + JSON.stringify({
                     noa : trim($('#txtNoa').val())
                 }) + ";" + r_accy + "_" + r_cno, 'umm', "95%", "95%", m_print);
             }
@@ -1106,7 +1111,7 @@
 
             function q_stPost() {
                 if (q_cur == 1 || q_cur == 2) {
-                    q_func('qtxt.query.vcc_tranmoney', 'vccfe.txt,vcc_tranmoney,'+$('#txtNoa').val()); 
+                    //q_func('qtxt.query.vcc_tranmoney', 'vccfe.txt,vcc_tranmoney,'+$('#txtNoa').val()); 
                 }
             }
 
@@ -1639,33 +1644,30 @@
 		<div class='dbbs'>
             <table id="tbbs" class='tbbs' style=' text-align:center'>
 				<tr style='color:white; background:#003366;' >
-					<td align="center" style="width:40px;">
-					<input class="btn"  id="btnPlus" type="button" value='＋' style="font-weight: bold;width:" />
-					</td>
+					<td align="center" style="width:40px;"><input class="btn"  id="btnPlus" type="button" value='＋' style="font-weight: bold;width:" /></td>
 					<td align="center" style="width:20px;"> </td>
-
-					<td align="center" style="width:250px"><a id='lblProduct_s'> </a></td>
+					<td align="center" style="width:250px"><a id='lblProduct_s'>品名</a></td>
 					<td align="center" style="width:95px;" class="isStyle"><a id='lblStyle_s'> </a></td>
 					<td align="center" style="width:80px;" class="isFe"><a id='lblLengthb_fe_s'> </a></td>
-					<td align="center" style="width:40px;"><a id='lblUnit_s'> </a></td>
-					<td align="center" style="width:80px;"><a id='lblMount_s'> </a></td>
-					<td align="center" style="width:100px;"><a id='lblWeight_s'> </a></td>
-					<td align="center" style="width:80px;display:none;" class="isGweight"><a id='lblGmount_s'> </a></td>
-					<td align="center" style="width:100px;display:none;" class="isGweight"><a id='lblGweight_s'> </a></td>
-					<td align="center" style="width:80px;"><a id='lblPrice_s'> </a></td>
-					<td align="center" style="width:80px;"><a id='lblTotal_s'> </a></td>
-					<td align="center" style="width:80px;"><a id='lblWcost_s'> </a></td>
-					<td align="center" style="width:80px;"><a id='lblTranmoney_s'> </a></td>
-					<td align="center" style="width:80px;"><a id='lblProfit_s'> </a></td>
-					<td align="center" style="width:60px;"><a id='lblChecker_s'> </a></td>
-					<td align="center" style="width:80px;"><a id='lblSprice_s'> </a></td>
-					<td align="center" style="width:80px;"><a id='lblSprice2_s'> </a></td>
-					<td align="center" style="width:120px;"><a id='lblStore_s'> </a></td>
+					<td align="center" style="width:40px;"><a id='lblUnit_s'>單位</a></td>
+					<td align="center" style="width:80px;"><a id='lblMount_s'>數量</a></td>
+					<td align="center" style="width:100px;"><a id='lblWeight_s'>重量</a></td>
+					<td align="center" style="width:80px;display:none;" class="isGweight"><a id='lblGmount_s'>實際數量</a></td>
+					<td align="center" style="width:100px;display:none;" class="isGweight"><a id='lblGweight_s'>實際重量</a></td>
+					<td align="center" style="width:80px;"><a id='lblPrice_s'>單價</a></td>
+					<td align="center" style="width:80px;"><a id='lblTotal_s'>小計</a></td>
+					<td align="center" style="width:80px;"><a id='lblWcost_s'>加工費</a></td>
+					<td align="center" style="width:80px;"><a id='lblTranmoney_s'>運費</a></td>
+					<td align="center" style="width:80px;"><a id='lblProfit_s'>毛利</a></td>
+					<td align="center" style="width:60px;"><a id='lblChecker_s'>毛利異常核准</a></td>
+					<td align="center" style="width:80px;"><a id='lblSprice_s'>基價</a></td>
+					<td align="center" style="width:80px;"><a id='lblSprice2_s'>手動基價</a></td>
+					<td align="center" style="width:120px;"><a id='lblStore_s'>倉庫</a></td>
 					<td align="center" style="width:100px;" class="isRack"><a id='lblRackno_s'> </a></td>
-					<td align="center" style="width:150px;"><a id='lblMemo_s'> </a></td>
-					<td align="center" style="width:40px;"><a id='lblRecord_s'> </a></td>
-					<td align="center" style="width:40px;"><a id='lblStk_s'> </a></td>
-					<td align="center" style="width:150px;"><a id='lblUno_s'> </a></td>
+					<td align="center" style="width:150px;"><a id='lblMemo_s'>備註</a></td>
+					<td align="center" style="width:40px;display:none;"><a id='lblRecord_s'>出貨記錄</a></td>
+					<td align="center" style="width:40px;display:none;"><a id='lblStk_s'>庫存</a></td>
+					<td align="center" style="width:150px;"><a id='lblUno_s'>批號</a></td>
 				</tr>
 				<tr style='background:#cad3ff;'>
 					<td>
@@ -1739,10 +1741,10 @@
 					<input id="txtOrdeno.*" type="text"  class="txt" style="width:60%;"/>
 					<input id="txtNo2.*" type="text" class="txt" style="width:18%;"/>
 					</td>
-					<td align="center">
+					<td align="center" style="display:none;">
 					<input class="btn"  id="btnRecord.*" type="button" value='.' style=" font-weight: bold;" />
 					</td>
-					<td align="center">
+					<td align="center" style="display:none;">
 					<input class="btn"  id="btnStk.*" type="button" value='.' style="width:1%;"/>
 					</td>
 					<td>

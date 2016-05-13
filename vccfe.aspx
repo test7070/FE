@@ -1054,14 +1054,14 @@
             function btnIns() {
                 _btnIns();
                 $('#txtNoa').val('');//一定要空白  //r_userno+(new Date()).getTime()
-                $('#txtCno').val(z_cno);
-                $('#txtAcomp').val(z_acomp);
+                if(t_acomp.length>0){
+                	$('#txtCno').val(t_acomp[0].noa);
+           	 		$('#txtAcomp').val(t_acomp[0].acomp);
+                }
                 $('#txtDatea').val(q_date());
                 $('#cmbTypea').val('1');
                 $('#txtDatea').focus();
                 $('#cmbTaxtype').val('1');
-                var t_where = "where=^^ 1=1  ^^";
-                q_gt('custaddr', t_where, 0, 0, 0, "");
             }
 			var guid = (function() {
 				function s4() {return Math.floor((1 + Math.random()) * 0x10000).toString(16).substring(1);}
