@@ -30,7 +30,7 @@ z_vcc2fep02:--z_vcc2fep02  請款單2   ref.z_ummfe03
 		,datea nvarchar(20)
 		,typea nvarchar(20)
 		,productno nvarchar(50)
-		,product nvarchar(50)
+		,product nvarchar(max)
 		,size nvarchar(max)
 		,unit nvarchar(20)
 		,mount float
@@ -353,7 +353,7 @@ z_vcc2fep01:--z_vcc2fep01   出貨單2 ref. z_vccfep02
 		
 		atotal float,
 		pno nvarchar(50),
-		product nvarchar(100),
+		product nvarchar(max),
 		unit nvarchar(50),
 		mount float,
 		price float,
