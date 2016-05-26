@@ -17,7 +17,7 @@
 		<script type="text/javascript">
             q_tables = 's';
             var q_name = "vcc2";
-            var q_readonly = ['txtNoa', 'txtAccno', 'txtComp', 'txtCardeal', 'txtSales', 'txtAcomp', 'txtMoney', 'txtTax', 'txtTotal', 'txtTotalus', 'txtWorker', 'txtWorker2', 'txtTranstart', 'txtWeight','txtApv','txtApvname','txtApvmemo'];
+            var q_readonly = ['txtNoa', 'txtAccno', 'txtCardeal', 'txtSales', 'txtAcomp', 'txtMoney', 'txtTax', 'txtTotal', 'txtTotalus', 'txtWorker', 'txtWorker2', 'txtTranstart', 'txtWeight','txtApv','txtApvname','txtApvmemo'];
             var q_readonlys = ['txtTotal', 'txtOrdeno', 'txtNo2', 'txtNoq', 'txtProfit', 'txtChecker'];
             var bbmNum = [];
             var bbsNum = [];
@@ -1521,8 +1521,10 @@
 					</tr>
 					<tr>
 						<td><span> </span><a id="lblAcomp" class="lbl btn">公司</a></td>
-						<td><input id="txtCno" type="text" class="txt c1"/></td>
-						<td><input id="txtAcomp" type="text" class="txt c1"/></td>
+						<td colspan="2">
+							<input id="txtCno" type="text" class="txt" style="width:30%"/>
+							<input id="txtAcomp" type="text" class="txt" style="width:70%"/>
+						</td>
 						<td><span> </span><a id='lblMon' class="lbl">帳款月份</a></td>
 						<td><input id="txtMon" type="text" class="txt c1"/></td>
 						<td></td>
@@ -1534,9 +1536,9 @@
 					</tr>
 					<tr>
 						<td><span> </span><a id="lblCust" class="lbl btn">客戶</a></td>
-						<td><input id="txtCustno" type="text" class="txt c1"/></td>
-						<td>
-							<input id="txtComp" type="text" class="txt c1"/>
+						<td colspan="2">
+							<input id="txtCustno" type="text" class="txt" style="width:30%"/>
+							<input id="txtComp" type="text" class="txt" style="width:70%"/>
 							<input id="txtNick" type="text" style="display:none;"/>
 						</td>
 						<td><span> </span><a id='lblPay' class="lbl">收款方式</a></td>
