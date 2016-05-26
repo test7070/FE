@@ -89,7 +89,7 @@
                     }else{
                         t_total = round(q_mul(t_price, t_mount), 0);
                     }
-                    t_total=q_mul(t_total,t_discount);
+                    t_total=round(q_mul(t_total,t_discount), 0);
                     
                     t_totals = q_add(t_totals,t_total);
                     $('#txtTotal_' + j).val(t_total);
