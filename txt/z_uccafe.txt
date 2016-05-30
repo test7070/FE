@@ -115,108 +115,10 @@ z_uccafe03:--z_uccafe03 銷售分析表(產品)
 z_uccafe02:--z_uccafe02 銷售分析表(客戶)
 	declare @t_bdate nvarchar(10)=case when '#non' = [1] then '' else [1] end
 	declare @t_edate nvarchar(10)=case when '#non' = [2] then CHAR(255) else [2] end
-	declare @t_bcustno nvarchar(20) = case when '#non' = [5] then '' else [5] end
-	declare @t_ecustno nvarchar(20) = case when '#non' = [6] then CHAR(255) else [6] end
-	-------------------------------------------------------------------------
-	declare @tmpa table(
-		custno nvarchar(20),
-		cust nvarchar(50),
-		accy nvarchar(20),
-		vccno nvarchar(20),
-		vccnoq nvarchar(10),
-		typea nvarchar(10),
-		
-		total float,
-		tranmoney float,
-		tranmoney2 float,
-		tranmoney3 float,
-		
-		spricemoney float,
-		wcost float,
-		inte float,
-		profit float
-	)
-	insert into @tmpa(custno,cust,accy,vccno,vccnoq,typea,total,tranmoney,tranmoney2,tranmoney3,spricemoney,wcost)
-	select a.custno,a.comp,a.accy,a.noa,b.noq,isnull(a.typea,'')
-		,b.total --* case when isnull(a.typea,'')='1' then 1 else -1 end
-		,b.tranmoney --* case when isnull(a.typea,'')='1' then 1 else -1 end
-		,b.tranmoney2 --* case when isnull(a.typea,'')='1' then 1 else -1 end
-		,b.tranmoney3 --* case when isnull(a.typea,'')='1' then 1 else -1 end
-		,round(case when ISNULL(b.sprice2,0)>0 then b.sprice2 else b.sprice end*case when UPPER(b.unit)='KG' or len(ISNULL(b.unit,''))=0 then b.[weight] else b.mount end,0)--* case when isnull(a.typea,'')='1' then 1 else -1 end
-		,round(ISNULL(b.wcost,0)*case when UPPER(b.unit)='KG' or len(ISNULL(b.unit,''))=0 then b.[weight] else b.mount end,0)--* case when isnull(a.typea,'')='1' then 1 else -1 end
-	from view_vcc a
-	left join view_vccs b on a.accy=b.accy and a.noa=b.noa
-	where a.datea between @t_bdate and @t_edate
-	and b.noa is not null
-	and isnull(a.custno,'') between @t_bcustno and @t_ecustno
-	--------------------------------------------------------------------------
-	update @tmpa set inte = isnull(round(a.total
-		*case when patindex('%[0-9]%',ISNULL(b.paytype,''))>0 then CAST(substring(ISNULL(b.paytype,''),patindex('%[0-9]%',ISNULL(b.paytype,'')),len(ISNULL(b.paytype,''))+2-patindex('%[0-9]%',ISNULL(b.paytype,''))- patindex('%[0-9]%',reverse(ISNULL(b.paytype,'')))) as int) else 0 end
-		*0.0004*(case when a.typea='2' then -1 else 1 end),0),0)
-	from @tmpa a
-	left join view_vcc b on a.accy=b.accy and a.vccno=b.noa
-	--update @tmpa set inte=b.inte
-	--from @tmpa a
-	--outer apply(select top 1 inte from vccprs where accy=a.accy and vccno=a.vccno and vccnoq=a.vccnoq order by noa desc) b
-	
-	update @tmpa set profit = total-tranmoney-tranmoney2-tranmoney3-spricemoney-wcost-inte
-	--------------------------------------------------------------------------------------------
-	declare @tmp table(
-		gno nvarchar(10),
-		custno nvarchar(20),
-		cust nvarchar(50),
-		total float,
-		tranmoney1 float,
-		tranmoney2 float,
-		tranmoney3 float,
-		spricemoney float,
-		wcost float,
-		inte float,
-		profit float
-	)	
-	insert into @tmp(gno,custno,cust,total,tranmoney1,tranmoney2,tranmoney3,spricemoney,wcost,inte,profit)
-	select '1' gno,custno,cust
-		,SUM(case when typea='1' then 1 else -1 end*isnull(total,0)) total
-		,SUM(case when typea='1' then 1 else -1 end*isnull(tranmoney,0)) tranmoney1
-		,SUM(case when typea='1' then 1 else -1 end*isnull(tranmoney2,0)) tranmoney2
-		,SUM(case when typea='1' then 1 else -1 end*isnull(tranmoney3,0)) tranmoney3
-		,SUM(case when typea='1' then 1 else -1 end*isnull(spricemoney,0)) spricemoney
-		,SUM(case when typea='1' then 1 else -1 end*isnull(wcost,0)) wcost
-		,SUM(case when typea='1' then 1 else -1 end*isnull(inte,0)) inte
-		,SUM(case when typea='1' then 1 else -1 end*isnull(profit,0)) profit
-	from @tmpa
-	group by custno,cust
-	insert into @tmp(gno,custno,cust,total,tranmoney1,tranmoney2,tranmoney3,spricemoney,wcost,inte,profit)
-	select '2',CHAR(255),''
-		,SUM(case when typea='1' then 1 else -1 end*isnull(total,0)) total
-		,SUM(case when typea='1' then 1 else -1 end*isnull(tranmoney,0)) tranmoney1
-		,SUM(case when typea='1' then 1 else -1 end*isnull(tranmoney2,0)) tranmoney2
-		,SUM(case when typea='1' then 1 else -1 end*isnull(tranmoney3,0)) tranmoney3
-		,SUM(case when typea='1' then 1 else -1 end*isnull(spricemoney,0)) spricemoney
-		,SUM(case when typea='1' then 1 else -1 end*isnull(wcost,0)) wcost
-		,SUM(case when typea='1' then 1 else -1 end*isnull(inte,0)) inte
-		,SUM(case when typea='1' then 1 else -1 end*isnull(profit,0)) profit
-	from @tmpa
-
-	select * 
-		,row_number()over(order by gno,total desc) rr
-		,custno a01
-		,cust a02
-		,dbo.getComma(total,0) a03
-		,dbo.getComma(tranmoney1,0) a04
-		,dbo.getComma(isnull(tranmoney2,0)+isnull(tranmoney3,0),0) a05
-		,dbo.getComma(spricemoney,0) a06
-		,dbo.getComma(wcost,0) a07
-		,dbo.getComma(inte,0) a08
-		,dbo.getComma(profit,0) a09
-	from @tmp order by gno,total desc;
-	
-z_uccafe01:--z_uccafe01 銷售分析表(業務)
-	SET QUOTED_IDENTIFIER OFF 
-	declare @t_bdate nvarchar(10)=case when '#non' = [1] then '' else [1] end
-	declare @t_edate nvarchar(10)=case when '#non' = [2] then CHAR(255) else [2] end
 	declare @t_bsalesno nvarchar(20) = case when '#non' = [3] then '' else [3] end
 	declare @t_esalesno nvarchar(20) = case when '#non' = [4] then CHAR(255) else [4] end
+	declare @t_bcustno nvarchar(20) = case when '#non' = [5] then '' else [5] end
+	declare @t_ecustno nvarchar(20) = case when '#non' = [6] then CHAR(255) else [6] end
 	-----------------------------------------------------------------
 	declare @tmpa table(
 		salesno nvarchar(20)
@@ -268,6 +170,209 @@ z_uccafe01:--z_uccafe01 銷售分析表(業務)
 	where a.datea between @t_bdate and @t_edate
 	and b.noa is not null
 	and isnull(a.salesno,'') between @t_bsalesno and @t_esalesno
+	and isnull(a.custno,'') between @t_bcustno and @t_ecustno
+	
+	update @tmpa set paytype = rtrim(ltrim(ISNULL(b.paytype,'')))
+	from @tmpa a
+	left join view_vcc b on a.accy=b.accy and a.vccno=b.noa
+	
+	update @tmpa set inte = isnull(round(total
+		*case when patindex('%[0-9]%',ISNULL(paytype,''))>0 then CAST(substring(ISNULL(paytype,''),patindex('%[0-9]%',ISNULL(paytype,'')),len(ISNULL(paytype,''))+2-patindex('%[0-9]%',ISNULL(paytype,''))- patindex('%[0-9]%',reverse(ISNULL(paytype,'')))) as int) else 0 end
+		*0.0004*(case when typea='2' then -1 else 1 end),0),0)
+	
+	update @tmpa set profit = total-tranmoney1-tranmoney2-tranmoney3-spricemoney-wcost-inte
+
+	---------------------------------------------------------------------------------------------------
+	declare @tmp table(
+		sel int identity(1,1)
+		,rr int
+		,gno nvarchar(10)
+		,recno int --出貨單
+		,recno2 int --出貨單明細 
+		,custno nvarchar(20)
+		,cust nvarchar(20)
+		,total float
+		,tranmoney1 float
+		,tranmoney2 float
+		,tranmoney3 float
+		,spricemoney float
+		,wcost float
+		,inte float
+		,profit float
+		,datea nvarchar(20)
+		,accy nvarchar(20)
+		,vccno nvarchar(20)
+		,sales nvarchar(50)
+		
+		,productno nvarchar(30)
+		,product nvarchar(50)
+		,unit nvarchar(20)
+		,mount float
+		,[weight] float
+		,price float
+		,sprice float
+		,sprice2 float
+	)
+	insert into @tmp(recno,gno,custno,cust,total,tranmoney1,tranmoney2,tranmoney3,spricemoney,wcost,inte,profit)
+	select 0,'1',custno,cust
+		,SUM(case when typea='1' then 1 else -1 end*isnull(total,0)) total
+		,SUM(case when typea='1' then 1 else -1 end*isnull(tranmoney1,0)) tranmoney1
+		,SUM(case when typea='1' then 1 else -1 end*isnull(tranmoney2,0)) tranmoney2
+		,SUM(case when typea='1' then 1 else -1 end*isnull(tranmoney3,0)) tranmoney3
+		,SUM(case when typea='1' then 1 else -1 end*isnull(spricemoney,0)) spricemoney
+		,SUM(case when typea='1' then 1 else -1 end*isnull(wcost,0)) wcost
+		,SUM(case when typea='1' then 1 else -1 end*isnull(inte,0)) inte
+		,SUM(case when typea='1' then 1 else -1 end*isnull(profit,0)) profit
+	from @tmpa
+	group by custno,cust
+	
+	update @tmp set rr=b.recno
+	from @tmp a
+	left join (select sel,ROW_NUMBER()over(order by custno) recno from @tmp ) b on a.sel=b.sel
+	
+	--出貨單
+	insert into @tmp(recno,recno2,gno,custno,cust,total,tranmoney1,tranmoney2,tranmoney3,spricemoney,wcost,inte,profit
+		,datea,accy,vccno,sales)
+	select ROW_NUMBER()over(partition by custno order by datea,accy,vccno),0
+		,'2',custno,cust
+		,SUM(case when typea='1' then 1 else -1 end*isnull(total,0)) total
+		,SUM(case when typea='1' then 1 else -1 end*isnull(tranmoney1,0)) tranmoney1
+		,SUM(case when typea='1' then 1 else -1 end*isnull(tranmoney2,0)) tranmoney2
+		,SUM(case when typea='1' then 1 else -1 end*isnull(tranmoney3,0)) tranmoney3
+		,SUM(case when typea='1' then 1 else -1 end*isnull(spricemoney,0)) spricemoney
+		,SUM(case when typea='1' then 1 else -1 end*isnull(wcost,0)) wcost
+		,SUM(case when typea='1' then 1 else -1 end*isnull(inte,0)) inte
+		,SUM(case when typea='1' then 1 else -1 end*isnull(profit,0)) profit
+		,datea,accy,vccno,sales
+	from @tmpa
+	group by custno,cust,datea,accy,vccno,sales
+	--出貨單明細 
+	insert into @tmp(recno,recno2,gno,custno,cust
+		,total,tranmoney1,tranmoney2,tranmoney3,spricemoney,wcost,inte,profit
+		,datea,accy,vccno,sales
+		,productno,product,unit,mount,[weight],price,sprice,sprice2)
+	select ROW_NUMBER()over(partition by custno order by datea,accy,vccno)
+		,ROW_NUMBER()over(partition by accy,vccno order by vccnoq)
+		,'3',custno,cust
+		,case when typea='1' then 1 else -1 end*isnull(total,0) total
+		,case when typea='1' then 1 else -1 end*isnull(tranmoney1,0) tranmoney1
+		,case when typea='1' then 1 else -1 end*isnull(tranmoney2,0) tranmoney2
+		,case when typea='1' then 1 else -1 end*isnull(tranmoney3,0) tranmoney3
+		,case when typea='1' then 1 else -1 end*isnull(spricemoney,0) spricemoney
+		,case when typea='1' then 1 else -1 end*isnull(wcost,0) wcost
+		,case when typea='1' then 1 else -1 end*isnull(inte,0) inte
+		,case when typea='1' then 1 else -1 end*isnull(profit,0) profit
+		,datea,accy,vccno,sales
+		,productno,product,unit,mount,[weight],price,sprice,sprice2
+	from @tmpa
+			
+	update @tmp set recno=b.recno
+	from @tmp a
+	outer apply (select recno from @tmp where a.accy=accy and a.vccno=vccno and gno='2') b
+	
+	insert into @tmp(gno,custno,cust,total,tranmoney1,tranmoney2,tranmoney3,spricemoney,wcost,inte,profit)
+	select '4',CHAR(255),''
+		,SUM(case when typea='1' then 1 else -1 end*isnull(total,0)) total
+		,SUM(case when typea='1' then 1 else -1 end*isnull(tranmoney1,0)) tranmoney1
+		,SUM(case when typea='1' then 1 else -1 end*isnull(tranmoney2,0)) tranmoney2
+		,SUM(case when typea='1' then 1 else -1 end*isnull(tranmoney3,0)) tranmoney3
+		,SUM(case when typea='1' then 1 else -1 end*isnull(spricemoney,0)) spricemoney
+		,SUM(case when typea='1' then 1 else -1 end*isnull(wcost,0)) wcost
+		,SUM(case when typea='1' then 1 else -1 end*isnull(inte,0)) inte
+		,SUM(case when typea='1' then 1 else -1 end*isnull(profit,0)) profit
+	from @tmpa
+	
+	
+	select * 
+		,"<a href="+CHAR(34)+"JavaScript:q_box('vccfe.aspx',' "+char(59)+"noa="+vccno+char(59)+accy+"','95%','95%','"+accy+"')"+CHAR(34)+">"+vccno+"</a>" xvccno
+		,custno a01
+		,cust a02
+		,dbo.getComma(total,0) a03
+		,dbo.getComma(tranmoney1,0) a04
+		,dbo.getComma(isnull(tranmoney2,0)+isnull(tranmoney3,0),0) a05
+		,dbo.getComma(spricemoney,0) a06
+		,dbo.getComma(wcost,0) a07
+		,dbo.getComma(inte,0) a08
+		,dbo.getComma(profit,0) a09
+		
+		,productno b01
+		,product b02
+		,unit b03
+		,dbo.getComma(mount,-1) b04
+		,dbo.getComma([weight],-1) b05
+		,dbo.getComma(price,-1) b06
+		,dbo.getComma(sprice,-1) b07
+		,dbo.getComma(sprice2,-1) b08
+		,dbo.getComma(total,0) b09
+		,dbo.getComma(tranmoney1,0) b10
+		,dbo.getComma(isnull(tranmoney2,0)+isnull(tranmoney3,0),0) b11
+		,dbo.getComma(spricemoney,0) b12
+		,dbo.getComma(wcost,0) b13
+		,dbo.getComma(inte,0) b14
+		,dbo.getComma(profit,0) b15
+
+	from @tmp order by custno,recno,recno2;
+	
+z_uccafe01:--z_uccafe01 銷售分析表(業務)
+	SET QUOTED_IDENTIFIER OFF 
+	declare @t_bdate nvarchar(10)=case when '#non' = [1] then '' else [1] end
+	declare @t_edate nvarchar(10)=case when '#non' = [2] then CHAR(255) else [2] end
+	declare @t_bsalesno nvarchar(20) = case when '#non' = [3] then '' else [3] end
+	declare @t_esalesno nvarchar(20) = case when '#non' = [4] then CHAR(255) else [4] end
+	declare @t_bcustno nvarchar(20) = case when '#non' = [5] then '' else [5] end
+	declare @t_ecustno nvarchar(20) = case when '#non' = [6] then CHAR(255) else [6] end
+	-----------------------------------------------------------------
+	declare @tmpa table(
+		salesno nvarchar(20)
+		,sales nvarchar(20)
+		,accy nvarchar(20)
+		,vccno nvarchar(20)
+		,vccnoq nvarchar(10)
+		,typea nvarchar(10)
+		,datea nvarchar(20)
+		,custno nvarchar(20)
+		,cust nvarchar(50)
+		
+		,total float
+		,tranmoney1 float
+		,tranmoney2 float
+		,tranmoney3 float
+		
+		,spricemoney float
+		,wcost float
+		,inte float
+		,profit float
+		,productno nvarchar(30)
+		,product nvarchar(50)
+		,unit nvarchar(20)
+		,mount float
+		,[weight] float
+		,price float
+		,sprice float
+		,sprice2 float
+		
+		,paytype nvarchar(20)
+	)
+	insert into @tmpa(salesno,sales,accy,vccno,vccnoq,typea,datea,total,tranmoney1,tranmoney2,tranmoney3,spricemoney,wcost
+		,custno,cust
+		,productno,product,unit,mount,[weight],price,sprice,sprice2)
+	select a.salesno,c.namea,a.accy,a.noa,b.noq,isnull(a.typea,''),a.datea
+		,b.total --* case when isnull(a.typea,'')='1' then 1 else -1 end
+		,b.tranmoney --* case when isnull(a.typea,'')='1' then 1 else -1 end
+		,b.tranmoney2 --* case when isnull(a.typea,'')='1' then 1 else -1 end
+		,b.tranmoney3 --* case when isnull(a.typea,'')='1' then 1 else -1 end
+		,round(case when ISNULL(b.sprice2,0)>0 then b.sprice2 else b.sprice end*case when UPPER(b.unit)='KG' or len(ISNULL(b.unit,''))=0 then b.[weight] else b.mount end,0)--* case when isnull(a.typea,'')='1' then 1 else -1 end
+		,round(ISNULL(b.wcost,0)*case when UPPER(b.unit)='KG' or len(ISNULL(b.unit,''))=0 then b.[weight] else b.mount end,0)--* case when isnull(a.typea,'')='1' then 1 else -1 end
+		,a.custno,d.nick
+		,b.productno,b.product,b.unit,b.mount,b.[weight],b.price,b.sprice,b.sprice2
+	from view_vcc a
+	left join view_vccs b on a.accy=b.accy and a.noa=b.noa
+	left join sss c on a.salesno=c.noa
+	left join cust d on a.custno=d.noa
+	where a.datea between @t_bdate and @t_edate
+	and b.noa is not null
+	and isnull(a.salesno,'') between @t_bsalesno and @t_esalesno
+	and isnull(a.custno,'') between @t_bcustno and @t_ecustno
 	
 	update @tmpa set paytype = rtrim(ltrim(ISNULL(b.paytype,'')))
 	from @tmpa a
