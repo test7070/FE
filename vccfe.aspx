@@ -786,6 +786,7 @@
 
 				//檢查庫存量
 				var t_noa = $.trim($('#txtNoa').val());
+				t_noa = t_noa.length==0?'AUTO':t_noa;
 				var t_datea = $.trim($('#txtDatea').val());
 				var t_where='';
 				for(var i=0;i<q_bbsCount;i++){
