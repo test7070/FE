@@ -1,3 +1,99 @@
+checkMount:--vccfe.txt checkMount  檢查庫存量
+	--  出貨單日期要是有變動,資料可能不一定會正確
+	declare @t_noa nvarchar(max) = [1]
+	declare @t_edate nvarchar(max) = [2]
+	declare @t_data nvarchar(max) = [3]
+	----------------------------------------------------------------
+	declare @tmpa table(
+		sel int identity(1,1)
+		,productno nvarchar(50)
+		,mount float
+		,[weight] float
+	)
+	declare @t_string nvarchar(max)=@t_data
+	declare @productno nvarchar(max)
+	declare @mount float
+	declare @weight float
+	
+	while CHARINDEX('　',@t_string)>0
+	begin
+		set @productno = LEFT(@t_string,CHARINDEX('　',@t_string)-1)
+		set @t_string = SUBSTRING(@t_string,CHARINDEX('　',@t_string)+1,LEN(@t_string))
+		set @mount = cast(LEFT(@t_string,CHARINDEX('　',@t_string)-1) as float)
+		set @t_string = SUBSTRING(@t_string,CHARINDEX('　',@t_string)+1,LEN(@t_string))
+		if(CHARINDEX('　',@t_string)>0)
+		begin
+			set @weight = cast(LEFT(@t_string,CHARINDEX('　',@t_string)-1) as float)
+			set @t_string = SUBSTRING(@t_string,CHARINDEX('　',@t_string)+1,LEN(@t_string))
+		end
+		else
+		begin
+			set @weight = cast(@t_string as float)
+			set @t_string = ''
+		end
+		insert into @tmpa(productno,mount,[weight])values(@productno,@mount,@weight)
+	end
+	------------------------------------------------------------------------------------------
+	declare @tmpb table( 
+		sel int identity(1,1)
+		,productno nvarchar(30) 
+		,storeno nvarchar(30) 
+		,mount float
+		,[weight] float 
+	) 
+	declare @t_bstoreno nvarchar(20) = ''
+	declare @t_estoreno nvarchar(20) = char(255)
+	
+	declare cursor_tablex cursor for
+	select productno from @tmpa group by productno
+	open cursor_tablex
+	fetch next from cursor_tablex
+	into @productno
+	while(@@FETCH_STATUS <> -1)
+	begin		
+		insert into @tmpb(productno,storeno,mount,[weight])
+		execute dbo.stkucc2 @t_edate,@t_bstoreno,@t_estoreno,@productno,@productno
+		
+		fetch next from cursor_tablex
+		into @productno
+	end
+	close cursor_tablex
+	deallocate cursor_tablex
+	----------------------------------------------------------------------------
+	
+	declare @tmp table( 
+		sel int identity(1,1)
+		,productno nvarchar(30) 
+		--　出貨(修改後)
+		,mount float
+		,[weight] float
+		--  當前庫存
+		,curmount float
+		,curweight float
+		--  出貨(修改前)
+		,vccmount float
+		,vccweight float 
+		--  出貨後庫存
+		,emount float
+		,eweight float
+	) 
+	insert into @tmp(productno,mount,[weight])
+	select productno,SUM(ISNULL(mount,0)),SUM(ISNULL([weight],0))
+	from @tmpa 
+	group by productno
+	
+	update @tmp set curmount=ISNULL(b.mount,0),curweight=ISNULL(b.[weight],0)
+	from @tmp a
+	left join (select productno,SUM(ISNULL(mount,0)) mount,SUM(ISNULL([weight],0)) [weight] from @tmpb group by productno) b on a.productno=b.productno
+	
+	update @tmp set vccmount=ISNULL(b.mount,0),vccweight=ISNULL(b.[weight],0)
+	from @tmp a
+	left join(select productno,SUM(ISNULL(mount,0)*case typea when '1' then 1 else -1 end) mount,SUM(ISNULL([weight],0)*case typea when '1' then 1 else -1 end) [weight] from view_vccs where noa=@t_noa group by productno) b on a.productno=b.productno
+
+	update @tmp set emount = ISNULL(curmount,0)+ISNULL(vccmount,0)-ISNULL(mount,0)
+		,eweight = ISNULL(curweight,0)+ISNULL(vccweight,0)-ISNULL([weight],0)
+	select * from @tmp;
+
 getPrice:--vccfe.txt getPrice 找上一次出貨單價 	
 	declare @t_noa nvarchar(max) = [1]
 	declare @t_bdate nvarchar(max) = [2]

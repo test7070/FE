@@ -2,7 +2,7 @@
 <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
 <html xmlns="http://www.w3.org/1999/xhtml" dir="ltr">
 	<head>
-		<title></title>
+		<title> </title>
 		<script src="../script/jquery.min.js" type="text/javascript"></script>
 		<script src='../script/qj2.js' type="text/javascript"></script>
 		<script src='qset.js' type="text/javascript"></script>
@@ -60,11 +60,7 @@
                 bbmKey = ['noa'];
                 bbsKey = ['noa', 'noq'];
                 q_brwCount();
-                
-                
                 q_gt('acomp', '', 0, 0, 0, "");
-                
-                
             });
 
             function main() {
@@ -133,8 +129,6 @@
                 //q_cmbParse("cmbCoin", q_getPara('sys.coin'));
                 q_cmbParse("combPay", q_getPara('vcc.paytype'));
                 q_cmbParse("cmbTrantype", q_getPara('fe.trantype'));
-                var t_where = "where=^^ 1=1  ^^";
-                q_gt('custaddr', t_where, 0, 0, 0, "");
                 
 				$('#btnFile').change(function(e){
 					event.stopPropagation(); 
@@ -788,9 +782,22 @@
                 }
                 /*if (emp($('#txtMon').val()))
                  $('#txtMon').val($('#txtDatea').val().substr(0, 6));*/
-
                 check_startdate = false;
 
+				//檢查庫存量
+				var t_noa = $.trim($('#txtNoa').val());
+				var t_datea = $.trim($('#txtDatea').val());
+				var t_where='';
+				for(var i=0;i<q_bbsCount;i++){
+					t_productno = $.trim($('#txtProductno_'+i).val());
+					if(t_productno.length>0)
+					{
+						//用全形空白區隔資料
+						t_where += (t_where.length>0?'　':'')+ t_productno+'　'+q_float('txtMount_'+i)+'　'+q_float('txtWeight_'+i);
+					}
+				}
+				q_func('qtxt.query.vccfe_checkMount', 'vccfe.txt,checkMount,'+t_noa+';'+t_datea+';' + t_where); 
+				
                 if (q_cur == 1)
                     $('#txtWorker').val(r_name);
                 else
@@ -825,6 +832,23 @@
             
             function q_funcPost(t_func, result) {
                 switch(t_func) {
+                	case 'qtxt.query.vccfe_checkMount':
+                		var as = _q_appendData("tmp0", "", true);
+                		var t_err = '';
+                        if (as[0] != undefined) {
+                        	for(var i=0;i<as.length;i++)
+                        		if(as[i].emount<0 && as[i].eweight<0)
+                        			t_err += (t_err.length>0?'\n':'') + as[i].productno +' 數量不足：'+Math.abs(as[i].emount)+' 重量不足：'+Math.abs(as[i].eweight);
+                        		else if(as[i].emount<0)
+                        			t_err += (t_err.length>0?'\n':'') + as[i].productno +' 數量不足：'+Math.abs(as[i].emount);
+                        		else if(as[i].eweight<0)
+                        			t_err += (t_err.length>0?'\n':'') + as[i].productno +' 重量不足：'+Math.abs(as[i].eweight);
+                        }else{
+                        	
+                        }
+                        if(t_err.length>0)
+                        	alert(t_err);
+                		break;
                 	case 'qtxt.query.vcc_tranmoney':
                 		var as = _q_appendData("tmp0", "", true);
                         if (as[0] != undefined) {
