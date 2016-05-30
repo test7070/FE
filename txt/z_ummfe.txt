@@ -776,7 +776,7 @@ z_ummfe03:--z_ummfe03
 		,case when recno=1 then noa else '' end a03
 		,case when recno=1 then dbo.getComma([money],0) else '' end a04
 		,case when recno=1 then dbo.getComma([tax],0) else '' end a04_1
-		,product a05
+		,replace(product,'~#$',"'") a05
 		,unit a06
 		,case when len(isnull(unit,''))=0 or UPPER(unit)='KG' or unit='公斤' then dbo.getComma([weight],-1) else dbo.getComma([mount],-1) end a07
 		,dbo.getComma([price],-1) a08
