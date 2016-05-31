@@ -1,5 +1,6 @@
 orde:-- workj -> orde 
-	--一張鋼筋加工單 只會產生一張訂單
+	-- 一張鋼筋加工單 只會產生一張訂單
+	-- 訂單號碼先產生
 	SET QUOTED_IDENTIFIER OFF
 	declare @cmd nvarchar(max)
 	declare @ordekey nvarchar(20) = [1]
@@ -7,6 +8,11 @@ orde:-- workj -> orde
 	------------------------------------------------------------------------------------------------
 	declare @accy nvarchar(20)
 	declare @ordeno nvarchar(20)
+	declare @ordeno1 nvarchar(20) = ''
+	declare @ordeno2 nvarchar(20) = ''
+	declare @string nvarchar(max) = '0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZ'
+	declare @n int
+	
 	select  top 1 @accy=accy,@ordeno =noa from view_ordes where quatno=@workjno
 	if len(isnull(@ordeno,''))=0
 		select  @accy=ordeaccy,@ordeno = ordeno from workj where noa=@workjno
@@ -27,14 +33,20 @@ orde:-- workj -> orde
 		select @odate = datea from workj where noa=@workjno
 		set @accy = LEFT(@odate,3)
 		declare @noa nvarchar(20)= @ordekey+replace(@odate,'/','')
-		select top 1 @ordeno=noa from view_orde where LEFT(noa,len(@noa))=@noa order by noa desc
+		select top 1 @ordeno1=noa from view_orde where noa like @noa+'[0-9,A-Z][0-9][0-9]' order by noa desc
+		select top 1 @ordeno2=ordeno from workj where ordeno like @noa+'[0-9,A-Z][0-9][0-9]' order by ordeno desc
+		set @ordeno = case when isnull(@ordeno1,'')>isnull(@ordeno2,'') then isnull(@ordeno1,'') else isnull(@ordeno2,'') end
+
 		if len(ISNULL(@ordeno,''))=0
 			set @ordeno = @noa + '001'
 		else
 		begin
 			set @ordeno = REPLACE(@ordeno,@noa,'')
-			set @ordeno = @noa + RIGHT('000'+cast(CAST(@ordeno as int)+1 as nvarchar),3)
+			set @n = (charindex(LEFT(@ordeno,1),@string)-1)*100 + cast(RIGHT(@ordeno,2) as int) + 1
+			set @ordeno = @noa +  substring(@string,floor(@n/100)+1,1)+ right('00'+ cast((@n%100) as nvarchar),2)
 		end
+		
+		update workj set ordeno=@ordeno where noa=@workjno
 	end
 	---========================================================================================
 	--已出貨則不異動  
