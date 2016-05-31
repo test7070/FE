@@ -152,12 +152,26 @@
 					if($('#chkYoption01 [value="出貨-預收-"]').prop('checked')){
 						$('#chkYoption01 [value="出貨-預收-"]').prop("checked",false);			
 					}	
-				})
+				});
 				$('#chkYoption01 [value="出貨-預收-"]').click(function(){
 					if($('#chkYoption01 [value="出貨-預收+"]').prop('checked')){
 						$('#chkYoption01 [value="出貨-預收+"]').prop("checked",false);			
 					}	
-				})
+				});
+				
+				$('#lblXdate').data('default',$('#lblXdate').text());
+				$('.report').click(function(e){
+					switch($('#q_report').data('info').radioIndex){
+						case 2: //客戶請款單
+                            $('#lblXdate').text('帳款日期');
+                            break;
+                        default:
+                        	$('#lblXdate').text($('#lblXdate').data('default'));
+                        	break;
+					}	
+				});
+				 
+				
 				
 			}
 
