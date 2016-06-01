@@ -722,13 +722,16 @@ z_ummfe03:--z_ummfe03
 					end
 					set @string = substring(@string,2,LEN(@string))
 				end
-					set @date1 = dbo.ChineseEraName2AD(@t_bmon+'/01')
-					set @date2 = DATEADD(MM,1,dbo.ChineseEraName2AD(@t_emon+'/01'))
-					set @date3 = DATEADD(DD,DATEDIFF(dd,@date1,@date2)-1,@date1)
-					set @date3 = DATEADD(DD,@mm,@date3)	
-					insert into @tmp(gno,cno,custno,datea,memo)
-					select '14',@cno,@custno,CHAR(255),'到期日：'+dbo.AD2ChineseEraName(@date3)+' 請勿尾折'
-					set @endcount = @endcount + 1 
+					if len(@t_bmon)>0 and len(@t_emon)>0 
+					begin
+						set @date1 = dbo.ChineseEraName2AD(@t_bmon+'/01')
+						set @date2 = DATEADD(MM,1,dbo.ChineseEraName2AD(@t_emon+'/01'))
+						set @date3 = DATEADD(DD,DATEDIFF(dd,@date1,@date2)-1,@date1)
+						set @date3 = DATEADD(DD,@mm,@date3)	
+						insert into @tmp(gno,cno,custno,datea,memo)
+						select '14',@cno,@custno,CHAR(255),'到期日：'+dbo.AD2ChineseEraName(@date3)+' 請勿尾折'
+						set @endcount = @endcount + 1 
+					end
 			end
 		end
 		

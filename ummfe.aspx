@@ -717,6 +717,7 @@
                     	}
                     	$('#txtCustno_'+n).val(t_custno);
                     	$('#txtPaymon_'+n).val(t_mon);
+                    	$('#txtCno_'+n).val($('#cmbCon').val());
                     });
 					
                     $('#txtMoney_' + i).change(function(e) {
