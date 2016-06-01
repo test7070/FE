@@ -46,7 +46,7 @@ orde:-- workj -> orde
 			set @ordeno = @noa +  substring(@string,floor(@n/100)+1,1)+ right('00'+ cast((@n%100) as nvarchar),2)
 		end
 		
-		update workj set ordeno=@ordeno where noa=@workjno
+		update workj set ordeaccy=@accy,ordeno=@ordeno where noa=@workjno
 	end
 	---========================================================================================
 	--已出貨則不異動  
