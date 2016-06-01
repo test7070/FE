@@ -73,8 +73,7 @@
             	['txtCustno', 'lblCust', 'cust', 'noa,nick', 'txtCustno,txtComp', 'cust_b.aspx']
             	, ['txtAcc1_', '', 'acc', 'acc1,acc2', 'txtAcc1_,txtAcc2_,txtMoney_', "acc_b.aspx?" + r_userno + ";" + r_name + ";" + q_time + "; ;" + r_accy + '_' + r_cno]
             	, ['txtBankno_', 'btnBank_', 'bank', 'noa,bank', 'txtBankno_,txtBank_', 'bank_b.aspx']
-            	, ['txtUmmaccno_', '', 'ummacc', 'noa,typea', 'txtUmmaccno_,txtTypea_', 'ummacc_b.aspx']
-            	, ['txtVccno_', '', 'view_vcc', 'noa,comp,unpay,unpay,typea,accy,cno,mon', 'txtVccno_,txtMemo2_,txtUnpayorg_,txtUnpay_,textTypea_,txtAccy_,txtCno_,txtPaymon_', '']);
+            	, ['txtUmmaccno_', '', 'ummacc', 'noa,typea', 'txtUmmaccno_,txtTypea_', 'ummacc_b.aspx']);
             	
                 q_getFormat();
 
@@ -653,7 +652,7 @@
                     if ($('#btnMinus_' + i).hasClass('isAssign'))/// 重要
                         continue;
                     $('#cmbHandle_'+i).change(function(e){
-						var n = $(this).attr('id').replace('cmbHandle_', '');
+						var n = $(this).attr('id').replace(/^(.*)_(\d+)$/,'$2');
 						$('#txtAcc1_'+n).attr('readonly','readonly').css('color','green').css('background','rgb(237,237,237)');
 						$('#txtAcc2_'+n).attr('readonly','readonly').css('color','green').css('background','rgb(237,237,237)');
 						var t_handle = $(this).val();
@@ -678,10 +677,10 @@
                     $('#txtAcc1_' + i).bind('contextmenu', function(e) {
                         /*滑鼠右鍵*/
                         e.preventDefault();
-                        var n = $(this).attr('id').replace('txtAcc1_', '');
+                        var n = $(this).attr('id').replace(/^(.*)_(\d+)$/,'$2');
                         $('#btnAcc_'+n).click();
                     }).change(function() {
-                    	var n = $(this).attr('id').replace('txtAcc1_','');
+                    	var n = $(this).attr('id').replace(/^(.*)_(\d+)$/,'$2');
                     	if($(this).val()=="=" && n>0){
                     		$('#txtAcc1_'+n).val($('#txtAcc1_'+(dec(n)-1)).val());
                     		$('#txtAcc2_'+n).val($('#txtAcc2_'+(dec(n)-1)).val());
@@ -697,8 +696,8 @@
                         var n = $(this).attr('id').replace('txtBankno_', '');
                         $('#btnBank_'+n).click();
                     });
-                    $('#txtVccno_'+i).bind('contextmenu',function(e) {
-                    	/*滑鼠右鍵*/
+                    /*$('#txtVccno_'+i).bind('contextmenu',function(e) {
+                    	//滑鼠右鍵
                     	e.preventDefault();
                     	var n = $(this).attr('id').replace('txtVccno_','');
                     	var t_accy = $('#txtAccy_'+n).val();
@@ -708,6 +707,16 @@
                     		//q_box(t_tablea+".aspx?;;;noa='" + $(this).val() + "'", t_tablea, "95%", "95%", q_getMsg("pop"+t_tablea));	
                     		q_box(t_tablea+".aspx?" + r_userno + ";" + r_name + ";" + q_time + ";noa='" + $(this).val() + "';" + t_accy, t_tablea, "95%", "95%", q_getMsg("pop"+t_tablea));
                     	}
+                    });*/
+                    $('#txtVccno_'+i).change(function(e){
+                    	var n = $(this).attr('id').replace(/^(.*)_(\d+)$/,'$2');
+                    	var t_custno='',t_mon='';	
+                    	if($(this).val().match(/^(.*)-(\d{3,4}\/\d{2})$/)){
+                			t_custno = $(this).val().replace(/^(.*)-(\d{3,4}\/\d{2})$/,'$1');
+                    		t_mon = $(this).val().replace(/^(.*)-(\d{3,4}\/\d{2})$/,'$2');
+                    	}
+                    	$('#txtCustno_'+n).val(t_custno);
+                    	$('#txtPaymon_'+n).val(t_mon);
                     });
 					
                     $('#txtMoney_' + i).change(function(e) {
@@ -719,7 +728,7 @@
                     $('#txtCheckno_'+i).change(function(){
         				Lock(1,{opacity:0});
         				
-        				var n = $(this).attr('id').replace('txtCheckno_','');
+        				var n = $(this).attr('id').replace(/^(.*)_(\d+)$/,'$2');
         				var t_noa = $('#txtNoa').val();
         				var t_checkno = $('#txtCheckno_'+n).val() ;
             			var t_where = "where=^^ checkno = '" + t_checkno + "' ^^";
@@ -755,7 +764,7 @@
             		}).bind('contextmenu', function(e) {
                         /*滑鼠右鍵*/
                         e.preventDefault();
-                        var n = $(this).attr('id').replace('txtCheckno_', '');
+                        var n = $(this).attr('id').replace(/^(.*)_(\d+)$/,'$2');
                         var t_checkno = $.trim($(this).val());
                         if (t_checkno.length > 0) {
                             q_box("gqb.aspx?" + r_userno + ";" + r_name + ";" + q_time + ";gqbno='" + t_checkno + "';" + r_accy, 'gqb', "95%", "95%", q_getMsg("popGqb"));
