@@ -83,21 +83,31 @@ import:--vccpr import
 		[post] [nvarchar](20) null,
 		[styleno] [nvarchar](20) null,
 		[floata] [float] null,
-		[paytype] [nvarchar](20) null
+		[paytype] [nvarchar](20) null,
+		[ordeno] [nvarchar](20) null,
+		odate [nvarchar](20) null
 	)
 	begin try
 		insert into #vccpr_import(accy,tablea,vccno,vccnoq,typea,datea,custno,cust,nick,apv,trantype,tranaddr
 			,productno,product,lengthb,unit,mount,[weight],price,total,tranmoney,tranmoney2,tranmoney3,sprice,sprice2,wcost
-			,post,[floata],[paytype],daya)
+			,post,[floata],[paytype],daya,ordeno)
 		select a.accy,'vccs',a.noa,b.noq,a.typea,a.datea,a.custno,a.custno,a.nick,a.apv,a.trantype,a.addr2
 			,b.productno,b.product,b.lengthb,b.unit,b.mount,b.[weight],b.price,b.total,b.tranmoney,b.tranmoney2,b.tranmoney3,b.sprice,b.sprice2,b.wcost
 			,a.transtartno,a.[floata],a.paytype
 			,case when patindex('%[0-9]%',ISNULL(a.paytype,''))>0 then CAST(substring(ISNULL(a.paytype,''),patindex('%[0-9]%',ISNULL(a.paytype,'')),len(ISNULL(a.paytype,''))+2-patindex('%[0-9]%',ISNULL(a.paytype,''))- patindex('%[0-9]%',reverse(ISNULL(a.paytype,'')))) as int) else 0 end
+			,b.ordeno
 		from view_vcc a
 		left join view_vccs b on a.accy=b.accy and a.noa=b.noa
 		where a.datea between @t_bdate and @t_edate
 		and (len(@t_custno)=0 or a.custno=@t_custno)
 		and (len(@t_salesno)=0 or a.salesno=@t_salesno)
+		
+		-- 鉅昕  基價是以 orde.odate 來判斷,不是出貨單日期
+		-- 105/04/30以前維持依出貨單日期
+		-- 105/05/01以後以 orde.odate
+		update #vccpr_import set odate = case when a.datea>='105/05/01' then isnull(b.odate,'') else a.datea end
+		from #vccpr_import a
+		left join view_orde b on a.ordeno=b.noa
 	end try
 	begin catch
 		--nothing
@@ -122,7 +132,7 @@ import:--vccpr import
 	--基價
 	update #vccpr_import set sprice = b.sprice
 	from #vccpr_import a
-	outer apply(select top 1 sprice from uccps where productno=a.productno and datea<=a.datea and sprice!=0 order by datea desc,noa desc) b
+	outer apply(select top 1 sprice from uccps where productno=a.productno and datea<=a.odate and sprice!=0 order by datea desc,noa desc) b
 	
 	--運費
 	update #vccpr_import set styleno=isnull(b.styleno,''),pprice=isnull(b.saleprice,0),tranmoney=

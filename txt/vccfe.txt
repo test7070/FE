@@ -138,15 +138,23 @@ vcc_tranmoney:--vccfe.txt	 vcc_tranmoney  基價和運費
 		,tranmoney float
 		,transtartno nvarchar(20)
 		,trantype nvarchar(50)
+		,ordeno nvarchar(20)
+		,odate nvarchar(20)
 	)
 	insert into #vcc_tranmoney(accy,noa,noq,datea,productno,mount,[weight],sprice,sprice2,unit
-		,tranmoney,transtartno,trantype)
+		,tranmoney,transtartno,trantype,ordeno)
 	select a.accy,a.noa,a.noq,b.datea,a.productno,a.mount,a.[weight],a.sprice,a.sprice2,a.unit
-		,0,b.transtartno,b.trantype
+		,0,b.transtartno,b.trantype,a.ordeno
 	from view_vccs a
 	left join view_vcc b on a.accy=b.accy and a.noa=b.noa
 	where a.noa=@t_noa
 	
+	-- 鉅昕  基價是以 orde.odate 來判斷,不是出貨單日期
+	-- 105/04/30以前維持依出貨單日期
+	-- 105/05/01以後以 orde.odate
+	update #vcc_tranmoney set odate = case when a.datea>='105/05/01' then isnull(b.odate,'') else a.datea end
+	from #vcc_tranmoney a
+	left join view_orde b on a.ordeno=b.noa
 	
 	update #vcc_tranmoney set sprice = b.sprice
 	from #vcc_tranmoney a
@@ -154,7 +162,7 @@ vcc_tranmoney:--vccfe.txt	 vcc_tranmoney  基價和運費
 		from uccps x
 		left join uccp y on x.noa=y.noa
 		where x.productno=a.productno 
-		and y.datea<=a.datea
+		and y.datea<=a.odate
 		order by y.datea desc,y.noa desc) b
 	where isnull(a.sprice,0)=0
 	and len(isnull(a.productno,''))>0

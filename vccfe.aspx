@@ -1312,6 +1312,10 @@
                     	var n = b_seq;
                     	var t_productno = $.trim($('#txtProductno_'+n).val());
                         var t_date = $.trim($('#txtDatea').val());
+                        // 鉅昕  基價是以 orde.odate 來判斷,不是出貨單日期
+						// 105/04/30以前維持依出貨單日期
+						// 105/05/01以後以 orde.odate
+						//  暫時不改,出貨單應該沒差
                         if(t_productno.length>0 && t_date.length>0)
                         	q_gt('vcc_uccps',"where=^^ productno='"+t_productno+"' and datea<='"+t_date+"' ^^", 0, 0, 0
                         	,JSON.stringify({action:'vcc_uccps',n:n}));

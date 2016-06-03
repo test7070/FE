@@ -86,6 +86,8 @@ drp_save:--drp_save
 	IF @@Error <> 0 BEGIN SET @chk = 1 END
 	
 	--vccs
+	declare @t_odate nvarchar(20)
+	
 	declare cursor_table cursor for
 	select accy,noa,noq,productno,datea,sprice2 from @tmp where upper(tablea)='VCC'
 	open cursor_table
@@ -96,8 +98,20 @@ drp_save:--drp_save
 		--回寫物品基價
 		if @sprice2<0.05 --and @datea>='093/11/01'
 		begin
+			-- 鉅昕  基價是以 orde.odate 來判斷,不是出貨單日期
+			-- 105/04/30以前維持依出貨單日期
+			-- 105/05/01以後以 orde.odate
+			set @t_odate = @datea
+			if @datea>='105/05/01'
+			begin
+				select @t_odate = b.odate
+				from view_vccs a
+				left join view_orde b on a.ordeno=b.noa
+				where a.accy=@accy and a.noa=@noa and a.noq=@noq
+			end
+		
 			select @sprice=0
-			select top 1 @sprice=sprice from uccps where productno=@productno and datea<=@datea and sprice!=0 order by datea desc,noa desc
+			select top 1 @sprice=sprice from uccps where productno=@productno and datea<=@t_odate and sprice!=0 order by datea desc,noa desc
 			set @cmd = "update vccs"+@accy+" set sprice=@sprice where noa=@noa and noq=@noq"
 			execute sp_executesql @cmd,N'@sprice float,@noa nvarchar(20),@noq nvarchar(10)'
 				,@sprice=@sprice,@noa=@noa,@noq=@noq
