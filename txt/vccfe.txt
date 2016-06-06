@@ -1,3 +1,244 @@
+vccfe_apv:--vccfe_apv
+	declare @t_userno nvarchar(max) = [1]
+	declare @t_form nvarchar(max) = [2]
+	declare @t_guid nvarchar(max) = [3]
+	declare @t_noa nvarchar(max) = [4]
+	declare @t_custno nvarchar(max) = [5]
+	declare @t_typea nvarchar(max) = [6]
+	declare @t_date nvarchar(max) = [7]
+	declare @t_mon nvarchar(max) = [8]
+	declare @t_item nvarchar(max) = [9]
+	
+	declare @t_rank int = 0
+	declare @t_user nvarchar(20) = ''
+	select @t_rank=[RANK],@t_user=namea from nhpe where noa=@t_userno
+	-- RANK >=8 不用檢查
+	if @t_rank>=8
+	begin
+		select 1 val,@t_userno+'等級'+cast(@t_rank as nvarchar)+',不需檢查。' msg
+		return 
+	end
+	-- 只檢查當時送簽核前的資料,若送完後再改資料則無法判斷
+	if exists(select * from [sign] where zno=@t_guid and sender=@t_user and LTRIM(RTRIM(isnull(enda,'')))='Y')
+	begin
+		select 1 val,'已簽核' msg
+		return
+	end
+	else if exists(select * from [sign] where zno=@t_guid and sender=@t_user and LTRIM(RTRIM(isnull(enda,'')))!='Y')
+	begin
+		select 0 val,'簽核已送，尚未核准，請稍後！' msg
+		return
+	end
+---------------------------------------------------------------------------------------
+	declare @t_memo nvarchar(max) = '' -- 簽核訊息
+---------------------------------------------------------------------------------------
+	--退貨
+	if(@t_typea != '1')
+	begin
+		set @t_memo = @t_memo + case when len(@t_memo)>0 then CHAR(13) else '' end + '【退貨】'
+	end
+	
+	--35天未收
+	declare @date date = convert(date, cast(cast(left(@t_date,3) as int)+1911 as nvarchar)+right(@t_date,6))
+	select @date = DATEADD(MM,-1,@date)
+	select @date = DATEADD(DD,-35,@date)
+	declare @bmon nvarchar(20)= right('000'+cast(year(@date)-1911 as nvarchar),3)
+		+'/'+right('00'+cast(month(@date) as nvarchar),2) 
+	declare @total float = 0
+	select @total = SUM(case when typea='1' then 1 else -1 end *isnull(total,0))
+	from view_vcc 
+	where not(noa=@t_noa)
+	and custno=@t_custno
+	and mon=@t_mon
+	
+	declare @money float = 0
+	declare @tax float = 0
+	declare @pay float = 0
+	
+	select @money = SUM(isnull(total,0))
+	from view_vcc
+	where custno=@t_custno 
+	and mon=@bmon
+	and total!=0
+	
+	select @tax = SUM(ISNULL(tax,0))
+	from vcca
+	where custno=@t_custno
+	and left(datea,6)=@bmon
+	
+	select @tax = @tax + SUM(ISNULL(-b.tax,0))
+	from vccb a
+	left join vccbs b on a.noa=b.noa
+	where LEFT(a.datea,6)=@bmon
+	and b.custno = @t_custno
+	
+	select @pay=SUM(ISNULL(paysale,0))
+	from umms 
+	where mon=@bmon
+	and custno=@t_custno
+	
+	if(@money+@tax)>@pay
+	begin
+		set @t_memo = @t_memo + case when len(@t_memo)>0 then CHAR(13) else '' end + '【35天未收】'
+	end
+	--呆帳  
+	set @date = convert(date, cast(cast(left(@t_mon,3) as int)+1911 as nvarchar)+right(@t_mon,3)+'/01')
+	select @date = DATEADD(MM,-3,@date)
+	
+	set @bmon = right('000'+cast(year(@date)-1911 as nvarchar),3)+'/'+right('00'+cast(month(@date) as nvarchar),2)
+	
+	declare @unpay float = 0
+	select top 1 @unpay=sum(isnull(unpay,0)) from cust_2s
+	where noa=@t_custno
+	and mon<=@bmon and unpay!=0
+	
+	if (LEN(@unpay)>0)
+	begin
+		set @t_memo = @t_memo + case when len(@t_memo)>0 then CHAR(13) else '' end + '【呆帳】'                                                                                                                                                             
+	end
+------------------------------------------------------------------------------------------------
+	declare @string nvarchar(max)
+	declare @string2 nvarchar(max)
+	declare @n int	
+	-- 修改前 VCCS
+	declare @previous table(
+		noq nvarchar(max)
+		,productno nvarchar(max)
+		,product nvarchar(max)
+		,unit nvarchar(max)
+		,mount float
+		,[weight] float
+		,[money] float
+	)
+	insert into @previous(noq,productno,product,unit,mount,[weight],[money])
+	select noq,productno,product,unit,mount,[weight],[total] 
+	from view_vccs
+	where noa=@t_noa
+	order by noq
+	-- 修改後 VCCS
+	declare @current table(
+		noq nvarchar(20)
+		,[money] float
+	)	
+	set @string = ltrim(rtrim(@t_item))
+	while LEN(@string)>0 
+	begin
+	
+		set @n = CHARINDEX('|',@string)
+		if @n = 0
+		begin
+			set @string2= @string
+			set @string = ''
+		end
+		else 
+		begin
+			set @string2 = ltrim(rtrim(LEFT(@string,@n-1)))
+			set @string = ltrim(rtrim(SUBSTRING(@string,@n+1,LEN(@string))))
+		end
+		
+		while len(@string2)>0
+		begin
+			
+			set @n = CHARINDEX('@',@string2)
+			if @n = 0
+			begin
+				insert into @current(noq,[money])values(@string2,0)
+				set @string2=''
+			end
+			else
+			begin 
+				insert into @current(noq,[money])
+				select ltrim(rtrim(LEFT(@string2,@n-1)))
+					,cast(ltrim(rtrim(SUBSTRING(@string2,@n+1,LEN(@string2)))) as float)
+				set @string2=''
+			end
+		end
+	end
+	------------------------------------------------------------------------------
+	--檢查明細筆數
+	declare @count1 int = 0, @count2 int = 0
+	select @count1 = count(1) from @current
+	select @count2 = count(1) from @previous
+	if @count1!=@count2 and isnull(@count2,0)>0
+	begin
+		set @t_memo = @t_memo + case when len(@t_memo)>0 then CHAR(13) else '' end + '【資料筆數異動】'                                                                                                                                                             
+	end
+	
+	declare @productno nvarchar(max)
+	declare @product nvarchar(max)
+	declare @money1 float
+	declare @money2 float
+	--檢查金額(金額只可以改大不可以改小，改小要"特別權限")
+	if exists(select * from @previous a left join @current b on a.noq=b.noq where a.[money]>b.[money])
+	begin
+		declare cursor_table cursor for
+		select a.productno,a.product,a.[money],b.[money]
+		from @previous a 
+		left join @current b on a.noq=b.noq 
+		where a.[money]>b.[money]
+		open cursor_table
+		fetch next from cursor_table
+		into @productno,@product,@money1,@money2
+		while(@@FETCH_STATUS <> -1)
+		begin
+			set @t_memo = @t_memo + case when len(@t_memo)>0 then CHAR(13) else '' end
+				+ @productno+' '+@product+'：金額變動 '+dbo.getComma(@money1,-1)+' -> '+dbo.getComma(@money2,-1)
+			fetch next from cursor_table
+			into @productno,@product,@money1,@money2
+		end
+		close cursor_table
+		deallocate cursor_table
+	end
+	-- 額度
+	declare @credit float =0
+	select @credit=ISNULL(total,0) from dbo.credit_fe(@t_custno,@t_noa) 
+	select @money1=0,@money2=0
+	select @money1= SUM(ISNULL([money],0)) from @previous
+	select @money2= SUM(ISNULL([money],0)) from @current
+	
+	set @money = ISNULL(@credit,0)+ISNULL(@money1,0)-ISNULL(@money2,0)
+	if ISNULL(@money,0)<0
+	begin
+		set @t_memo = @t_memo + case when len(@t_memo)>0 then CHAR(13) else '' end + '【額度不足】'+dbo.getComma(abs(@money),-1)                                                                                                                                                             
+	end
+	
+----------------------------------------------------------------------------
+	if len(@t_memo)>0
+	begin
+		declare @x_date nvarchar(20) = dbo.AD2ChineseEraName(getdate())
+		declare @x_time nvarchar(20) = left(CONVERT(nvarchar,getdate(),108),5)
+		declare @number nvarchar(max)
+		declare @sign nvarchar(max) = '0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZ'
+		declare @nn int
+		declare @mm nvarchar(max)
+		declare @noa nvarchar(20) = ''
+		declare @t_checker nvarchar(max) = ''
+		
+		select top 1 @noa = case when noa>isnull(@noa,'') then noa else @noa end from [sign] where noa like REPLACE(@t_date,'/','')+'[0-9,A-Z][0-9][0-9]' order by noa desc
+		if LEN(ISNULL(@noa,'')) = 0
+			set @noa = REPLACE(@x_date,'/','')+'000'
+		set @number  = right(@noa,3)				
+		set @nn = (charindex(left(@number,1),@sign)-1) * 100 + cast(right(@number,2) as int) + 1
+		set @mm = substring(@sign,floor(@nn/100)+1,1)
+		set @noa =  REPLACE(@t_date,'/','')+@mm+RIGHT('00'+cast(@nn as nvarchar),2)
+		
+		begin try
+			select @t_checker=checker from signform where noa='vccfe'
+			insert into [sign](noa,datea,timea,form,sender,checker,zno,memo,enda,memochecker)
+			select @noa,@x_date,@x_time,@t_form,@t_user,@t_checker,@t_guid,@t_memo,'N',''
+			select 0 val,'【需核准】簽核已送，請稍後！' msg
+			return
+		end try
+		begin catch
+			select 0 val,'錯誤：簽核產生異常。' msg
+			return
+		end catch
+	end
+	else
+	begin
+		select 1 val,'沒問題。' msg
+	end;
+
 checkMount:--vccfe.txt checkMount  檢查庫存量
 	--  出貨單日期要是有變動,資料可能不一定會正確
 	declare @t_noa nvarchar(max) = [1]
@@ -232,186 +473,3 @@ vcc_tranmoney:--vccfe.txt	 vcc_tranmoney  基價和運費
 	declare @tmp table(msg nvarchar(max))
 	insert into @tmp(msg)values('done!')
 	select * from @tmp;
-
-vccfe_apv:--vccfe_apv
-	declare @t_userno nvarchar(max) = [1]
-	declare @t_form nvarchar(max) = [2]
-	declare @t_guid nvarchar(max) = [3]
-	declare @t_noa nvarchar(max) = [4]
-	declare @t_item nvarchar(max) = [5]
-	declare @t_rank int = 0
-	declare @t_user nvarchar(20) = ''
-	select @t_rank=[RANK],@t_user=namea from nhpe where noa=@t_userno
-	--RANK >=8 不用檢查
-	if @t_rank>=8
-	begin
-		select 1 val,@t_userno+'等級'+cast(@t_rank as nvarchar)+',不需檢查。' msg
-		return 
-	end
-	-----------------------------------------------------------------
-	declare @string nvarchar(max)
-	declare @string2 nvarchar(max)
-	declare @n int
-	
-	declare @previous table(
-		noq nvarchar(max)
-		,productno nvarchar(max)
-		,product nvarchar(max)
-		,unit nvarchar(max)
-		,mount float
-		,[weight] float
-		,[money] float
-	)
-	insert into @previous(noq,productno,product,unit,mount,[weight],[money])
-	select noq,productno,product,unit,mount,[weight],[total] 
-	from view_vccs
-	where noa=@t_noa
-	order by noq
-		
-	declare @current table(
-		noq nvarchar(20)
-		,[money] float
-	)	
-	set @string = ltrim(rtrim(@t_item))
-	while LEN(@string)>0 
-	begin
-	
-		set @n = CHARINDEX('|',@string)
-		if @n = 0
-		begin
-			set @string2= @string
-			set @string = ''
-		end
-		else 
-		begin
-			set @string2 = ltrim(rtrim(LEFT(@string,@n-1)))
-			set @string = ltrim(rtrim(SUBSTRING(@string,@n+1,LEN(@string))))
-		end
-		
-		while len(@string2)>0
-		begin
-			
-			set @n = CHARINDEX('@',@string2)
-			if @n = 0
-			begin
-				insert into @current(noq,[money])values(@string2,0)
-				set @string2=''
-			end
-			else
-			begin 
-				insert into @current(noq,[money])
-				select ltrim(rtrim(LEFT(@string2,@n-1)))
-					,cast(ltrim(rtrim(SUBSTRING(@string2,@n+1,LEN(@string2)))) as float)
-				set @string2=''
-			end
-		end
-	end
-	------------------------------------------------------------------------------
-	--檢查明細筆數
-	declare @count1 int = 0, @count2 int = 0
-	select @count1 = count(1) from @current
-	select @count2 = count(1) from @previous
-	
-	
-	--檢查金額(金額只可以改大不可以改小，改小要"特別權限")
-	declare @t_date nvarchar(20) = dbo.AD2ChineseEraName(getdate())
-	declare @t_time nvarchar(20) = left(CONVERT(nvarchar,getdate(),108),5)
-	declare @number nvarchar(max)
-	declare @sign nvarchar(max) = '0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZ'
-	declare @nn int
-	declare @mm nvarchar(max)
-	declare @noa nvarchar(20) = ''
-	--
-	declare @t_checker nvarchar(max) = ''
-	declare @t_memo nvarchar(max) = '出貨單號：'+@t_noa
-	declare @productno nvarchar(max)
-	declare @product nvarchar(max)
-	declare @money1 float
-	declare @money2 float
-	
-	select top 1 @noa = case when noa>isnull(@noa,'') then noa else @noa end from [sign] where noa like REPLACE(@t_date,'/','')+'[0-9,A-Z][0-9][0-9]' order by noa desc
-	if LEN(ISNULL(@noa,'')) = 0
-		set @noa = REPLACE(@t_date,'/','')+'000'
-	set @number  = right(@noa,3)				
-	set @nn = (charindex(left(@number,1),@sign)-1) * 100 + cast(right(@number,2) as int) + 1
-	set @mm = substring(@sign,floor(@nn/100)+1,1)
-	set @noa =  REPLACE(@t_date,'/','')+@mm+RIGHT('00'+cast(@nn as nvarchar),2)
-		
-	if exists(select * from [sign] where zno=@t_guid and memo like @t_memo+'%' and LTRIM(RTRIM(isnull(enda,'')))='Y')
-	begin
-		select 1 val,'已簽核' msg
-		return
-	end
-	else if exists(select * from [sign] where zno=@t_guid and memo like @t_memo+'%' and LTRIM(RTRIM(isnull(enda,'')))!='Y')
-	begin
-		select 0 val,'簽核已送，尚未核准，請稍後！' msg
-		return
-	end
-	else if @count1!=@count2
-	begin
-		--select 0 val,'原先資料筆數'+CAST(@count2 as nvarchar)+',當前筆數'+CAST(@count1 as nvarchar)+',請檢查。' msg
-		begin try
-			select @t_checker=checker from signform where noa='vccfe'
-			insert into [sign](noa,datea,timea,form,sender,checker,zno,memo,enda,memochecker)
-			select @noa,@t_date,@t_time,@t_form,@t_user,@t_checker,@t_guid,@t_memo + case when len(@t_memo)>0 then CHAR(13) else '' end+'資料筆數異動','N',''
-			select 0 val,'資料筆數異動，簽核已送，請稍後！' msg
-			return
-		end try
-		begin catch
-			select 0 val,'錯誤：簽核產生異常。' msg
-			return
-		end catch
-	end
-	else if exists( select * from @previous a left join @current b on a.noq=b.noq where b.noq is null)
-	begin
-		--檢查NOQ
-		--select 0 val,'錯誤：資料不一致。' msg
-		begin try
-			select @t_checker=checker from signform where noa='vccfe'
-			insert into [sign](noa,datea,timea,form,sender,checker,zno,memo,enda,memochecker)
-			select @noa,@t_date,@t_time,@t_form,@t_user,@t_checker,@t_guid,@t_memo + case when len(@t_memo)>0 then CHAR(13) else '' end+'資料異動','N',''
-			select 0 val,'資料異動，簽核已送，請稍後！' msg
-			return
-		end try
-		begin catch
-			select 0 val,'錯誤：簽核產生異常。' msg
-			return
-		end catch
-	end
-	else if exists(select * from @previous a left join @current b on a.noq=b.noq where a.[money]>b.[money])
-	begin
-		declare cursor_table cursor for
-		select a.productno,a.product,a.[money],b.[money]
-		from @previous a 
-		left join @current b on a.noq=b.noq 
-		where a.[money]>b.[money]
-		open cursor_table
-		fetch next from cursor_table
-		into @productno,@product,@money1,@money2
-		while(@@FETCH_STATUS <> -1)
-		begin
-			set @t_memo = @t_memo + case when len(@t_memo)>0 then CHAR(13) else '' end
-				+ @productno+' '+@product+'：金額變動 '+dbo.getComma(@money1,-1)+' -> '+dbo.getComma(@money2,-1)
-			fetch next from cursor_table
-			into @productno,@product,@money1,@money2
-		end
-		close cursor_table
-		deallocate cursor_table
-		
-		begin try
-			select @t_checker=checker from signform where noa='vccfe'
-			insert into [sign](noa,datea,timea,form,sender,checker,zno,memo,enda,memochecker)
-			select @noa,@t_date,@t_time,@t_form,@t_user,@t_checker,@t_guid,@t_memo,'N',''
-			select 0 val,'金額變動，簽核已送，請稍後！' msg
-			return
-		end try
-		begin catch
-			select 0 val,'錯誤：簽核產生異常。' msg
-			return
-		end catch
-	end
-	else
-	begin
-		select 1 val,'沒問題。' msg
-		return
-	end;

@@ -806,19 +806,32 @@
                	chkPrice(0);
             }
             function chkPrice(n){
-            	
             	//如果是有產品編號的東西    出貨單價如無打 應該要自動跳最高單價
             	if(n>=q_bbsCount){
+            		var t_userno = r_userno;
+					var t_form = 'vccfe';
+					var t_guid = $('#btnOk').data('guid');
+					var t_noa = $.trim($('#txtNoa').val());
+					var t_custno = $.trim($('#txtCustno').val());
+					var t_typea = $.trim($('#cmbTypea').val());
+					var t_date = $.trim($('#txtDatea').val());
+					var t_mon = $.trim($('#txtMon').val());
             		var t_item = '';
 	               	for(var i=0;i<q_bbsCount;i++){
 	               		t_item += (t_item.length>0?'|':'') + $('#txtNoq_'+i).val()+'@'+q_float('txtTotal_'+i);
 	               	}
-	               	if(q_cur==2){
-	               		//修改需檢查金額(金額只可以改大不可以改小，改小要"特別權限")
-	               		q_func('qtxt.query.vccfe', 'vccfe.txt,vccfe_apv,'+r_userno+';vccfe;' + $('#btnModi').data('guid')+';'+$('#txtNoa').val()+';'+t_item); 
-	               	}else{
-	               		btnOk_sum(q_bbsCount);
-	               	} 	
+               		q_func('qtxt.query.vccfe_apv', 'vccfe.txt,vccfe_apv,'
+               			+t_userno+';'
+               			+t_form+';'
+               			+t_guid+';'
+               			+t_noa+';'
+               			+t_custno+';'
+               			+t_typea+';'
+               			+t_date+';'
+               			+t_mon+';'
+               			+t_item+';'
+           			); 
+               			
             	}else if($.trim($('#txtProductno_'+n).val()).length>0 && q_float('txtPrice_'+n)==0){
             		t_noa = $.trim($('#txtNoa').val());
             		t_noa = t_noa.length==0?'AUTO':t_noa;
@@ -855,7 +868,7 @@
                         if (as[0] != undefined) {
                         }else{}
                 		break;
-                	case 'qtxt.query.vccfe':
+                	case 'qtxt.query.vccfe_apv':
                 		//BBS TEXTBOX全部鎖定
                 		$('#tbbs').children().find('input[type="text"]').attr('disabled','disabled');
                 		var as = _q_appendData("tmp0", "", true);
@@ -869,22 +882,6 @@
                         }else{
                     		alert('出貨單檢查異常，無法儲存。');
                         	return;
-                        }
-                		break;
-                	case 'qtxt.query.vccfe_save':
-                		var as = _q_appendData("tmp0", "", true);
-                        if (as[0] != undefined) {
-                        	if(as[0].msg.length>0){
-                        		alert(as[0].msg);
-                        		$('#txtApvname').val(as[0].memo);
-                        		$('#txtApv').val('');
-                        		$('#txtNoa').val(as[0].noa);
-                        		return;
-                        	}else{
-                        		$('#txtApvname').val(as[0].memo);
-                        		$('#txtApv').val(as[0].checker);
-                        		q_gtnoa(q_name, replaceAll(q_getPara('sys.key_vcc') + $('#txtDatea').val(), '/', ''));	
-                        	}
                         }
                 		break;
                     default:
@@ -936,28 +933,7 @@
             		}
             	}else{
             		if(q_cur==1){
-						//核准檢查
-						var t_noa = $.trim($('#txtNoa').val());
-						var t_typea = $.trim($('#cmbTypea').val());
-		                var t_custno = $.trim($('#txtCustno').val());
-		                var t_datea = $.trim($('#txtDatea').val());
-		                var t_mon = $.trim($('#txtMon').val());
-		                var t_total = q_float('txtTotal');
-		                var t_other = '';
-		                for(var i=0;i<q_bbsCount;i++){
-		                	
-		                	
-		                }
-		                
-		                q_func('qtxt.query.vccfe_save', 'vcc.txt,vccfe_save,' 
-		                	+ encodeURI(r_accy) 
-		                	+ ';' + encodeURI(t_noa)
-		                	+ ';' + encodeURI(t_typea)
-		                	+ ';' + encodeURI(t_custno)
-		                	+ ';' + encodeURI(t_datea)
-		                	+ ';' + encodeURI(t_mon)
-		                	+ ';' + encodeURI(r_name)
-		                	+ ';' + t_total);
+						q_gtnoa(q_name, replaceAll(q_getPara('sys.key_vcc') + $('#txtDatea').val(), '/', ''));	
 					}else{
 						var s1 = $('#txt' + bbmKey[0].substr(0, 1).toUpperCase() + bbmKey[0].substr(1)).val();
 		                wrServer(s1);
@@ -1078,6 +1054,7 @@
 
             function btnIns() {
                 _btnIns();
+                $('#btnOk').data('guid',guid());
                 $('#txtNoa').val('');//一定要空白  //r_userno+(new Date()).getTime()
                 if(t_acomp.length>0){
                 	$('#txtCno').val(t_acomp[0].noa);
@@ -1103,7 +1080,7 @@
                 });
                 
                 //產生guid,送簽核用
-              	$('#btnModi').data('guid',guid());
+              	$('#btnOk').data('guid',guid());
                 //取得車號下拉式選單
                 var thisVal = $('#txtCardealno').val();
                 var t_where = "where=^^ noa=N'" + thisVal + "' ^^";
