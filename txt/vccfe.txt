@@ -233,7 +233,7 @@ vcc_tranmoney:--vccfe.txt	 vcc_tranmoney  基價和運費
 	insert into @tmp(msg)values('done!')
 	select * from @tmp;
 
-check:--check
+vccfe_apv:--vccfe_apv
 	declare @t_userno nvarchar(max) = [1]
 	declare @t_form nvarchar(max) = [2]
 	declare @t_guid nvarchar(max) = [3]

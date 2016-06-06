@@ -815,7 +815,7 @@
 	               	}
 	               	if(q_cur==2){
 	               		//修改需檢查金額(金額只可以改大不可以改小，改小要"特別權限")
-	               		q_func('qtxt.query.vccfe', 'vccfe.txt,check,'+r_userno+';vccfe;' + $('#btnModi').data('guid')+';'+$('#txtNoa').val()+';'+t_item); 
+	               		q_func('qtxt.query.vccfe', 'vccfe.txt,vccfe_apv,'+r_userno+';vccfe;' + $('#btnModi').data('guid')+';'+$('#txtNoa').val()+';'+t_item); 
 	               	}else{
 	               		btnOk_sum(q_bbsCount);
 	               	} 	
@@ -1747,8 +1747,8 @@
 					<tr>
 						<td class="td1"><span> </span><a id='lblApv' class="lbl"> </a></td>
 						<td class="td2" colspan='2'>
-							<input id="txtApvname" type="text" class="txt c4"/>
-							<input id="txtApv" type="text" class="txt c4"/>
+							<input id="txtApvname" type="text" class="txt" style="float:left;width:50%;"/>
+							<input id="txtApv" type="text" class="txt" style="float:left;width:50%;"/>
 						</td>
 						<td class="td3"><span> </span><a id='lblApvmemo' class="lbl"> </a></td>
 						<td class="td4" colspan='4'>

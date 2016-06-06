@@ -790,7 +790,7 @@
 	               	}
 	               	if(q_cur==2){
 	               		//修改需檢查金額(金額只可以改大不可以改小，改小要"特別權限")
-	               		q_func('qtxt.query.vccfe', 'vccfe.txt,check,'+r_userno+';vccfe;' + $('#btnModi').data('guid')+';'+$('#txtNoa').val()+';'+t_item); 
+	               		q_func('qtxt.query.vccfe', 'vccfe.txt,vccfe_apv,'+r_userno+';vccfe;' + $('#btnModi').data('guid')+';'+$('#txtNoa').val()+';'+t_item); 
 	               	}else{
 	               		btnOk_sum(q_bbsCount);
 	               	} 	
