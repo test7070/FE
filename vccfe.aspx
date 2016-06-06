@@ -973,7 +973,7 @@
                     $('#lblNo_' + i).text(i + 1);
                     if (!$('#btnMinus_' + i).hasClass('isAssign')) {
                     	$('#txtUno_'+i).focusout(function(e) {
-							var n = $(this).attr('id').replace('txtUno_', '');
+							var n = $(this).attr('id').replace(/^(.*)_(\d+)$/,'$2');
 							var t_uno = $(this).val();
 							if(t_uno.length==19)
 								q_gt('workj', "where=^^noa='"+t_uno.substring(0,11)+"'^^", 0, 0, 0, JSON.stringify({action:"data_workj",n:n,uno:t_uno}));				
@@ -981,7 +981,7 @@
                         $('#txtProductno_' + i).bind('contextmenu', function(e) {
                             /*滑鼠右鍵*/
                             e.preventDefault();
-                            var n = $(this).attr('id').replace('txtProductno_', '');
+                            var n = $(this).attr('id').replace(/^(.*)_(\d+)$/,'$2');
                             $('#btnProduct_' + n).click();
                         });
                         $('#txtStoreno_' + i).bind('contextmenu', function(e) {

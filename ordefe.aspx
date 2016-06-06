@@ -704,7 +704,7 @@
 						$('#txtQuatno_' + j).bind('contextmenu', function(e) {
                             /*滑鼠右鍵*/
                             e.preventDefault();
-                            var n = $(this).attr('id').replace('txtQuatno_', '');
+                            var n = $(this).attr('id').replace(/^(.*)_(\d+)$/,'$2');
                             var t_accy = $('#txtTableaccy_' + n).val();
                             var t_tablea = $('#txtTablea_' + n).val();
                             var t_noa =  $('#txtQuatno_' + n).val();
@@ -720,7 +720,7 @@
 						$('#txtProductno_' + j).bind('contextmenu', function(e) {
                             /*滑鼠右鍵*/
                             e.preventDefault();
-                            var n = $(this).attr('id').replace('txtProductno_', '');
+                            var n = $(this).attr('id').replace(/^(.*)_(\d+)$/,'$2');
                             $('#btnProduct_'+n).click();
                         });
 						/*$('#btnProductno_' + j).click(function() {

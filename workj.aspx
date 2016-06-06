@@ -862,50 +862,50 @@
                     	$('#cmbMech1_' + i).bind('contextmenu', function(e) {
                             /*滑鼠右鍵*/
                             e.preventDefault();
-                            var n = $(this).attr('id').replace('cmbMech1_', '');
+                            var n = $(this).attr('id').replace(/^(.*)_(\d+)$/,'$2');
                             CopyMech(n)
                         });
                         $('#cmbMech2_' + i).bind('contextmenu', function(e) {
                             /*滑鼠右鍵*/
                             e.preventDefault();
-                            var n = $(this).attr('id').replace('cmbMech2_', '');
+                            var n = $(this).attr('id').replace(/^(.*)_(\d+)$/,'$2');
                             CopyMech(n)
                         });
                         $('#cmbMech3_' + i).bind('contextmenu', function(e) {
                             /*滑鼠右鍵*/
                             e.preventDefault();
-                            var n = $(this).attr('id').replace('cmbMech3_', '');
+                            var n = $(this).attr('id').replace(/^(.*)_(\d+)$/,'$2');
                             CopyMech(n)
                         });
                         $('#cmbMech4_' + i).bind('contextmenu', function(e) {
                             /*滑鼠右鍵*/
                             e.preventDefault();
-                            var n = $(this).attr('id').replace('cmbMech4_', '');
+                            var n = $(this).attr('id').replace(/^(.*)_(\d+)$/,'$2');
                             CopyMech(n)
                         });
                         $('#cmbMech5_' + i).bind('contextmenu', function(e) {
                             /*滑鼠右鍵*/
                             e.preventDefault();
-                            var n = $(this).attr('id').replace('cmbMech5_', '');
+                            var n = $(this).attr('id').replace(/^(.*)_(\d+)$/,'$2');
                             CopyMech(n)
                         });
                     	//--------------------------------------------------------------
                     	$('#txtProductno_' + i).bind('contextmenu', function(e) {
                             /*滑鼠右鍵*/
                             e.preventDefault();
-                            var n = $(this).attr('id').replace('txtProductno_', '');
+                            var n = $(this).attr('id').replace(/^(.*)_(\d+)$/,'$2');
                             $('#btnProduct_'+n).click();
                         });
                         $('#txtStoreno_' + i).bind('contextmenu', function(e) {
                             /*滑鼠右鍵*/
                             e.preventDefault();
-                            var n = $(this).attr('id').replace('txtStoreno_', '');
+                            var n = $(this).attr('id').replace(/^(.*)_(\d+)$/,'$2');
                             $('#btnStore_'+n).click();
                         });
                         $('#txtPicno_' + i).bind('contextmenu', function(e) {
                             /*滑鼠右鍵*/
                             e.preventDefault();
-                            var n = $(this).attr('id').replace('txtPicno_', '');
+                            var n = $(this).attr('id').replace(/^(.*)_(\d+)$/,'$2');
                             $('#btnPicno_'+n).click();
                         });
                     	/*$('#txtPicno_'+i).change(function(e){
@@ -913,27 +913,27 @@
                     		createImg(n);
                     	});*/
                     	$('#txtParaa_'+i).change(function(e){
-                    		var n = $(this).attr('id').replace('txtParaa_', '');
+                    		var n = $(this).attr('id').replace(/^(.*)_(\d+)$/,'$2');
                     		createImg(n);
                     	});
                     	$('#txtParab_'+i).change(function(e){
-                    		var n = $(this).attr('id').replace('txtParab_', '');
+                    		var n = $(this).attr('id').replace(/^(.*)_(\d+)$/,'$2');
                     		createImg(n);
                     	});
                     	$('#txtParac_'+i).change(function(e){
-                    		var n = $(this).attr('id').replace('txtParac_', '');
+                    		var n = $(this).attr('id').replace(/^(.*)_(\d+)$/,'$2');
                     		createImg(n);
                     	});
                     	$('#txtParad_'+i).change(function(e){
-                    		var n = $(this).attr('id').replace('txtParad_', '');
+                    		var n = $(this).attr('id').replace(/^(.*)_(\d+)$/,'$2');
                     		createImg(n);
                     	});
                     	$('#txtParae_'+i).change(function(e){
-                    		var n = $(this).attr('id').replace('txtParae_', '');
+                    		var n = $(this).attr('id').replace(/^(.*)_(\d+)$/,'$2');
                     		createImg(n);
                     	});
                     	$('#txtParaf_'+i).change(function(e){
-                    		var n = $(this).attr('id').replace('txtParaf_', '');
+                    		var n = $(this).attr('id').replace(/^(.*)_(\d+)$/,'$2');
                     		createImg(n);
                     	});
                     	$('#txtContno_' + i).bind('contextmenu', function(e) {
