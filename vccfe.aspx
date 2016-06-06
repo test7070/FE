@@ -935,8 +935,7 @@
             		if(q_cur==1){
 						q_gtnoa(q_name, replaceAll(q_getPara('sys.key_vcc') + $('#txtDatea').val(), '/', ''));	
 					}else{
-						var s1 = $('#txt' + bbmKey[0].substr(0, 1).toUpperCase() + bbmKey[0].substr(1)).val();
-		                wrServer(s1);
+						wrServer($('#txtNoa').val());
 					}
             	}
             }
