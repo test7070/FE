@@ -15,7 +15,6 @@ returns  @tmp table(
 	total float -- 可用額度
 )
 begin
-	--訂單和出貨單,單號不可以有一樣
 	SET QUOTED_IDENTIFIER OFF
 	declare @cmd nvarchar(max)
 	declare @t_rate float = 0.05
