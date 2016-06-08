@@ -105,7 +105,7 @@
                      			if (as[0] != undefined && parseFloat(as[0].uweight)!=0) {
                      				$('#txtWeight_'+t_para.n).val(round(parseFloat(as[0].uweight)*t_para.mount,3));
                      			}
-                     			btnOk_sum(t_para.n)
+                     			btnOk_sum(t_para.n);
                      		}
                      	}catch(e){
                      	}
@@ -135,13 +135,15 @@
 						wrServer(t_noa);
             	}else{
             		n--;
-            		t_productno = $.trim($('#txtProductno_'+n).val());
+            		btnOk_sum(n);
+            		
+            		/*t_productno = $.trim($('#txtProductno_'+n).val());
                     t_mount = q_float('txtMount_' + n);
                     if(t_productno.length>0 && t_mount!=0){
                     	q_gt('ucc', "where=^^noa='"+t_productno+"'^^", 0, 0, 0,JSON.stringify({action:"getWeight_sum",n:n,mount:t_mount}));	
                     }else{
                     	btnOk_sum(n);
-                    }
+                    }*/
             	}           		
             }
 
@@ -158,24 +160,24 @@
 						$('#txtProductno_' + j).bind('contextmenu', function(e) {
 							/*滑鼠右鍵*/
 							e.preventDefault();
-							var n = $(this).attr('id').replace('txtProductno_', '');
+							var n = $(this).attr('id').replace(/^(.*)_(\d+)$/,'$2');
 							$('#btnProductno_'+n).click();
 						});
 						$('#txtSssno_' + j).bind('contextmenu', function(e) {
 							/*滑鼠右鍵*/
 							e.preventDefault();
-							var n = $(this).attr('id').replace('txtSssno_', '');
+							var n = $(this).attr('id').replace(/^(.*)_(\d+)$/,'$2');
 							$('#btnSssno_'+n).click();
 						});
 						$('#txtMechno_' + j).bind('contextmenu', function(e) {
 							/*滑鼠右鍵*/
 							e.preventDefault();
-							var n = $(this).attr('id').replace('txtMechno_', '');
+							var n = $(this).attr('id').replace(/^(.*)_(\d+)$/,'$2');
 							$('#btnMechno_'+n).click();
 						});
 						$('#txtMount_' + j).change(function() {
 							if (q_cur == 1 || q_cur == 2){
-                            	var n = $(this).attr('id').split('_')[$(this).attr('id').split('_').length - 1];
+                            	var n = $(this).attr('id').replace(/^(.*)_(\d+)$/,'$2');
                             	t_productno = $.trim($('#txtProductno_'+n).val());
 			                    t_mount = q_float('txtMount_' + n);
 			                    if(t_productno.length>0 && t_mount!=0){

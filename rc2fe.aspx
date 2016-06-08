@@ -517,13 +517,13 @@
                         $('#txtProductno_' + j).bind('contextmenu', function(e) {
                             /*滑鼠右鍵*/
                             e.preventDefault();
-                            var n = $(this).attr('id').replace('txtProductno_', '');
+                            var n = $(this).attr('id').replace(/^(.*)_(\d+)$/,'$2');
                             $('#btnProduct_' + n).click();
                         });
                         $('#txtStoreno_' + j).bind('contextmenu', function(e) {
                             /*滑鼠右鍵*/
                             e.preventDefault();
-                            var n = $(this).attr('id').replace('txtStoreno_', '');
+                            var n = $(this).attr('id').replace(/^(.*)_(\d+)$/,'$2');
                             $('#btnStore_' + n).click();
                         });
                         
@@ -553,7 +553,7 @@
                         });
                         $('#txtMount_' + j).focusout(function() {
                             if (q_cur == 1 || q_cur == 2){
-                            	var n = $(this).attr('id').split('_')[$(this).attr('id').split('_').length - 1];
+                            	var n = $(this).attr('id').replace(/^(.*)_(\d+)$/,'$2');
                             	t_productno = $.trim($('#txtProductno_'+n).val());
 			                    t_mount = q_float('txtMount_' + n);
 			                    if(t_productno.length>0 && t_mount!=0){
