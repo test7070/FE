@@ -12,6 +12,7 @@ vccfe_apv:--vccfe_apv
 	declare @t_rank int = 0
 	declare @t_user nvarchar(20) = ''
 	select @t_rank=[RANK],@t_user=namea from nhpe where noa=@t_userno
+	---------------------------------------------------------------------------
 	-- RANK >=8 不用檢查
 	if @t_rank>=8
 	begin
@@ -205,7 +206,9 @@ vccfe_apv:--vccfe_apv
 ----------------------------------------------------------------------------
 	if len(@t_memo)>0
 	begin
-		set @t_memo = '單號：'+@t_noa+CHAR(13)+'客戶：'+@t_custno+CHAR(13)+@t_memo
+		declare @cust nvarchar(max) = ''
+		select @cust = case when len(isnull(nick,''))>0 then nick else ISNULL(comp,'') end from cust where noa=@t_custno
+		set @t_memo = '單號：'+@t_noa+CHAR(13)+'客戶：【'+@t_custno+'】'+@cust+CHAR(13)+@t_memo
 
 		declare @x_date nvarchar(20) = dbo.AD2ChineseEraName(getdate())
 		declare @x_time nvarchar(20) = left(CONVERT(nvarchar,getdate(),108),5)
