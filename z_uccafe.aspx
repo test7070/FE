@@ -89,6 +89,19 @@
 						type : '5', //[12]  8
 						name : 'xacomp',
 						value : t_acomp.split(',')
+					}, {
+						type : '2', //[13][14]  9
+						name : 'xsales',
+						dbf : 'sss',
+						index : 'noa,namea',
+						src : 'sss_b.aspx'
+					}, {
+						type : '6', //[15]   10
+						name : 'lostdate'
+					}, {
+                        type : '5', //[16]  11
+                        name : 'lostorder',
+                        value : "0@交易日,1@業務".split(',')
 					}]
                 });
                 q_popAssign();
@@ -98,6 +111,7 @@
                 $('#txtDate1').datepicker();
                 $('#txtDate2').mask('999/99/99');
                 $('#txtDate2').datepicker();
+                $('#txtLostdate').val(100);
 
                 var t_date, t_year, t_month, t_day;
                 t_date = new Date();

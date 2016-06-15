@@ -1,3 +1,47 @@
+z_uccafe07:--z_uccafe07   ref. z_anavccfe6
+declare @t_bcustno nvarchar(100) = case when '#non'=[5] then '' else [5] end
+declare @t_ecustno nvarchar(100) = case when '#non'=[6] then char(255) else [6] end
+declare @t_bsalesno nvarchar(35) = case when '#non'=[13] then '' else [13] end
+declare @t_esalesno nvarchar(35) = case when '#non'=[14] then char(255) else [14] end
+declare @t_lostdate nvarchar(90) = case when '#non'=[15] then '0' else [15] end
+declare @t_lostorder nvarchar(10) = case when '#non'=[16] then '0' else [16] end
+
+
+declare @now_date nvarchar(10) --今天日期
+set @now_date=CONVERT (VARCHAR(7), GETDATE(),12 )+0890000
+set @now_date=left(@now_date,3)+'/'+substring(@now_date,4,2)+'/'+right(@now_date,2)
+
+declare @tmp table(
+	gno nvarchar(10),
+	noa nvarchar(50),
+	comp nvarchar(200),
+	salesno nvarchar(50),
+	sales nvarchar(50),
+	datea nvarchar(50),
+	tel nvarchar(MAX),
+	fax nvarchar(MAX),
+	mobile nvarchar(MAX),
+	addrcomp nvarchar(MAX),
+	addrconn nvarchar(MAX)
+)
+insert @tmp 
+select '0',noa,comp,salesno,sales,isnull((select MAX(datea) from view_vcc where custno=a.noa),'')
+,tel,fax,mobile,addr_comp,addr_home from cust a
+where isnull(a.salesno,'') between @t_bsalesno and @t_esalesno
+and a.noa between @t_bcustno and @t_ecustno
+
+delete @tmp where datea>dbo.q_cdn(@now_date,-1*cast(@t_lostdate as int))
+
+if @t_lostorder='0'
+begin
+	select * from @tmp order by datea,noa,salesno
+end
+else 
+begin
+	select * from @tmp order by salesno,datea,noa
+end
+;
+
 z_uccafe06:--z_uccafe06 銷售分析明細表(產品)
 	SET QUOTED_IDENTIFIER OFF
 	declare @t_bdate nvarchar(10)=case when '#non' = [1] then '' else [1] end
