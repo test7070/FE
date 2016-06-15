@@ -323,12 +323,13 @@
                             }
                         }
                         _btnModi();
-                        if(r_rank<8){
+                        /*if(r_rank<8){
+		                	不確定用途??
 		                	$('#btnPlus').attr('disabled','disabled');
 		                	for(var i=0;i<q_bbsCount;i++){
 		                		$('#btnMinus_'+i).attr('disabled','disabled');	
 		                	}
-		                }
+		                }*/
                         Unlock(1);
                         $('#txtDatea').focus();
                         if (!emp($('#txtTggno').val())) {
