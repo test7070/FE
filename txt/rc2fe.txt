@@ -1,19 +1,37 @@
-check:--check
+rc2fe_apv:--rc2fe_apv
 	declare @t_userno nvarchar(max) = [1]
 	declare @t_form nvarchar(max) = [2]
 	declare @t_guid nvarchar(max) = [3]
 	declare @t_noa nvarchar(max) = [4]
-	declare @t_item nvarchar(max) = [5]
+	declare @t_tggno nvarchar(max) = [5]
+	declare @t_typea nvarchar(max) = [6]
+	declare @t_date nvarchar(max) = [7]
+	declare @t_mon nvarchar(max) = [8]
+	declare @t_item nvarchar(max) = [9]
 	declare @t_rank int = 0
 	declare @t_user nvarchar(20) = ''
 	select @t_rank=[RANK],@t_user=namea from nhpe where noa=@t_userno
+	-----------------------------------------------------------------------------
 	--RANK >=8 不用檢查
 	if @t_rank>=8
 	begin
 		select 1 val,@t_userno+'等級'+cast(@t_rank as nvarchar)+',不需檢查。' msg
 		return 
 	end
-	-----------------------------------------------------------------
+	-- 只檢查當時送簽核前的資料,若送完後再改資料則無法判斷
+	if exists(select * from [sign] where zno=@t_guid and sender=@t_user and LTRIM(RTRIM(isnull(enda,'')))='Y')
+	begin
+		select 1 val,'已簽核' msg
+		return
+	end
+	else if exists(select * from [sign] where zno=@t_guid and sender=@t_user and LTRIM(RTRIM(isnull(enda,'')))!='Y')
+	begin
+		select 0 val,'簽核已送，尚未核准，請稍後！' msg
+		return
+	end
+---------------------------------------------------------------------------------------
+	declare @t_memo nvarchar(max) = '' -- 簽核訊息
+---------------------------------------------------------------------------------------
 	declare @string nvarchar(max)
 	declare @string2 nvarchar(max)
 	declare @n int
@@ -76,54 +94,18 @@ check:--check
 	declare @count1 int = 0, @count2 int = 0
 	select @count1 = count(1) from @current
 	select @count2 = count(1) from @previous
+	if @count1!=@count2 and isnull(@count2,0)>0
+	begin
+		set @t_memo = @t_memo + case when len(@t_memo)>0 then CHAR(13) else '' end + '【資料筆數異動】'                                                                                                                                                             
+	end
 	
-	if @count1!=@count2
-	begin
-		select 0 val,'原先資料筆數'+CAST(@count2 as nvarchar)+',當前筆數'+CAST(@count1 as nvarchar)+',請檢查。' msg
-		return 
-	end
-	--檢查NOQ
-	if exists( select * from @previous a left join @current b on a.noq=b.noq where b.noq is null)
-	begin
-		select 0 val,'錯誤：資料不一致。' msg
-		return
-	end
-	--檢查金額(金額只可以改小不可以改大，改大要"特別權限")
-	declare @t_date nvarchar(20) = dbo.AD2ChineseEraName(getdate())
-	declare @t_time nvarchar(20) = left(CONVERT(nvarchar,getdate(),108),5)
-	declare @number nvarchar(max)
-	declare @sign nvarchar(max) = '0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZ'
-	declare @nn int
-	declare @mm nvarchar(max)
-	declare @noa nvarchar(20) = ''
-	--
-	declare @t_checker nvarchar(max) = ''
-	declare @t_memo nvarchar(max) = '進貨單號：'+@t_noa
 	declare @productno nvarchar(max)
 	declare @product nvarchar(max)
 	declare @money1 float
 	declare @money2 float
-	
-	if exists(select * from [sign] where zno=@t_guid and memo like @t_memo+'%' and LTRIM(RTRIM(isnull(enda,'')))='Y')
+	--檢查金額(金額只可以改小不可以改大，改大要"特別權限")
+	if exists(select * from @previous a left join @current b on a.noq=b.noq where a.[money]<b.[money])
 	begin
-		select 1 val,'已簽核' msg
-		return
-	end
-	else if exists(select * from [sign] where zno=@t_guid and memo like @t_memo+'%' and LTRIM(RTRIM(isnull(enda,'')))!='Y')
-	begin
-		select 0 val,'簽核已送，尚未核准，請稍後！' msg
-		return
-	end
-	else if exists(select * from @previous a left join @current b on a.noq=b.noq where a.[money]<b.[money])
-	begin
-		select top 1 @noa = case when noa>isnull(@noa,'') then noa else @noa end from [sign] where noa like REPLACE(@t_date,'/','')+'[0-9,A-Z][0-9][0-9]' order by noa desc
-		if LEN(ISNULL(@noa,'')) = 0
-			set @noa = REPLACE(@t_date,'/','')+'000'
-		set @number  = right(@noa,3)				
-		set @nn = (charindex(left(@number,1),@sign)-1) * 100 + cast(right(@number,2) as int) + 1
-		set @mm = substring(@sign,floor(@nn/100)+1,1)
-		set @noa =  REPLACE(@t_date,'/','')+@mm+RIGHT('00'+cast(@nn as nvarchar),2)
-		
 		declare cursor_table cursor for
 		select a.productno,a.product,a.[money],b.[money]
 		from @previous a 
@@ -141,12 +123,36 @@ check:--check
 		end
 		close cursor_table
 		deallocate cursor_table
+	end
+-------------------------------------------------------------------------------
+	if len(@t_memo)>0
+	begin
+		declare @tgg nvarchar(max) = ''
+		select @tgg = case when len(isnull(nick,''))>0 then nick else ISNULL(comp,'') end from tgg where noa=@t_tggno
+		set @t_memo = '單號：'+@t_noa+CHAR(13)+'客戶：【'+@t_tggno+'】'+@tgg+CHAR(13)+@t_memo
+
+		declare @x_date nvarchar(20) = dbo.AD2ChineseEraName(getdate())
+		declare @x_time nvarchar(20) = left(CONVERT(nvarchar,getdate(),108),5)
+		declare @number nvarchar(max)
+		declare @sign nvarchar(max) = '0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZ'
+		declare @nn int
+		declare @mm nvarchar(max)
+		declare @noa nvarchar(20) = ''
+		declare @t_checker nvarchar(max) = ''
+		
+		select top 1 @noa = case when noa>isnull(@noa,'') then noa else @noa end from [sign] where noa like REPLACE(@t_date,'/','')+'[0-9,A-Z][0-9][0-9]' order by noa desc
+		if LEN(ISNULL(@noa,'')) = 0
+			set @noa = REPLACE(@x_date,'/','')+'000'
+		set @number  = right(@noa,3)				
+		set @nn = (charindex(left(@number,1),@sign)-1) * 100 + cast(right(@number,2) as int) + 1
+		set @mm = substring(@sign,floor(@nn/100)+1,1)
+		set @noa =  REPLACE(@t_date,'/','')+@mm+RIGHT('00'+cast(@nn as nvarchar),2)
 		
 		begin try
 			select @t_checker=checker from signform where noa='rc2fe'
 			insert into [sign](noa,datea,timea,form,sender,checker,zno,memo,enda,memochecker)
-			select @noa,@t_date,@t_time,@t_form,@t_user,@t_checker,@t_guid,@t_memo,'N',''
-			select 0 val,'簽核已送，請稍後！' msg
+			select @noa,@x_date,@x_time,@t_form,@t_user,@t_checker,@t_guid,@t_memo,'N',''
+			select 0 val,'【需核准】簽核已送，請稍後！' msg
 			return
 		end try
 		begin catch
@@ -157,5 +163,4 @@ check:--check
 	else
 	begin
 		select 1 val,'沒問題。' msg
-		return
-	end;
+	end;	

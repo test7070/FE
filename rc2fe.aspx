@@ -441,22 +441,41 @@
                     $('#txtWorker').val(r_name);
                 if (q_cur == 2)
                     $('#txtWorker2').val(r_name);
-                    
+                
+                var t_userno = r_userno;
+				var t_form = 'rc2fe';
+				var t_guid = $('#btnOk').data('guid');
+				var t_noa = $.trim($('#txtNoa').val());
+				var t_tggno = $.trim($('#txtTggno').val());
+				var t_typea = $.trim($('#cmbTypea').val());
+				var t_date = $.trim($('#txtDatea').val());
+				var t_mon = $.trim($('#txtMon').val());    
                 var t_item = '';
                	for(var i=0;i<q_bbsCount;i++){
                		t_item += (t_item.length>0?'|':'') + $('#txtNoq_'+i).val()+'@'+q_float('txtTotal_'+i);
                	}
-               	
-                if(q_cur==2){
+               	//修改需檢查金額(金額只可以改小不可以改大，改大要"特別權限")
+               	q_func('qtxt.query.rc2fe_apv', 'rc2fe.txt,rc2fe_apv,'
+           			+t_userno+';'
+           			+t_form+';'
+           			+t_guid+';'
+           			+t_noa+';'
+           			+t_tggno+';'
+           			+t_typea+';'
+           			+t_date+';'
+           			+t_mon+';'
+           			+t_item+';'
+       			); 
+                /*if(q_cur==2){
                		//修改需檢查金額(金額只可以改小不可以改大，改大要"特別權限")
-               		q_func('qtxt.query.rc2fe', 'rc2fe.txt,check,'+r_userno+';rc2fe;' + $('#btnModi').data('guid')+';'+$('#txtNoa').val()+';'+t_item); 
+               		q_func('qtxt.query.rc2fe_apv', 'rc2fe.txt,rc2fe_apv,'+r_userno+';rc2fe;' + $('#btnModi').data('guid')+';'+$('#txtNoa').val()+';'+t_item); 
                	}else{
                		save();
-               	} 
+               	} */
             }
             function q_funcPost(t_func, result) {
                 switch(t_func) {
-                	case 'qtxt.query.rc2fe':
+                	case 'qtxt.query.rc2fe_apv':
                 		//BBS TEXTBOX全部鎖定
                 		$('#tbbs').children().find('input[type="text"]').attr('disabled','disabled');
                 		var as = _q_appendData("tmp0", "", true);
@@ -589,6 +608,8 @@
 
             function btnIns() {
                 _btnIns();
+                $('#btnOk').data('guid',guid());
+                
                 $('#txt' + bbmKey[0].substr(0, 1).toUpperCase() + bbmKey[0].substr(1)).val('AUTO');
                 $('#txtCno').val(z_cno);
                 $('#txtAcomp').val(z_acomp);
@@ -611,7 +632,7 @@
                     opacity : 0
                 });
                 //產生guid,送簽核用
-              	$('#btnModi').data('guid',guid());
+              	$('#btnOk').data('guid',guid());
               	
                 var t_where = " where=^^ rc2no='" + $('#txtNoa').val() + "'^^";
                 q_gt('pays', t_where, 0, 0, 0, 'btnModi', r_accy);
