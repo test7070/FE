@@ -62,7 +62,11 @@
                     }, {
 						type : '6', //[10]               6
 						name : 'edate'
-					}]
+					}, {
+                        type : '8', //[11]               5
+                        name : 'xVcc',
+                        value : ['銷售明細']
+                    }]
 				});
 				q_popAssign();
 				q_langShow();

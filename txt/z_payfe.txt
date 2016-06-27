@@ -10,6 +10,7 @@ z_payfe03:--z_payfe03
 	declare @t_datea nvarchar(20) = case when '#non' = [10] then '' else [10] end --預付截止日 
 	declare @t_userno nvarchar(20) = '' 
 	declare @t_user nvarchar(20) = N'[9]' 
+	declare @t_vcc nvarchar(20) = case when '#non' = [11] then '' else [11] end 
 	---------------------------------------------------------------------------------
 	declare @tmp table(
 		sel int identity(1,1)

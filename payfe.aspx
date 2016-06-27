@@ -18,7 +18,7 @@
 		    q_tables = 's';
 		    var q_name = "pay";
 		    var q_readonly = ['txtWorker', 'txtWorker2', 'txtAccno','txtSale','txtTotal','txtPaysale','txtUnpay','txtOpay','textOpay','txtWorker2','txtRc2no'];
-		    var q_readonlys = ['txtRc2no', 'txtUnpay', 'txtUnpayorg', 'txtAcc1', 'txtAcc2', 'txtPart2','txtMemo2','txtCno','txtCoin'];
+		    var q_readonlys = [ 'txtUnpay', 'txtUnpayorg', 'txtAcc1', 'txtAcc2', 'txtPart2','txtMemo2','txtCoin'];
 		    var bbmNum = new Array(['txtSale', 10, 0, 1], ['txtTotal', 10, 0, 1], ['txtPaysale', 10, 0, 1], ['txtUnpay', 10, 0, 1], ['txtOpay', 10, 0, 1], ['txtUnopay', 10, 0, 1], ['textOpay', 10, 0, 1]);
 		    var bbsNum = [['txtMoney', 10, 0, 1], ['txtChgs', 10, 0, 1], ['txtPaysale', 10, 0, 1], ['txtUnpay', 10, 0, 1], ['txtUnpayorg', 10, 0, 1]];
 		    var bbmMask = [];
@@ -342,7 +342,42 @@
 		                    q_Seek_gtPost();
 		                break;
 		            default:
-                    	if(t_name.substring(0,13)=='gqb_btnOkbbs1'){
+		            	if(t_name.substring(0,11)=='rc2nocheck_'){
+                    		var n = t_name.split('_')[1];
+                    		var as = _q_appendData("view_rc2", "", true);
+                    		var patten = /^(.+)-([0-9]{3,4}\/[0-9]{2})$/;
+                    		if(as[0]!=undefined){
+                    			var t_unpay=q_mul((as[0].typea=='2'?-1:1),dec(as[0].unpay));
+                    			$('#txtMemo2_'+n).val(as[0].comp);
+	                    		$('#txtCno_'+n).val(as[0].cno);
+	                    		$('#txtRc2no_'+n).val(as[0].noa);
+	                    		$('#txtAccy_'+n).val(as[0].accy);
+	                    		$('#txtTablea_'+n).val('');
+	                    		$('#textTypea_'+n).val(as[0].typea);
+	                    		$('#txtTggno_'+n).val(as[0].tggno);
+	                    		$('#txtPaymon_'+n).val(as[0].mon);
+	                    		$('#txtPaysale_'+n).val('');
+	                    		$('#txtUnpayorg_'+n).val(t_unpay);
+	                    		$('#txtUnpay_'+n).val(t_unpay);
+                    		}else if(patten.test($('#txtRc2no_'+n).val())){
+                    			//月結  
+                    			$('#txtTggno_'+n).val($('#txtRc2no_'+n).val().replace(patten,'$1'));
+                    			$('#txtPaymon_'+n).val($('#txtRc2no_'+n).val().replace(patten,'$2'));
+                			}else{
+                    			//資料清空
+	                    		$('#txtMemo2_'+n).val('');
+	                    		$('#txtCno_'+n).val('');
+	                    		$('#txtRc2no_'+n).val('');
+	                    		$('#txtAccy_'+n).val('');
+	                    		$('#txtTablea_'+n).val('');
+	                    		$('#textTypea_'+n).val('');
+	                    		$('#txtTggno_'+n).val('');
+	                    		$('#txtPaymon_'+n).val('');
+	                    		$('#txtPaysale_'+n).val('');
+	                    		$('#txtUnpayorg_'+n).val('');
+	                    		$('#txtUnpay_'+n).val('');
+                    		}
+                    	}else if(t_name.substring(0,13)=='gqb_btnOkbbs1'){
                     		//存檔時   bbs 支票號碼   先檢查view_gqb_chk,再檢查GQB
                     		var t_sel = parseFloat(t_name.split('_')[2]); 
                     		var t_checkno = t_name.split('_')[3];  
@@ -683,7 +718,26 @@
                     			
                     		q_box(t_tablea+".aspx?;;;noa='" + $(this).val() + "';" + t_accy, t_tablea, "95%", "95%", q_getMsg("pop"+t_tablea));	
                     	}
-                    });
+                    }).change(function() {
+                    	var n = $(this).attr('id').replace(/^(.*)_(\d+)$/,'$2');
+                    	if($(this).val().length==0){
+                    		//資料清空
+                    		$('#txtMemo2_'+n).val('');
+                    		$('#txtCno_'+n).val('');
+                    		$('#txtRc2no_'+n).val('');
+                    		$('#txtAccy_'+n).val('');
+                    		$('#txtTablea_'+n).val('');
+                    		$('#textTypea_'+n).val('');
+                    		$('#txtTggno_'+n).val('');
+                    		$('#txtPaymon_'+n).val('');
+                    		$('#txtPaysale_'+n).val('');
+                    		$('#txtUnpayorg_'+n).val('');
+                    		$('#txtUnpay_'+n).val('');
+                    	}else{
+                    		var t_where = "where=^^ noa='"+$(this).val()+"' ^^";
+	            			q_gt('view_rc2', t_where, 0, 0, 0, "rc2nocheck_"+n, r_accy);
+                    	}
+					});
 					$('#cmbPayc2_' + i).change(function (e) {					
 		                var n = $(this).attr("id").replace(/cmbPayc2_/g,'');
 		                $("#txtPayc_"+n).val($(this).find(":selected").text());
