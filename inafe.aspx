@@ -119,6 +119,9 @@
 					alert(t_err);
 					return;
 				}
+				for(var i=0;i<q_bbsCount;i++)
+					$('#txtStoreno_'+i).val($.trim($('#txtStoreno').val()));
+				
 				if (q_cur == 1)
 					$('#txtWorker').val(r_name);
 				else
@@ -521,8 +524,9 @@
 				</tr>
 				<tr  style='background:#cad3ff;'>
                     <td align="center">
-                    <input class="btn"  id="btnMinus.*" type="button" value='-' style=" font-weight: bold;" />
-                    <input id="txtNoq.*" type="text" style="display: none;" />
+                    	<input class="btn"  id="btnMinus.*" type="button" value='-' style=" font-weight: bold;" />
+                    	<input id="txtNoq.*" type="text" style="display: none;" />
+                    	<input id="txtStoreno.*" type="text" style="display: none;" />
                     </td>
                     <td><a id="lblNo.*" style="font-weight: bold;text-align: center;display: block;"> </a></td>
 					<td>
