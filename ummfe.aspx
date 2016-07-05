@@ -20,7 +20,7 @@
             q_tables = 's';
             var q_name = "umm";
             var q_readonly = [ 'txtWorker', 'txtCno', 'txtAcomp', 'txtSale', 'txtTotal', 'txtPaysale', 'txtUnpay', 'txtOpay', 'textOpay','txtAccno','txtWorker2'];
-            var q_readonlys = ['txtUnpay', 'txtUnpayorg', 'txtAcc1', 'txtAcc2', 'txtPart2','txtMemo2','txtCno','txtCoin','txtAcc1'];
+            var q_readonlys = ['txtUnpay', 'txtUnpayorg', 'txtAcc1', 'txtAcc2', 'txtPart2','txtMemo2','txtCoin','txtAcc1'];
             var bbmNum = new Array(['txtSale', 10, 0, 1], ['txtTotal', 10, 0, 1], ['txtPaysale', 10, 0, 1], ['txtUnpay', 10, 0, 1], ['txtOpay', 10, 0, 1], ['txtUnopay', 10, 0, 1], ['textOpay', 10, 0, 1]);
             var bbsNum = [['txtMoney', 10, 0, 1], ['txtChgs', 10, 0, 1], ['txtPaysale', 10, 0, 1], ['txtUnpay', 10, 0, 1], ['txtUnpayorg', 10, 0, 1]];
             var bbmMask = [];
