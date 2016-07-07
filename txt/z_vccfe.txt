@@ -119,7 +119,11 @@ update @result
 set mount=mount*-1,total=total*-1
 where typea='退'
 
-select gno, noa, noq, typea, datea, LEFT(datea,6) xdatea, mon, custno, left(comp,10) comp, productno, replace(xproduct,'~#$',char(39)) xproduct,unit,qhref
+update @result set comp=a.custno+' '+isnull(b.nick,'')
+from @result a
+left join cust b on a.custno=b.custno
+
+select gno, noa, noq, typea, datea, LEFT(datea,6) xdatea, mon, custno, comp, productno, replace(xproduct,'~#$',char(39)) xproduct,unit,qhref
 	,dbo.getComma(lengthb,2)  lengthb
 	,dbo.getComma(mount,[23])  mount
 	,dbo.getComma(weight,[24])  weight
