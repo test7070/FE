@@ -121,7 +121,7 @@ where typea='退'
 
 update @result set comp=a.custno+' '+isnull(b.nick,'')
 from @result a
-left join cust b on a.custno=b.custno
+left join cust b on a.custno=b.noa
 
 select gno, noa, noq, typea, datea, LEFT(datea,6) xdatea, mon, custno, comp, productno, replace(xproduct,'~#$',char(39)) xproduct,unit,qhref
 	,dbo.getComma(lengthb,2)  lengthb
