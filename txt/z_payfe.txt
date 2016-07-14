@@ -10,12 +10,12 @@ z_payfe03:--z_payfe03
 	declare @t_datea nvarchar(20) = case when '#non' = [10] then '' else [10] end --預付截止日 
 	declare @t_userno nvarchar(20) = '' 
 	declare @t_user nvarchar(20) = N'[9]' 
-	declare @t_vcc nvarchar(20) = case when '#non' = [11] then '' else [11] end 
 	---------------------------------------------------------------------------------
 	declare @tmp table(
 		sel int identity(1,1)
 		,recno int
 		,gno nvarchar(20)
+		,pno float
 		,cno nvarchar(20)
 		,acomp nvarchar(50)
 		,tggno nvarchar(20)
@@ -43,13 +43,26 @@ z_payfe03:--z_payfe03
 		,tweight float
 		,paytype nvarchar(50)
 		,memo nvarchar(max)
+		
+		,vccaccy nvarchar(10)
+		,vccno nvarchar(20)
+		,vccnoq nvarchar(10)
+		,custno nvarchar(20)
+		,cust nvarchar(50)
+		,vccunit nvarchar(20)
+		,vccmount float
+		,vccweight float
+		,vccprice float
+		,vccmoney float
+		
+		,profit float
 	)
 	
 	--進貨單
-	insert into @tmp(recno,gno,cno,tggno,tablea,accy,noa,noq,[money],datea,typea
+	insert into @tmp(recno,gno,pno,cno,tggno,tablea,accy,noa,noq,[money],datea,typea
 		,productno,product,size,unit,mount,[weight],price,moneys,paytype)
 	select ROW_NUMBER()over(partition by b.cno,a.accy,a.noa order by b.cno,a.accy,a.noa,a.noq)
-		,'1',b.cno,b.tggno,'rc2',a.accy,a.noa,a.noq,b.[money]
+		,'1',1,b.cno,b.tggno,'rc2',a.accy,a.noa,a.noq,b.[money]
 		,b.datea,case when b.typea='2' then '退' else '進' end
 		,a.productno,a.product,a.size,a.unit
 		,a.mount
@@ -61,17 +74,34 @@ z_payfe03:--z_payfe03
 	and (len(@t_cno)=0 or b.cno=@t_cno)
 	and ISNULL(b.tggno,'') between @t_btggno and @t_etggno
 	and ISNULL(b.mon,'') between @t_bmon and @t_emon
-	
+	--出貨單
+	insert into @tmp(cno,tggno,pno,datea,tablea,noa,noq,gno
+		,vccaccy,vccno,vccnoq,custno,cust,vccunit,vccmount,vccweight,vccprice,vccmoney)
+	select a.cno,a.tggno,a.pno,a.datea,a.tablea,a.noa,a.noq,'15'
+		,d.accy,d.noa,d.noq,e.custno,e.nick,d.unit,d.mount,d.[weight],d.price,d.total
+	from @tmp a
+	left join rc2t b on a.noa=b.rc2no and a.noq=b.rc2noq
+	left join rc2ts c on b.noa=c.noa 
+	left join view_vccs d on c.vccno=d.noa and c.vccnoq=d.noq
+	left join view_vcc e on d.accy=e.accy and d.noa=e.noa
+	where len(isnull(c.noa,''))>0
+	--毛利
+	insert into @tmp(cno,tggno,pno,datea,tablea,noa,noq,gno,profit)
+	select a.cno,a.tggno,a.pno,a.datea,a.tablea,a.noa,a.noq,'16',ISNULL(b.vccmoney,0)-isnull(a.moneys,0)
+	from @tmp a
+	left join(select noa,noq,SUM(isnull(vccmoney,0)) vccmoney from @tmp where gno='15' group by noa,noq) b on a.noa=b.noa and a.noq=b.noq
+	where gno='1' 
+	and b.noa is not null
 	--發票
-	insert into @tmp(recno,gno,cno,tggno,tablea,accy,noa,noq,tax,datea,typea,moneys,product)
-	select 1,'2',cno,tggno,'rc2a','',noa,'',tax,datea,'稅',total,ISNULL(acomp,'')+' '+ISNULL(comp,'')
+	insert into @tmp(recno,gno,pno,cno,tggno,tablea,accy,noa,noq,tax,datea,typea,moneys,product)
+	select 1,'2',2,cno,tggno,'rc2a','',noa,'',tax,datea,'稅',total,ISNULL(acomp,'')+' '+ISNULL(comp,'')
 	from rc2a
 	where (len(@t_cno)=0 or cno=@t_cno)
 	and ISNULL(tggno,'') between @t_btggno and @t_etggno
 	and ISNULL(mon,'') between @t_bmon and @t_emon
 	--折讓單
-	insert into @tmp(recno,gno,cno,tggno,tablea,accy,noa,noq,tax,datea,typea,moneys,product)
-	select 1,'3',a.cno,a.tggno,'rc2a','',a.noa,'',a.tax,a.datea,'折',a.total,ISNULL(b.acomp,'')+' '+ISNULL(a.comp,'')
+	insert into @tmp(recno,gno,pno,cno,tggno,tablea,accy,noa,noq,tax,datea,typea,moneys,product)
+	select 1,'3',3,a.cno,a.tggno,'rc2a','',a.noa,'',a.tax,a.datea,'折',a.total,ISNULL(b.acomp,'')+' '+ISNULL(a.comp,'')
 	from vccb a
 	left join acomp b on a.cno=b.noa
 	where (ISNULL(a.typea,'')='3' or ISNULL(a.typea,'')='4') 
@@ -148,41 +178,41 @@ z_payfe03:--z_payfe03
 	
 		
 		--進貨金額：
-		insert into @tmp(gno,cno,tggno,datea,typea,[money])
-		select '6',@cno,@tggno,CHAR(255),'進貨金額',@money
+		insert into @tmp(gno,pno,cno,tggno,datea,typea,[money])
+		select '6',6,@cno,@tggno,CHAR(255),'進貨金額',@money
 		--退貨金額：	
 		if isnull(@bkmoney,0)!=0
 		begin
-			insert into @tmp(gno,cno,tggno,datea,typea,[money])
-			select '7',@cno,@tggno,CHAR(255),'退貨金額',@bkmoney
+			insert into @tmp(gno,pno,cno,tggno,datea,typea,[money])
+			select '7',7,@cno,@tggno,CHAR(255),'退貨金額',@bkmoney
 		end
 		--稅　　額：
-		insert into @tmp(gno,cno,tggno,datea,typea,[money])
-		select '8',@cno,@tggno,CHAR(255),'稅　　額',@tax	
+		insert into @tmp(gno,pno,cno,tggno,datea,typea,[money])
+		select '8',8,@cno,@tggno,CHAR(255),'稅　　額',@tax	
 		--本期應付：
-		insert into @tmp(gno,cno,tggno,datea,typea,[money])
-		select '9',@cno,@tggno,CHAR(255),'本期應付',@a01
+		insert into @tmp(gno,pno,cno,tggno,datea,typea,[money])
+		select '9',9,@cno,@tggno,CHAR(255),'本期應付',@a01
 		--前期未付
 		if @a02!=0
 		begin
-			insert into @tmp(gno,cno,tggno,datea,typea,[money])
-			select '10',@cno,@tggno,CHAR(255),'前期未付',@a02
+			insert into @tmp(gno,pno,cno,tggno,datea,typea,[money])
+			select '10',10,@cno,@tggno,CHAR(255),'前期未付',@a02
 		end
 		--本期已付
 		if @a03!=0
 		begin
-			insert into @tmp(gno,cno,tggno,datea,typea,[money])
-			select '11',@cno,@tggno,CHAR(255),'本期已付',@a03
+			insert into @tmp(gno,pno,cno,tggno,datea,typea,[money])
+			select '11',11,@cno,@tggno,CHAR(255),'本期已付',@a03
 		end
 		--預付
 		if LEN(@t_datea)>0
 		begin
-			insert into @tmp(gno,cno,tggno,datea,typea,[money])
-			select '12',@cno,@tggno,CHAR(255),'預　　付',@a04
+			insert into @tmp(gno,pno,cno,tggno,datea,typea,[money])
+			select '12',12,@cno,@tggno,CHAR(255),'預　　付',@a04
 		end
 		--應付總計：
-		insert into @tmp(gno,cno,tggno,datea,typea,[money])
-		select '13',@cno,@tggno,CHAR(255),'應付總計',@a05
+		insert into @tmp(gno,pno,cno,tggno,datea,typea,[money])
+		select '13',13,@cno,@tggno,CHAR(255),'應付總計',@a05
 		----支票請開
 		--select @money=0
 		--select @money=sum(isnull([money],0)*case when typea='稅' then 1 else -1 end) 
@@ -258,13 +288,13 @@ z_payfe03:--z_payfe03
 		select @mm = COUNT(1) from @tmp where cno=@cno and tggno=@tggno and cast(gno as int) between 1 and 3
 		if(@mm+@endcount)%@linecount != 0
 		begin
-			insert into @tmp(gno,cno,tggno,datea,typea)
-			select '4',@cno,@tggno,CHAR(255) ,'---以下空白---'
+			insert into @tmp(gno,pno,cno,tggno,datea,typea)
+			select '4',4,@cno,@tggno,CHAR(255) ,'---以下空白---'
 			set @mm = @mm + 1
 			while @linecount-@mm%@linecount!=@endcount
 			begin
-				insert into @tmp(gno,cno,tggno,datea,typea)
-				select '5',@cno,@tggno,CHAR(255) ,''
+				insert into @tmp(gno,pno,cno,tggno,datea,typea)
+				select '5',5,@cno,@tggno,CHAR(255) ,''
 				set @mm = @mm + 1
 			end
 		end
@@ -316,8 +346,17 @@ z_payfe03:--z_payfe03
 		,'數量合計： '+dbo.getComma(tmount,-1) b001
 		,'重量合計： '+dbo.getComma(tweight,-1) b002
 		,memo
+		
+		,vccno d01
+		,cust d02
+		,vccunit d03
+		,dbo.getComma([vccmount],-1) d04
+		,dbo.getComma([vccweight],-1) d05
+		,dbo.getComma([vccprice],-1) d06
+		,dbo.getComma([vccmoney],-1) d07
+		,dbo.getComma([profit],-1) e01
 	from @tmp
-	order by cno,tggno,cast(gno as int),datea,tablea,noa,noq,sel;
+	order by cno,tggno,pno,datea,tablea,noa,noq,sel,CAST(gno as int);
 --*********************************************************************************
 z_payfe02:--z_payfe02
 
