@@ -1,4 +1,62 @@
-﻿groupb:--uccp.txt groupb  
+﻿uccp_price:--uccp_price  訂單單價檢查	
+	declare @t_noa nvarchar(max) = [1]
+	declare @t_data nvarchar(max) = [2]
+	--declare @t_data nvarchar(max) ='1@G18059@25.5@105/07/01$2@G18029@20.1@105/06/29'
+	
+	declare @tmpa table(
+		sel int identity(1,1)
+		,n int
+		,productno nvarchar(30)
+		,price float
+		,datea nvarchar(20)
+		,uccpprice float
+		,uccpdate nvarchar(20)
+	)
+	declare @string nvarchar(max)
+	declare @n nvarchar(max)
+	declare @productno nvarchar(max)
+	declare @price nvarchar(max)
+	declare @datea nvarchar(max)
+	
+	while CHARINDEX('$',@t_data)>0
+	begin
+		set @string = LEFT(@t_data,CHARINDEX('$',@t_data)-1)
+		set @t_data = RIGHT(@t_data,len(@t_data)-len(@string)-1)
+		
+		set @n = left(@string,CHARINDEX('@',@string)-1)
+		set @string = RIGHT(@string,len(@string)-len(@n)-1)
+		set @productno = left(@string,CHARINDEX('@',@string)-1)
+		set @string = RIGHT(@string,len(@string)-len(@productno)-1)
+		set @price = left(@string,CHARINDEX('@',@string)-1)
+		set @string = RIGHT(@string,len(@string)-len(@price)-1)
+		set @datea = @string
+		
+		insert into @tmpa(n,productno,price,datea)
+		select CAST(@n as int),@productno,CAST(@price as float),@datea
+	end
+	if len(@t_data)>0
+	begin
+		set @string = @t_data
+		
+		set @n = left(@string,CHARINDEX('@',@string)-1)
+		set @string = RIGHT(@string,len(@string)-len(@n)-1)
+		set @productno = left(@string,CHARINDEX('@',@string)-1)
+		set @string = RIGHT(@string,len(@string)-len(@productno)-1)
+		set @price = left(@string,CHARINDEX('@',@string)-1)
+		set @string = RIGHT(@string,len(@string)-len(@price)-1)
+		set @datea = @string
+		
+		insert into @tmpa(n,productno,price,datea)
+		select CAST(@n as int),@productno,CAST(@price as float),@datea
+	end
+	
+	update @tmpa set uccpprice=b.sprice,uccpdate=b.datea
+	from @tmpa a
+	outer apply(select top 1 * from uccps where productno=a.productno and a.datea>=datea order by datea desc,noa desc) b
+	---------------------------------------------------------------------------
+	select * from @tmpa;
+
+groupb:--uccp.txt groupb  
 	declare @t_date nvarchar(20) = [1]
 	declare @t_groupbno nvarchar(20) = [2]
 	declare @t_price float = cast([3] as float) 

@@ -567,7 +567,18 @@
             	}           		
             }
 			function save(){
-                var s1 = $('#txtNoa').val();
+				//檢查單價
+				var t_noa = $('#txtNoa').val();
+				var t_data ='';
+				for(var i=0;i<q_bbsCount;i++){
+					if($.trim($('#txtProductno_'+i).val().length>0)){
+						t_data += (t_data.length>0?'$':'')+i+'@'+ $('#txtProductno_'+i).val()+'@'+q_float('txtPrice_'+i)+'@'+$('#txtOdate').val();
+					}
+				}
+				q_func('qtxt.query.uccp_price', 'uccp.txt,uccp_price,'+t_noa+';'+t_data); 
+            }
+            function save2(){
+            	var s1 = $('#txtNoa').val();
                 if (s1.length == 0 || s1 == "AUTO")/// 自動產生編號
                     q_gtnoa(q_name, replaceAll(q_getPara('sys.key_orde') + $('#txtOdate').val(), '/', ''));
                 else
@@ -575,6 +586,24 @@
             }
 			function q_funcPost(t_func, result) {
                 switch(t_func) {
+                	case 'qtxt.query.uccp_price':
+                		var as = _q_appendData("tmp0", "", true, true);
+                        if(as[0]!=undefined){
+                        	var msg = '';
+                        	for(var i=0;i<as.length;i++){
+                        		if(as[i].price<as[i].uccpprice){
+                        			msg += (msg.length>0?'\n':'') + as[i].productno + ' 單價不可小於 '+as[i].uccpprice;
+                        		}
+                        	}
+                        	if(msg.length>0){
+                        		alert(msg);
+                        	}else{
+                        		save2();
+                        	}
+                        }else{
+                        	alert('無資料!');
+                        }
+                		break;
                     case 'qtxt.query.conform':
                         var as = _q_appendData("tmp0", "", true, true);
                         if(as[0]!=undefined){
