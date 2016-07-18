@@ -9,14 +9,15 @@
 		<script src="../script/qbox.js" type="text/javascript"></script>
 		<script src='../script/mask.js' type="text/javascript"></script>
 		<link href="../qbox.css" rel="stylesheet" type="text/css" />
+
 		<script type="text/javascript">
 			this.errorHandler = null;
 			function onPageError(error) {
 				alert("An error occurred:\r\n" + error.Message);
 			}
 
-			var q_name = "addrcase";
-			var q_readonly = [];
+			var q_name = "adpro";
+			var q_readonly = ['txtNoa','txtWeight'];
 			var bbmNum = [];
 			var bbmMask = [];
 			q_sqlCount = 6;
@@ -24,14 +25,16 @@
 			brwList = [];
 			brwNowPage = 0;
 			brwKey = 'noa';
-			brwCount2 = 10;
+			brwCount2 = 20;
+			q_desc = 1;
 			aPop = new Array();
 
 			$(document).ready(function() {
 				bbmKey = ['noa'];
-				brwCount2 = 10
+				brwCount2 = 20;
 				q_brwCount();
 				q_gt(q_name, q_content, q_sqlCount, 1);
+				
 			});
 
 			function main() {
@@ -45,9 +48,42 @@
 			function mainPost() {
 				bbmMask = [];
 				q_mask(bbmMask);
-				document.title='材質主檔';
+				bbmNum = [['txtWidth', 15, q_getPara('vcc.weightPrecision'), 1],['txtDime', 15, q_getPara('vcc.weightPrecision'), 1],['txtWeight', 15, q_getPara('vcc.weightPrecision'), 1]];
+				document.title='鋼筋存量設定';
+				q_gt('add5', "where=^^1=1^^" , 0, 0, 0, "getadd5",r_accy,1); //號數
+				var as = _q_appendData("add5", "", true);
+				as.sort(function(a, b){if (a.typea > b.typea) {return 1;}if (a.typea < b.typea) {return -1;}});
+				var t_item = " @ ";
+				if (as[0] != undefined) {
+					for ( i = 0; i < as.length; i++) {
+						t_item = t_item + (t_item.length > 0 ? ',' : '') + as[i].typea + '@' + as[i].typea;
+					}
+				}
+				q_cmbParse("cmbStyle", t_item);
+				
+				q_gt('addrcase', "where=^^1=1^^", 0, 0, 0, "getaddrcase",r_accy,1); //材質
+				var as = _q_appendData("addrcase", "", true);
+				as.sort(function(a, b){if (a.addr > b.addr) {return 1;}if (a.addr < b.addr) {return -1;}});
+				t_item = " @ ";
+				if (as[0] != undefined) {
+					for ( i = 0; i < as.length; i++) {
+						t_item = t_item + (t_item.length > 0 ? ',' : '') + as[i].addr + '@' + as[i].addr;
+					}
+				}
+				q_cmbParse("cmbMon", t_item);
+				q_gt('adsize', "where=^^1=1 and lengthb1>0 ^^", 0, 0, 0, "getadsize",r_accy,1); //長度
+				var as = _q_appendData("adsize", "", true);
+				as.sort(function(a, b){return a.lengthb1-b.lengthb1});
+				t_item = " @ ";
+				if (as[0] != undefined) {
+					for ( i = 0; i < as.length; i++) {
+						t_item = t_item + (t_item.length > 0 ? ',' : '') + as[i].lengthb1 + '@' + as[i].lengthb1;
+					}
+				}
+				q_cmbParse("cmbLengthb", t_item);
+				
 			}
-
+			
 			function q_boxClose(s2) {
 				var ret;
 				switch (b_pop) {
@@ -60,9 +96,9 @@
 			function q_gtPost(t_name) {
 				switch (t_name) {
 					case 'check_btnOk':
-						 var as = _q_appendData("addrcase", "", true);
+						var as = _q_appendData("adpro", "", true);
                         if (as[0] != undefined) {
-                            alert('已存在 ' + as[0].addr);
+                            alert('號數:'+as[0].style+' 材質:'+as[0].mon+' 長度:'+as[0].lengthb+' 已存在!!');
                             Unlock();
                             return;
                         } else {
@@ -83,17 +119,21 @@
 			function _btnSeek() {
 				if (q_cur > 0 && q_cur < 4)
 					return;
-				q_box('addrcase_fe_s.aspx', q_name + '_s', "500px", "430px", q_getMsg("popSeek"));
+				q_box('adpro_fe_s.aspx', q_name + '_s', "500px", "450px", q_getMsg("popSeek"));
 			}
 
 			function btnIns() {
 				_btnIns();
+				$('#txtNoa').val('AUTO');
+				$('#cmbStyle').focus();
 			}
 
 			function btnModi() {
 				if (emp($('#txtNoa').val()))
 					return;
 				_btnModi();
+				$('#txtNoa').attr('disabled', 'disabled')
+				$('#cmbStyle').focus();
 			}
 
 			function btnPrint() {
@@ -104,18 +144,20 @@
 				if (!(q_cur == 1 || q_cur == 2))
 					return false;
 				Unlock();
+
 			}
 
 			function btnOk() {
 				Lock();
 				
-				$('#txtAddr').val($.trim($('#txtAddr').val()));
-				t_where = "where=^^ addr='" + $('#txtAddr').val() + "' and noa!='"+$('#txtNoa').val()+"' ^^";
-				q_gt('addrcase', t_where, 0, 0, 0, "check_btnOk", r_accy);
+				
+				t_where = "where=^^ style='" + $('#cmbStyle').val() + "' and mon='" + $('#cmbMon').val() + "' and lengthb='" + $('#cmbLengthb').val() + "' and noa!='"+$('#txtNoa').val()+"' ^^";
+				q_gt('adpro', t_where, 0, 0, 0, "check_btnOk", r_accy);
 			}
 
 			function wrServer(key_value) {
 				var i;
+
 				xmlSql = '';
 				if (q_cur == 2)
 					xmlSql = q_preXml();
@@ -126,8 +168,15 @@
 
 			function refresh(recno) {
 				_refresh(recno);
-				$('#lblAddr').text('材質');
-				$('#vewAddr').text('材質');
+				$('#vewStyle').text('號數');
+				$('#vewMon').text('材質');
+				$('#vewLengthb').text('長度');
+				$('#lblStyle').text('號數');
+				$('#lblMon').text('材質');
+				$('#lblLengthb').text('長度');
+				$('#lblWidth').text('安全庫存量');
+				$('#lblDime').text('螢幕顯示量');
+				$('#lblWeight').text('庫存量');
 			}
 
 			function readonly(t_para, empty) {
@@ -192,13 +241,14 @@
 			}
 			.dview {
 				float: left;
-				width: 170px;
+				width: 500px;
 				border-width: 0px;
 			}
 			.tview {
 				border: 5px solid gray;
 				font-size: medium;
 				background-color: black;
+				width: 100%;
 			}
 			.tview tr {
 				height: 30px;
@@ -212,7 +262,7 @@
 			}
 			.dbbm {
 				float: left;
-				width: 300px;
+				width: 500px;
 				/*margin: -1px;
 				 border: 1px black solid;*/
 				border-radius: 5px;
@@ -315,28 +365,51 @@
 				<table class="tview" id="tview">
 					<tr>
 						<td align="center" style="width:20px; color:black;"><a id='vewChk'> </a></td>
-						<td align="center" style="width:150px; color:black;"><a id='vewAddr'> </a></td>
+						<td align="center" style="width:150px; color:black;"><a id='vewStyle'> </a></td>
+						<td align="center" style="width:160px; color:black;"><a id='vewMon'> </a></td>
+						<td align="center" style="width:180px; color:black;"><a id='vewLengthb'> </a></td>
 					</tr>
 					<tr>
-						<td ><input id="chkBrow.*" type="checkbox" style=''/></td>
-						<td id='addr'  style="text-align: left;">~addr</td>
+						<td ><input id="chkBrow.*" type="checkbox" style=' '/></td>
+						<td id='style' style="text-align: center;">~style</td>
+						<td id='mon' style="text-align: center;">~mon</td>
+						<td id='lengthb' style="text-align: center;">~lengthb</td>
 					</tr>
 				</table>
 			</div>
 			<div class='dbbm'>
-				<table class="tbbm" id="tbbm">
+				<table class="tbbm"  id="tbbm">
 					<tr style="height:1px;">
 						<td> </td>
 						<td> </td>
 						<td> </td>
+						<td class="tdZ"> </td>
 					</tr>
 					<tr>
-						<td><span> </span><a id='lblAddr' class="lbl"> </a></td>
-						<td>
-							<input id="txtAddr" type="text" class="txt c1" />
-							<input id="txtNoa"  type="text" class="txt c1" style="display: none;" />
-						</td>
+						<td><span> </span><a id='lblStyle' class="lbl"> </a></td>
+						<td><select id='cmbStyle'> </select></td>
 					</tr>
+					<tr>
+						<td><span> </span><a id='lblMon' class="lbl"> </a></td>
+						<td><select id='cmbMon'> </select></td>
+					</tr>
+					<tr>
+						<td><span> </span><a id='lblLengthb' class="lbl"> </a></td>
+						<td><select id='cmbLengthb'> </select></td>
+					</tr>
+					<tr>
+						<td><span> </span><a id='lblWidth' class="lbl"> </a></td>
+						<td><input id="txtWidth"  type="text" class="txt num c1" /></td>
+					</tr>
+					<tr>
+						<td><span> </span><a id='lblDime' class="lbl"> </a></td>
+						<td><input id="txtDime"  type="text" class="txt num c1" /></td>
+					</tr>
+					<tr>
+						<td><span> </span><a id='lblWeight' class="lbl"> </a></td>
+						<td><input id="txtWeight"  type="text" class="txt num c1" /></td>
+					</tr>
+					
 				</table>
 			</div>
 		</div>

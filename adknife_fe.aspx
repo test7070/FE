@@ -14,9 +14,8 @@
 			function onPageError(error) {
 				alert("An error occurred:\r\n" + error.Message);
 			}
-
-			var q_name = "addrcase";
-			var q_readonly = [];
+			var q_name = "adknife";
+			var q_readonly = ['txtNoa'];
 			var bbmNum = [];
 			var bbmMask = [];
 			q_sqlCount = 6;
@@ -25,11 +24,13 @@
 			brwNowPage = 0;
 			brwKey = 'noa';
 			brwCount2 = 10;
-			aPop = new Array();
+			aPop = new Array(
+				['txtProductno', 'lblProductno', 'ucc', 'noa,product', 'txtProductno,txtProduct', 'ucc_b.aspx']
+			);
 
 			$(document).ready(function() {
 				bbmKey = ['noa'];
-				brwCount2 = 10
+				brwCount2 = 20
 				q_brwCount();
 				q_gt(q_name, q_content, q_sqlCount, 1);
 			});
@@ -43,9 +44,23 @@
 			}
 
 			function mainPost() {
-				bbmMask = [];
+				bbmMask = [['txtMon', r_picm]];
 				q_mask(bbmMask);
-				document.title='材質主檔';
+				bbmNum = [['txtDime1', 10, 0, 1],['txtDime2', 10, 0, 1],['txtWidth1', 10, 0, 1],	['txtWidth2', 10, 0, 1],
+									['txtKnife1', 10, 0, 1],['txtKnife2', 10, 0, 1],	['txtPrice', 10, 0, 1]];
+				
+				document.title='裁剪床設定';
+				q_gt('add5', "where=^^1=1^^" , 0, 0, 0, "getadd5",r_accy,1); //號數
+				var as = _q_appendData("add5", "", true);
+				as.sort(function(a, b){if (a.typea > b.typea) {return 1;}if (a.typea < b.typea) {return -1;}});
+				var t_item = " @ ";
+				if (as[0] != undefined) {
+					for ( i = 0; i < as.length; i++) {
+						t_item = t_item + (t_item.length > 0 ? ',' : '') + as[i].typea + '@' + as[i].typea;
+					}
+				}
+				q_cmbParse("cmbStyle", t_item);
+				
 			}
 
 			function q_boxClose(s2) {
@@ -60,9 +75,9 @@
 			function q_gtPost(t_name) {
 				switch (t_name) {
 					case 'check_btnOk':
-						 var as = _q_appendData("addrcase", "", true);
+						var as = _q_appendData("adknife", "", true);
                         if (as[0] != undefined) {
-                            alert('已存在 ' + as[0].addr);
+                            alert('噸數:'+as[0].price+' 號數:'+as[0].style+' 已存在!!');
                             Unlock();
                             return;
                         } else {
@@ -83,17 +98,21 @@
 			function _btnSeek() {
 				if (q_cur > 0 && q_cur < 4)
 					return;
-				q_box('addrcase_fe_s.aspx', q_name + '_s', "500px", "430px", q_getMsg("popSeek"));
+				q_box('adknife_fe_s.aspx', q_name + '_s', "500px", "400px", q_getMsg("popSeek"));
 			}
 
 			function btnIns() {
 				_btnIns();
+				$('#txtNoa').val('AUTO');
+				$('#txtMon').val(q_date().substring(0,6)).focus();
 			}
 
 			function btnModi() {
 				if (emp($('#txtNoa').val()))
 					return;
 				_btnModi();
+				$('#txtNoa').attr('disabled', 'disabled')
+				$('#txtProductno').focus();
 			}
 
 			function btnPrint() {
@@ -104,20 +123,24 @@
 				if (!(q_cur == 1 || q_cur == 2))
 					return false;
 				Unlock();
+
 			}
 
 			function btnOk() {
+				if(dec($('#txtPrice').val())<=0){
+					alert('請輸入正確噸數!!');
+					return;
+				}
 				Lock();
 				
-				$('#txtAddr').val($.trim($('#txtAddr').val()));
-				t_where = "where=^^ addr='" + $('#txtAddr').val() + "' and noa!='"+$('#txtNoa').val()+"' ^^";
-				q_gt('addrcase', t_where, 0, 0, 0, "check_btnOk", r_accy);
+				t_where = "where=^^ style='" + $('#cmbStyle').val() + "' and price='" + $('#txtPrice').val() + "' and noa!='"+$('#txtNoa').val()+"' ^^";
+				q_gt('adknife', t_where, 0, 0, 0, "check_btnOk", r_accy);
 			}
 
 			function wrServer(key_value) {
 				var i;
 				xmlSql = '';
-				if (q_cur == 2)
+				if (q_cur == 2)/// popSave
 					xmlSql = q_preXml();
 
 				$('#txt' + bbmKey[0].substr(0, 1).toUpperCase() + bbmKey[0].substr(1)).val(key_value);
@@ -126,8 +149,20 @@
 
 			function refresh(recno) {
 				_refresh(recno);
-				$('#lblAddr').text('材質');
-				$('#vewAddr').text('材質');
+				$('#lblPrice').text('噸數');
+				$('#lblStyle').text('號數');
+				$('#lblKnife1').text('支/刀');
+				$('#lblKnife2').text('小把/每大把');
+				$('#lblDime').text('支/每小把');
+				$('#lblWidth').text('把/排剪');
+				$('#lblMemo').text('定尺尺寸');
+				
+				$('#vewPrice').text('噸數');
+				$('#vewStyle').text('號數');
+				$('#vewKnife1').text('支/刀');
+				$('#vewKnife2').text('小把/每大把');
+				$('#vewDime').text('支/每小把');
+				$('#vewWidth').text('把/排剪');
 			}
 
 			function readonly(t_para, empty) {
@@ -192,7 +227,7 @@
 			}
 			.dview {
 				float: left;
-				width: 170px;
+				width: 600px;
 				border-width: 0px;
 			}
 			.tview {
@@ -212,7 +247,7 @@
 			}
 			.dbbm {
 				float: left;
-				width: 300px;
+				width: 410px;
 				/*margin: -1px;
 				 border: 1px black solid;*/
 				border-radius: 5px;
@@ -231,10 +266,10 @@
 				height: 35px;
 			}
 			.tbbm tr td {
-				width: 10%;
+				/*width: 10%;*/
 			}
 			.tbbm .tdZ {
-				width: 1%;
+				/*width: 1%;*/
 			}
 			.tbbm tr td span {
 				float: right;
@@ -315,28 +350,72 @@
 				<table class="tview" id="tview">
 					<tr>
 						<td align="center" style="width:20px; color:black;"><a id='vewChk'> </a></td>
-						<td align="center" style="width:150px; color:black;"><a id='vewAddr'> </a></td>
+						<td align="center" style="width:100px; color:black;"><a id='vewPrice'> </a></td>
+						<td align="center" style="width:100px; color:black;"><a id='vewStyle'> </a></td>
+						<td align="center" style="width:70px; color:black;"><a id='vewKnife1'> </a></td>
+						<td align="center" style="width:130px; color:black;"><a id='vewKnife2'> </a></td>
+						<td align="center" style="width:130px; color:black;"><a id='vewDime'> </a></td>
+						<td align="center" style="width:130px; color:black;"><a id='vewWidth'> </a></td>
 					</tr>
 					<tr>
-						<td ><input id="chkBrow.*" type="checkbox" style=''/></td>
-						<td id='addr'  style="text-align: left;">~addr</td>
+						<td ><input id="chkBrow.*" type="checkbox" style=' '/></td>
+						<td id='price' style="text-align: center;">~price</td>
+						<td id='style' style="text-align: center;">~style</td>
+						<td id='knife1' style="text-align: center;">~knife1</td>
+						<td id='knife2' style="text-align: center;">~knife2</td>
+						<td id='dime1 dime2' style="text-align: center;">~dime1 ~ ~dime2</td>
+						<td id='width1 width2' style="text-align: v;">~width1 ~ ~width2</td>
 					</tr>
 				</table>
 			</div>
 			<div class='dbbm'>
-				<table class="tbbm" id="tbbm">
+				<table class="tbbm"  id="tbbm">
 					<tr style="height:1px;">
-						<td> </td>
-						<td> </td>
-						<td> </td>
+						<td style="width: 100px;"> </td>
+						<td style="width: 100px;"> </td>
+						<td style="width: 100px;"> </td>
+						<td style="width: 100px;"> </td>
+						<td style="width: 10px;"> </td>
 					</tr>
 					<tr>
-						<td><span> </span><a id='lblAddr' class="lbl"> </a></td>
+						<td><span> </span><a id='lblPrice' class="lbl"> </a></td>
 						<td>
-							<input id="txtAddr" type="text" class="txt c1" />
+							<input id="txtPrice" type="text" class="txt num c1" />
 							<input id="txtNoa"  type="text" class="txt c1" style="display: none;" />
 						</td>
 					</tr>
+					<tr>
+						<td><span> </span><a id='lblStyle' class="lbl"> </a></td>
+						<td><select id='cmbStyle' > </select></td>
+					</tr>
+					<tr>
+						<td><span> </span><a id='lblKnife1' class="lbl"> </a></td>
+						<td><input id="txtKnife1"  type="text" class="txt num c1" /></td>
+						<td><span> </span><a id='lblKnife2' class="lbl"> </a></td>
+						<td><input id="txtKnife2"  type="text" class="txt num c1" /></td>
+					</tr>
+					<tr>
+						<td><span> </span><a id='lblDime' class="lbl"> </a></td>
+						<td colspan="3">
+							<input id="txtDime1"  type="text" class="txt num c1" style="width: 30%;"/>
+							<a style="float: left;">~</a>
+							<input id="txtDime2"  type="text" class="txt num c1" style="width: 30%;"/>
+						</td>
+						
+					</tr>
+					<tr>
+						<td><span> </span><a id='lblWidth' class="lbl"> </a></td>
+						<td colspan="3">
+							<input id="txtWidth1"  type="text" class="txt num c1" style="width: 30%;"/>
+							<a style="float: left;">~</a>
+							<input id="txtWidth2"  type="text" class="txt num c1" style="width: 30%;"/>
+						</td>
+					</tr>
+					<tr>
+						<td><span> </span><a id='lblMemo' class="lbl"> </a></td>
+						<td colspan='3'><textarea id="txtMemo" rows='5' cols='10' style="width:99%; height: 350px;"> </textarea></td>
+					</tr>
+					<tr style="height:2px;"> </tr>
 				</table>
 			</div>
 		</div>

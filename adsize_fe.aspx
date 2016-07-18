@@ -118,7 +118,7 @@
 				}
 				Lock();
 				
-				t_where = "where=^^ lengthb1='" + $('#txtLengthb1').val() + "'^^";
+				t_where = "where=^^ lengthb1=" + dec($('#txtLengthb1').val()) + " and noa!='"+$('#txtNoa').val()+"' ^^";
 				q_gt('adsize', t_where, 0, 0, 0, "check_btnOk", r_accy);
 			}
 
