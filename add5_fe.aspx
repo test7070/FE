@@ -36,10 +36,7 @@
 				q_gt(q_name, q_content, q_sqlCount, 1);
 			});
 			
-			aPop = new Array(
-				['txtCardealno', 'lblCardealno', 'cardeal', 'noa,comp', 'txtCardealno,txtCardeal', 'cardeal_b.aspx'],
-				['txtPostno_', 'btnPost_', 'add2', 'noa,post', 'txtPostno_,txtPost_,txtPrice2_', 'add2_b.aspx']
-			);
+			aPop = new Array();
 			
 			function main() {
 				if (dataErr) {
@@ -53,6 +50,7 @@
 				q_getFormat();
 				bbmMask = [];
 				q_mask(bbmMask);
+				bbmNum = [['txtBoil',10, 2, 1]];
 				bbsNum = [['txtCount1',10, 0, 1],['txtCount2', 10,0, 1]];
 				
 				document.title='號數主檔';
@@ -142,6 +140,7 @@
 				_bbsAssign();
 				$('#lblTypea').text('號數');
 				$('#vewTypea').text('號數');
+				$('#lblBoil').text('直徑');
 				$('#lblCount1_s').text('長度');
 				$('#lblCount2_s').text('預估支數');
 			}
@@ -368,6 +367,10 @@
 						<td>
 							<input id="txtTypea" type="text" class="txt c1" />
 							<input id="txtNoa"  type="text" class="txt c1" style="display: none;" />
+						</td>
+						<td><span> </span><a id='lblBoil' class="lbl"> </a></td>
+						<td>
+							<input id="txtBoil" type="text" class="txt num c1" />
 						</td>
 					</tr>
 				</table>
