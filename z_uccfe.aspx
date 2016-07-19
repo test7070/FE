@@ -25,7 +25,7 @@
 					if (q_getPara('sys.project').toUpperCase()!='YC'){
 						$('#Xcarton').hide();
 					}
-					if (q_getPara('sys.project').toUpperCase()=='YC' && r_rank<8){
+					if (q_getPara('sys.project').toUpperCase()=='YC' && r_rank<2){
 						$('#Xshowprice').hide();
 					}
 				});
@@ -140,7 +140,7 @@
 				if (q_getPara('sys.project').toUpperCase()=='YC'){
 					$('#q_report .report div').eq(6).hide();
 				}
-				if (q_getPara('sys.project').toUpperCase()=='YC' && r_rank<8){
+				if (q_getPara('sys.project').toUpperCase()=='YC' && r_rank<2){
 					$('#Xshowprice').hide();
 				}
 				
