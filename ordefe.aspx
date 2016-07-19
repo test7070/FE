@@ -590,15 +590,20 @@
                 		var as = _q_appendData("tmp0", "", true, true);
                         if(as[0]!=undefined){
                         	var msg = '';
-                        	for(var i=0;i<as.length;i++){
-                        		if(as[i].price<as[i].uccpprice){
-                        			msg += (msg.length>0?'\n':'') + as[i].productno + ' 單價不可小於 '+as[i].uccpprice;
-                        		}
-                        	}
-                        	if(msg.length>0){
-                        		alert(msg);
-                        	}else{
-                        		save2();
+                        	try{
+                        		for(var i=0;i<as.length;i++){
+	                        		if(parseFloat(as[i].price)<parseFloat(as[i].uccpprice)){
+	                        			msg += (msg.length>0?'\n':'') + as[i].productno +'  '+as[i].price+ ' 單價不可小於 '+as[i].uccpprice;
+	                        			$('#txtPrice_'+as[i].n).val(q_mul(parseFloat(as[i].uccpprice),2));
+	                        		}
+	                        	}
+	                        	if(msg.length>0){
+	                        		sum();
+	                        		alert(msg+'\n自動調整成2倍基價!');
+	                        	}
+	                        	save2();
+                        	}catch(e){
+                        		alert('Error_01');
                         	}
                         }else{
                         	alert('無資料!');
