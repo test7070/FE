@@ -71,16 +71,16 @@
 					}
 				}
 				q_cmbParse("cmbMon", t_item);
-				q_gt('adsize', "where=^^1=1 and lengthb1>0 ^^", 0, 0, 0, "getadsize",r_accy,1); //長度
+				q_gt('adsize', "where=^^1=1 and mon!='' ^^", 0, 0, 0, "getadsize",r_accy,1); //長度
 				var as = _q_appendData("adsize", "", true);
-				as.sort(function(a, b){return a.lengthb1-b.lengthb1});
+				as.sort(function(a, b){if (a.mon > b.mon) {return 1;}if (a.mon < b.mon) {return -1;}});
 				t_item = " @ ";
 				if (as[0] != undefined) {
 					for ( i = 0; i < as.length; i++) {
-						t_item = t_item + (t_item.length > 0 ? ',' : '') + as[i].lengthb1 + '@' + as[i].lengthb1;
+						t_item = t_item + (t_item.length > 0 ? ',' : '') + as[i].mon + '@' + as[i].mon;
 					}
 				}
-				q_cmbParse("cmbLengthb", t_item);
+				q_cmbParse("cmbMemo1", t_item);
 				
 			}
 			
@@ -98,7 +98,7 @@
 					case 'check_btnOk':
 						var as = _q_appendData("adpro", "", true);
                         if (as[0] != undefined) {
-                            alert('號數:'+as[0].style+' 材質:'+as[0].mon+' 長度:'+as[0].lengthb+' 已存在!!');
+                            alert('號數:'+as[0].style+' 材質:'+as[0].mon+' 長度:'+as[0].memo1+' 已存在!!');
                             Unlock();
                             return;
                         } else {
@@ -151,7 +151,7 @@
 				Lock();
 				
 				
-				t_where = "where=^^ style='" + $('#cmbStyle').val() + "' and mon='" + $('#cmbMon').val() + "' and lengthb='" + $('#cmbLengthb').val() + "' and noa!='"+$('#txtNoa').val()+"' ^^";
+				t_where = "where=^^ style='" + $('#cmbStyle').val() + "' and mon='" + $('#cmbMon').val() + "' and memo1='" + $('#cmbMemo1').val() + "' and noa!='"+$('#txtNoa').val()+"' ^^";
 				q_gt('adpro', t_where, 0, 0, 0, "check_btnOk", r_accy);
 			}
 
@@ -170,10 +170,10 @@
 				_refresh(recno);
 				$('#vewStyle').text('號數');
 				$('#vewMon').text('材質');
-				$('#vewLengthb').text('長度');
+				$('#vewMemo1').text('長度');
 				$('#lblStyle').text('號數');
 				$('#lblMon').text('材質');
-				$('#lblLengthb').text('長度');
+				$('#lblMemo1').text('長度');
 				$('#lblWidth').text('安全庫存量');
 				$('#lblDime').text('螢幕顯示量');
 				$('#lblWeight').text('庫存量');
@@ -367,13 +367,13 @@
 						<td align="center" style="width:20px; color:black;"><a id='vewChk'> </a></td>
 						<td align="center" style="width:150px; color:black;"><a id='vewStyle'> </a></td>
 						<td align="center" style="width:160px; color:black;"><a id='vewMon'> </a></td>
-						<td align="center" style="width:180px; color:black;"><a id='vewLengthb'> </a></td>
+						<td align="center" style="width:180px; color:black;"><a id='vewMemo1'> </a></td>
 					</tr>
 					<tr>
 						<td ><input id="chkBrow.*" type="checkbox" style=' '/></td>
 						<td id='style' style="text-align: center;">~style</td>
 						<td id='mon' style="text-align: center;">~mon</td>
-						<td id='lengthb' style="text-align: center;">~lengthb</td>
+						<td id='memo1' style="text-align: center;">~memo1</td>
 					</tr>
 				</table>
 			</div>
@@ -387,15 +387,18 @@
 					</tr>
 					<tr>
 						<td><span> </span><a id='lblStyle' class="lbl"> </a></td>
-						<td><select id='cmbStyle'> </select></td>
+						<td>
+							<select id='cmbStyle'> </select>
+							<input id="txtNoa"  type="text" class="txt c1" style="display: none;" />
+						</td>
 					</tr>
 					<tr>
 						<td><span> </span><a id='lblMon' class="lbl"> </a></td>
 						<td><select id='cmbMon'> </select></td>
 					</tr>
 					<tr>
-						<td><span> </span><a id='lblLengthb' class="lbl"> </a></td>
-						<td><select id='cmbLengthb'> </select></td>
+						<td><span> </span><a id='lblMemo1' class="lbl"> </a></td>
+						<td><select id='cmbMemo1'> </select></td>
 					</tr>
 					<tr>
 						<td><span> </span><a id='lblWidth' class="lbl"> </a></td>

@@ -51,9 +51,20 @@
 				bbmMask = [];
 				q_mask(bbmMask);
 				bbmNum = [['txtBoil',10, 2, 1]];
-				bbsNum = [['txtCount1',10, 0, 1],['txtCount2', 10,0, 1]];
+				bbsNum = [['txtCount2', 10,0, 1]];
 				
 				document.title='號數主檔';
+				
+				q_gt('adsize', "where=^^1=1 and mon!='' ^^", 0, 0, 0, "getadsize",r_accy,1); //長度
+				var as = _q_appendData("adsize", "", true);
+				as.sort(function(a, b){if (a.mon > b.mon) {return 1;}if (a.mon < b.mon) {return -1;}});
+				t_item = " @ ";
+				if (as[0] != undefined) {
+					for ( i = 0; i < as.length; i++) {
+						t_item = t_item + (t_item.length > 0 ? ',' : '') + as[i].mon + '@' + as[i].mon;
+					}
+				}
+				q_cmbParse("cmbPostno", t_item,'s');
 			}
 
 			function q_boxClose(s2) {
@@ -141,13 +152,13 @@
 				$('#lblTypea').text('號數');
 				$('#vewTypea').text('號數');
 				$('#lblBoil').text('直徑');
-				$('#lblCount1_s').text('長度');
+				$('#lblPostno_s').text('長度');
 				$('#lblCount2_s').text('預估支數');
 			}
 
 			function bbsSave(as) {
 				t_err = '';
-				if (dec(as['count1'])==0) {
+				if (!as['postno']) {
 					as[bbsKey[1]] = '';
 					return;
 				}
@@ -379,7 +390,7 @@
 				<table id="tbbs" class='tbbs'>
 					<tr style='color:white; background:#003366;' >
 						<td align="center" style="width: 2%;"><input class="btn" id="btnPlus" type="button" value='+' style="font-weight: bold;" /></td>
-						<td align="center" style="width:10%;"><a id='lblCount1_s'> </a></td>
+						<td align="center" style="width:10%;"><a id='lblPostno_s'> </a></td>
 						<td align="center" style="width:10%;"><a id='lblCount2_s'> </a></td>
 					</tr>
 					<tr style='background:#cad3ff;'>
@@ -387,7 +398,7 @@
 							<input class="btn" id="btnMinus.*" type="button" value='-' style=" font-weight: bold;" />
 							<input id="txtNoq.*" type="text" style="display: none;" />
 						</td>
-						<td><input id="txtCount1.*" type="text" class="txt num c1" style="width: 60%;"/>M</td>
+						<td><select id="cmbPostno.*" class="txt c1"> </select></td>
 						<td><input id="txtCount2.*" type="text" class="txt num c1" style="width: 60%;"/>/每大把</td>
 					</tr>
 				</table>
