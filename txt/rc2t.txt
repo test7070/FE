@@ -26,7 +26,7 @@ import:--rc2t import
 	select b.custno,e.nick,a.productno,a.product,a.unit,a.mount,a.[weight],a.price,a.total,a.noa,a.noq
 	from view_vccs a
 	left join view_vcc b on a.accy=b.accy and a.noa=b.noa
-	left join rc2ts c on a.noa=c.vccno and a.noq=c.noq
+	left join rc2ts c on a.noa=c.vccno and a.noq=c.vccnoq
 	left join rc2t d on c.noa=d.noa
 	left join cust e on b.custno=e.noa
 	where a.productno=@productno
