@@ -638,6 +638,15 @@
                                 return;
                             }
                         }
+                        if(r_rank<=7 && $('#txtDatea').val()<=q_cdn(q_date(),-3)){
+                        	alert('只能刪除三天內資料!');
+                        	Unlock(1);
+                        	return;
+                        }else if(r_rank>7 && $('#txtDatea').val()<=q_cdn(q_date(),-60)){
+                        	alert('只能刪除六十天內資料!');
+                        	Unlock(1);
+                        	return;
+                        }
                         _btnDele();
                         Unlock(1);
                         break;
@@ -655,6 +664,15 @@
                                 Unlock(1);
                                 return;
                             }
+                        }
+                        if(r_rank<=7 && $('#txtDatea').val()<=q_cdn(q_date(),-3)){
+                        	alert('只能修改三天內資料!');
+                        	Unlock(1);
+                        	return;
+                        }else if(r_rank>7 && $('#txtDatea').val()<=q_cdn(q_date(),-60)){
+                        	alert('只能修改六十天內資料!');
+                        	Unlock(1);
+                        	return;
                         }
                         _btnModi();
                         Unlock(1);
