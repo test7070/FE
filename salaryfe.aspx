@@ -18,12 +18,17 @@
             var q_name = "salaryfe";
             var decbbs = [];
             var decbbm = [];
-            var q_readonly = ['txtNoa','txtSales','txtWorker','txtWorker2','txtTotal'];
-            var q_readonlys = ['txtNoq'];
+            var q_readonly = ['txtNoa','txtWorker','txtWorker2','txtBase','txtTotal'
+            	,'txtAllowance01','txtAllowance02','txtAllowance03','txtAllowance04'
+            	,'txtAllowance05','txtAllowance06','txtAllowance07','txtAllowance08'
+            	,'txtAllowance09','txtAllowance10','txtAllowance11','txtAllowance12'];
+            var q_readonlys = ['txtNoq','txtTotal'];
             var bbmNum = [['txtTotal',10,0,1],['txtBase',10,0,1]
             	,['txtAllowance01',10,0,1],['txtAllowance02',10,0,1],['txtAllowance03',10,0,1],['txtAllowance04',10,0,1],['txtAllowance05',10,0,1],['txtAllowance06',10,0,1]
             	,['txtAllowance07',10,0,1],['txtAllowance08',10,0,1],['txtAllowance09',10,0,1],['txtAllowance10',10,0,1],['txtAllowance11',10,0,1],['txtAllowance12',10,0,1]];
-            var bbsNum = [];
+            var bbsNum = [['txtTotal',10,0,1],['txtBase',10,0,1]
+            	,['txtAllowance01',10,0,1],['txtAllowance02',10,0,1],['txtAllowance03',10,0,1],['txtAllowance04',10,0,1],['txtAllowance05',10,0,1],['txtAllowance06',10,0,1]
+            	,['txtAllowance07',10,0,1],['txtAllowance08',10,0,1],['txtAllowance09',10,0,1],['txtAllowance10',10,0,1],['txtAllowance11',10,0,1],['txtAllowance12',10,0,1]];
             var bbmMask = [];
             var bbsMask = [];
             q_sqlCount = 6;
@@ -31,7 +36,7 @@
             brwList = [];
             brwNowPage = 0;
             brwKey = 'datea';
-            aPop = new Array(['txtSalesno', 'lblSales', 'sss', 'noa,namea', 'txtSalesno,txtSales', 'sss_b.aspx']);
+            aPop = new Array(['txtSalesno_', 'btnSales', 'sss', 'noa,namea', 'txtSalesno_,txtSales_', 'sss_b.aspx']);
             $(document).ready(function() {
                 bbmKey = ['noa'];
                 bbsKey = ['noa', 'noq'];
@@ -51,11 +56,44 @@
             	if(!(q_cur=='1' || q_cur=='2')){
             		return;
             	}
-            	var total = q_float('txtBase')
-              	+q_float('txtAllowance01')+q_float('txtAllowance02')+q_float('txtAllowance03')
-              	+q_float('txtAllowance04')+q_float('txtAllowance05')+q_float('txtAllowance06')
-              	+q_float('txtAllowance07')+q_float('txtAllowance08')+q_float('txtAllowance09')
-              	+q_float('txtAllowance10')+q_float('txtAllowance11')+q_float('txtAllowance12');
+            	var base=0,total=0
+            		,allowance01=0,allowance02=0,allowance03=0,allowance04=0
+            		,allowance05=0,allowance06=0,allowance07=0,allowance08=0
+            		,allowance09=0,allowance10=0,allowance11=0,allowance12=0;
+            	for(var i=0;i<q_bbsCount;i++){
+            		$('#txtTotal_'+i).val(q_float('txtBase_'+i)
+            			+q_float('txtAllowance01_'+i)+q_float('txtAllowance02_'+i)+q_float('txtAllowance03_'+i)
+            			+q_float('txtAllowance04_'+i)+q_float('txtAllowance05_'+i)+q_float('txtAllowance06_'+i)
+            			+q_float('txtAllowance07_'+i)+q_float('txtAllowance08_'+i)+q_float('txtAllowance09_'+i)
+            			+q_float('txtAllowance10_'+i)+q_float('txtAllowance11_'+i)+q_float('txtAllowance12_'+i));
+            		base += q_float('txtBase_'+i);
+            		allowance01 += q_float('txtAllowance01_'+i);
+            		allowance02 += q_float('txtAllowance02_'+i);
+            		allowance03 += q_float('txtAllowance03_'+i);
+            		allowance04 += q_float('txtAllowance04_'+i);
+            		allowance05 += q_float('txtAllowance05_'+i);
+            		allowance06 += q_float('txtAllowance06_'+i);
+            		allowance07 += q_float('txtAllowance07_'+i);
+            		allowance08 += q_float('txtAllowance08_'+i);
+            		allowance09 += q_float('txtAllowance09_'+i);
+            		allowance10 += q_float('txtAllowance10_'+i);
+            		allowance11 += q_float('txtAllowance11_'+i);
+            		allowance12 += q_float('txtAllowance12_'+i);
+            		total += q_float('txtTotal_'+i);
+            	}	
+            	$('#txtBase').val(FormatNumber(base));
+            	$('#txtAllowance01').val(FormatNumber(allowance01));
+            	$('#txtAllowance02').val(FormatNumber(allowance02));
+            	$('#txtAllowance03').val(FormatNumber(allowance03));
+            	$('#txtAllowance04').val(FormatNumber(allowance04));
+            	$('#txtAllowance05').val(FormatNumber(allowance05));
+            	$('#txtAllowance06').val(FormatNumber(allowance06));
+            	$('#txtAllowance07').val(FormatNumber(allowance07));
+            	$('#txtAllowance08').val(FormatNumber(allowance08));
+            	$('#txtAllowance09').val(FormatNumber(allowance09));
+            	$('#txtAllowance10').val(FormatNumber(allowance10));
+            	$('#txtAllowance11').val(FormatNumber(allowance11));
+            	$('#txtAllowance12').val(FormatNumber(allowance12));
               	$('#txtTotal').val(FormatNumber(total));
             }
 
@@ -64,7 +102,7 @@
                 bbmMask = [['txtMon', r_picm]];
                 q_mask(bbmMask);
                 
-                $('#txtBase').change(function(e){
+                /*$('#txtBase').change(function(e){
                 	sum();
                 });
                 $('#txtAllowance01').change(function(e){
@@ -102,7 +140,7 @@
                 });
                 $('#txtAllowance12').change(function(e){
                 	sum();
-                });
+                });*/
             }
 
             function q_boxClose(s2) {
@@ -162,6 +200,25 @@
                 	$('#lblNo_'+i).text(i+1);
                     if ($('#btnMinus_' + i).hasClass('isAssign'))
 						continue;
+					$('#txtSalesno_' + i).bind('contextmenu', function(e) {
+                        /*滑鼠右鍵*/
+                        e.preventDefault();
+                        var n = $(this).attr('id').replace(/^(.*)_(\d+)$/,'$2');
+                        $('#btnSales_' + n).click();
+                    });
+                    $('#txtBase_'+i).change(function(e){sum();});
+                    $('#txtAllowance01_'+i).change(function(e){sum();});
+                    $('#txtAllowance02_'+i).change(function(e){sum();});
+                    $('#txtAllowance03_'+i).change(function(e){sum();});
+                    $('#txtAllowance04_'+i).change(function(e){sum();});
+                    $('#txtAllowance05_'+i).change(function(e){sum();});
+                    $('#txtAllowance06_'+i).change(function(e){sum();});
+                    $('#txtAllowance07_'+i).change(function(e){sum();});
+                    $('#txtAllowance08_'+i).change(function(e){sum();});
+                    $('#txtAllowance09_'+i).change(function(e){sum();});
+                    $('#txtAllowance10_'+i).change(function(e){sum();});
+                    $('#txtAllowance11_'+i).change(function(e){sum();});
+                    $('#txtAllowance12_'+i).change(function(e){sum();});
                 }
                 _bbsAssign();
             }
@@ -195,7 +252,7 @@
             }
 
             function bbsSave(as) {
-                if (!as['vccno'] && !as['vccnoq']) {
+                if (!as['salesno']) {
                     as[bbsKey[1]] = '';
                     return;
                 }
@@ -295,11 +352,10 @@
         </script>
         <style type="text/css">
 			#dmain {
-				/*overflow: hidden;*/
 			}
 			.dview {
 				float: left;
-				width: 500px;
+				width: 300px;
 				border-width: 0px;
 			}
 			.tview {
@@ -384,62 +440,37 @@
 				margin: -1px;
 			}
 			.dbbs {
-				width: 1200px;
-			}
-			.tbbs a {
-				font-size: medium;
-			}
-			input[type="text"], input[type="button"] {
-				font-size: medium;
-			}
-			.num {
-				text-align: right;
-			}
-			select {
-				font-size: medium;
-			}
-			#dbbt {
-				width: 400px;
-			}
-			#tbbt {
-				margin: 0;
-				padding: 2px;
-				border: 2px pink double;
-				border-spacing: 1;
-				border-collapse: collapse;
-				font-size: medium;
-				color: blue;
-				background: pink;
-				width: 100%;
-			}
-			#tbbt tr {
-				height: 35px;
-			}
-			#tbbt tr td {
-				text-align: center;
-				border: 2px pink double;
-			}
+                width: 1200px;
+            }
+            .tbbs a {
+                font-size: medium;
+            }
+            input[type="text"], input[type="button"] {
+                font-size: medium;
+            }
+            .num {
+                text-align: right;
+            }
+            select {
+                font-size: medium;
+            }
 		</style>
     </head>
     <body>
         <!--#include file="../inc/toolbar.inc"-->
-        <div id='dmain'>
+        <div id='dmain' style="overflow:hidden;width: 1000px;">
             <div class="dview" id="dview">
                 <table class="tview" id="tview" >
                     <tr>
                         <td align="center" style="width:5%"><a id='vewChk'> </a></td>
                         <td style="display:none;">noa</td>
                         <td align="center" style="width:20%"><a id='vewMon'>月份</a></td>
-                        <td style="display:none;">salesno</td>
-                        <td align="center" style="width:20%"><a id='vewSales'>業務</a></td>
                         <td align="center" style="width:20%"><a id='vewTotal'>薪資</a></td>
                     </tr>
                     <tr>
                         <td><input id="chkBrow.*" type="checkbox" style=''/></td>
                         <td style="display:none;" id='noa'>~noa</td>
                         <td align="center" id='mon'>~mon</td>
-                        <td style="display:none;" id='salesno'>~salesno</td>
-                        <td align="center" id='sales'>~sales</td>
                         <td align="center" id='total'>~total</td>
                     </tr>
                 </table>
@@ -460,16 +491,9 @@
                         <td><input id="txtNoa" type="text" class="txt c1"/></td>
                         <td><span> </span><a id='lblMon' class="lbl">月份</a></td>
                         <td><input id="txtMon" type="text" class="txt c1"/></td>
-                    </tr>
-                    <tr>
-                        <td><span> </span><a id='lblSales' class="lbl">業務</a></td>
-                        <td><input id="txtSalesno" type="text" class="txt c1"/></td>
-                        <td><input id="txtSales" type="text" class="txt c1"/></td>
-                        <td> </td>
                         <td><span> </span><a id='lblBase' class="lbl">本薪</a></td>
                         <td><input id="txtBase" type="text" class="txt num c1"/></td>
                     </tr>
-                    
                     <tr>
                     	<td><span> </span><a id='lblAllowance01' class="lbl">全勤</a></td>
                         <td><input id="txtAllowance01" type="text" class="txt num c1"/></td>
@@ -523,21 +547,54 @@
                 </table>
             </div>
         </div>
-        <div class='dbbs' style="display:none;">
-            <table id="tbbs" class='tbbs'>
+        <div class='dbbs' style="width: 1500px;">
+            <table id="tbbs" class='tbbs' style=' text-align:center'>
                 <tr style='color:white; background:#003366;' >
                     <td align="center" style="width:1%;">
                         <input class="btn" id="btnPlus" type="button" value='＋' style="font-weight: bold;" />
                     </td>
                     <td align="center" style="width:20px;"> </td>
-                    <td align="center" style="width:100px;"><a> </a></td>
+                    <td align="center" style="width:200px;"><a>業務</a></td>
+                    <td align="center" style="width:100px;"><a>本薪</a></td>
+                    <td align="center" style="width:100px;"><a>全勤</a></td>
+                    <td align="center" style="width:100px;"><a>無遲到</a></td>
+                    <td align="center" style="width:100px;"><a>團體獎金</a></td>
+                    <td align="center" style="width:100px;"><a>個人獎金</a></td>
+                    <td align="center" style="width:100px;"><a>會議出勤</a></td>
+                    <td align="center" style="width:100px;"><a>成交獎金</a></td>
+                    <td align="center" style="width:100px;"><a>收現獎金</a></td>
+                    <td align="center" style="width:100px;"><a>早收獎金</a></td>
+                    <td align="center" style="width:100px;"><a>簽約獎金</a></td>
+                    <td align="center" style="width:100px;"><a>職等級</a></td>
+                    <td align="center" style="width:100px;"><a>報價獎金</a></td>
+                    <td align="center" style="width:100px;"><a>拜訪獎金</a></td>
+                    <td align="center" style="width:100px;"><a>總計</a></td>
                 </tr>
                 <tr style='background:#cad3ff;'>
                     <td>
                         <input class="btn" id="btnMinus.*" type="button" value='－' style=" font-weight: bold;" />
+                   		<input id="txtNoq.*" type="text" style="display:none;"/> 
                     </td>
                     <td><a id="lblNo.*" style="font-weight: bold;text-align: center;display: block;"> </a></td>
-                    <td><input id="txtNoq.*" type="text" class="txt c1"/></td>
+                    <td>
+                    	<input id="txtSalesno.*" type="text" class="txt" style="float:left;width:40%;"/>
+                        <input id="txtSales.*" type="text" class="txt" style="float:left;width:50%;"/>
+                        <input id='btnSales.*' type="button" style="display:none;"/>
+                    </td>
+                    <td> <input id="txtBase.*" type="text" class="txt num" style="width:95%;"/></td>
+                    <td> <input id="txtAllowance01.*" type="text" class="txt num" style="width:95%;"/></td>
+                    <td> <input id="txtAllowance02.*" type="text" class="txt num" style="width:95%;"/></td>
+                    <td> <input id="txtAllowance03.*" type="text" class="txt num" style="width:95%;"/></td>
+                    <td> <input id="txtAllowance04.*" type="text" class="txt num" style="width:95%;"/></td>
+                    <td> <input id="txtAllowance05.*" type="text" class="txt num" style="width:95%;"/></td>
+                    <td> <input id="txtAllowance06.*" type="text" class="txt num" style="width:95%;"/></td>
+                    <td> <input id="txtAllowance07.*" type="text" class="txt num" style="width:95%;"/></td>
+                    <td> <input id="txtAllowance08.*" type="text" class="txt num" style="width:95%;"/></td>
+                    <td> <input id="txtAllowance09.*" type="text" class="txt num" style="width:95%;"/></td>
+                    <td> <input id="txtAllowance10.*" type="text" class="txt num" style="width:95%;"/></td>
+                    <td> <input id="txtAllowance11.*" type="text" class="txt num" style="width:95%;"/></td>
+                    <td> <input id="txtAllowance12.*" type="text" class="txt num" style="width:95%;"/></td>
+                    <td> <input id="txtTotal.*" type="text" class="txt num" style="width:95%;"/></td>
                 </tr>
             </table>
         </div>
