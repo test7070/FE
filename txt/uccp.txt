@@ -1,6 +1,7 @@
 ﻿uccp_price:--uccp_price  訂單單價檢查	
 	declare @t_noa nvarchar(max) = [1]
-	declare @t_data nvarchar(max) = [2]
+	declare @t_contract nvarchar(max) = [2]
+	declare @t_data nvarchar(max) = [3]
 	--declare @t_data nvarchar(max) ='1@G18059@25.5@105/07/01$2@G18029@20.1@105/06/29'
 	
 	declare @tmpa table(
@@ -11,6 +12,7 @@
 		,datea nvarchar(20)
 		,uccpprice float
 		,uccpdate nvarchar(20)
+		,contprice float
 	)
 	declare @string nvarchar(max)
 	declare @n nvarchar(max)
@@ -49,10 +51,14 @@
 		insert into @tmpa(n,productno,price,datea)
 		select CAST(@n as int),@productno,CAST(@price as float),@datea
 	end
-	
+
 	update @tmpa set uccpprice=b.sprice,uccpdate=b.datea
 	from @tmpa a
 	outer apply(select top 1 * from uccps where productno=a.productno and a.datea>=datea order by datea desc,noa desc) b
+	
+	update @tmpa set contprice=b.price
+	from @tmpa a
+	left join conts b on b.noa=@t_contract and a.productno=b.productno 
 	---------------------------------------------------------------------------
 	select * from @tmpa;
 

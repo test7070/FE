@@ -569,13 +569,14 @@
 			function save(){
 				//檢查單價
 				var t_noa = $('#txtNoa').val();
+				var t_ontract = $('#txtContract').val();
 				var t_data ='';
 				for(var i=0;i<q_bbsCount;i++){
 					if($.trim($('#txtProductno_'+i).val().length>0)){
 						t_data += (t_data.length>0?'$':'')+i+'@'+ $('#txtProductno_'+i).val()+'@'+q_float('txtPrice_'+i)+'@'+$('#txtOdate').val();
 					}
 				}
-				q_func('qtxt.query.uccp_price', 'uccp.txt,uccp_price,'+t_noa+';'+t_data); 
+				q_func('qtxt.query.uccp_price', 'uccp.txt,uccp_price,'+t_noa+';'+t_ontract+';'+t_data); 
             }
             function save2(){
             	var s1 = $('#txtNoa').val();
@@ -592,14 +593,23 @@
                         	var msg = '';
                         	try{
                         		for(var i=0;i<as.length;i++){
-	                        		if(parseFloat(as[i].price)<parseFloat(as[i].uccpprice)){
-	                        			msg += (msg.length>0?'\n':'') + as[i].productno +'  '+as[i].price+ ' 單價不可小於 '+as[i].uccpprice;
-	                        			$('#txtPrice_'+as[i].n).val(q_mul(parseFloat(as[i].uccpprice),2));
-	                        		}
+                        			if(parseFloat(as[i].contprice)>0){
+                        				//合約
+                        				if(parseFloat(as[i].price)!=parseFloat(as[i].contprice)){
+                        					msg += (msg.length>0?'\n':'') + as[i].productno +'  '+as[i].price+ ' 單價須等於合約單價 '+as[i].contprice;
+                        					$('#txtPrice_'+as[i].n).val(parseFloat(as[i].contprice));
+                        				}
+                        			}else{
+                        				//基價
+                        				if(parseFloat(as[i].price)<parseFloat(as[i].uccpprice)){
+		                        			msg += (msg.length>0?'\n':'') + as[i].productno +'  '+as[i].price+ ' 單價不可小於基價 '+as[i].uccpprice;
+		                        			$('#txtPrice_'+as[i].n).val(q_mul(parseFloat(as[i].uccpprice),2));
+		                        		}
+                        			}
 	                        	}
 	                        	if(msg.length>0){
 	                        		sum();
-	                        		alert(msg+'\n自動調整成2倍基價!');
+	                        		alert(msg+'\n自動調整成為"合約單價"或"2倍基價"!');
 	                        	}
 	                        	save2();
                         	}catch(e){
