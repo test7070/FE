@@ -46,7 +46,7 @@
 			function mainPost() {
 				bbmMask = [];
 				q_mask(bbmMask);
-				bbmNum = [['txtLengthb1', 10, 0, 1]]
+				bbmNum = []
 				document.title='長度主檔';
 			}
 
@@ -64,7 +64,7 @@
 					case 'check_btnOk':
 						 var as = _q_appendData("adsize", "", true);
                         if (as[0] != undefined) {
-                            alert('長度 '+as[0].lengthb1+'M 已存在!!');
+                            alert('長度 '+as[0].mon+'M 已存在!!');
                             Unlock();
                             return;
                         } else {
@@ -97,7 +97,7 @@
 				if (emp($('#txtNoa').val()))
 					return;
 				_btnModi();
-				$('#txtLengthb1').focus();
+				$('#txtMon').focus();
 			}
 
 			function btnPrint() {
@@ -112,13 +112,9 @@
 			}
 
 			function btnOk() {
-				if(dec($('#txtLengthb1').val())<=0){
-					alert('請輸入正確長度!!');
-					return;
-				}
 				Lock();
 				
-				t_where = "where=^^ lengthb1=" + dec($('#txtLengthb1').val()) + " and noa!='"+$('#txtNoa').val()+"' ^^";
+				t_where = "where=^^ mon='" + $('#txtMon').val() + "' and noa!='"+$('#txtNoa').val()+"' ^^";
 				q_gt('adsize', t_where, 0, 0, 0, "check_btnOk", r_accy);
 			}
 
@@ -135,8 +131,8 @@
 
 			function refresh(recno) {
 				_refresh(recno);
-				$('#lblLengthb1').text('長度');
-				$('#vewLengthb1').text('長度');
+				$('#lblMon').text('長度');
+				$('#vewMon').text('長度');
 			}
 
 			function readonly(t_para, empty) {
@@ -316,11 +312,11 @@
 				<table class="tview" id="tview">
 					<tr>
 						<td align="center" style="width:20px; color:black;"><a id='vewChk'> </a></td>
-						<td align="center" style="width:100px; color:black;"><a id='vewLengthb1'> </a></td>
+						<td align="center" style="width:100px; color:black;"><a id='vewMon'> </a></td>
 					</tr>
 					<tr>
 						<td ><input id="chkBrow.*" type="checkbox" style=' '/></td>
-						<td id='lengthb1' style="text-align: right;">~lengthb1</td>
+						<td id='mon' style="text-align: right;">~mon</td>
 					</tr>
 				</table>
 			</div>
@@ -333,9 +329,9 @@
 						<td class="tdZ"> </td>
 					</tr>
 					<tr>
-						<td><span> </span><a id='lblLengthb1' class="lbl"> </a></td>
+						<td><span> </span><a id='lblMon' class="lbl"> </a></td>
 						<td>
-							<input id="txtLengthb1" type="text" class="txt num c1" style="width: 80%;" /><a class="lbl"> M </a>
+							<input id="txtMon" type="text" class="txt num c1" /><a class="lbl">  </a>
 							<input id="txtNoa"  type="text" class="txt c1" style="display: none;" />
 						</td>
 					</tr>
