@@ -396,6 +396,7 @@
 				$('#lblUnit_s').text('單位');
 				$('#lblW01_s').text('容許損耗長度');
 				$('#lblW02_s').text('容許損耗%');
+				$('#btnUcccstk').val('2 = 電腦配料');
 			}
 
 			function distinct(arr1) {
@@ -712,7 +713,7 @@
 						<td><span> </span><a id="lblM1" class="lbl" > </a></td>
 						<td><select id="cmbM1" class="txt c1"> </select></td>
 						<td> </td>
-						<td><input type="button" id="btnUccc" style="width:120px;text-align: left;" value="選料"/></td>
+						<td><input type="button" id="btnUcccstk" style="width:120px;text-align: left;" /></td>
 						<td> </td>
 						<td class="cut"><a style="margin-left: 50px;">1.5M內</a></td>
 						<td class="cut"><input id="txtM4" type="text" class="txt num c1" style="width: 70%;"/>秒</td>
