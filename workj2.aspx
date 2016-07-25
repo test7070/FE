@@ -200,6 +200,8 @@
 	                q_cmbParse("cmbMech5", z_mech,'s');
                 }
      			
+     			$('#btnPrint').hide();
+     			
      			$('#btnPrint_d').hide();
                 $('#btnPrint_d').click(function(e){
                 	return;
@@ -737,7 +739,7 @@
             }
 
             function btnPrint() {
-                q_box("z_workj2p.aspx?" + r_userno + ";" + r_name + ";" + q_time + ";" + JSON.stringify({noa:trim($('#txtNoa').val())}) + ";" + r_accy + "_" + r_cno, 'workj', "95%", "95%", m_print);
+                //q_box("z_workj2p.aspx?" + r_userno + ";" + r_name + ";" + q_time + ";" + JSON.stringify({noa:trim($('#txtNoa').val())}) + ";" + r_accy + "_" + r_cno, 'workj', "95%", "95%", m_print);
             }
 
             function btnOk() {
