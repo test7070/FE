@@ -142,7 +142,7 @@
 		    }
 
             q_tables = 't';
-            var q_name = "workj";
+            var q_name = "workj2";
             var q_readonly = ['txtNoa','txtOrdeno','txtMount','txtWeight','txtWorker','txtWorker2'];
             var q_readonlys = ['txtContno','txtContnoq','txtStore','txtMech','txtWeight'];
             var q_readonlyt = ['txtBno'];
@@ -278,7 +278,7 @@
                 	var t_where ='';
                 	q_box("contfe_b.aspx?" + r_userno + ";" + r_name + ";" + q_time + ";" + t_where+";"+";"+JSON.stringify({workjno:t_noa,custno:t_custno}), "cont_workj", "95%", "95%", '');
                 });
-                $('#btnOrde').click(function(e){
+                /*$('#btnOrde').click(function(e){
                 	var t_key = q_getPara('sys.key_orde');
                 	var t_noa = $('#txtNoa').val();
                 	q_func('qtxt.query.orde', 'workj.txt,orde,' + encodeURI(t_key)+ ';' +encodeURI(t_noa)); 	
@@ -288,7 +288,7 @@
                 	var t_accy = $('#txtOrdeaccy').val();
                 	if(t_noa.length>0)
                 		q_box("ordefe.aspx?" + r_userno + ";" + r_name + ";" + q_time + ";noa='" + t_noa + "';" + t_accy, 'orde', "95%", "95%", q_getMsg("popOrde"));
-                });
+                });*/
                 $('#pageAll').parent().append('<input type="button" id="buttonCopy" value="複製"/>')
                 .append('<input type="button" id="buttonPaste" value="貼上"/>');
                 
