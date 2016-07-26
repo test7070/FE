@@ -914,26 +914,32 @@
                     	});*/
                     	$('#txtParaa_'+i).change(function(e){
                     		var n = $(this).attr('id').replace(/^(.*)_(\d+)$/,'$2');
+                    		$(this).val(isNaN(q_float($(this).attr('id')))?0:q_float($(this).attr('id')));
                     		createImg(n);
                     	});
                     	$('#txtParab_'+i).change(function(e){
                     		var n = $(this).attr('id').replace(/^(.*)_(\d+)$/,'$2');
+                    		$(this).val(isNaN(q_float($(this).attr('id')))?0:q_float($(this).attr('id')));
                     		createImg(n);
                     	});
                     	$('#txtParac_'+i).change(function(e){
                     		var n = $(this).attr('id').replace(/^(.*)_(\d+)$/,'$2');
+                    		$(this).val(isNaN(q_float($(this).attr('id')))?0:q_float($(this).attr('id')));
                     		createImg(n);
                     	});
                     	$('#txtParad_'+i).change(function(e){
                     		var n = $(this).attr('id').replace(/^(.*)_(\d+)$/,'$2');
+                    		$(this).val(isNaN(q_float($(this).attr('id')))?0:q_float($(this).attr('id')));
                     		createImg(n);
                     	});
                     	$('#txtParae_'+i).change(function(e){
                     		var n = $(this).attr('id').replace(/^(.*)_(\d+)$/,'$2');
+                    		$(this).val(isNaN(q_float($(this).attr('id')))?0:q_float($(this).attr('id')));
                     		createImg(n);
                     	});
                     	$('#txtParaf_'+i).change(function(e){
                     		var n = $(this).attr('id').replace(/^(.*)_(\d+)$/,'$2');
+                    		$(this).val(isNaN(q_float($(this).attr('id')))?0:q_float($(this).attr('id')));
                     		createImg(n);
                     	});
                     	$('#txtContno_' + i).bind('contextmenu', function(e) {
@@ -993,7 +999,15 @@
             function sum() {
                 if (!(q_cur == 1 || q_cur == 2))
                     return;
-                
+                for(var i=0;i<q_bbsCount;i++){
+                	//檢查參數輸入是否有問題
+                	$('#txtParaa_'+i).val(isNaN(q_float('txtParaa_'+i))?0:q_float('txtParaa_'+i));
+                	$('#txtParab_'+i).val(isNaN(q_float('txtParab_'+i))?0:q_float('txtParab_'+i));
+                	$('#txtParac_'+i).val(isNaN(q_float('txtParac_'+i))?0:q_float('txtParac_'+i));
+                	$('#txtParad_'+i).val(isNaN(q_float('txtParad_'+i))?0:q_float('txtParad_'+i));
+                	$('#txtParae_'+i).val(isNaN(q_float('txtParae_'+i))?0:q_float('txtParae_'+i));
+                	$('#txtParaf_'+i).val(isNaN(q_float('txtParaf_'+i))?0:q_float('txtParaf_'+i));
+                }
                 var calc =[{key:'3#',value:0.56,m300:400,m600:400,m1000:270,m1600:250,w300:600,w600:1300,w1000:1300,w1600:1300}
 	                ,{key:'4#',value:0.994,m300:300,m600:250,m1000:150,m1600:130,w300:500,w600:1300,w1000:1300,w1600:1300}
 	                ,{key:'5#',value:1.56,m300:200,m600:160,m1000:100,m1600:80,w300:900,w600:1300,w1000:1300,w1600:1300}
