@@ -57,7 +57,7 @@
 		            tolerance:$('#txtTolerance').val(),
 		            trantype1:$('#mbTrantype1').val(),
 		            trantype2:$('#mbTrantype2').val()    
-		        }
+		       };
 		        var t_workjs = new Array();
 		    	for(var i=0;i<q_bbsCount;i++){
 		    		t_workjs.push({
@@ -142,7 +142,7 @@
 		    }
 
             q_tables = 't';
-            var q_name = "workj";
+            var q_name = "workj2";
             var q_readonly = ['txtNoa','txtOrdeno','txtMount','txtWeight','txtWorker','txtWorker2'];
             var q_readonlys = ['txtContno','txtContnoq','txtStore','txtMech','txtWeight'];
             var q_readonlyt = ['txtBno'];
@@ -199,14 +199,19 @@
 	                q_cmbParse("cmbMech4", z_mech,'s');
 	                q_cmbParse("cmbMech5", z_mech,'s');
                 }
-     
+     			
+     			$('#btnPrint').hide();
+     			
+     			$('#btnPrint_d').hide();
                 $('#btnPrint_d').click(function(e){
+                	return;
+                	//不需要印條碼
                 	$('#btnPrint_d').attr('disabled','disabled');
-                	setTimeout(function(){$('#btnPrint_d').removeAttr('disabled')}, 3000);
+                	setTimeout(function(){$('#btnPrint_d').removeAttr('disabled');}, 3000);
                 	Lock(1,{opacity:0});
                 	var t_noq = '';
                 	if($('#combPrint').val()=='barfe2.bat'){
-                		var t_printCount = 0
+                		var t_printCount = 0;
                 		for(var i=0;i<q_bbtCount;i++){
 	                		if($('#checkIsprint__'+i).prop('checked') && $.trim($('#txtBno__'+i).val()).length>0){
 	                			t_noq = t_noq + (t_noq.length>0?'^'.val():'')+$('#txtNoq__'+i);	
@@ -224,8 +229,8 @@
 	                		}	                		
 	                	}	
                 	}else{
-                		var t_printCount = 0
-                		var t_printPage = 0
+                		var t_printCount = 0;
+                		var t_printPage = 0;
                 		for(var i=0;i<q_bbsCount;i++){
 	                		if($('#checkIsprint_'+i).prop('checked') && $.trim($('#txtProductno_'+i).val()).length>0){
 	                			t_noq = t_noq + (t_noq.length>0?'^':'')+$('#txtNoq_'+i).val();	
@@ -263,6 +268,7 @@
 	                	}
                 	}
                 });
+                $('#btnBarcode').hide();
                 $('#btnBarcode').click(function() {
                     $('#divImport').toggle();
                 });
@@ -270,6 +276,7 @@
                     $('#divImport').toggle();
                 });
                 //-----------------------------------------------------------------------
+                $('#btnCont').hide();
                 $('#btnCont').click(function(e){
                 	var t_noa = $('#txtNoa').val();
                 	var t_custno = $('#txtCustno').val();
@@ -278,7 +285,9 @@
                 	var t_where ='';
                 	q_box("contfe_b.aspx?" + r_userno + ";" + r_name + ";" + q_time + ";" + t_where+";"+";"+JSON.stringify({workjno:t_noa,custno:t_custno}), "cont_workj", "95%", "95%", '');
                 });
-                $('#btnOrde').click(function(e){
+                $('#txtOrdeno').hide();
+                $('#btnOrde').hide();
+                /*$('#btnOrde').click(function(e){
                 	var t_key = q_getPara('sys.key_orde');
                 	var t_noa = $('#txtNoa').val();
                 	q_func('qtxt.query.orde', 'workj.txt,orde,' + encodeURI(t_key)+ ';' +encodeURI(t_noa)); 	
@@ -288,7 +297,7 @@
                 	var t_accy = $('#txtOrdeaccy').val();
                 	if(t_noa.length>0)
                 		q_box("ordefe.aspx?" + r_userno + ";" + r_name + ";" + q_time + ";noa='" + t_noa + "';" + t_accy, 'orde', "95%", "95%", q_getMsg("popOrde"));
-                });
+                });*/
                 $('#pageAll').parent().append('<input type="button" id="buttonCopy" value="複製"/>')
                 .append('<input type="button" id="buttonPaste" value="貼上"/>');
                 
@@ -675,10 +684,10 @@
             function q_stPost() {
                 if (!(q_cur == 1 || q_cur == 2))
                     return false;
-                Lock(1,{opacity:0});
+                //Lock(1,{opacity:0});
                 //匯出訂單
                 //餘料編號
-                $('#btnOrde').click();
+                //$('#btnOrde').click();
             }
 
             function q_boxClose(s2) {
@@ -702,7 +711,7 @@
             function _btnSeek() {
                 if (q_cur > 0 && q_cur < 4)
                     return;
-                q_box('workj_s.aspx', q_name + '_s', "550px", "440px", q_getMsg("popSeek"));
+                q_box('workj2_s.aspx', q_name + '_s', "550px", "440px", q_getMsg("popSeek"));
             }
 
             function btnIns() {
@@ -716,7 +725,9 @@
             function btnModi() {
                 if (emp($('#txtNoa').val()))
                     return;
-                var t_ordeno = $('#txtOrdeno').val();
+                _btnModi();
+            	$('#txtDatea').focus();
+                /*var t_ordeno = $('#txtOrdeno').val();
                 if(t_ordeno.length>0){
                 	Lock(1,{opacity:0});
                		q_gt('view_vccs', "where=^^ ordeno='"+t_ordeno+"' ^^ stop=1", 0, 0, 0, 'btnModi'); 
@@ -724,11 +735,11 @@
                 else{
                 	_btnModi();
                 	$('#txtDatea').focus();
-                }    
+                }   */ 
             }
 
             function btnPrint() {
-                q_box("z_workjp.aspx?" + r_userno + ";" + r_name + ";" + q_time + ";" + JSON.stringify({noa:trim($('#txtNoa').val())}) + ";" + r_accy + "_" + r_cno, 'workj', "95%", "95%", m_print);
+                //q_box("z_workj2p.aspx?" + r_userno + ";" + r_name + ";" + q_time + ";" + JSON.stringify({noa:trim($('#txtNoa').val())}) + ";" + r_accy + "_" + r_cno, 'workj', "95%", "95%", m_print);
             }
 
             function btnOk() {
@@ -742,7 +753,7 @@
                     return;
                 }
                 if($.trim($('#txtCustno').val())==0){
-                	alert(q_getMsg('lblCust') + '空白。');
+                	alert('請輸入客戶。');
                     Unlock(1);
                     return;
                 }
@@ -805,6 +816,14 @@
             function bbsSave(as) {
                 if (!as['productno'] && !as['imgdata']) {
                     as[bbsKey[1]] = '';
+                    return;
+                }
+                q_nowf();
+                return true;
+            }
+            function bbtSave(as) {
+                if (!as['productno']) {
+                    as[bbtKey[1]] = '';
                     return;
                 }
                 q_nowf();
@@ -911,50 +930,50 @@
                     	$('#cmbMech1_' + i).bind('contextmenu', function(e) {
                             /*滑鼠右鍵*/
                             e.preventDefault();
-                            var n = $(this).attr('id').replace('cmbMech1_', '');
-                            CopyMech(n)
+                            var n = $(this).attr('id').replace(/^(.*)_(\d+)$/,'$2');
+                            CopyMech(n);
                         });
                         $('#cmbMech2_' + i).bind('contextmenu', function(e) {
                             /*滑鼠右鍵*/
                             e.preventDefault();
-                            var n = $(this).attr('id').replace('cmbMech2_', '');
-                            CopyMech(n)
+                            var n = $(this).attr('id').replace(/^(.*)_(\d+)$/,'$2');
+                            CopyMech(n);
                         });
                         $('#cmbMech3_' + i).bind('contextmenu', function(e) {
                             /*滑鼠右鍵*/
                             e.preventDefault();
-                            var n = $(this).attr('id').replace('cmbMech3_', '');
-                            CopyMech(n)
+                            var n = $(this).attr('id').replace(/^(.*)_(\d+)$/,'$2');
+                            CopyMech(n);
                         });
                         $('#cmbMech4_' + i).bind('contextmenu', function(e) {
                             /*滑鼠右鍵*/
                             e.preventDefault();
-                            var n = $(this).attr('id').replace('cmbMech4_', '');
-                            CopyMech(n)
+                            var n = $(this).attr('id').replace(/^(.*)_(\d+)$/,'$2');
+                            CopyMech(n);
                         });
                         $('#cmbMech5_' + i).bind('contextmenu', function(e) {
                             /*滑鼠右鍵*/
                             e.preventDefault();
-                            var n = $(this).attr('id').replace('cmbMech5_', '');
-                            CopyMech(n)
+                            var n = $(this).attr('id').replace(/^(.*)_(\d+)$/,'$2');
+                            CopyMech(n);
                         });
                     	//--------------------------------------------------------------
                     	$('#txtProductno_' + i).bind('contextmenu', function(e) {
                             /*滑鼠右鍵*/
                             e.preventDefault();
-                            var n = $(this).attr('id').replace('txtProductno_', '');
+                            var n = $(this).attr('id').replace(/^(.*)_(\d+)$/,'$2');
                             $('#btnProduct_'+n).click();
                         });
                         $('#txtStoreno_' + i).bind('contextmenu', function(e) {
                             /*滑鼠右鍵*/
                             e.preventDefault();
-                            var n = $(this).attr('id').replace('txtStoreno_', '');
+                            var n = $(this).attr('id').replace(/^(.*)_(\d+)$/,'$2');
                             $('#btnStore_'+n).click();
                         });
                         $('#txtPicno_' + i).bind('contextmenu', function(e) {
                             /*滑鼠右鍵*/
                             e.preventDefault();
-                            var n = $(this).attr('id').replace('txtPicno_', '');
+                            var n = $(this).attr('id').replace(/^(.*)_(\d+)$/,'$2');
                             $('#btnPicno_'+n).click();
                         });
                     	/*$('#txtPicno_'+i).change(function(e){
@@ -962,27 +981,27 @@
                     		createImg(n);
                     	});*/
                     	$('#txtParaa_'+i).change(function(e){
-                    		var n = $(this).attr('id').replace('txtParaa_', '');
+                    		var n = $(this).attr('id').replace(/^(.*)_(\d+)$/,'$2');
                     		createImg(n);
                     	});
                     	$('#txtParab_'+i).change(function(e){
-                    		var n = $(this).attr('id').replace('txtParab_', '');
+                    		var n = $(this).attr('id').replace(/^(.*)_(\d+)$/,'$2');
                     		createImg(n);
                     	});
                     	$('#txtParac_'+i).change(function(e){
-                    		var n = $(this).attr('id').replace('txtParac_', '');
+                    		var n = $(this).attr('id').replace(/^(.*)_(\d+)$/,'$2');
                     		createImg(n);
                     	});
                     	$('#txtParad_'+i).change(function(e){
-                    		var n = $(this).attr('id').replace('txtParad_', '');
+                    		var n = $(this).attr('id').replace(/^(.*)_(\d+)$/,'$2');
                     		createImg(n);
                     	});
                     	$('#txtParae_'+i).change(function(e){
-                    		var n = $(this).attr('id').replace('txtParae_', '');
+                    		var n = $(this).attr('id').replace(/^(.*)_(\d+)$/,'$2');
                     		createImg(n);
                     	});
                     	$('#txtParaf_'+i).change(function(e){
-                    		var n = $(this).attr('id').replace('txtParaf_', '');
+                    		var n = $(this).attr('id').replace(/^(.*)_(\d+)$/,'$2');
                     		createImg(n);
                     	});
                     	$('#txtContno_' + i).bind('contextmenu', function(e) {
@@ -1367,9 +1386,9 @@
 				<table class="tview" id="tview" >
 					<tr>
 						<td style="width:20px; color:black;"><a id='vewChk'> </a></td>
-						<td style="width:100px; color:black;"><a id='vewCust'> </a></td>
-						<td style="width:100px; color:black;"><a id='vewDatea'> </a></td>
-						<td style="width:100px; color:black;"><a id='vewOdate'> </a></td>
+						<td style="width:100px; color:black;"><a id='vewCust'>客戶</a></td>
+						<td style="width:100px; color:black;"><a id='vewDatea'>接單日</a></td>
+						<td style="width:100px; color:black;"><a id='vewOdate'>預交日</a></td>
 					</tr>
 					<tr>
 						<td><input id="chkBrow.*" type="checkbox" style=''/></td>
@@ -1392,54 +1411,54 @@
 						<td class="tdZ"></td>
 					</tr>
 					<tr>
-						<td><span> </span><a id="lblNoa" class="lbl"> </a></td>
+						<td><span> </span><a id="lblNoa" class="lbl">電腦編號</a></td>
 						<td colspan="2">
 						<input id="txtNoa"  type="text" class="txt c1"/>
 						</td>
-						<td><span> </span><a id="lblDatea" class="lbl"> </a></td>
+						<td><span> </span><a id="lblDatea" class="lbl">接單日</a></td>
 						<td><input id="txtDatea"  type="text"  class="txt c1"/></td>
-						<td><span> </span><a id="lblOdate" class="lbl"> </a></td>
+						<td><span> </span><a id="lblOdate" class="lbl">預交日</a></td>
 						<td><input id="txtOdate"  type="text"  class="txt c1"/></td>
 					</tr>
 					<tr>
-						<td><span> </span><a id="lblCust" class="lbl btn"> </a></td>
+						<td><span> </span><a id="lblCust" class="lbl btn">客戶</a></td>
 						<td colspan="2">
 							<input id="txtCustno"  type="text"  class="txt" style="width:45%;float:left;"/>
 							<input id="txtCust"  type="text"  class="txt" style="width:55%;float:left;"/>
 							<input id="txtNick"  type="text"  class="txt" style="display:none;"/>
 						</td>
-						<td><span> </span><a id="lblTrantype" class="lbl"> </a></td>
+						<td><span> </span><a id="lblTrantype" class="lbl">交貨方式</a></td>
 						<td><select id="cmbTrantype" class="txt c1"></select></td>
 						<td><select id="cmbTrantype1" class="txt c1"></select></td>
 						<td><select id="cmbTrantype2" class="txt c1"></select></td>
 					</tr>
 					<tr>
-						<td><span> </span><a id="lblSite" class="lbl"> </a></td>
+						<td><span> </span><a id="lblSite" class="lbl">工地</a></td>
 						<td colspan="2"><input id="txtSite"  type="text"  class="txt c1"/></td>
-						<td><span> </span><a id="lblTagcolor" class="lbl"> </a></td>
+						<td><span> </span><a id="lblTagcolor" class="lbl">標籤顏色</a></td>
 						<td><select id="cmbTagcolor" class="txt c1"></select></td>
-						<td><span> </span><a id="lblTolerance" class="lbl"> </a></td>
+						<td><span> </span><a id="lblTolerance" class="lbl">公差</a></td>
 						<td><input id="txtTolerance"  type="text"  class="txt c1"/></td>
 					</tr>
 					<tr>
-						<td><span> </span><a id="lblMemo" class="lbl"> </a></td>
+						<td><span> </span><a id="lblMemo" class="lbl">備註</a></td>
 						<td colspan="2" rowspan="2"><textarea id="txtMemo" class="txt c1" rows="3"></textarea></td>
-						<td><span> </span><a id="lblChktype" class="lbl"> </a></td>
+						<td><span> </span><a id="lblChktype" class="lbl">檢驗方式</a></td>
 						<td><input id="txtChktype"  type="text"  class="txt c1"/></td>
-						<td><span> </span><a id="lblMount" class="lbl"> </a></td>
+						<td><span> </span><a id="lblMount" class="lbl">數量</a></td>
 						<td><input id="txtMount"  type="text"  class="num txt c1"/></td>
 					</tr>
 					<tr>
 						<td></td>
 						<td></td>
 						<td><input type="button" id="btnBarcode" value="條碼列印" /></td>
-						<td><span> </span><a id="lblWeight" class="lbl"> </a></td>
+						<td><span> </span><a id="lblWeight" class="lbl">重量</a></td>
 						<td><input id="txtWeight"  type="text"  class="num txt c1"/></td>
 					</tr>
 					<tr>
-						<td><span> </span><a id="lblWorker" class="lbl"> </a></td>
+						<td><span> </span><a id="lblWorker" class="lbl">製單人</a></td>
 						<td><input id="txtWorker" type="text" class="txt c1"/></td>
-						<td><span> </span><a id="lblWorker2" class="lbl"> </a></td>
+						<td><span> </span><a id="lblWorker2" class="lbl">修改人</a></td>
 						<td><input id="txtWorker2" type="text" class="txt c1"/></td>
 						<td><input type="button" id="btnCont" value="合約匯入" /></td>
 						<td><span> </span><a id="lblOrdeno" class="lbl btn"> </a></td>
@@ -1476,7 +1495,7 @@
 					<td style="width:100px;"><a id='lbl_place'>儲位</a></td>
 					<td style="width:180px;"><a id='lbl_timea'>加工時間</a></td>
 					<td style="width:100px;"><a id='lbl_worker'>入庫人員</a></td>
-					<td style="width:180px;"><a id='lbl_cont'>合約單號</a></td>
+					<!--<td style="width:180px;"><a id='lbl_cont'>合約單號</a></td>-->
 				</tr>
 				<tr  style='background:#cad3ff;'>
 					<td align="center">
@@ -1558,10 +1577,10 @@
 						<input class="txt" id="txtWorker4.*" type="text" style="width:95%;padding: 0px;"/>
 						<input class="txt" id="txtWorker5.*" type="text" style="width:95%;padding: 0px;"/>
 					</td>
-					<td>
+					<!--<td>
 						<input class="txt" id="txtContno.*" type="text" style="float:left;width:120px;"/>
 						<input class="txt" id="txtContnoq.*" type="text" style="float:left;width:35px;"/>
-					</td>
+					</td>-->
 				</tr>
 			</table>
 		</div>

@@ -190,6 +190,11 @@
 					var t_where = " noa='"+t_custno+"'";
 					q_box("usecrd.aspx?" + r_userno + ";" + r_name + ";" + q_time + ";" +t_where, JSON.stringify({action:'usecrd',custno:t_custno}), "95%", "95%", q_getMsg('usecrd'));					
 				});
+				
+				$('#btnUpcust').click(function(e){
+					var t_custno = $('#txtNoa').val();
+                    q_box("upcust.aspx?" + r_userno + ";" + r_name + ";" + q_time + ";custno='" + t_custno + "';" + r_accy, 'rc2tfe', "95%", "95%", q_getMsg('popPrint'));
+				});
 			}
 			
 			function q_boxClose(s2) {
@@ -419,11 +424,12 @@
 					$('#btnCustm').removeAttr('disabled');
 					//$('#btnUsecrd').attr('disabled', 'disabled');
 					
-					
+					$('#btnUpcust').removeAttr('disabled');
 				}else{
 					$('#btnConn').attr('disabled', 'disabled');
 					$('#btnCustm').attr('disabled', 'disabled');
 					//$('#btnUsecrd').removeAttr('disabled');
+					$('#btnUpcust').attr('disabled', 'disabled');
 				}
 				
 			}
@@ -657,10 +663,11 @@
 						<td><input id="txtBoss" type="text" class="txt c1"/></td>
 						<td><span> </span><a id='lblHead' class="lbl"> </a></td>
 						<td><input id="txtHead" type="text" class="txt c1"/></td>
-						<td colspan="2">
+						<td>
 							<input id="btnConn" type="button" />
 							<input id="btnCustm" type="button" />
-						</td>						
+						</td>
+						<td><input id="btnUpcust" type="button" value="圖片、附件上傳"/></td>					
 					</tr>
 					<tr>
 						<td><span> </span><a id='lblType' class="lbl"> </a></td>
