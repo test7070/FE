@@ -19,7 +19,7 @@
 			var decbbs = [];
 			var decbbm = [];
 			var q_readonly = [];
-			var q_readonlys = [];
+			var q_readonlys = ['txtProduct'];
 			var bbmNum = [];
 			var bbsNum = [['txtMount',10,0,1],['txtWeight',15,2,1]];
 			var bbmMask = [];
@@ -34,7 +34,7 @@
 			aPop = new Array(
 				['txtStoreno_', 'btnStoreno_', 'store', 'noa,store', 'txtStoreno_,txtStore_', 'store_b.aspx'],
 				['txtCustno_', 'btnCustno_', 'cust', 'noa,nick', 'txtCustno_,txtComp_', 'cust_b.aspx'],
-				['txtOrdeno_', 'btnOrdeno_', 'view_ordes', 'noa,no2,custno,cust,productno,product', 'txtOrdeno_,txtNo2_,txtCustno_,txtComp_,txtProductno_,txtProduct_', 'ordes_b.aspx', '95%', '60%'],
+				['txtOrdeno_', 'btnOrdeno_', 'workjs_fe', 'a.noa,b.noq,custno,cust,productno,product', 'txtOrdeno_,txtNo2_,txtCustno_,txtComp_,txtProductno_,txtProduct_', 'workjsfe_b.aspx', '95%', '60%'],
 				['txtProductno_', 'btnProductno_', 'ucaucc', 'noa,product', 'txtProductno_', 'ucaucc_b.aspx']
 			);
 			$(document).ready(function() {
@@ -200,10 +200,69 @@
 						/*if ((t_mount > 0) && (t_uno.length == 0))
 							t_errMsg += '第 ' + (i + 1) + " 筆批號為空。\n";*/
 					}
+					
+					//判斷 定尺入庫 3#.4#.5#
+					if(cubBBtArray.length>0){
+						for (var i = 0; i < q_bbsCount; i++) {
+							var tspec='',tsize='',tlength=0,tproduct='',tmount=0;
+							if($('#txtProduct_'+i).val()!='' ){
+								tproduct=$('#txtProduct_'+i).val();
+								tmount=dec($('#txtMount_'+i).val());
+								//材質號數長度
+								tspec=tproduct.substr(tproduct.indexOf('S'),tproduct.indexOf(' ')-tproduct.indexOf('S'))
+								tsize=tproduct.split(' ')[1].split('*')[0];
+								tlength=dec(tproduct.split('*')[1])*100;
+								
+								var t_ordeno=$('#txtOrdeno_'+i).val();
+								var t_no2=$('#txtNo2_'+i).val();
+								var texists=false;
+								var t_w01=0;//容許公差
+								var t_w02=0;//容許公差
+								var t_w03=0;//容許損耗長度
+								var t_w04=0;//容許損耗%
+								var olength=0;//訂單長度
+								//檢查客戶允許公差
+								if(t_ordeno.length>0){ //非訂單就不判斷
+									for (var j=0; j<cubBBsArray.length;j++){
+										if(cubBBsArray[j].ordeno==t_ordeno && cubBBsArray[j].no2==t_no2){
+											t_w01=dec(cubBBsArray[j].w01);
+											t_w02=dec(cubBBsArray[j].w02);
+											t_w03=dec(cubBBsArray[j].w03);
+											t_w04=dec(cubBBsArray[j].w04);
+											olength=dec(cubBBsArray[j].lengthb);
+											texists=true;
+											break;
+										}
+									}
+									
+									if(!texists){
+										t_errMsg += '第 ' + (i + 1) + " 筆 裁剪訂單不存在。\n";
+									}else{
+										if(!(tlength<=olength+t_w01 && tlength>=olength-t_w02)){
+											t_errMsg += '第 ' + (i + 1) + " 筆 裁剪長度非在允許公差內。\n";
+										}
+									}
+								}
+
+								if(tsize=='3#' || tsize=='4#' || tsize=='5#'){
+									var t_where = "where=^^ style='"+tsize+"' and charindex('"+tlength+"',memo)>0 ^^";
+									q_gt('adknife', t_where, 0, 0, 0, 'adknifecheck', r_accy,1);
+									var as = _q_appendData("adknife", "", true);
+									if (as[0] == undefined) {
+										t_errMsg += '第 ' + (i + 1) + " 筆 非訂尺入庫。\n";
+									}
+								}
+							}
+						}
+					}else{
+							t_errMsg += "裁剪無領料禁止入庫!!";
+					}
+					
 					if ($.trim(t_errMsg).length > 0) {
 						alert(t_errMsg);
 						return;
 					}
+					
 					//檢查批號
                     for (var i = 0; i < q_bbsCount; i++) {
                         for (var j = i + 1; j < q_bbsCount; j++) {
@@ -439,8 +498,7 @@
 						<input type="text" id="txtUno.*" class="txt c1"/>
 					</td>
 					<td>
-						<input id="btnOrdeno.*" type="button" value="." class="txt btn" style="width:1%;"/>
-						<input type="text" id="txtOrdeno.*" class="txt" style="width:60%;"/>
+						<input type="text" id="txtOrdeno.*" class="txt" style="width:65%;"/>
 						<input type="text" id="txtNo2.*" class="txt" style="width:20%;"/>
 					</td>
 					<td>
