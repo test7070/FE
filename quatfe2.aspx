@@ -53,7 +53,6 @@
 				bbtKey = ['noa', 'noq'];
 				q_brwCount();
 				q_gt(q_name, q_content, q_sqlCount, 1, 0, '', r_accy);
-				q_gt('flors_coin', '', 0, 0, 0, "flors_coin");
 			});
 
 			function main() {
@@ -140,14 +139,6 @@
 						}
 					}
 				});
-				
-				//判斷核准是否顯示
-				if(q_getPara('sys.project').toUpperCase()=='XY'){
-					$('.apv').show();
-				}else{
-					$('.apv').hide();
-				}
-				
 				$('#cmbTaxtype').change(function(e){
 					sum();
 				}).click(function(e){
@@ -174,43 +165,7 @@
 					}
 				});
 				
-				$('#btnMemo').click(function(e){
-					var t_string='1. （1）本報價單價不含5%稅金。 (含/不含) 運費、  (含/不含) 磅費、  (含/不含) 檢驗費。';
-					t_string += '\n   （2）馬架10CM以下，圓型特殊框型不在此單價內。';
-					t_string += '\n   （3）本報價單不含至續接廠運輸費用。';
-					t_string += '\n   （4）加工成型部份為不分板料、彎料、直料。';
-					t_string += '\n   （5）加工成型部份尺寸公差為±5公分。此單價不含裁切長度70CM以下直料。';
-					t_string += '\n2. 交貨地點：(廠交/自運/XX工地)。 交貨期限： 年 月 日止。';
-					t_string += '\n3. 工程名稱：。';
-					t_string += '\n4. 鋼筋計價重量：以賣方實際過磅為準，若磅差超出千分之三時買方得要求公證地磅會磅，千分之三';
-					t_string += '\n   內買方不得扣失重，若超出千分之三以上，雙方各半。;' ;   
-                 	t_string += '\n5. 交貨辦法：（1）(A：板車送達 XX工地，買方負責卸貨。出貨須達25噸，未達25';
-                 	t_string += '\n   噸者須補貼運費至25噸，每噸 XXX元。)';
-                 	t_string += '\n   (B：吊車送達 XX工地，賣方負責卸貨。出貨需達10噸，未達10';
-                 	t_string += '\n   噸者須補貼運費至10噸，每噸 XXX元。)';
-                 	t_string += '\n  C：吊車送達高雄市(工地手KEY)工地，限一趟(手KEY)運輸以內，賣方負責卸貨。';
-                 	t_string += '\n';
-/*5.	交貨辦法：（1）
-             1.當上面第一大項第一點如勾選含運費時
-             選項A：板車送達高雄市(工地手KEY)工地，買方負責卸貨。出貨須達25噸，未達25
-                     噸者須補貼運費至25噸，每噸200(手KEY)元。
-             選項B：吊車送達高雄市(工地手KEY)工地，賣方負責卸貨。出貨需達10噸，未達10
-                     噸者須補貼運費至10噸，每噸200(手KEY)元。
-             選項C：吊車送達高雄市(工地手KEY)工地，限一趟(手KEY)運輸以內，賣方負責卸貨。
-             2.當上面第一大項第一點如勾選不含運費時                     
-             選項A：板車送達高雄市(工地手KEY)工地，每噸200(手KEY)元，買方負責卸貨。出貨
-                     須達25噸，未達25噸者須補貼運費至25噸，每噸200(手KEY)元。 
-             選項B：吊車送達高雄市(工地手KEY)工地，每噸200(手KEY)元，賣方負責卸貨。出貨
-                     需達10噸，未達10噸者須補貼運費至10噸，每噸200(手KEY)元。
-             選項C：吊車送達高雄市(工地手KEY)工地，每趟3000(手KEY)元。*/
 				
-
-
-
-					
-					t_string += '\n';
-					$('#txtMemo').attr('value',t_string);
-				});
 			}
 
 			function q_boxClose(s2) {
@@ -700,8 +655,7 @@
                         <td class="tdZ"></td>
                     </tr>
 					<tr>
-						<td> </td>
-						<td><select id="cmbStype" class="txt c1"></select></td>
+						<td><span> </span><a id='lblOdate' class="lbl"> </a></td>
 						<td><input id="txtOdate" type="text" class="txt c1"/></td>
 						<td><span> </span><a id='lblDatea' class="lbl"> </a></td>
 						<td colspan="2">
@@ -716,9 +670,6 @@
 						<td><span> </span><a id='lblAcomp' class="lbl btn"> </a></td>
 						<td><input id="txtCno" type="text" class="txt c1"/></td>
 						<td><input id="txtAcomp" type="text" class="txt c1"/></td>
-						<td><span> </span><a id='lblFloata' class="lbl"> </a></td>
-						<td><select id="cmbCoin" class="txt c1" onchange='coin_chg()'></select></td>
-						<td><input id="txtFloata" type="text" class="txt c1 num"/></td>
 						<td><span> </span><a id='lblContract' class="lbl"> </a></td>
 						<td><input id="txtContract" type="text" class="txt c1"/></td>
 					</tr>
@@ -798,9 +749,6 @@
 						<td colspan='6' >
 							<textarea id="txtMemo" class="txt c1" rows="7"> </textarea>
 						</td>
-						<td>
-							<input type="button" id="btnMemo" value="鋼筋報價" style="display:none;" />
-						</td>
 					</tr>
 				</table>
 			</div>
@@ -811,17 +759,18 @@
                     <td  align="center" style="width:30px;">
                     <input class="btn"  id="btnPlus" type="button" value='+' style="font-weight: bold;"  />
                     </td>
-                    <td align="center" style="width:20px;"></td>
+                    <td align="center" style="width:20px;"> </td>
                     <td align="center" style="width:40px;"><a id='lblNo3_s'> </a></td>
-					<td align="center" style="width:250px;"><a id='lblProductno'> </a></td>
-					<td align="center" style="width:40px;"><a id='lblUnit'> </a></td>
-					<td align="center" style="width:100px;"><a id='lblMount'> </a></td>
-					<td align="center" style="width:100px;"><a id='lblWeight_s'> </a></td>
-					<td align="center" style="width:100px;"><a id='lblPrices'> </a></td>
-					<td align="center" style="width:100px;"><a id='lblTotals'> </a></td>
-					<td align="center" style="width:150px;"><a id='lblMemos'> </a></td>
-					<td align="center" style="width:40px;"><a id='lblEnda_s'> </a></td>
-					<td align="center" style="width:40px;"><a id='lblCancels'> </a></td>
+					<td align="center" style="width:250px;"><a>單名</a></td>
+					<td align="center" style="width:250px;"><a>規格</a></td>
+					<td align="center" style="width:40px;"><a>單位</a></td>
+					<td align="center" style="width:100px;"><a>數量</a></td>
+					<td align="center" style="width:100px;"><a>重量</a></td>
+					<td align="center" style="width:100px;"><a>單價</a></td>
+					<td align="center" style="width:100px;"><a>金額</a></td>
+					<td align="center" style="width:150px;"><a>備註</a></td>
+					<td align="center" style="width:40px;"><a>結案</a></td>
+					<td align="center" style="width:40px;"><a>取消</a></td>
 				</tr>
 				<tr  style='background:#cad3ff;'>
                     <td align="center">
@@ -835,6 +784,7 @@
 						<input id="txtProduct.*" type="text" class="txt" style="float:left;width:95%;"/>
 						<input id="btnProduct.*" type="button" style="display:none;" />
 					</td>
+					<td><input id="txtSize.*" type="text" class="txt" style="float:left;width:95%;"/></td>
 					<td><input id="txtUnit.*" type="text" class="txt" style="float:left;width:95%;"/></td>
 					<td><input id="txtMount.*" type="text" class="txt num" style="float:left;width:95%;"/></td>
 					<td><input id="txtWeight.*" type="text" class="txt num" style="float:left;width:95%;"/></td>
@@ -851,14 +801,45 @@
 			</table>
 		</div>
 		<input id="q_sys" type="hidden" />
-		<div id="dbbt" style="display:none;">
+
+		<div id='divCC' style="font-family: '細明體';">
+			<table>
+				<tr><td><a>1.</a><a>(1)</a><a>本報價單價不含5%稅金。</a><select><option value='含'>含</option><option value='不含'>不含</option></select><a>運費、</a><select><option value='含'>含</option><option value='不含'>不含</option></select><a>磅費、</a><select><option value='含'>含</option><option value='不含'>不含</option></select><a>檢驗費。</a></td></tr>
+				<tr><td><a>　</a><a>(2)</a><a>定尺品每噸加價</a><input type="textbox" id="" /><a>元。定尺品長度最短2米，以0.1米為一單位，尺寸公差為±10公 分。16米以上定尺價格另議。板料不拆支。</a></td></tr>
+				<tr><td><a>　</a><a>(3)</a><a>定尺品每尺寸最少5噸，不足5噸依加工成型計價。</a></td></tr>
+			 	<tr><td><a>　</a><a>(4)</a><a>鋼筋3#每噸加價</a><input type="textbox" id="" /><a>元。</a></td></tr>
+				<tr><td><a>　</a><a>　</a><a>鋼筋9#每噸加價</a><input type="textbox" id="" /><a>元。</a></td></tr>
+				<tr><td><a>　</a><a>　</a><a>鋼筋11#每噸加價</a><input type="textbox" id="" /><a>元。</a></td></tr>
+				<tr><td><a>　</a><a>(5)</a><a>本報價單不含至續接廠運輸費用。</a></td></tr>
+				
+				<tr><td><a>2.</a><a>交貨地點：</a>
+					<input type="radio" name="2_1" value="1"/>
+					<a>廠交(自運)</a>
+					<input type="radio" name="2_1" value="2"/>
+					<input type="textbox" id=""/>
+					<a>交貨期限：</a>
+					<input type="textbox" id=""/>
+					<a>年</a>
+					<input type="textbox" id=""/>
+					<a>月</a>
+					<input type="textbox" id=""/>
+					<a>日止。</a>
+				</td></tr>
+			
+			</table>
+			
+		
+	
+			
+		</div>
+		<div id="dbbt" style="display:noxne;">
 			<table id="tbbt">
 				<tbody>
 					<tr class="head" style="color:white; background:#003366;">
 						<td style="width:20px;">
 						<input id="btnPlut" type="button" style="font-size: medium; font-weight: bold;" value="＋"/>
 						</td>
-						<td style="width:20px;"></td>
+						<td style="width:20px;"> </td>
 						<td style="width:200px; text-align: center;">備註</td>
 						<td style="width:200px; text-align: center;">備註2</td>
 					</tr>
