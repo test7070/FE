@@ -164,7 +164,10 @@
 						input.selectionEnd = $(this).val().indexOf(n) + (n + "").length;
 					}
 				});
-				
+				//------------------------------------------------------
+				$('#c1_1_a').change(function(e){
+					refreshData();
+				});
 				
 			}
 
@@ -406,9 +409,20 @@
 				as['apv'] = abbm2['apv'];
 				return true;
 			}
-
+			
+			function refreshData(){
+				if($('#c1_1_a').val()=='含'){
+					$('#c5_1_a').show();
+					$('#c5_1_b').hide();
+				}else{
+					$('#c5_1_a').hide();
+					$('#c5_1_b').show();
+				}
+			}
+			
 			function refresh(recno) {
 				_refresh(recno);
+				refreshData();
 			}
 
 			function readonly(t_para, empty) {
@@ -804,7 +818,17 @@
 
 		<div id='divCC' style="font-family: '細明體';">
 			<table>
-				<tr><td><a>1.</a><a>(1)</a><a>本報價單價不含5%稅金。</a><select><option value='含'>含</option><option value='不含'>不含</option></select><a>運費、</a><select><option value='含'>含</option><option value='不含'>不含</option></select><a>磅費、</a><select><option value='含'>含</option><option value='不含'>不含</option></select><a>檢驗費。</a></td></tr>
+				<tr>
+					<td>
+						<a>1.</a><a>(1)</a><a>本報價單價不含5%稅金。</a>
+						<select id="c1_1_a"><option value='含'>含</option><option value='不含'>不含</option></select>
+						<a>運費、</a>
+						<select><option value='含'>含</option><option value='不含'>不含</option></select>
+						<a>磅費、</a>
+						<select><option value='含'>含</option><option value='不含'>不含</option></select>
+						<a>檢驗費。</a>
+					</td>
+				</tr>
 				<tr><td><a>　</a><a>(2)</a><a>定尺品每噸加價</a><input type="textbox" style="width:60px;" id="" /><a>元。定尺品長度最短2米，以0.1米為一單位，尺寸公差為±10公 分。16米以上定尺價格另議。板料不拆支。</a></td></tr>
 				<tr><td><a>　</a><a>(3)</a><a>定尺品每尺寸最少5噸，不足5噸依加工成型計價。</a></td></tr>
 			 	<tr><td><a>　</a><a>(4)</a><a>鋼筋3#每噸加價</a><input type="textbox" style="width:60px;" id="" /><a>元。</a></td></tr>
@@ -832,6 +856,11 @@
 				<tr>
 					<td>
 						<a>5.</a><a>交貨辦法：</a>
+					</td>
+				</tr>
+				<tr id="c5_1_a">
+					<td>
+						<a>　</a><a>(1)</a>
 						<a>板車送達</a><input type="textbox" style="width:200px;" id=""/><a>，</a>
 						<select><option value='買方'>買方</option><option value='賣方'>賣方</option></select>
 						<a>負責卸貨。</a>
@@ -839,26 +868,48 @@
 						<a>出貨須達25噸，未達25噸者須補貼運費至25噸，每噸</a><input type="textbox" style="width:60px;" id=""/><a>元。</a>
 					</td>
 				</tr>
+				<tr id="c5_1_b">
+					<td>
+						<a>　</a><a>(1)</a>
+						<a>板車送達</a><input type="textbox" style="width:200px;" id=""/><a>，每噸</a><input type="textbox" style="width:60px;" id=""/><a>元。</a>
+						<a>買方負責卸貨。</a>
+						<br>
+						<a>出貨須達25噸，未達25噸者須補貼運費至25噸，每噸</a><input type="textbox" style="width:60px;" id=""/><a>元。</a>
+					</td>
+				</tr>
+				<tr>
+					<td>
+						<a>　</a><a>(2)</a>
+						<a>鋼筋材料若為定尺料者，買方應於14日前通知賣方交貨數量規格。</a>
+					</td>
+				</tr>
+				<tr>
+					<td>
+						<a>　</a><a>(3)</a>
+						<a>買方工地向賣方訂貨後，如遇天災或人力不可抗力之因素時，由雙方再議定交貨時間，經賣方同意展期外，買方應按訂貨數量交貨。</a>
+					</td>
+				</tr>
+				<tr>
+					<td>
+						<a>　</a><a>(4)</a>
+						<a>買方應備妥足夠容納進貨之場地，及35噸拖車可安全到達之卸貨場地，否則因而產生的其他費用由買方負擔。 </a>
+					</td>
+				</tr>
+				<tr>
+					<td>
+						<a>　</a><a>(5)</a>
+						<a>板車料長度12M、14M。超長運費加價14.1M~15M，毎米毎噸加價 </a><input type="textbox" style="width:60px;" id=""/><a>元，</a>
+						<br>
+						<a>超長運費加價15.1M~18M，毎米毎噸加價</a><input type="textbox" style="width:60px;" id=""/><a>元，不足一米以一米計。 </a>
+					</td>
+				</tr>
+				<tr>
+					<td>
+						<a>　</a><a>(6)</a>
+						<a>板車承裝加工成型料整台運費每噸另加50元。 </a>
+					</td>
+				</tr>
 			</table>
-			
-		
-	5.	交貨辦法：（1）
-             1.當上面第一大項第一點如勾選含運費時
-             選項A：板車送達高雄市(工地手KEY)工地，買方/賣方(用選項)負責卸貨。出貨須達25
-                     噸，未達25噸者須補貼運費至25噸，每噸200(手KEY)元。
-             2.當上面第一大項第一點如勾選不含運費時                     
-             選項A：板車送達高雄市(工地手KEY)工地，每噸200(手KEY)元，買方負責卸貨。出貨
-                     須達25噸，未達25噸者須補貼運費至25噸，每噸200(手KEY)元。
-             3.選項D：開放可以手KEY。需核准方可列印。
-（2）鋼筋材料若為定尺料者，買方應於14日前通知賣方交貨數量規格。
-            （3）買方工地向賣方訂貨後，如遇天災或人力不可抗力之因素時，由雙方再議定交貨時間，經賣方同意展期外，買方應按訂貨數量交貨。
-            （4）買方應備妥足夠容納進貨之場地，及35噸拖車可安全到達之卸貨場地，否則因而產生的其他費用由買方負擔。 
-            （5）板車料長度12M、14M。超長運費加價14.1M~15M，毎米毎噸加價50(手KEY)元，
-超長運費加價15.1M~18M，毎米毎噸加價100(手KEY)元，不足一米以一米計。 
-            （6）板車承裝加工成型料整台運費每噸另加50元。
-
-
-			
 		</div>
 		<div id="dbbt" style="display:noxne;">
 			<table id="tbbt">
@@ -868,6 +919,8 @@
 						<input id="btnPlut" type="button" style="font-size: medium; font-weight: bold;" value="＋"/>
 						</td>
 						<td style="width:20px;"> </td>
+						<td style="width:100px; text-align: center;">field</td>
+						<td style="width:100px; text-align: center;">value</td>
 						<td style="width:200px; text-align: center;">備註</td>
 						<td style="width:200px; text-align: center;">備註2</td>
 					</tr>
