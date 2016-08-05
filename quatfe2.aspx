@@ -467,6 +467,14 @@
 				as['apv'] = abbm2['apv'];
 				return true;
 			}
+			function bbtSave(as) {
+				if (!as['keya']) {
+					as[bbtKey[1]] = '';
+					return;
+				}
+				q_nowf();
+				return true;
+			}
 			
 			function refreshData(){
 				$('#divCC').find('.c1_4').remove();
@@ -1170,7 +1178,6 @@
 						<td style="width:100px; text-align: center;">field</td>
 						<td style="width:100px; text-align: center;">value</td>
 						<td style="width:200px; text-align: center;">備註</td>
-						<td style="width:200px; text-align: center;">備註2</td>
 					</tr>
 					<tr>
 						<td>
