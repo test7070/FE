@@ -72,7 +72,7 @@
 				q_mask(bbmMask);
 				q_cmbParse("cmbMechno", "01@剪台,02@火切");
 				
-				document.title='鋼筋存量設定';
+				document.title='鋼筋裁剪單';
 				q_gt('add5', "where=^^1=1^^" , 0, 0, 0, "getadd5",r_accy,1); //號數
 				var as = _q_appendData("add5", "", true);
 				as.sort(function(a, b){if (a.typea > b.typea) {return 1;}if (a.typea < b.typea) {return -1;}});
@@ -131,6 +131,160 @@
 						var t_where = "noa='" + trim($('#txtNoa').val()) + "'";
 						q_box("cubufe_b.aspx?" + r_userno + ";" + r_name + ";" + q_time + ";" + t_where + ";"+r_accy, 'cubu', "95%", "95%", q_getMsg('popCubu'));
 					}
+				});
+				
+				$('#btnUcccstk').click(function() {
+					var t_err='';
+					var t_same=[];
+					//相同材質號數合併
+					for (var i = 0; i < q_bbsCount; i++) {
+						if(!emp($('#txtProductno_'+i).val()) && !emp($('#txtProduct_'+i).val())){
+							var tproduct=$('#txtProduct_'+i).val();
+							var tmount=dec($('#txtMount_'+i).val());//裁剪數量
+							var tweight=dec($('#txtWeight_'+i).val());//裁剪數量
+							//材質號數長度
+							var tspec=tproduct.substr(tproduct.indexOf('S'),tproduct.indexOf(' ')-tproduct.indexOf('S'))
+							var tsize=tproduct.split(' ')[1].split('*')[0];
+							var tlength=dec($('#txtLengthb_'+i).val());
+							var tw03=dec($('#txtW03_'+i).val()); //容許損耗長度
+							var tw04=dec($('#txtW04_'+i).val()); //容許損耗%
+							
+							var t_j=-1;
+							for (var j=0;j<t_same.length;j++){
+								if(t_same[j].spec==tspec && t_same[j].size==tsize){
+									t_j=j;
+									t_same[j].data.push({
+										'nor':i,
+										'tlengthb':tlength,
+										'mount':tmount,
+										'weight':tweight,
+										'w03':tw03,
+										'w04':tw04
+									})
+								}
+							}
+							
+							if(t_j<0){
+								t_same.push({
+									'spec':tspec,
+									'size':tsize,
+									'data':{
+										'nor':i,
+										'tlengthb':tlength,
+										'mount':tmount,
+										'weight':tweight,
+										'w03':tw03,
+										'w04':tw04
+									}
+								});
+							}
+						}
+					}
+					var nbbt=0;
+					
+					for (var j=0;j<t_same.length;j++){
+						//材質號數
+						var tspec=t_same[j].spec;
+						var tsize=t_same[j].size;
+						
+						//讀取相同材質號數的庫存
+						var t_where=" ['" + q_date() + "','','') where (storeno like '[A-Z]' or isnull(storeno,'')='') and mount>0 and weight>0 ";
+						var t_where=" and product like '%"+tspec+"%' ";
+						var t_where=" and product like '%"+tsize+"%' ";
+						var t_where=" and product like '%M' ";
+						//var t_where=" and cast(substring(product,charindex('*',product)+1,charindex('M',product)-charindex('*',product)-1) as float)*100>"+tlength+" ";
+						var t_where=" order by productno,storeno";
+						t_where="where=^^"+t_where+"^^";
+						q_gt('calstk', t_where, 0, 0, 0, "getstk",r_accy,1);
+						var as = _q_appendData("stkucc", "", true);
+						if (as[0] != undefined) {
+							//判斷庫存是否有符合的長度
+							for (var k=0;k<t_same[j].data.length;k++){
+								var t_n=t_same[j].data[k].nor;//訂單序
+								var tmount=dec(t_same[j].data[k].mount);//裁剪數量
+								var tweight=dec(t_same[j].data[k].weight);//裁剪重量
+								var tlength=dec(t_same[j].data[k].tlengthb);//裁剪長度
+								var tavgweight=round(tweight/tmount,2);
+								
+								for (var m=0;m<as.length;m++){
+									var slength=dec(as[m].product.split('*')[1])*100;//庫存長度
+									var smount=dec(as[m].mount);//庫存數量
+									var sweight=dec(as[m].weight);//庫存重量
+									
+									if(slength==tlength){//符合的長度
+										if(smount>=tmount){
+											$('#txtProductno__'+nbbt).val(as[m].productno);
+											$('#txtProduct__'+nbbt).val(as[m].product);
+											$('#txtUnit__'+nbbt).val(as[m].unit);
+											$('#txtGmount__'+nbbt).val(tmount);
+											$('#txtGweight__'+nbbt).val(tweight);
+											$('#txtStoreno__'+nbbt).val(as[m].storeno);
+											$('#txtStore__'+nbbt).val(as[m].store);
+											$('#txtNor__'+nbbt).val(t_n);
+											as[m].mount=as[m].mount-tmount;
+											as[m].weight=as[m].weight-tweight;
+											tmount=0;
+											tweight=0;
+											nbbt++;
+										}else{
+											$('#txtProductno__'+nbbt).val(as[m].productno);
+											$('#txtProduct__'+nbbt).val(as[m].product);
+											$('#txtUnit__'+nbbt).val(as[m].unit);
+											$('#txtGmount__'+nbbt).val(as[m].mount);
+											$('#txtGweight__'+nbbt).val(round(as[m].mount*tavgweight,2));
+											$('#txtStoreno__'+nbbt).val(as[m].storeno);
+											$('#txtStore__'+nbbt).val(as[m].store);
+											$('#txtNor__'+nbbt).val(t_n);
+											as[m].mount=0;
+											as[m].weight=0;
+											tmount=tmount-as[m].mount;
+											tweight=tweight-round(as[m].mount*tavgweight,2);
+											nbbt++;
+										}
+									}
+									if(tmount<=0){
+										break;
+									}
+									if(as[m].mount==0){
+										as.splice(m, 1);
+										m--;
+									}
+								}
+								if(tmount<=0){
+									t_same[j].data.splice(k, 1);
+									k--;
+								}
+							}
+							
+							//庫存無剛好長度 需合併裁剪
+							/*//3#.4#.5# 需定尺入庫
+							 if(tsize=='3#' || tsize=='4#' || tsize=='5#'){
+								//組合配料
+								//取出剩餘長度 進行組合
+								var alength='';
+								for (var k=0;k<t_same[j].data.length;k++){
+									var t_n=t_same[j].data[k].nor;//訂單序
+									var tmount=dec(t_same[j].data[k].mount);//裁剪數量
+									var tweight=dec(t_same[j].data[k].weight);//裁剪重量
+									var tlength=dec(t_same[j].data[k].tlengthb);//裁剪長度
+									var tavgweight=round(tweight/tmount,2);
+									alength=alength+tlength+',';
+								}
+								
+								
+								//最小定尺合併裁剪
+							}else{
+								//組合配料
+								
+								//最小損耗材剪
+							}*/
+						}else{
+							for (var k=0;k<t_same[j].data.length;k++){
+								t_err=t_err+"第"+k+"項 無庫存可以裁剪!! \n";
+							}
+						}
+					}
+					
 				});
 			}
 
@@ -269,7 +423,7 @@
 			}
 
 			function btnPrint() {
-				q_box('z_cub.aspx' + "?;;;noa=" + trim($('#txtNoa').val()) + ";" + r_accy, '', "95%", "95%", q_getMsg("popPrint"));
+				q_box('z_cubfep.aspx' + "?;;;noa=" + trim($('#txtNoa').val()) + ";" + r_accy, '', "95%", "95%", q_getMsg("popPrint"));
 			}
 
 			function btnOk() {
