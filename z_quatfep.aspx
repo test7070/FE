@@ -45,6 +45,16 @@
                 	
                 }else{
                 	$('#txtXnoa').val(t_para.noa);
+                	switch(t_para.typea){
+                		case '加工成型':
+                			$('#q_report').find('span.radio').eq(1).parent().click();
+                			break;
+            			case '板料':
+                			$('#q_report').find('span.radio').eq(1).parent().click();
+                			break;
+            			default:
+            				break;
+                	}
                 }
             }
 

@@ -18,19 +18,23 @@
 			function onPageError(error) {
 				alert("An error occurred:\r\n" + error.Message);
 			}
+
 			q_desc = 1;
 			q_tables = 't';
 			var q_name = "quat";
-			var decbbs = ['price', 'weight', 'mount', 'total', 'dime', 'width', 'lengthb', 'c1', 'notv', 'theory'];
+			
 			var decbbm = ['money', 'tax', 'total', 'weight', 'floata', 'mount', 'price', 'totalus'];
+			var decbbs = ['price', 'weight', 'mount', 'total', 'dime', 'width', 'lengthb', 'c1', 'notv', 'theory'];
 			var decbbt = [];
 			var q_readonly = ['txtNoa','txtWorker', 'txtComp', 'txtSales', 'txtWorker2','txtApv', 'txtMoney', 'txtTotal', 'txtWeight'];
 			var q_readonlys = ['txtNo3'];
 			var q_readonlyt = ['txtMemo','txtMemo2'];
 			var bbmNum = [];
 			var bbsNum = [];
+			var bbtNum = [];
 			var bbmMask = [];
 			var bbsMask = [];
+			var bbtMask = [];
 			q_sqlCount = 6;
 			brwCount = 6;
 			brwCount2 = 11;
@@ -49,7 +53,6 @@
 				bbtKey = ['noa', 'noq'];
 				q_brwCount();
 				q_gt(q_name, q_content, q_sqlCount, 1, 0, '', r_accy);
-				q_gt('flors_coin', '', 0, 0, 0, "flors_coin");
 			});
 
 			function main() {
@@ -89,11 +92,10 @@
 				q_getFormat();
 				bbmMask = [['txtDatea', r_picd], ['txtOdate', r_picd], ['txtTimea', '99:99']];
 				q_mask(bbmMask);
-				bbmNum = [['txtMoney', 15, 0, 1], ['txtTax', 10, 0, 1], ['txtTotal', 15, 0, 1],['txtTotalus', 15, 2, 1], ['txtFloata', 15, 3, 1]];
+				bbmNum = [['txtMoney', 15, 0, 1], ['txtTax', 10, 0, 1], ['txtTotal', 15, 0, 1],['txtTotalus', 15, 2, 1]];
 				bbsNum = [['txtWeight', 10, q_getPara('vcc.weightPrecision'), 1],['txtMount', 10, q_getPara('vcc.mountPrecision'), 1], ['txtPrice', 10, q_getPara('vcc.pricePrecision'), 1], ['txtTotal', 15, 0, 1]];
 				
-				q_cmbParse("cmbTypea", '加工成型,板料');
-				q_cmbParse("cmbStype", q_getPara('vcc.stype'));
+				//q_cmbParse("cmbStype", q_getPara('vcc.stype'));
 				//q_cmbParse("cmbCoin", q_getPara('sys.coin'));
 				q_cmbParse("combPaytype", q_getPara('vcc.paytype'));
 				q_cmbParse("cmbTrantype", q_getPara('sys.tran'));
@@ -137,14 +139,6 @@
 						}
 					}
 				});
-				
-				//判斷核准是否顯示
-				if(q_getPara('sys.project').toUpperCase()=='XY'){
-					$('.apv').show();
-				}else{
-					$('.apv').hide();
-				}
-				
 				$('#cmbTaxtype').change(function(e){
 					sum();
 				}).click(function(e){
@@ -171,9 +165,6 @@
 					}
 				});
 				//------------------------------------------------------
-				$('#cmbTypea').change(function(e){
-					refreshData();
-				});
 				$('#c1_1_a').change(function(e){
 					refreshData();
 				});
@@ -183,22 +174,12 @@
 				$('#c6_1').change(function(e){
 					refreshData();
 				});
-				$('#b1_1_a').change(function(e){
-					refreshData();
-				});
-				$('#b2_1').change(function(e){
-					refreshData();
-				});
-				$('#b6_1').change(function(e){
-					refreshData();
-				});
-				$('#b5_1').change(function(e){
-					refreshData();
-				});
+				
 			}
 
 			function q_boxClose(s2) {
-				var ret;
+				var
+				ret;
 				switch (b_pop) {
 					case q_name + '_s':
 						q_boxClose2(s2);
@@ -303,8 +284,6 @@
 							string += '\n';
 						}else if(!cobj.eq(i).is(":visible")){
 							;
-						}else if(cobj.eq(i).attr('id')=='b5_1'){
-							;
 						}else if(cobj.eq(i).attr('id')=='c6_1'){
 							;
 						}else if(cobj.eq(i)[0].nodeName == 'SELECT'){
@@ -318,12 +297,10 @@
 			}
 			
 			function btnOk() {
-				var curObj = ($('#cmbTypea').val()=='加工成型'?$('#divBB'):$('#divCC'));
-				
 				for(var i=0;i<q_bbtCount;i++){
 					$('#btnMinut__'+i).click();
 				}
-				var obj=curObj.find('input,select');
+				var obj=$('#divCC').find('input,select');
 				for(var i=0;i<obj.length;i++){
 					if(q_bbtCount<i){
 						$('#btnPlut').click();
@@ -333,7 +310,7 @@
 				}
 				//MEMO2
 				var memo2 = '';
-				var obj = curObj.find('tr');
+				var obj = $('#divCC').find('tr');
 				var string = '';
 				for(var i=0;i<obj.length;i++){
 					string = getString(obj.eq(i));
@@ -407,7 +384,7 @@
                         });
                         $('#txtMount_' + i).focusout(function() {
                             if (q_cur == 1 || q_cur == 2){
-                            	var n = $(this).attr('id').replace(/^(.*)_(\d+)$/,'$2');
+                            	var n = $(this).attr('id').split('_')[$(this).attr('id').split('_').length - 1];
                             	t_productno = $.trim($('#txtProductno_'+n).val());
 			                    t_mount = q_float('txtMount_' + n);
 			                    if(t_productno.length>0 && t_mount!=0){
@@ -450,7 +427,6 @@
 
 				var t_where = "where=^^ 1=1 ^^";
 				q_gt('custaddr', t_where, 0, 0, 0, "");
-				loadData();
 			}
 
 			function btnModi() {
@@ -465,11 +441,10 @@
 					var t_where = "where=^^ noa='" + $('#txtCustno').val() + "' ^^";
 					q_gt('custaddr', t_where, 0, 0, 0, "");
 				}
-				loadData();
 			}
 
 			function btnPrint() {
-				q_box("z_quatfep.aspx?" + r_userno + ";" + r_name + ";" + q_time + ";" + JSON.stringify({noa:trim($('#txtNoa').val()),typea:trim($('#cmbTypea').val())}) + ";" + r_accy + "_" + r_cno, 'quat', "95%", "95%", m_print);
+				q_box("z_quatfep.aspx?" + r_userno + ";" + r_name + ";" + q_time + ";" + JSON.stringify({noa:trim($('#txtNoa').val())}) + ";" + r_accy + "_" + r_cno, 'quat', "95%", "95%", m_print);
 			}
 
 			function wrServer(key_value) {
@@ -484,6 +459,7 @@
 					as[bbsKey[1]] = '';
 					return;
 				}
+
 				q_nowf();
 				as['datea'] = abbm2['datea'];
 				as['odate'] = abbm2['odate'];
@@ -499,98 +475,8 @@
 				q_nowf();
 				return true;
 			}
-			function refreshDivBB(){
-				$('#divBB').show();
-				$('#divBB').find('.b1_4').remove();
-				var obj = $('.b1_3');
-				var n=0;
-				for(var i=0;i<q_bbsCount;i++){
-					if($('#txtProduct_'+i).val().length>0){
-						n++;
-						obj.after('<tr class="b1_4"><td><a>　</a><a>'+(n==1?'(4)':'　 ')+'</a><a>'+$('#txtProduct_'+i).val()+'每噸加價</a><input type="text" style="width:60px;" id="b1_4_'+n+'" /><a>元。</a></td></tr>');
-						obj = obj.next();
-						if(!(q_cur==1 || q_cur==2))
-							$('#b1_4_'+n).attr('disabled', 'disabled');
-						for(var j=0;j<q_bbtCount;j++){
-							if($('#txtKeya__'+j).val()=='b1_4_'+n){
-								$('#b1_4_'+n).val($('#txtValue__'+j).val());
-								break;
-							}
-						}
-					}
-				}
-				
-				$('.b5_1x').hide();
-				if($('#b1_1_a').val()=='含'){
-					switch($('#b5_1').val()){
-						case 'A':
-							$('#b5_1_a').show();
-							break;
-						case 'B':
-							$('#b5_1_b').show();
-							break;
-						case 'C':
-							$('#b5_1_c').show();
-							break;
-					}
-				}else{
-					switch($('#b5_1').val()){
-						case 'A':
-							$('#b5_1_d').show();
-							break;
-						case 'B':
-							$('#b5_1_e').show();
-							break;
-						case 'C':
-							$('#b5_1_f').show();
-							break;
-					}
-				}
-				$('#b2_1_a').hide();
-				$('#b2_1_b').hide();
-				switch($('#b2_1').val()){
-					case '廠交(自運)':
-						$('#b2_1_a').show();
-						break;
-					case '自訂':
-						$('#b2_1_b').show();
-						break;
-					default:
-						break;
-				};
-				
-				$('#b6_1_a').hide();
-				$('#b6_1_b').hide();
-				$('#b6_1_c').hide();
-				$('#b6_1_d').hide();
-				switch($('#b6_1').val()){
-					case '預付':
-						$('#b6_1_a').show();
-						break;
-					case '月結':
-						$('#b6_1_b').show();
-						break;
-					case '電匯':
-						$('#b6_1_c').show();
-						break;
-					case '自訂':
-						$('#b6_1_d').show();
-						break;
-					default:
-						break;
-				};
-				$('#divBB').find('input[type="text"]').css('text-align','right');
-				$('#b3_1').css('text-align','center');
-				$('#b5_1_a_a').css('text-align','center');
-				$('#b5_1_b_a').css('text-align','center');
-				$('#b5_1_c_a').css('text-align','center');
-				$('#b5_1_d_a').css('text-align','center');
-				$('#b5_1_e_a').css('text-align','center');
-				$('#b5_1_f_a').css('text-align','center');
-				$('#b6_9_1').css('text-align','center');
-			}
-			function refreshDivCC(){
-				$('#divCC').show();
+			
+			function refreshData(){
 				$('#divCC').find('.c1_4').remove();
 				var obj = $('.c1_3');
 				var n=0;
@@ -650,33 +536,17 @@
 					default:
 						break;
 				};
-				$('#divCC').find('input[type="text"]').css('text-align','right');
-				$('#c3_1').css('text-align','center');
-				$('#c5_1_a_a').css('text-align','center');
-				$('#c5_1_b_a').css('text-align','center');
-				$('#c6_9_1').css('text-align','center');
 			}
-			function refreshData(){
-				if($('#cmbTypea').val()=='加工成型'){
-					$('#divCC').hide();
-					refreshDivBB();
-				}else{
-					$('#divBB').hide();
-					refreshDivCC();
-				}
-			}
+			
 			function refresh(recno) {
 				_refresh(recno);
-				loadData();
-			}
-			function loadData(){
-				var curObj = ($('#cmbTypea').val()=='加工成型'?$('#divBB'):$('#divCC'));
+				//init then  load
 				refreshData();
-				var obj = curObj.find('input');
+				var obj = $('#divCC').find('input');
 				for(var i=0;i<obj.length;i++){
 					obj.eq(i).val('');
 				}
-				var obj = curObj.find('select');
+				var obj = $('#divCC').find('select');
 				for(var i=0;i<obj.length;i++){
 					obj.eq(i)[0].selectedIndex = 0;
 				}
@@ -692,13 +562,11 @@
 					$('#combAddr').attr('disabled', 'disabled');
 					$('#combPaytype').attr('disabled', 'disabled');
 					
-					$('#divBB').find('input,select').attr('disabled', 'disabled');
 					$('#divCC').find('input,select').attr('disabled', 'disabled');
 				} else {
 					$('#combAddr').removeAttr('disabled');
 					$('#combPaytype').removeAttr('disabled');
 					
-					$('#divBB').find('input,select').removeAttr('disabled');
 					$('#divCC').find('input,select').removeAttr('disabled');
 				}
 			}
@@ -940,8 +808,7 @@
                         <td class="tdZ"></td>
                     </tr>
 					<tr>
-						<td> </td>
-						<td><select id="cmbStype" class="txt c1"></select></td>
+						<td><span> </span><a id='lblOdate' class="lbl"> </a></td>
 						<td><input id="txtOdate" type="text" class="txt c1"/></td>
 						<td><span> </span><a id='lblDatea' class="lbl"> </a></td>
 						<td colspan="2">
@@ -956,12 +823,8 @@
 						<td><span> </span><a id='lblAcomp' class="lbl btn"> </a></td>
 						<td><input id="txtCno" type="text" class="txt c1"/></td>
 						<td><input id="txtAcomp" type="text" class="txt c1"/></td>
-						<td><span> </span><a id='lblFloata' class="lbl"> </a></td>
-						<td><select id="cmbCoin" class="txt c1" onchange='coin_chg()'></select></td>
-						<td><input id="txtFloata" type="text" class="txt c1 num"/></td>
 						<td><span> </span><a id='lblContract' class="lbl"> </a></td>
 						<td><input id="txtContract" type="text" class="txt c1"/></td>
-						
 					</tr>
 					<tr>
 						<td><span> </span><a id='lblCust' class="lbl btn"> </a></td>
@@ -1033,18 +896,11 @@
 						</td>
 					</tr>
 					<tr>
-						<td><span> </span><a class="lbl">類型</a></td>
-						<td><select id="cmbTypea" class="txt c1"> </select></td>
-					</tr>
-					<tr>
 						<td align="right">
 							<span> </span><a id='lblMemo' class="lbl"> </a>
 						</td>
 						<td colspan='6' >
 							<textarea id="txtMemo" class="txt c1" rows="7"> </textarea>
-						</td>
-						<td>
-							<input type="button" id="btnMemo" value="鋼筋報價" style="display:none;" />
 						</td>
 					</tr>
 					<tr style="display:none;">
@@ -1064,19 +920,18 @@
                     <td  align="center" style="width:30px;">
                     <input class="btn"  id="btnPlus" type="button" value='+' style="font-weight: bold;"  />
                     </td>
-                    <td align="center" style="width:20px;"></td>
+                    <td align="center" style="width:20px;"> </td>
                     <td align="center" style="width:40px;"><a id='lblNo3_s'> </a></td>
-					<td align="center" style="width:250px;"><a id='lblProductno'> </a></td>
-					<td align="center" style="width:100px;"><a>規格</a></td>
-					<td align="center" style="width:40px;"><a id='lblUnit'> </a></td>
-					<td align="center" style="width:100px;"><a id='lblMount'> </a></td>
-					<td align="center" style="width:100px;"><a id='lblWeight_s'> </a></td>
-					<td align="center" style="width:100px;"><a id='lblPrices'> </a></td>
-					<td align="center" style="width:100px;"><a id='lblTotals'> </a></td>
-					<td align="center" style="width:150px;"><a id='lblMemos'> </a></td>
-					<td align="center" style="width:40px;"><a id='lblEnda_s'> </a></td>
-					<td align="center" style="width:40px;"><a id='lblCancels'> </a></td>
-					<td align="center" style="width:40px;"><a id='lblVccrecord'> </a></td>
+					<td align="center" style="width:250px;"><a>單名</a></td>
+					<td align="center" style="width:250px;"><a>規格</a></td>
+					<td align="center" style="width:40px;"><a>單位</a></td>
+					<td align="center" style="width:100px;"><a>數量</a></td>
+					<td align="center" style="width:100px;"><a>重量</a></td>
+					<td align="center" style="width:100px;"><a>單價</a></td>
+					<td align="center" style="width:100px;"><a>金額</a></td>
+					<td align="center" style="width:150px;"><a>備註</a></td>
+					<td align="center" style="width:40px;"><a>結案</a></td>
+					<td align="center" style="width:40px;"><a>取消</a></td>
 				</tr>
 				<tr  style='background:#cad3ff;'>
                     <td align="center">
@@ -1086,8 +941,8 @@
                     <td><a id="lblNo.*" style="font-weight: bold;text-align: center;display: block;"> </a></td>
                     <td><input id="txtNo3.*" type="text" class="txt" style="float:left;width:95%;"/></td>
 					<td align="center">
-						<input id="txtProductno.*" type="text" class="txt" style="float:left;width:95%;"/>
-						<input id="txtProduct.*" type="text" class="txt" style="float:left;width:95%;"/>
+						<input id="txtProductno.*" type="text" class="txt" style="float:left;width:35%;"/>
+						<input id="txtProduct.*" type="text" class="txt" style="float:left;width:60%;"/>
 						<input id="btnProduct.*" type="button" style="display:none;" />
 					</td>
 					<td><input id="txtSize.*" type="text" class="txt" style="float:left;width:95%;"/></td>
@@ -1103,257 +958,11 @@
 					</td>
 					<td align="center"><input id="chkEnda.*" type="checkbox"/></td>
 					<td align="center"><input id="chkCancel.*" type="checkbox"/></td>
-					<td align="center">
-						<input class="btn" id="btnVccrecord.*" type="button" value='.' style=" font-weight: bold;" />
-					</td>
 				</tr>
 			</table>
 		</div>
 		<input id="q_sys" type="hidden" />
-		<div id='divBB' style="font-family: '細明體';">
-			<table>
-				<tr>
-					<td>
-						<a>1.</a><a>(1)</a><a>本報價單價不含5%稅金。</a>
-						<select id="b1_1_a"><option value='含'>含</option><option value='不含'>不含</option></select>
-						<a>運費、</a>
-						<select id="b1_1_b"><option value='含'>含</option><option value='不含'>不含</option></select>
-						<a>磅費、</a>
-						<select id="b1_1_c"><option value='含'>含</option><option value='不含'>不含</option></select>
-						<a>檢驗費。</a>
-					</td>
-				</tr>
-				<tr class="b1_3">
-					<td>
-						<a>　(2)馬架10CM以下，圓型特殊框型不在此單價內。</a>
-					</td>
-				</tr>
-				<!-- 依BBS  動態產生
-		 		<tr class="b1_4"><td><a>　</a><a>（3）</a><a>鋼筋3#每噸加價</a><input type="text" style="width:60px;" id="c1_4_a" /><a>元。</a></td></tr>
-				<tr class="b1_4"><td><a>　</a><a>　</a><a>鋼筋9#每噸加價</a><input type="text" style="width:60px;" id="c1_4_b" /><a>元。</a></td></tr>
-				<tr class="b1_4"><td><a>　</a><a>　</a><a>鋼筋11#每噸加價</a><input type="text" style="width:60px;" id="c1_4_c" /><a>元。</a></td></tr>
-				-->
-				<tr><td><a>　</a><a>(4)</a><a>本報價單不含至續接廠運輸費用。</a></td></tr>
-				<tr><td><a>　</a><a>(5)</a><a>加工成型部份為不分板料、彎料、直料。</a></td></tr>
-				<tr><td><a>　</a><a>(6)</a><a>加工成型部份尺寸公差為±5公分。此單價不含裁切長度70CM以下直料。</a></td></tr>
-				
-				<tr>
-					<td>
-						<a style="float:left;">2.</a><a style="float:left;">交貨地點：</a>
-						<select id="b2_1" style="float:left;">
-							<option value='廠交(自運)'>廠交(自運)</option>
-							<option value='自訂'>自訂</option>
-						</select>
-						<div id="b2_1_a" style="float:left;">
-							<a>　</a>
-						</div>
-						<div id="b2_1_b" style="float:left;">
-							<a>　</a><input type="text" style="width:120px;" id="b2_1_b_1"/>
-						</div>
-						<a style="float:left;">交貨期限：</a>
-						<input type="text" style="width:40px;float:left;" id="b2_1_c"/>
-						<a style="float:left;">年</a>
-						<input type="text" style="width:40px;float:left;" id="b2_1_d"/>
-						<a style="float:left;">月</a>
-						<input type="text" style="width:40px;float:left;" id="b2_1_e"/>
-						<a style="float:left;">日止。</a>
-					</td>
-				</tr>
-				<tr><td><a>3.</a><a>工程名稱：</a><input type="text" style="width:200px;" id="b3_1"/></td></tr>
-				<tr><td><a>4.</a><a>鋼筋計價重量：以賣方實際過磅為準，若磅差超出千分之三時買方得要求公證地磅會磅，</a></td></tr>
-				<tr><td><a>　千分之三內買方不得扣失重，若超出千分之三以上，雙方各半。</a></td></tr>
-				<tr>
-					<td>
-						<a style="float:left;">5.交貨辦法：</a>
-						<select id="b5_1" style="float:left;">
-							<option value='A'>A</option>
-							<option value='B'>B</option>
-							<option value='C'>C</option>
-						</select>
-					</td>
-				</tr>
-				<!-- 含運  -->
-				<tr id="b5_1_a" class="b5_1x">
-					<td>
-						<a>　</a><a>(1)</a>
-						<a>板車送達</a><input type="text" style="width:200px;" id="b5_1_a_a"/>
-						<a>，買方負責卸貨。</a>
-						<br>
-						<a>　　 出貨須達25噸，未達25噸者須補貼運費至25噸，每噸</a><input type="text" style="width:60px;" id="b5_1_a_c"/><a>元。</a>
-					</td>
-				</tr>
-				<tr id="b5_1_b" class="b5_1x">
-					<td>
-						<a>　</a><a>(1)</a>
-						<a>吊車送達</a><input type="text" style="width:200px;" id="b5_1_b_a"/>
-						<a>，賣方負責卸貨。</a>
-						<br>
-						<a>　　 出貨需達10噸，未達10噸者須補貼運費至10噸，每噸</a><input type="text" style="width:60px;" id="b5_1_b_c"/><a>元。</a>
-					</td>
-				</tr>
-				<tr id="b5_1_c" class="b5_1x">
-					<td>
-						<a>　(1)</a>
-						<a>吊車送達</a><input type="text" style="width:200px;" id="b5_1_c_a"/>
-						<a>限</a><input type="text" style="width:60px;" id="b5_1_c_b"/>
-						<a>運輸以內，賣方負責卸貨。</a>
-					</td>
-				</tr>
-				<!-- 不含運  -->
-				<tr id="b5_1_d" class="b5_1x">
-					<td>
-						<a>　(1)</a>
-						<a>板車送達</a><input type="text" style="width:200px;" id="b5_1_d_a"/>
-						<a>，每噸</a><input type="text" style="width:60px;" id="b5_1_d_b"/>
-						<a>元，買方負責卸貨。</a>
-						<br>
-						<a>　　　出貨須達25噸，未達25噸者須補貼運費至25噸，每噸</a><input type="text" style="width:60px;" id="b5_1_d_c"/><a>元。</a>
-					</td>
-				</tr>
-				<tr id="b5_1_e" class="b5_1x">
-					<td>
-						<a>　(1)</a>
-						<a>吊車送達</a><input type="text" style="width:200px;" id="b5_1_e_a"/>
-						<a>，每噸</a><input type="text" style="width:60px;" id="b5_1_e_b"/>
-						<a>元，賣方負責卸貨。</a>
-						<br>
-						<a>　　　出貨須達25噸，未達25噸者須補貼運費至25噸，每噸</a><input type="text" style="width:60px;" id="b5_1_e_c"/><a>元。</a>
-					</td>
-				</tr>
-				<tr id="b5_1_f" class="b5_1x">
-					<td>
-						<a>　(1)</a>
-						<a>吊車送達</a><input type="text" style="width:200px;" id="b5_1_f_a"/>
-						<a>，每趟</a><input type="text" style="width:60px;" id="b5_1_f_b"/>
-						<a>)元。</a>
-					</td>
-				</tr>
-				<tr>
-					<td>
-						<a>　</a><a>(2)</a>
-						<a>鋼筋材料若為定尺料者，買方應於14日前通知賣方交貨數量規格。</a>
-					</td>
-				</tr>
-				<tr>
-					<td>
-						<a>　</a><a>(3)</a>
-						<a>買方工地向賣方訂貨後，如遇天災或人力不可抗力之因素時，由雙方再議定交貨時間，</a>
-					</td>
-				</tr>
-				<tr>
-					<td>
-						<a>　　 經賣方同意展期外，買方應按訂貨數量交貨。</a>
-					</td>
-				</tr>
-				<tr>
-					<td>
-						<a>　</a><a>(4)</a>
-						<a>買方應備妥足夠容納進貨之場地，及35噸拖車可安全到達之卸貨場地，否則因而產生的其他費用 </a>
-					</td>
-				</tr>
-				<tr>
-					<td>
-						<a>　　 由買方負擔。 </a>
-					</td>
-				</tr>
-				<tr>
-					<td>
-						<a>　</a><a>(5)</a>
-						<a>板車料長度12M、14M。超長運費加價14.1M~15M，毎米毎噸加價 </a><input type="text" style="width:60px;" id="b5_1_5_a"/><a>元，</a>
-						<br>
-						<a>　　 超長運費加價15.1M~18M，毎米毎噸加價</a><input type="text" style="width:60px;" id="b5_1_5_b"/><a>元，不足一米以一米計。 </a>
-					</td>
-				</tr>
-				
-				<tr>
-					<td>
-						<a>6.</a><a>付款條件：</a>
-					</td>
-				</tr>
-				<tr>
-					<td>
-						<a style="float:left;">　(1)</a>
-						<select id="b6_1" style="float:left;">
-							<option value='預付'>預付</option>
-							<option value='月結'>月結</option>
-							<option value='電匯'>電匯</option>
-							<option value='自訂'>自訂</option>
-						</select>
-						<div id="b6_1_a" style="float:left;">
-							<a>預付</a><input type="text" style="width:40px;" id="b6_1_a_1"/><a>%貨款現金含稅為訂金，</a>
-							<select id="b6_1_a_2">
-								<option value='訂金抵尾款'>訂金抵尾款</option>
-								<option value='訂金依出貨比例扣除'>訂金依出貨比例扣除</option>
-							</select>
-							<a>。每月出貨貨款為當月月結</a><input type="text" style="width:40px;" id="b6_1_a_3"/><a>天票期。</a>
-							<br>
-							<a>　　 例：7月帳，開立9月10日到期支票。</a>
-							<br>
-							<a>　　 交貨期限到需將未出鋼筋噸數的金額扣除訂金依 當期貨款支付現金完案。</a>
-						</div>
-						<div id="b6_1_b" style="float:left;">
-							<a>每月出貨貨款為當月月結</a><input type="text" style="width:40px;" id="b6_1_b_1"/><a>天票期。例：7月帳，開立9月10日到期支票。</a>
-							<br>
-							<a>　　 交貨期限到需將未出鋼筋噸數的金額依當期貨款支付現金完案。</a>
-						</div>
-						<div id="b6_1_c" style="float:left;">
-							<a>出貨前電匯貨款全額。</a><input type="text" style="width:150px;" id="b6_1_c_1"/>
-						</div>
-						<div id="b6_1_d" style="float:left;">
-							<a></a><input type="text" style="width:150px;" id="b6_1_d_1"/>
-						</div>
-					</td>
-				</tr>
-				<tr>
-					<td>
-						<a>　</a><a>(2)</a><a>買方同意依照合約所定之付款日期及方式繳付價款予賣方，如逾期未付則按總價款</a>
-					</td>
-				</tr>
-				<tr>
-					<td>
-						<a>　　 之日息萬分之六計算遲延付款之利息，賣方並得據以暫停出貨。</a>
-					</td>
-				</tr>
-				<tr>
-					<td>
-						<a>7.</a><a>材料檢驗：</a>
-					</td>
-				</tr>
-				<tr>
-					<td>
-						<a>　(1)</a><a>賣方鋼筋出廠毎批均附鋼筋無輻射證明，買方需要檢驗報告時依CNS560規範執行。</a>
-					</td>
-				</tr>
-				<tr>
-					<td>
-						<a>　(2)</a><a>鋼筋未經送驗合格前，不得加工及使用，否則所衍費用由買方自行吸收，且該批鋼筋不得辦理</a>
-					</td>
-				</tr>
-				<tr>
-					<td>
-						<a>　　 退貨。</a>
-					</td>
-				</tr>
-          		<tr>
-					<td>
-						<a>8.</a><a>特約事項：賣方所提供材料於買方各期貨款支付或票據兌現前賣方仍保有所有權。</a>
-					</td>
-				</tr>
-				
-				<tr>
-					<td>
-						<a>9.</a><a>報價時效：本報價期限至</a><input type="text" style="width:200px;" id="b6_9_1"/><a>止為有效報價日。</a>
-					</td>
-				</tr>
-				<tr>
-					<td>
-						<a>10.</a><a>本報價單蓋公司大小章回傳視同訂購。</a>
-					</td>
-				</tr>
-				
-				
-			</table>
-		</div>
+
 		<div id='divCC' style="font-family: '細明體';">
 			<table>
 				<tr>
@@ -1377,6 +986,7 @@
 				<tr class="c1_4"><td><a>　</a><a>　</a><a>鋼筋11#每噸加價</a><input type="text" style="width:60px;" id="c1_4_c" /><a>元。</a></td></tr>
 				-->
 				<tr><td><a>　</a><a>(5)</a><a>本報價單不含至續接廠運輸費用。</a></td></tr>
+				
 				<tr>
 					<td>
 						<a style="float:left;">2.</a><a style="float:left;">交貨地點：</a>
@@ -1400,8 +1010,8 @@
 					</td>
 				</tr>
 				<tr><td><a>3.</a><a>工程名稱：</a><input type="text" style="width:200px;" id="c3_1"/></td></tr>
-				<tr><td><a>4.</a><a>鋼筋計價重量：以賣方實際過磅為準，若磅差超出千分之三時買方得要求公證地磅會磅，</a></td></tr>
-				<tr><td><a>　千分之三內買方不得扣失重，若超出千分之三以上，雙方各半。</a></td></tr>
+				<tr><td><a>4.</a><a>以賣方實際過磅為準，若磅差超出千分之三時買方得要求公證地磅會磅，千分之三內買方</a></td></tr>
+				<tr><td><a>　不得扣失重，若超出千分之三以上，雙方各半。</a></td></tr>
 				<tr>
 					<td>
 						<a>5.</a><a>交貨辦法：</a>
@@ -1409,21 +1019,21 @@
 				</tr>
 				<tr id="c5_1_a">
 					<td>
-						<a>　(1)</a>
+						<a>　</a><a>(1)</a>
 						<a>板車送達</a><input type="text" style="width:200px;" id="c5_1_a_a"/><a>，</a>
 						<select id="c5_1_a_b"><option value='買方'>買方</option><option value='賣方'>賣方</option></select>
 						<a>負責卸貨。</a>
 						<br>
-						<a>　　 出貨須達25噸，未達25噸者須補貼運費至25噸，每噸</a><input type="text" style="width:60px;" id="c5_1_a_c"/><a>元。</a>
+						<a>　　　出貨須達25噸，未達25噸者須補貼運費至25噸，每噸</a><input type="text" style="width:60px;" id="c5_1_a_c"/><a>元。</a>
 					</td>
 				</tr>
 				<tr id="c5_1_b">
 					<td>
-						<a>　(1)</a>
+						<a>　</a><a>(1)</a>
 						<a>板車送達</a><input type="text" style="width:200px;" id="c5_1_b_a"/><a>，每噸</a><input type="text" style="width:60px;" id="c5_1_b_b"/><a>元。</a>
 						<a>買方負責卸貨。</a>
 						<br>
-						<a>　　 出貨須達25噸，未達25噸者須補貼運費至25噸，每噸</a><input type="text" style="width:60px;" id="c5_1_b_c"/><a>元。</a>
+						<a>　 　出貨須達25噸，未達25噸者須補貼運費至25噸，每噸</a><input type="text" style="width:60px;" id="c5_1_b_c"/><a>元。</a>
 					</td>
 				</tr>
 				<tr>

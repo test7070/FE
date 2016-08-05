@@ -1,3 +1,92 @@
+z_quatfep02:--	z_quatfep02
+	SET QUOTED_IDENTIFIER OFF
+	declare @t_path nvarchar(max) = '[1]'
+	declare @t_db nvarchar(max) = '[2]'
+	declare @t_noa nvarchar(max) = case when '#non' = [3] then '' else [3] end
+	-------------------------------------------------------------
+	-------------------------------------------------------------
+	declare @tmp table(
+		sel int identity(1,1)
+		,gno nvarchar(10)
+		,typea nvarchar(20)
+		,worker nvarchar(20)
+		,datea nvarchar(20)
+		,noa nvarchar(20)
+		,custno nvarchar(20)
+		,cust nvarchar(50)
+		,conn nvarchar(50)
+		,tel nvarchar(50)
+		,fax nvarchar(50)
+		
+		,productno nvarchar(20)
+		,product nvarchar(50)
+		,size nvarchar(50)
+		,unit nvarchar(50)
+		,mount float
+		,price float
+		,memo nvarchar(max)
+	)
+	
+	insert into @tmp(gno)values('1')
+	insert into @tmp(gno)values('2')
+	insert into @tmp(gno)values('3')
+	insert into @tmp(gno)values('4')
+	insert into @tmp(gno)values('5')
+	insert into @tmp(gno)values('6')
+	insert into @tmp(gno)values('13') --空白行
+	insert into @tmp(gno)values('7')
+	insert into @tmp(gno)values('8')
+	insert into @tmp(gno)values('9')
+	---------------------------------------------------------------------------
+	insert into @tmp(gno,productno,product,size,unit,mount,price,memo)
+	select '10',b.productno,b.product,b.size,b.unit,b.mount,b.price,b.memo
+	from view_quats b 
+	where b.noa=@t_noa
+	
+	update @tmp set gno='11'
+	from @tmp a
+	outer apply(select top 1 * from @tmp where gno='10' order by sel desc) b
+	where a.sel=b.sel
+	
+	insert into @tmp(gno)values('13') --空白行
+	----------------------------------------------------------------------------
+	declare @memo2 nvarchar(max) = ''
+	select @memo2=memo2 from view_quat where noa=@t_noa
+	declare @string nvarchar(max) 
+	while CHARINDEX('chr(10)',@memo2)>0
+	begin
+		set @string = LEFT(@memo2,CHARINDEX('chr(10)',@memo2)-1)	
+		set @memo2 = substring(@memo2,CHARINDEX('chr(10)',@memo2)+7,LEN(@memo2))
+		insert into @tmp(gno,memo)values('12',@string)
+	end
+	if LEN(@memo2)>0
+	begin
+		insert into @tmp(gno,memo)values('12',@memo2)
+	end
+	
+	-------------------------------------------------------------------------------------
+	update @tmp set worker=b.worker,datea=b.datea,noa=b.noa,custno=b.custno,cust=b.comp
+		,conn=b.conn,tel=b.tel,fax=b.fax,typea=b.typea
+	from @tmp a
+	left join view_quat b on b.noa=@t_noa
+	-------------------------------------------------------------------------------------
+	select gno
+		,'<a style="font-size:30px'+char(59)+'font-family:'+ "'Times New Roman','標楷體', serif"+char(59)+'">報價單</a>' 
+			+'<a style="font-size:20px'+char(59)+'font-family:'+ "'Times New Roman','標楷體', serif"+char(59)+'">('+typea+')</a>'a01
+		,'<a style="font-family:'+ "'Times New Roman','標楷體', serif"+char(59)+'">聯絡人：'+worker+'</a>' a02
+		,'<a style="font-family:'+ "'Times New Roman','標楷體', serif"+char(59)+'">TEL：07-6661653 FAX：07-6662927 e-mail：jyu.sin@msa.hinet.net</a>' a03
+		,'<a style="font-family:'+ "'Times New Roman','標楷體', serif"+char(59)+'">報價日期：'+datea+'</a>' a04
+		,'<a style="font-family:'+ "'Times New Roman','標楷體', serif"+char(59)+'">報價編號：'+noa+'</a>' a05
+		,'<a style="font-family:'+ "'Times New Roman','標楷體', serif"+char(59)+'">謹致：'+cust+'   聯絡人：'+conn+'</a>' a06
+		,'<a style="font-family:'+ "'Times New Roman','標楷體', serif"+char(59)+'">電話：'+tel+'   傳真：'+fax+'</a>' a07
+		,product b01
+		,size b02
+		,unit b03
+		,dbo.getComma(mount,-1) b04
+		,dbo.getComma(price,-1) b05
+		,memo b06
+	from @tmp;
+
 z_quatfep01:--	z_quatfep01
 	SET QUOTED_IDENTIFIER OFF
 	declare @t_path nvarchar(max) = '[1]'

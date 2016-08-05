@@ -1,4 +1,5 @@
 z_vccap_fe01:--z_vccap_fe01	
+	SET QUOTED_IDENTIFIER OFF
 	declare @noa nvarchar(20)=case when '#non'=[1] then '' else [1] end
 	
 	declare @tmp table(
@@ -123,6 +124,8 @@ z_vccap_fe01:--z_vccap_fe01
 	from @tmp a
 	outer apply (select * from @tmp where sel=1) b
 	where a.recno=@n-1
+	
+	update @tmp set product_s = REPLACE(product_s,"~#$","'")
 	
 	select noa vccano
 		,dbo.getComma(mount_s,2) mount
