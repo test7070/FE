@@ -319,10 +319,171 @@
 				q_nowf();
 				return true;
 			}
-			function refreshDivBB(){}
-			function refreshDivCC(){}
-			function refreshData(){
+			function refreshDivBB(){
+				$('#divBB').show();
+				$('#divBB').find('.b1_4').remove();
+				var obj = $('.b1_3');
+				var n=0;
+				for(var i=0;i<q_bbsCount;i++){
+					if($('#txtProduct_'+i).val().length>0){
+						n++;
+						obj.after('<tr class="b1_4"><td><a>　</a><a>'+(n==1?'(3)':'　 ')+'</a><a>'+$('#txtProduct_'+i).val()+'每噸加價</a><input type="text" style="width:60px;" id="b1_4_'+n+'" /><a>元。</a></td></tr>');
+						obj = obj.next();
+						if(!(q_cur==1 || q_cur==2))
+							$('#b1_4_'+n).attr('disabled', 'disabled');
+						for(var j=0;j<q_bbtCount;j++){
+							if($('#txtKeya__'+j).val()=='b1_4_'+n){
+								$('#b1_4_'+n).val($('#txtValue__'+j).val());
+								break;
+							}
+						}
+					}
+				}
 				
+				$('.b5_1x').hide();
+				if($('#b1_1_a').val()=='含'){
+					switch($('#b5_1').val()){
+						case 'A':
+							$('#b5_1_a').show();
+							break;
+						case 'B':
+							$('#b5_1_b').show();
+							break;
+						case 'C':
+							$('#b5_1_c').show();
+							break;
+					}
+				}else{
+					switch($('#b5_1').val()){
+						case 'A':
+							$('#b5_1_d').show();
+							break;
+						case 'B':
+							$('#b5_1_e').show();
+							break;
+						case 'C':
+							$('#b5_1_f').show();
+							break;
+					}
+				}
+				$('#b2_1_a').hide();
+				$('#b2_1_b').hide();
+				switch($('#b2_1').val()){
+					case '廠交(自運)':
+						$('#b2_1_a').show();
+						break;
+					case '自訂':
+						$('#b2_1_b').show();
+						break;
+					default:
+						break;
+				};
+				
+				$('#b6_1_a').hide();
+				$('#b6_1_b').hide();
+				$('#b6_1_c').hide();
+				$('#b6_1_d').hide();
+				switch($('#b6_1').val()){
+					case '預付':
+						$('#b6_1_a').show();
+						break;
+					case '月結':
+						$('#b6_1_b').show();
+						break;
+					case '電匯':
+						$('#b6_1_c').show();
+						break;
+					case '自訂':
+						$('#b6_1_d').show();
+						break;
+					default:
+						break;
+				};
+				$('#divBB').find('input[type="text"]').css('text-align','right');
+				$('#b3_1').css('text-align','center');
+				$('#b5_1_a_a').css('text-align','center');
+				$('#b5_1_b_a').css('text-align','center');
+				$('#b5_1_c_a').css('text-align','center');
+				$('#b5_1_d_a').css('text-align','center');
+				$('#b5_1_e_a').css('text-align','center');
+				$('#b5_1_f_a').css('text-align','center');
+				$('#b6_9_1').css('text-align','center');
+			}
+			function refreshDivCC(){
+				$('#divCC').show();
+				$('#divCC').find('.c1_4').remove();
+				var obj = $('.c1_3');
+				var n=0;
+				for(var i=0;i<q_bbsCount;i++){
+					if($('#txtProduct_'+i).val().length>0){
+						n++;
+						obj.after('<tr class="c1_4"><td><a>　</a><a>'+(n==1?'(4)':'　 ')+'</a><a>'+$('#txtProduct_'+i).val()+'每噸加價</a><input type="text" style="width:60px;" id="c1_4_'+n+'" /><a>元。</a></td></tr>');
+						obj = obj.next();
+						if(!(q_cur==1 || q_cur==2))
+							$('#c1_4_'+n).attr('disabled', 'disabled');
+						for(var j=0;j<q_bbtCount;j++){
+							if($('#txtKeya__'+j).val()=='c1_4_'+n){
+								$('#c1_4_'+n).val($('#txtValue__'+j).val());
+								break;
+							}
+						}
+					}
+				}
+				
+				if($('#c1_1_a').val()=='含'){
+					$('#c5_1_a').show();
+					$('#c5_1_b').hide();
+				}else{
+					$('#c5_1_a').hide();
+					$('#c5_1_b').show();
+				}
+				$('#c2_1_a').hide();
+				$('#c2_1_b').hide();
+				switch($('#c2_1').val()){
+					case '廠交(自運)':
+						$('#c2_1_a').show();
+						break;
+					case '自訂':
+						$('#c2_1_b').show();
+						break;
+					default:
+						break;
+				};
+				
+				$('#c6_1_a').hide();
+				$('#c6_1_b').hide();
+				$('#c6_1_c').hide();
+				$('#c6_1_d').hide();
+				switch($('#c6_1').val()){
+					case '預付':
+						$('#c6_1_a').show();
+						break;
+					case '月結':
+						$('#c6_1_b').show();
+						break;
+					case '電匯':
+						$('#c6_1_c').show();
+						break;
+					case '自訂':
+						$('#c6_1_d').show();
+						break;
+					default:
+						break;
+				};
+				$('#divCC').find('input[type="text"]').css('text-align','right');
+				$('#c3_1').css('text-align','center');
+				$('#c5_1_a_a').css('text-align','center');
+				$('#c5_1_b_a').css('text-align','center');
+				$('#c6_9_1').css('text-align','center');
+			}
+			function refreshData(){
+				if($('#cmbTypea').val()=='加工成型'){
+					$('#divCC').hide();
+					refreshDivBB();
+				}else{
+					$('#divBB').hide();
+					refreshDivCC();
+				}
 			}
 			function loadData(){
 				var curObj = ($('#cmbTypea').val()=='加工成型'?$('#divBB'):$('#divCC'));
@@ -840,7 +1001,7 @@
 					</td>
 				</tr>
 				<tr><td><a>3.</a><a>工程名稱：</a><input type="text" style="width:200px;" id="b3_1"/></td></tr>
-				<tr><td><a>4.</a><a>鋼筋計價重量：以賣方實際過磅為準，若磅差超出千分之三時甲方得要求公證地磅會磅，</a></td></tr>
+				<tr><td><a>4.</a><a>鋼筋計價重量：以乙方實際過磅為準，若磅差超出千分之三時甲方得要求公證地磅會磅，</a></td></tr>
 				<tr><td><a>　千分之三內甲方不得扣失重，若超出千分之三以上，雙方各半。</a></td></tr>
 				<tr>
 					<td>
@@ -885,7 +1046,7 @@
 						<a>　(1)</a>
 						<a>板車送達</a><input type="text" style="width:200px;" id="b5_1_d_a"/>
 						<a>，每噸</a><input type="text" style="width:60px;" id="b5_1_d_b"/>
-						<a>元，買方負責卸貨。</a>
+						<a>元，甲方負責卸貨。</a>
 						<br>
 						<a>　　　出貨須達25噸，未達25噸者須補貼運費至25噸，每噸</a><input type="text" style="width:60px;" id="b5_1_d_c"/><a>元。</a>
 					</td>
@@ -895,7 +1056,7 @@
 						<a>　(1)</a>
 						<a>吊車送達</a><input type="text" style="width:200px;" id="b5_1_e_a"/>
 						<a>，每噸</a><input type="text" style="width:60px;" id="b5_1_e_b"/>
-						<a>元，賣方負責卸貨。</a>
+						<a>元，乙方負責卸貨。</a>
 						<br>
 						<a>　　　出貨須達25噸，未達25噸者須補貼運費至25噸，每噸</a><input type="text" style="width:60px;" id="b5_1_e_c"/><a>元。</a>
 					</td>
@@ -910,7 +1071,7 @@
 				</tr>
 				<tr>
 					<td>
-						<a>　</a><a>(2)鋼筋材料若為加工成型者，甲方應於21日前通知賣方交貨數量規格。</a>
+						<a>　</a><a>(2)鋼筋材料若為加工成型者，甲方應於21日前通知乙方交貨數量規格。</a>
 					</td>
 				</tr>
 				<tr>
@@ -983,12 +1144,12 @@
 				</tr>
 				<tr>
 					<td>
-						<a>　</a><a>(2)</a><a>買方同意依照合約所定之付款日期及方式繳付價款予賣方，如逾期未付則按總價款</a>
+						<a>　</a><a>(2)</a><a>甲方同意依照合約所定之付款日期及方式繳付價款予乙方，如逾期未付則按總價款</a>
 					</td>
 				</tr>
 				<tr>
 					<td>
-						<a>　　 之日息萬分之六計算遲延付款之利息，賣方並得據以暫停出貨。</a>
+						<a>　　 之日息萬分之六計算遲延付款之利息，乙方並得據以暫停出貨。</a>
 					</td>
 				</tr>
 				<tr>
@@ -998,12 +1159,12 @@
 				</tr>
 				<tr>
 					<td>
-						<a>　(1)</a><a>賣方鋼筋出廠毎批均附鋼筋無輻射證明，買方需要檢驗報告時依CNS560規範執行。</a>
+						<a>　(1)</a><a>乙方鋼筋出廠毎批均附鋼筋無輻射證明，甲方需要檢驗報告時依CNS560規範執行。</a>
 					</td>
 				</tr>
 				<tr>
 					<td>
-						<a>　(2)</a><a>鋼筋未經送驗合格前，不得加工及使用，否則所衍費用由買方自行吸收，且該批鋼筋不得辦理</a>
+						<a>　(2)</a><a>鋼筋未經送驗合格前，不得加工及使用，否則所衍費用由甲方自行吸收，且該批鋼筋不得辦理</a>
 					</td>
 				</tr>
 				<tr>
