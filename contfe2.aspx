@@ -72,7 +72,7 @@
 				bbmMask = [['txtEnddate', r_picd],['txtDatea', r_picd], ['txtPledgedate', r_picd], ['txtPaydate', r_picd], ['txtBcontdate', r_picd], ['txtEcontdate', r_picd], ['txtChangecontdate', r_picd]];
 				q_mask(bbmMask);
 				
-				q_cmbParse("cmbStype", '加工成型,板料');
+				q_cmbParse("cmbTypea", '加工成型,板料');
 				q_cmbParse("cmbEnsuretype", ('').concat(new Array('', '定存單質押', '不可撤銷保證', '銀行本票質押', '商業本票質押', '現金質押')));
 				q_cmbParse("cmbEtype", ('').concat(new Array('','存入', '存出')));
 				q_gt('acomp', '', 0, 0, 0, "");
@@ -86,6 +86,32 @@
 
 				$('#lblCust2').click(function(e) {
 					q_box("cust_b2.aspx", 'cust', "90%", "600px", q_getMsg("popCust"));
+				});
+				
+				//------------------------------------------------------
+				$('#cmbTypea').change(function(e){
+					refreshData();
+				});
+				$('#c1_1_a').change(function(e){
+					refreshData();
+				});
+				$('#c2_1').change(function(e){
+					refreshData();
+				});
+				$('#c6_1').change(function(e){
+					refreshData();
+				});
+				$('#b1_1_a').change(function(e){
+					refreshData();
+				});
+				$('#b2_1').change(function(e){
+					refreshData();
+				});
+				$('#b6_1').change(function(e){
+					refreshData();
+				});
+				$('#b5_1').change(function(e){
+					refreshData();
 				});
 			}
 
@@ -134,13 +160,67 @@
 						break;
 				}  /// end switch
 			}
+			
+			function getString(obj){
+				var string = '';
+				var cobj = obj.children();
+				if(cobj.length==0){
+					if(obj.eq(0)[0].nodeName == 'BR'){
+						string += '\n';
+					}else if(!obj.eq(0).is(":visible")){
+						;
+					}else if(obj[0].nodeName == 'INPUT' || obj[0].nodeName == 'SELECT'){
+						string = obj.val();
+					}
+					else{
+						string = obj.text();
+					}
+				}else{
+					var string = '';
+					for(var i=0;i<cobj.length;i++){
+						if(cobj.eq(i)[0].nodeName == 'BR'){
+							string += '\n';
+						}else if(!cobj.eq(i).is(":visible")){
+							;
+						}else if(cobj.eq(i).attr('id')=='b5_1'){
+							;
+						}else if(cobj.eq(i).attr('id')=='c6_1'){
+							;
+						}else if(cobj.eq(i)[0].nodeName == 'SELECT'){
+							string+=cobj.eq(i).val();
+						}else{
+							string+=getString(cobj.eq(i));	
+						}
+					}
+				}
+				return string;
+			}
 
 			function btnOk() {
-				t_err = q_chkEmpField([['txtNoa', q_getMsg('lblNoa')]]);
-				if(t_err.length > 0) {
-					alert(t_err);
-					return;
+				var curObj = ($('#cmbTypea').val()=='加工成型'?$('#divBB'):$('#divCC'));
+				
+				for(var i=0;i<q_bbtCount;i++){
+					$('#btnMinut__'+i).click();
 				}
+				var obj=curObj.find('input,select');
+				for(var i=0;i<obj.length;i++){
+					if(q_bbtCount<i){
+						$('#btnPlut').click();
+					}
+					$('#txtKeya__'+i).val(obj.eq(i).attr('id'));
+					$('#txtValue__'+i).val(obj.eq(i).val());
+				}
+				//MEMO2
+				var memo2 = '';
+				var obj = curObj.find('tr');
+				var string = '';
+				for(var i=0;i<obj.length;i++){
+					string = getString(obj.eq(i));
+					if(string.length>0)
+						memo2 += (i==0?'':'\n') + string;
+				}
+				$('#txtMemo2').val(memo2);
+				//----------------------------------------------------------------
 				$('#txtAcomp').val($('#cmbCno').find(":selected").text());
 				$('#cmbCnonick').val($('#cmbCno').val());
 				$('#txtAcompnick').val($('#cmbCnonick').find(":selected").text());
@@ -191,6 +271,7 @@
 					}
 				}
 				_bbsAssign();
+				refreshData();
 			}
 
 			function btnIns() {
@@ -198,6 +279,8 @@
 				$('#txtNoa').val('AUTO');
 				$('#txtDatea').val(q_date());
 				$('#txtTggno').focus();
+				
+				loadData();
 			}
 
 			function btnModi() {
@@ -205,10 +288,12 @@
 					return;
 				_btnModi();
 				$('#txtTggno').focus();
+				
+				loadData();
 			}
 
 			function btnPrint() {
-				q_box("z_contfep.aspx?" + r_userno + ";" + r_name + ";" + q_time + ";" + JSON.stringify({noa:trim($('#txtNoa').val())}) + ";" + r_accy + "_" + r_cno, 'cont', "95%", "95%", m_print);
+				q_box("z_contfep.aspx?" + r_userno + ";" + r_name + ";" + q_time + ";" + JSON.stringify({noa:trim($('#txtNoa').val()),typea:trim($('#cmbTypea').val())}) + ";" + r_accy + "_" + r_cno, 'cont', "95%", "95%", m_print);
 			}
 
 			function wrServer(key_value) {
@@ -226,7 +311,16 @@
 				as['date'] = abbm2['date'];
 				return true;
 			}
-			
+			function bbtSave(as) {
+				if (!as['keya']) {
+					as[bbtKey[1]] = '';
+					return;
+				}
+				q_nowf();
+				return true;
+			}
+			function refreshDivBB(){}
+			function refreshDivCC(){}
 			function refreshData(){
 				
 			}
@@ -260,6 +354,8 @@
                         if(trim($('#txtStyle_' + b_seq).val()).length != 0)
                         	ProductAddStyle(b_seq);
 						$('#txtStyle_' + b_seq).focus();
+						
+						refreshData();
 					break;
 				}
 			}
@@ -501,7 +597,7 @@
 							<input id="txtAcomp"  type="text" class="txt" style="width:70%; float: left;"/>
 						</td>
 						<td><span> </span><a id="lblStype" class="lbl">類型</a></td>
-						<td><select id="cmbStype" class="txt c1"> </select></td>
+						<td><select id="cmbTypea" class="txt c1"> </select></td>
 					</tr>
 					<tr>
 						<td><span> </span><a id='lblTgg' class="lbl btn"> </a></td>
@@ -604,6 +700,10 @@
 						<td><span> </span><a id='lblMemo' class="lbl"> </a></td>
 						<td colspan="7"><textarea id="txtMemo" rows="5" cols="10" type="text" class="txt c1"></textarea></td>
 					</tr>
+					<tr >
+						<td><span> </span><a id='lblMemo2' class="lbl"> </a></td>
+						<td colspan="7"><textarea id="txtMemo2" rows="5" cols="10" type="text" class="txt c1"></textarea></td>
+					</tr>
 					<tr class="tr13">
 						<td class="td1"><span> </span><a id='lblWorker' class="lbl"> </a></td>
 						<td class="td2"><input id="txtWorker"  type="text" class="txt c1" /></td>
@@ -624,6 +724,7 @@
 					</td>
 					<td style="width:20px;"></td>
 					<td align="center" style="width:200px;"><a id='lblProduct_s'>品名</a></td>
+					<td align="center" style="width:120px;"><a>規格</a></td>
 					<td align="center" style="width:60px;"><a id='lblUnit_s'>單位</a></td>
 					<td align="center" style="width:60px;"><a id='lblLengthb_s'>單支長</a></td>
 					<td align="center" style="width:60px;"><a id='lblMount_s'>數量</a></td>
@@ -645,6 +746,7 @@
 						<input id="txtProduct.*" type="text" class="txt"style="width:45%; float:left;"/>
 						<input class="btn"  id="btnProduct.*" type="button" style="display: none;" />
 					</td> 
+					<td ><input id="txtSize.*" type="text"  class="txt c7"/></td>
 					<td ><input id="txtUnit.*" type="text"  class="txt c7"/></td>
 					<td ><input id="txtLengthb.*" type="text"  class="txt num c7"/></td>
 					<td ><input id="txtMount.*" type="text"  class="txt num c7"/></td>
