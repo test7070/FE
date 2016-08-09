@@ -761,6 +761,15 @@
                 q_nowf();
                 return true;
             }
+            
+            function bbtSave(as) {
+                if (!as['uno'] && !as['productno']) {
+                    as[bbsKey[1]] = '';
+                    return;
+                }
+                q_nowf();
+                return true;
+            }
 
             function refresh(recno) {
                 _refresh(recno);
