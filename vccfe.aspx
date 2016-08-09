@@ -638,12 +638,12 @@
                                 return;
                             }
                         }
-                        if(r_rank<=7 && $('#txtDatea').val()<=q_cdn(q_date(),-3)){
-                        	alert('只能刪除三天內資料!');
+                        if(r_rank<=7 && $('#txtDatea').val()<=q_cdn(q_date(),-1*parseInt(q_getPara('sys.modiday')))){
+                        	alert('只能刪除'+q_getPara('sys.modiday')+'天內資料!');
                         	Unlock(1);
                         	return;
-                        }else if(r_rank>7 && $('#txtDatea').val()<=q_cdn(q_date(),-60)){
-                        	alert('只能刪除六十天內資料!');
+                        }else if(r_rank>7 && $('#txtDatea').val()< q_getPara('sys.edate')){
+                        	alert('只能刪除'+q_getPara('sys.edate')+'後的資料!');
                         	Unlock(1);
                         	return;
                         }
@@ -665,12 +665,12 @@
                                 return;
                             }
                         }
-                        if(r_rank<=7 && $('#txtDatea').val()<=q_cdn(q_date(),-3)){
-                        	alert('只能修改三天內資料!');
+                        if(r_rank<=7 && $('#txtDatea').val()<=q_cdn(q_date(),-1*parseInt(q_getPara('sys.modiday')))){
+                        	alert('只能修改'+q_getPara('sys.modiday')+'天內資料!');
                         	Unlock(1);
                         	return;
-                        }else if(r_rank>7 && $('#txtDatea').val()<=q_cdn(q_date(),-60)){
-                        	alert('只能修改六十天內資料!');
+                        }else if(r_rank>7 && $('#txtDatea').val()< q_getPara('sys.edate')){
+                        	alert('只能刪除'+q_getPara('sys.edate')+'後的資料!');
                         	Unlock(1);
                         	return;
                         }

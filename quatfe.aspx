@@ -507,7 +507,7 @@
 				for(var i=0;i<q_bbsCount;i++){
 					if($('#txtProduct_'+i).val().length>0){
 						n++;
-						obj.after('<tr class="b1_4"><td><a>　</a><a>'+(n==1?'(4)':'　 ')+'</a><a>'+$('#txtProduct_'+i).val()+'每噸加價</a><input type="text" style="width:60px;" id="b1_4_'+n+'" /><a>元。</a></td></tr>');
+						obj.after('<tr class="b1_4"><td><a>　</a><a>'+(n==1?'(3)':'　 ')+'</a><a>'+$('#txtProduct_'+i).val()+'每噸加價</a><input type="text" style="width:60px;" id="b1_4_'+n+'" /><a>元。</a></td></tr>');
 						obj = obj.next();
 						if(!(q_cur==1 || q_cur==2))
 							$('#b1_4_'+n).attr('disabled', 'disabled');
