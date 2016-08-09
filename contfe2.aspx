@@ -139,11 +139,11 @@
 						 	t_item2 = t_item2 + (t_item.length > 0 ? ',' : '') + as[i].noa + '@' + as[i].nick;
 						 	t_item = t_item + (t_item.length > 0 ? ',' : '') + as[i].noa + '@' + as[i].acomp;
 						 }
-						 q_cmbParse("cmbCno", t_item);
+						 //q_cmbParse("cmbCno", t_item);
 						 q_cmbParse("cmbCnonick", t_item2);
 						 q_cmbParse("cmbGuarantorno", t_item);
 						 if(abbm[q_recno]){
-						 	$("#cmbCno").val(abbm[q_recno].cno);
+						 	//$("#cmbCno").val(abbm[q_recno].cno);
 						 	$("#cmbCnonick").val(abbm[q_recno].cno);
 						 	$("#cmbGuarantorno").val(abbm[q_recno].guarantorno);
 						 }
@@ -221,11 +221,11 @@
 				}
 				$('#txtMemo2').val(memo2);
 				//----------------------------------------------------------------
-				$('#txtAcomp').val($('#cmbCno').find(":selected").text());
+				/*$('#txtAcomp').val($('#cmbCno').find(":selected").text());
 				$('#cmbCnonick').val($('#cmbCno').val());
 				$('#txtAcompnick').val($('#cmbCnonick').find(":selected").text());
 				$('#txtGuarantor').val($('#cmbGuarantorno').find(":selected").text());
-				
+				*/
 				sum();
 				if (q_cur == 1)
 					$('#txtWorker').val(r_name);
@@ -242,7 +242,7 @@
 			function _btnSeek() {
 				if(q_cur > 0 && q_cur < 4)// 1-3
 					return;
-				q_box('quat_s.aspx', q_name + '_s', "500px", "330px", q_getMsg("popSeek"));
+				q_box('quat_s.aspx', q_name + '_s', "500px", "450px", q_getMsg("popSeek"));
 			}
 
 			
@@ -523,6 +523,13 @@
 			
 			function readonly(t_para, empty) {
 				_readonly(t_para, empty);
+				if (t_para) {
+					$('#divBB').find('input,select').attr('disabled', 'disabled');
+					$('#divCC').find('input,select').attr('disabled', 'disabled');
+				} else {
+					$('#divBB').find('input,select').removeAttr('disabled');
+					$('#divCC').find('input,select').removeAttr('disabled');
+				}
 			}
 
 			function btnMinus(id) {
@@ -794,7 +801,7 @@
 					<tr>
 						<td><span> </span><a id="lblAcomp" class="lbl"> </a></td>
 						<td colspan="3">
-							<select id="cmbCno" class="txt c1"> </select>
+							<!--<select id="cmbCno" class="txt c1"> </select>-->
 							<select id="cmbCnonick" class="txt c1" style="display:none;"> </select>
 							<input id="txtAcomp"  type="hidden" class="txt" style="width:80%; float: left;"/>
 							<input id="txtAcompnick"  type="hidden" style="display: none;"/>
@@ -1195,6 +1202,215 @@
 				</tr>
 			</table>
 		</div>
+		
+		<div id='divCC' style="font-family: '細明體';">
+			<table>
+				<tr>
+					<td>
+						<a>1.</a><a>(1)</a><a>本報價單價不含5%稅金。</a>
+						<select id="c1_1_a"><option value='含'>含</option><option value='不含'>不含</option></select>
+						<a>運費、</a>
+						<select id="c1_1_b"><option value='含'>含</option><option value='不含'>不含</option></select>
+						<a>磅費、</a>
+						<select id="c1_1_c"><option value='含'>含</option><option value='不含'>不含</option></select>
+						<a>檢驗費。</a>
+					</td>
+				</tr>
+				<tr><td><a>　(2)</a><a>定尺品每噸加價</a><input type="text" style="width:60px;" id="c1_2_a" /><a>元。定尺品長度最短2米，以0.1米為一單位，尺寸公差為±10公分。</a></td></tr>
+				<tr><td><a>　　 16米以上定尺價格另議。板料不拆支。</a></td></tr>
+				<tr class="c1_3"><td><a>　</a><a>(3)</a><a>定尺品每尺寸最少5噸，不足5噸依加工成型計價。</a></td></tr>
+			 	
+			 	<!-- 依BBS  動態產生
+		 		<tr class="c1_4"><td><a>　</a><a>(4)</a><a>鋼筋3#每噸加價</a><input type="text" style="width:60px;" id="c1_4_a" /><a>元。</a></td></tr>
+				<tr class="c1_4"><td><a>　</a><a>　</a><a>鋼筋9#每噸加價</a><input type="text" style="width:60px;" id="c1_4_b" /><a>元。</a></td></tr>
+				<tr class="c1_4"><td><a>　</a><a>　</a><a>鋼筋11#每噸加價</a><input type="text" style="width:60px;" id="c1_4_c" /><a>元。</a></td></tr>
+				-->
+				<tr><td><a>　</a><a>(5)</a><a>本報價單不含至續接廠運輸費用。</a></td></tr>
+				<tr>
+					<td>
+						<a style="float:left;">2.</a><a style="float:left;">交貨地點：</a>
+						<select id="c2_1" style="float:left;">
+							<option value='廠交(自運)'>廠交(自運)</option>
+							<option value='自訂'>自訂</option>
+						</select>
+						<div id="c2_1_a" style="float:left;">
+							<a>　</a>
+						</div>
+						<div id="c2_1_b" style="float:left;">
+							<a>　</a><input type="text" style="width:120px;" id="c2_1_b_1"/>
+						</div>
+						<a style="float:left;">交貨期限：</a>
+						<input type="text" style="width:40px;float:left;" id="c2_1_c"/>
+						<a style="float:left;">年</a>
+						<input type="text" style="width:40px;float:left;" id="c2_1_d"/>
+						<a style="float:left;">月</a>
+						<input type="text" style="width:40px;float:left;" id="c2_1_e"/>
+						<a style="float:left;">日止。</a>
+					</td>
+				</tr>
+				<tr><td><a>3.</a><a>工程名稱：</a><input type="text" style="width:200px;" id="c3_1"/></td></tr>
+				<tr><td><a>4.</a><a>鋼筋計價重量：以乙方實際過磅為準，若磅差超出千分之三時買方得要求公證地磅會磅，</a></td></tr>
+				<tr><td><a>　千分之三內甲方不得扣失重，若超出千分之三以上，雙方各半。</a></td></tr>
+				<tr>
+					<td>
+						<a>5.</a><a>交貨辦法：</a>
+					</td>
+				</tr>
+				<tr id="c5_1_a">
+					<td>
+						<a>　(1)</a>
+						<a>板車送達</a><input type="text" style="width:200px;" id="c5_1_a_a"/><a>，</a>
+						<select id="c5_1_a_b"><option value='買方'>甲方</option><option value='賣方'>乙方</option></select>
+						<a>負責卸貨。</a>
+						<br>
+						<a>　　 出貨須達25噸，未達25噸者須補貼運費至25噸，每噸</a><input type="text" style="width:60px;" id="c5_1_a_c"/><a>元。</a>
+					</td>
+				</tr>
+				<tr id="c5_1_b">
+					<td>
+						<a>　(1)</a>
+						<a>板車送達</a><input type="text" style="width:200px;" id="c5_1_b_a"/><a>，每噸</a><input type="text" style="width:60px;" id="c5_1_b_b"/><a>元。</a>
+						<a>買方負責卸貨。</a>
+						<br>
+						<a>　　 出貨須達25噸，未達25噸者須補貼運費至25噸，每噸</a><input type="text" style="width:60px;" id="c5_1_b_c"/><a>元。</a>
+					</td>
+				</tr>
+				<tr>
+					<td>
+						<a>　</a><a>(2)</a>
+						<a>鋼筋材料若為定尺料者，買方應於14日前通知賣方交貨數量規格。</a>
+					</td>
+				</tr>
+				<tr>
+					<td>
+						<a>　</a><a>(3)</a>
+						<a>甲方工地向乙方訂貨後，如遇天災或人力不可抗力之因素時，由雙方再議定交貨時間，</a>
+					</td>
+				</tr>
+				<tr>
+					<td>
+						<a>　　 經乙方同意展期外，買方應按訂貨數量交貨。</a>
+					</td>
+				</tr>
+				<tr>
+					<td>
+						<a>　</a><a>(4)</a>
+						<a>甲方應備妥足夠容納進貨之場地，及35噸拖車可安全到達之卸貨場地，否則因而產生的其他費用 </a>
+					</td>
+				</tr>
+				<tr>
+					<td>
+						<a>　　 由甲方負擔。 </a>
+					</td>
+				</tr>
+				<tr>
+					<td>
+						<a>　</a><a>(5)</a>
+						<a>板車料長度12M、14M。超長運費加價14.1M~15M，毎米毎噸加價 </a><input type="text" style="width:60px;" id="c5_1_5_a"/><a>元，</a>
+						<br>
+						<a>　　 超長運費加價15.1M~18M，毎米毎噸加價</a><input type="text" style="width:60px;" id="c5_1_5_b"/><a>元，不足一米以一米計。 </a>
+					</td>
+				</tr>
+				<tr>
+					<td>
+						<a>　</a><a>(6)</a>
+						<a>板車承裝加工成型料整台運費每噸另加50元。 </a>
+					</td>
+				</tr>
+				
+				<tr>
+					<td>
+						<a>6.</a><a>付款條件：</a>
+					</td>
+				</tr>
+				<tr>
+					<td>
+						<a style="float:left;">　(1)</a>
+						<select id="c6_1" style="float:left;">
+							<option value='預付'>預付</option>
+							<option value='月結'>月結</option>
+							<option value='電匯'>電匯</option>
+							<option value='自訂'>自訂</option>
+						</select>
+						<div id="c6_1_a" style="float:left;">
+							<a>預付</a><input type="text" style="width:40px;" id="c6_1_a_1"/><a>%貨款現金含稅為訂金，</a>
+							<select id="c6_1_a_2">
+								<option value='訂金抵尾款'>訂金抵尾款</option>
+								<option value='訂金依出貨比例扣除'>訂金依出貨比例扣除</option>
+							</select>
+							<a>。每月出貨貨款為當月月結</a><input type="text" style="width:40px;" id="c6_1_a_3"/><a>天票期。</a>
+							<br>
+							<a>　　 例：7月帳，開立9月10日到期支票。</a>
+							<br>
+							<a>　　 交貨期限到需將未出鋼筋噸數的金額扣除訂金依 當期貨款支付現金完案。</a>
+						</div>
+						<div id="c6_1_b" style="float:left;">
+							<a>每月出貨貨款為當月月結</a><input type="text" style="width:40px;" id="c6_1_b_1"/><a>天票期。例：7月帳，開立9月10日到期支票。</a>
+							<br>
+							<a>　　 交貨期限到需將未出鋼筋噸數的金額依當期貨款支付現金完案。</a>
+						</div>
+						<div id="c6_1_c" style="float:left;">
+							<a>出貨前電匯貨款全額。</a><input type="text" style="width:150px;" id="c6_1_c_1"/>
+						</div>
+						<div id="c6_1_d" style="float:left;">
+							<a></a><input type="text" style="width:150px;" id="c6_1_d_1"/>
+						</div>
+					</td>
+				</tr>
+				<tr>
+					<td>
+						<a>　</a><a>(2)</a><a>甲方同意依照合約所定之付款日期及方式繳付價款予乙方，如逾期未付則按總價款</a>
+					</td>
+				</tr>
+				<tr>
+					<td>
+						<a>　　 之日息萬分之六計算遲延付款之利息，乙方並得據以暫停出貨。</a>
+					</td>
+				</tr>
+				<tr>
+					<td>
+						<a>7.</a><a>材料檢驗：</a>
+					</td>
+				</tr>
+				<tr>
+					<td>
+						<a>　(1)</a><a>乙方鋼筋出廠毎批均附鋼筋無輻射證明，甲方需要檢驗報告時依CNS560規範執行。</a>
+					</td>
+				</tr>
+				<tr>
+					<td>
+						<a>　(2)</a><a>鋼筋未經送驗合格前，不得加工及使用，否則所衍費用由甲方自行吸收，且該批鋼筋不得辦理</a>
+					</td>
+				</tr>
+				<tr>
+					<td>
+						<a>　　 退貨。</a>
+					</td>
+				</tr>
+          		<tr>
+					<td>
+						<a>8.</a><a>特約事項：乙方所提供材料於甲方各期貨款支付或票據兌現前乙方仍保有所有權。</a>
+					</td>
+				</tr>
+				
+				<tr>
+					<td>
+						<a>9.</a><a>本交易為附條件買賣，依動產交易法第三章之規定，在貨款未付清或票據未兌現之前，標的物之所有權歸屬本公司所有，買受人無異議，本公司無需經法律程序隨時取回本貨品或貨物清償。</a>
+					</td>
+				</tr>
+				<tr>
+					<td>
+						<a>10.</a><a>本合約所立條文不得任意更改。</a>
+					</td>
+				</tr>
+				<tr>
+					<td>
+						<a>11.</a><a>本合約如有爭議雙方願以高雄地方法院為第一管轄法院。</a>
+					</td>
+				</tr>
+			</table>
+		</div>
+		
 	</body>
 	
 	
