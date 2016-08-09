@@ -46,6 +46,7 @@
 				bbsKey = ['noa', 'noq'];
 				bbtKey = ['noa', 'noq'];
 				q_brwCount();
+				q_content="where=^^left(noa,1)='M'^^";
 				q_gt(q_name, q_content, q_sqlCount, 1, 0, '', r_accy);
 			});
 
@@ -94,16 +95,16 @@
 					}
 				}
 				q_cmbParse("cmbSpec", t_item);
-				/*q_gt('adsize', "where=^^1=1 and mon!='' ^^", 0, 0, 0, "getadsize",r_accy,1); //長度
+				q_gt('adsize', "where=^^1=1 and mon!='' ^^", 0, 0, 0, "getadsize",r_accy,1); //長度
 				var as = _q_appendData("adsize", "", true);
 				as.sort(function(a, b){if (a.mon > b.mon) {return 1;}if (a.mon < b.mon) {return -1;}});
-				t_item = " @ ";
+				t_item = "";
 				if (as[0] != undefined) {
 					for ( i = 0; i < as.length; i++) {
 						t_item = t_item + (t_item.length > 0 ? ',' : '') + as[i].mon + '@' + as[i].mon;
 					}
 				}
-				q_cmbParse("cmbMo", t_item);*/
+				q_cmbParse("cmbStatus", t_item);
 				
 				$('#btnWorkjImport').click(function() {
 					var t_mech=$('#cmbMechno').val();
@@ -182,10 +183,11 @@
 					}
 					
 					var getucc=[];
-					var t_cutlength=$('#txtStatus').val();//可裁剪的板料長度
-					if(t_cutlength.length==0)
+					var t_cutlength=$('#cmbStatus').val();//可裁剪的板料長度
+					if(t_cutlength.length==0){
 						t_cutlength='12';
-					t_cutlength=t_cutlength.split('');
+						t_cutlength=t_cutlength.split(',');
+					}
 					
 					//推算選料
 					//先裁剪最大長度
@@ -255,7 +257,7 @@
 												bmount++;
 												for (var m=0;m<cupcutlength.length;m++){//裁切數量
 													var x_n=-1;
-													for (var n=0;cuttmp.length,n++){
+													for (var n=0;cuttmp.length;n++){
 														if(cuttmp[n].lengthb==dec(cupcutlength[m])){
 															cuttmp[n].mount=cuttmp[n].mount+1;
 															break;	
@@ -1066,7 +1068,10 @@
 					</tr>
 					<tr>
 						<td><span> </span><a id="lblStatus" class="lbl" > </a></td>
-						<td colspan="2"><input id="txtStatus" type="text" class="txt c1"/></td>
+						<td colspan="2" rowspan='3'>
+							<!--<input id="txtStatus" type="text" class="txt c1"/>-->
+							<select id="cmbStatus" class="txt c1" multiple="multiple"> </select>
+						</td>
 						<td><input type="button" id="btnUcccstk" style="width:120px;text-align: left;" /></td>
 						<td> </td>
 						<td class="cut"><a style="margin-left: 50px;">4M~7M</a></td>
@@ -1074,30 +1079,33 @@
 						<td class="cut"> </td>
 					</tr>
 					<tr>
-						<td > </td>
-						<td colspan="2"><span> </span><a class="lbl" style="float: left;color: red;">多種長度請用逗號隔開</a></td>
-						<td><input type="button" id="btnCubu" style="width:120px;text-align: left;"/></td>
+						<td> </td>
+						<td style="color: red;">多選請按Ctrl點選</td>
 						<td> </td>
 						<td class="cut"><a style="margin-left: 50px;">7M以上</a></td>
 						<td class="cut"><input id="txtM7" type="text" class="txt num c1" style="width: 70%;"/>秒</td>
 						<td class="cut"> </td>
 					</tr>
 					<tr>
-						<td><span> </span><a id="lblMemo" class="lbl" > </a></td>
-						<td colspan="3"><input id="txtMemo" type="text" class="txt c1"/></td>
+						<td> </td>
+						<td> </td>
 						<td> </td>
 						<td class="cut">裁剪</td>
 						<td class="cut"><input id="txtM8" type="text" class="txt num c1" /></td>
 						<td class="cut">秒/刀 </td>
 					</tr>
 					<tr>
-						<td colspan="5"> </td>
+						<td colspan="3"> </td>
+						<td><input type="button" id="btnCubu" style="width:120px;text-align: left;"/></td>
+						<td> </td>
 						<td class="cut">卸料/刀</td>
 						<td class="cut"> </td>
 						<td class="cut"> </td>
 					</tr>
 					<tr>
-						<td colspan="5"> </td>
+						<td><span> </span><a id="lblMemo" class="lbl" > </a></td>
+						<td colspan="3"><input id="txtMemo" type="text" class="txt c1"/></td>
+						<td> </td>
 						<td class="cut"><a style="margin-left: 50px;">1.5M內</a></td>
 						<td class="cut"><input id="txtBdime" type="text" class="txt num c1" style="width: 70%;" />秒</td>
 						<td class="cut"> </td>

@@ -52,7 +52,7 @@
 				document.title='裁剪床設定';
 				q_gt('add5', "where=^^1=1^^" , 0, 0, 0, "getadd5",r_accy,1); //號數
 				var as = _q_appendData("add5", "", true);
-				as.sort(function(a, b){if (a.typea > b.typea) {return 1;}if (a.typea < b.typea) {return -1;}});
+				as.sort(function(a, b){if (dec(a.typea) > dec(b.typea)) {return 1;}if (dec(a.typea) < dec(b.typea)) {return -1;}});
 				var t_item = " @ ";
 				if (as[0] != undefined) {
 					for ( i = 0; i < as.length; i++) {
