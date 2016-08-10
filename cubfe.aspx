@@ -46,7 +46,6 @@
 				bbsKey = ['noa', 'noq'];
 				bbtKey = ['noa', 'noq'];
 				q_brwCount();
-				q_content="where=^^left(noa,1)='M'^^";
 				q_gt(q_name, q_content, q_sqlCount, 1, 0, '', r_accy);
 			});
 
@@ -76,7 +75,7 @@
 				document.title='鋼筋裁剪單';
 				q_gt('add5', "where=^^1=1^^" , 0, 0, 0, "getadd5",r_accy,1); //號數
 				var as = _q_appendData("add5", "", true);
-				as.sort(function(a, b){if (a.typea > b.typea) {return 1;}if (a.typea < b.typea) {return -1;}});
+				as.sort(function(a, b){if (dec(a.typea) > dec(b.typea)) {return 1;}if (dec(a.typea) < dec(b.typea)) {return -1;}});
 				var t_item = " @ ";
 				if (as[0] != undefined) {
 					for ( i = 0; i < as.length; i++) {
@@ -135,7 +134,7 @@
 				});
 				
 				$('#btnUcccstk').click(function() {
-					return;
+					//return;
 					var t_err='';
 					var t_same=[];
 					//相同材質號數長度合併
@@ -171,12 +170,12 @@
 									'size':tsize,
 									'lengthb':tlength,
 									'mount':tmount,
-									'data':{
+									'data':[{
 										'nor':i,
 										'mount':tmount,
 										'w03':tw03,
 										'w04':tw04
-									}
+									}]
 								});
 							}
 						}
@@ -191,7 +190,7 @@
 					
 					//推算選料
 					//先裁剪最大長度
-					t_same.sort(function(a, b) {if(a.lengthb>b.lengthb) {return 1;} if (a.lengthb < b.lengthb) {return -1;} return 0;});
+					t_same.sort(function(a, b) {if(a.lengthb>b.lengthb) {return -1;} if (a.lengthb < b.lengthb) {return 1;} return 0;});
 					
 					var specsize='';
 					for (var i=0;i<t_same.length;i++){
@@ -214,24 +213,36 @@
 							for(var j=0;j<cutlengthb.length;j++){
 								cutlengthb[j]=dec(cutlengthb[j]);
 							}
-							cutlengthb.sort(function(a, b) { if(a > b) {return 1;} if (a < b) {return -1;} return 0;});
+							cutlengthb.sort(function(a, b) { if(a > b) {return -1;} if (a < b) {return 1;} return 0;});
 							
 							//取得裁切組合
 							var t_cups=[];
-							for(var j=0;j<t_cutlength.length;j++){
-								var clength=dec(cutlengthb[j]);
+							/*for(var j=0;j<t_cutlength.length;j++){
+								var clength=dec(t_cutlength[j])*100; //原單位M
 								var t_cup=getmlength(clength,clength,0,cutlengthb,'',[]);
 								t_cups=t_cups.concat(t_cup);
 							}
 							
 							//損耗率排序
-							t_cups.sort(function(a, b) { if(a.wrate > b.wrate) {return -1;} if (a.wrate < b.wrate) {return 1;} return 0;});
+							t_cups.sort(function(a, b) { if(a.wrate > b.wrate) {return 1;} if (a.wrate < b.wrate) {return -1;} return 0;});*/
 							
 							//材質號數最大長度 先處理
 							for(var j=0;j<cutlengthb.length;j++){//已排序過 由大到小
 								//取得所需數量
 								var max_mount=0;
 								var t_n=-1;
+								
+								//已裁剪完的長度已不需要，再重新取得組合 求得最小損耗
+								t_cups=[];
+								for(var k=0;k<t_cutlength.length;k++){
+									var clength=dec(t_cutlength[k])*100; //原單位M
+									var t_cup=getmlength(clength,clength,0,cutlengthb,'',[]);
+									t_cups=t_cups.concat(t_cup);
+								}
+								
+								//損耗率排序
+								t_cups.sort(function(a, b) { if(a.wrate > b.wrate) {return 1;} if (a.wrate < b.wrate) {return -1;} return 0;});
+								
 								for(var k=0;k<t_same.length;k++){
 									var tspec2=t_same[k].spec;
 									var tsize2=t_same[k].size;
@@ -257,9 +268,10 @@
 												bmount++;
 												for (var m=0;m<cupcutlength.length;m++){//裁切數量
 													var x_n=-1;
-													for (var n=0;cuttmp.length;n++){
+													for (var n=0;n<cuttmp.length;n++){
 														if(cuttmp[n].lengthb==dec(cupcutlength[m])){
 															cuttmp[n].mount=cuttmp[n].mount+1;
+															x_n=n;
 															break;	
 														}
 													}
@@ -287,8 +299,6 @@
 								}
 								//扣除已裁切完的數量
 								for (var m=0;m<cuttmp.length;m++){
-									cuttmp[m].lengthb
-									cuttmp[m].mount
 									for(var k=0;k<t_same.length;k++){
 										var tspec2=t_same[k].spec;
 										var tsize2=t_same[k].size;
@@ -299,6 +309,9 @@
 										}
 									}
 								}
+								//已裁剪完的長度已不需要
+								cutlengthb.splice(j, 1);
+								j--;
 							}
 						}
 					}
@@ -312,7 +325,7 @@
 						//取得產品資料
 						var t_where="1=1 and product like '%"+getucc[i].spec+"%' ";
 						t_where=t_where+" and product like '%"+getucc[i].size+"%' ";
-						t_where=t_where+" and product like '%"+(getucc[i].lengthb/100).toString()+"M' ";
+						t_where=t_where+" and (product like '%"+(getucc[i].lengthb/100).toString()+"M' or product like '%"+(getucc[i].lengthb/100).toString()+".0M' )";
 						t_where="where=^^"+t_where+"^^";
 						q_gt('ucc', t_where , 0, 0, 0, "getucc",r_accy,1); //號數
 						var as = _q_appendData("ucc", "", true);
@@ -341,7 +354,7 @@
 						
 					for(var i=0;i<cutlength.length;i++){
 						if(lengthb-cutlength[i]>=0){
-							getmlength(lengthb,cutlength[i],cutlength,cutall,cutarry);
+							getmlength(olength,lengthb,cutlength[i],cutlength,cutall,cutarry);
 						}else{
 							cutall=cutall+'#'+lengthb;
 							cutarry.push({'olength':olength,'cutlength':cutall,'wlenhth':lengthb,'wrate':round(lengthb/olength,4)});
@@ -470,6 +483,9 @@
 				$('#txtNoa').val('AUTO');
 				$('#txtDatea').val(q_date());
 				$('#txtDatea').focus();
+				
+				$('#txtBdate').val(q_date());
+				$('#txtEdate').val(q_cdn(q_date(),7));
 				
 				//預設值
 				$('#txtM2').val(12);

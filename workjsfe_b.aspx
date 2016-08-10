@@ -84,9 +84,9 @@
 					<td align="center"><input id="chkSel.*" type="checkbox"/></td>
 					<td><input class="txt" id="txtOdate.*" type="text" style="width:98%; text-align:left;"/></td>
 					<td>
-						<input class="txt" id="txtCustno.*" type="text" style="width:98%; text-align:left;"/>
+						<input class="txt" id="txtCustno.*" type="hidden" style="width:98%; text-align:left;"/>
 						<input class="txt" id="txtCust.*" type="hidden" style="width:98%; text-align:left;"/>
-						<input class="txt" id="txtNick.*" type="hidden" style="width:98%; text-align:left;"/>
+						<input class="txt" id="txtNick.*" type="text" style="width:98%; text-align:left;"/>
 					</td>
 					<td>
 						<input class="txt" id="txtProductno.*" type="text" style="width:35%; text-align:left;"/>
