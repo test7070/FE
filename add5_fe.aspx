@@ -50,7 +50,7 @@
 				q_getFormat();
 				bbmMask = [];
 				q_mask(bbmMask);
-				bbmNum = [['txtBoil',10, 2, 1]];
+				bbmNum = [['txtBoil',10, 1, 1]];
 				bbsNum = [['txtCount2', 10,0, 1]];
 				
 				document.title='號數主檔';
@@ -58,7 +58,7 @@
 				q_gt('adsize', "where=^^1=1 and mon!='' ^^", 0, 0, 0, "getadsize",r_accy,1); //長度
 				var as = _q_appendData("adsize", "", true);
 				as.sort(function(a, b){if (a.mon > b.mon) {return 1;}if (a.mon < b.mon) {return -1;}});
-				t_item = " @ ";
+				t_item = "@ ";
 				if (as[0] != undefined) {
 					for ( i = 0; i < as.length; i++) {
 						t_item = t_item + (t_item.length > 0 ? ',' : '') + as[i].mon + '@' + as[i].mon;
@@ -158,7 +158,7 @@
 
 			function bbsSave(as) {
 				t_err = '';
-				if (!as['postno']) {
+				if (!as['postno'] && !as['count2']) {
 					as[bbsKey[1]] = '';
 					return;
 				}
@@ -380,8 +380,8 @@
 							<input id="txtNoa"  type="text" class="txt c1" style="display: none;" />
 						</td>
 						<td><span> </span><a id='lblBoil' class="lbl"> </a></td>
-						<td>
-							<input id="txtBoil" type="text" class="txt num c1" />
+						<td><input id="txtBoil" type="text" class="txt num c1" style="width: 60%;" />
+							<span> </span><a class="lbl"> cm </a>
 						</td>
 					</tr>
 				</table>

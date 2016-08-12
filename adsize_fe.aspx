@@ -47,7 +47,7 @@
 				bbmMask = [];
 				q_mask(bbmMask);
 				bbmNum = []
-				document.title='長度主檔';
+				document.title='板料長度主檔';
 			}
 
 			function q_boxClose(s2) {
