@@ -29,6 +29,8 @@ begin
 		from view_vccs where noa!=@t_vccno and len(isnull(ordeno,''))>0
 		group by ordeno,no2) c on a.noa=c.ordeno and a.no2=c.no2
 	where b.noa is not null
+	and isnull(a.cancel,0)=0
+	and isnull(b.cancel,0)=0
 	and ISNULL(b.custno,0)=@t_custno
 	--要注意是訂單是否有勾專案,沒勾才不匯入已結案的
 	and (isnull(b.isproj,0)=1 or (isnull(b.isproj,0)=0 and ISNULL(b.enda,0)=0 and ISNULL(a.enda,0)=0))
