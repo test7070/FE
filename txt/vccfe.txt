@@ -428,7 +428,7 @@ vcc_tranmoney:--vccfe.txt	 vcc_tranmoney  基價和運費
 	update #vcc_tranmoney set tranmoney=round(a.tranmoney*isnull(c.price,0),0)
 	from #vcc_tranmoney a
 	left join addr2 b on a.transtartno=b.noa
-	outer apply(select top 1 * from carp where noa=a.styleno and addrno=b.p_post)c
+	outer apply(select top 1 * from carp where styleno=a.styleno and addrno=b.p_post)c
 	
 	--update
 	declare @accy nvarchar(20)

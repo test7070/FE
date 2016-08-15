@@ -71,7 +71,7 @@ drp_save:--drp_save
 	
 	update @tmp set tranmoney=round(a.tranmoney*isnull(b.price,0),0)
 	from @tmp a
-	outer apply(select top 1 * from carp where noa=a.styleno and addrno=a.post)b
+	outer apply(select top 1 * from carp where styleno=a.styleno and addrno=a.post)b
 	
 	------------------------------------------------------------------------------
 	DECLARE @chk tinyint = 0
