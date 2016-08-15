@@ -45,7 +45,7 @@
 				$(this).val($.trim($(this).val()).toUpperCase());		
 				if($(this).val().length>0){
 					t_where="where=^^ noa='"+$(this).val()+"'^^";
-					q_gt('carp', t_where, 0, 0, 0, "cheakCarp_change", r_accy);
+					q_gt('carp', t_where, 0, 0, 0, "checkCarp_change", r_accy);
 				}
 			});
 		}
@@ -64,16 +64,16 @@
 
 		function q_gtPost(t_name) {  
 			switch (t_name) {
-				case 'cheakCarp_change':
+				case 'checkCarp_change':
 						var as = _q_appendData("carp", "", true);
 						if (as[0] != undefined){
-							alert('已存在 '+as[0].noa+' '+as[0].styleno+' '+as[0].addrno+' '+as[0].addr);
+							alert('已存在 '+as[0].noa+' '+as[0].styleno+' '+as[0].addrno);
 						}
 						break;
-				case 'cheakCarp_btnOk':
+				case 'checkCarp_btnOk':
 						var as = _q_appendData("carp", "", true);
 						if (as[0] != undefined){
-							alert('已存在 '+as[0].noa+' '+as[0].styleno+' '+as[0].addrno+' '+as[0].addr);
+							alert('已存在 '+as[0].noa+' '+as[0].styleno+' '+as[0].addrno);
 							Unlock();
 							return;
 						}else{
