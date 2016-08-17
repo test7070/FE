@@ -43,6 +43,11 @@
 				_bbsAssign();
 				for (var j = 0; j < q_bbsCount; j++) {
 				}
+				$('#checkAllCheckbox').click(function() {
+                    $('input[type=checkbox][id^=chkSel]').each(function() {
+                            $(this).attr('checked', $('#checkAllCheckbox').is(':checked'));
+                    });
+                });
 			}
 
 			function q_gtPost() {
@@ -70,7 +75,7 @@
 		<div  id="dbbs"  >
 			<table id="tbbs" class='tbbs'  border="2"  cellpadding='2' cellspacing='1' style='width:100%'  >
 				<tr style='color:White; background:#003366;' >
-					<td align="center" style="width:1%;"> </td>
+					<td align="center" style="width:1%;"><input type="checkbox" id="checkAllCheckbox"/></td>
 					<td align="center" style="width:6%;"><a id='lblOdate'>預交日</a></td>
 					<td align="center" style="width:8%;"><a id='lblCust'>客戶</a></td>
 					<td align="center" style="width:15%;"><a id='lblProduct'>品名</a></td>

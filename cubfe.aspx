@@ -109,8 +109,8 @@
 					var t_mech=$('#cmbMechno').val();
 					var t_bdate = trim($('#txtBdate').val());
 					var t_edate = trim($('#txtEdate').val());
-					var t_spec = dec($('#cmbSpec').val());
-					var t_m1 = dec($('#cmbM1').val());
+					var t_spec = $('#cmbSpec').val();
+					var t_m1 = $('#cmbM1').val();
 					//外調定尺不用裁剪
 					var t_where = " 1=1 and (mech1='"+t_mech+"' or mech2='"+t_mech+"' or mech3='"+t_mech+"' or mech4='"+t_mech+"' or mech5='"+t_mech+"')";
 					t_bdate = (emp(t_bdate) ? '' : t_bdate);
@@ -123,7 +123,8 @@
 						t_where += " and (b.product like '%" + t_m1 + "%') ";
 					}
 					
-					q_box("workjsfe_b.aspx?" + r_userno + ";" + r_name + ";" + q_time + ";" + t_where, 'workjsfe_b', "95%", "95%", q_getMsg('popOrde'));
+					if(q_cur==1 || q_cur==2)
+						q_box("workjsfe_b.aspx?" + r_userno + ";" + r_name + ";" + q_time + ";" + t_where, 'workjsfe_b', "95%", "95%", q_getMsg('popOrde'));
 				});
 				
 				$('#btnCubu').click(function() {
@@ -135,6 +136,7 @@
 				
 				$('#btnUcccstk').click(function() {
 					//return;
+					Lock();
 					var t_err='';
 					var t_same=[];
 					//相同材質號數長度合併
@@ -230,13 +232,15 @@
 							for(var j=0;j<cutlengthb.length;j++){//已排序過 由大到小
 								//取得所需數量
 								var max_mount=0;
+								var t_nor='';
 								var t_n=-1;
 								
 								//已裁剪完的長度已不需要，再重新取得組合 求得最小損耗
 								t_cups=[];
 								for(var k=0;k<t_cutlength.length;k++){
 									var clength=dec(t_cutlength[k])*100; //原單位M
-									var t_cup=getmlength(clength,clength,0,cutlengthb,'',[]);
+									rep='';
+									var t_cup=getmlength(clength,clength,cutlengthb[j],cutlengthb,'',[],0);
 									t_cups=t_cups.concat(t_cup);
 								}
 								
@@ -291,6 +295,7 @@
 												'size':tsize1,
 												'lengthb':cupolength,
 												'mount':bmount,
+												'nor':'',
 												'data':cuttmp
 											});
 											break;
@@ -305,13 +310,49 @@
 										var lengthb2=t_same[k].lengthb;
 										if(tspec1==tspec2 && tsize1==tsize2 && lengthb2==cuttmp[m].lengthb){
 											t_same[k].mount=t_same[k].mount-cuttmp[m].mount;
+											var tcusttmpmount=cuttmp[m].mount;
+											
+											for(var n=0;n<t_same[k].data.length;n++){
+												if(t_same[k].data[n].mount>0){
+													if(t_same[k].data[n].mount>=tcusttmpmount){
+														t_same[k].data[n].mount=t_same[k].data[n].mount-tcusttmpmount;
+														tcusttmpmount=0;
+													}else{
+														tcusttmpmount=tcusttmpmount-t_same[k].data[n].mount;
+														t_same[k].data[n].mount=0;
+													}
+													if(t_nor.indexOf((t_same[k].data[n].nor+1).toString())==-1){
+														t_nor=t_nor+(t_nor.length>0?',':'')+(t_same[k].data[n].nor+1);
+													}
+												}
+												if(tcusttmpmount<=0){
+													break;
+												}
+											}
 											break;
 										}
 									}
 								}
+								//更新最後一個物料的配料項次
+								if(getucc[getucc.length-1].nor=='')
+									getucc[getucc.length-1].nor=t_nor;
+								
 								//已裁剪完的長度已不需要
 								cutlengthb.splice(j, 1);
 								j--;
+								//其他剪長的長度也刪除
+								for(var m=0;m<cutlengthb.length;m++){
+									for(var k=0;k<t_same.length;k++){
+										var tspec2=t_same[k].spec;
+										var tsize2=t_same[k].size;
+										var lengthb2=t_same[k].lengthb;
+										var mount2=t_same[k].mount;
+										if(tspec1==tspec2 && tsize1==tsize2 && cutlengthb[m]==lengthb2 && mount2<=0){
+											cutlengthb.splice(m, 1);
+											m--;
+										}
+									}	
+								}
 							}
 						}
 					}
@@ -320,8 +361,29 @@
 					for (var i = 0; i < q_bbtCount; i++) {
 						$('#btnMinut__'+i).click();
 					}
+					while(getucc.length>q_bbtCount){
+						$('#btnPlut').click()
+					}
+					
 					var t_n=0;
 					for (var i = 0; i < getucc.length; i++) {
+						var t_weight=0;
+						switch(getucc[i].size){
+				            case '3#': t_weight=0.560; break;
+				            case '4#': t_weight=0.994; break;
+				            case '5#': t_weight=1.560; break;
+				            case '6#': t_weight=2.250; break;
+				            case '7#': t_weight=3.040; break;
+				            case '8#': t_weight=3.980; break;
+				            case '9#': t_weight=5.080; break;
+				            case '10#': t_weight=6.390; break;
+				            case '11#': t_weight=7.900; break;
+				            case '12#': t_weight=9.570; break;
+				            case '14#': t_weight=11.40; break;
+				            case '16#': t_weight=15.50; break;
+				            case '18#': t_weight=20.20; break;
+						}
+						
 						//取得產品資料
 						var t_where="1=1 and product like '%"+getucc[i].spec+"%' ";
 						t_where=t_where+" and product like '%"+getucc[i].size+"%' ";
@@ -334,19 +396,25 @@
 							$('#txtProduct__'+t_n).val(as[0].product);
 							$('#txtUnit__'+t_n).val(as[0].unit);
 							$('#txtGmount__'+t_n).val(getucc[i].mount);
+							$('#txtGweight__'+t_n).val(round(getucc[i].mount*t_weight*getucc[i].lengthb/100,0));
+							$('#txtNor__'+t_n).val(getucc[i].nor);
 						}else{
 							$('#txtProductno__'+t_n).val('');
 							$('#txtProduct__'+t_n).val('鋼筋熱軋'+getucc[i].spec+' '+getucc[i].size+'*'+(getucc[i].lengthb/100).toString()+'M');
 							$('#txtUnit__'+t_n).val('KG');
 							$('#txtGmount__'+t_n).val(getucc[i].mount);
+							$('#txtGweight__'+t_n).val(round(getucc[i].mount*t_weight*getucc[i].lengthb/100,2));
+							$('#txtNor__'+t_n).val(getucc[i].nor);
 						}
 						t_n++;
 					}
+					Unlock();
 				});
 			}
 			
 			//取得組合陣列
-			function getmlength (olength,lengthb,cut,cutlength,cutall,cutarry){//原長度,目前長度,本次裁剪長度,可裁剪長度,裁剪樣式,回傳陣列
+			var rep='';
+			function getmlength (olength,lengthb,cut,cutlength,cutall,cutarry,repall){//原長度,目前長度,本次裁剪長度,可裁剪長度,裁剪樣式,回傳陣列
 				if(cut>=0 && lengthb-cut>=0){
 					lengthb=lengthb-cut;
 					if(cut>0)
@@ -354,18 +422,24 @@
 						
 					for(var i=0;i<cutlength.length;i++){
 						if(lengthb-cutlength[i]>=0){
-							getmlength(olength,lengthb,cutlength[i],cutlength,cutall,cutarry);
+							repall=repall+Math.pow(2,i);
+							getmlength(olength,lengthb,cutlength[i],cutlength,cutall,cutarry,repall);
 						}else{
 							cutall=cutall+'#'+lengthb;
-							cutarry.push({'olength':olength,'cutlength':cutall,'wlenhth':lengthb,'wrate':round(lengthb/olength,4)});
-							return ;
+							if(rep.indexOf(repall.toString()+'#')==-1){
+								rep=rep+repall.toString()+'#';
+								cutarry.push({'olength':olength,'cutlength':cutall,'wlenhth':lengthb,'wrate':round(lengthb/olength,4)});
+							}
+							return cutarry;
 						}
 					}
-						
 				}else{
 					cutall=cutall+'#'+lengthb;
-					cutarry.push({'olength':olength,'cutlength':cutall,'wlenhth':lengthb,'wrate':round(lengthb/olength,4)});
-					return ;
+					if(rep.indexOf(repall.toString()+'#')==-1){
+						rep=rep+repall.toString()+'#';
+						cutarry.push({'olength':olength,'cutlength':cutall,'wlenhth':lengthb,'wrate':round(lengthb/olength,4)});
+					}
+					return cutarry;
 				}
 				return cutarry;
 			}
@@ -582,7 +656,7 @@
 					}
 				}
 				
-				ordearry.sort(function(a, b) {if(a.lengthb>b.lengthb) {return 1;}if (a.lengthb < b.lengthb) {return -1;}return 0;})
+				ordearry.sort(function(a, b) {if(a.lengthb>b.lengthb) {return -1;}if (a.lengthb < b.lengthb) {return 1;}return 0;})
 				
 				//計算損耗
 				for (var i = 0; i < ordearry.length; i++) {
