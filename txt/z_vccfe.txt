@@ -394,7 +394,7 @@ z_vccfe3:--z_vccfe3
 									when'2' then -@mount 
 									else 0 
 								end 
-				set @t_weight1 = @t_mount1 + case @typea 
+				set @t_weight1 = @t_weight1 + case @typea 
 									when'1' then @weight
 									when'2' then -@weight
 									else 0 
@@ -438,7 +438,7 @@ z_vccfe3:--z_vccfe3
 									when'2' then -@mount 
 									else 0 
 								end 
-				set @t_weight2 = @t_mount2 + case @typea 
+				set @t_weight2 = @t_weight2 + case @typea 
 									when'1' then @weight
 									when'2' then -@weight
 									else 0 
