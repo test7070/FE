@@ -21,7 +21,7 @@
 			var q_readonly = [];
 			var q_readonlys = ['txtProduct'];
 			var bbmNum = [];
-			var bbsNum = [['txtMount',10,0,1],['txtWeight',15,2,1]];
+			var bbsNum = [['txtMount',10,0,1],['txtWeight',15,2,1],['txtLengthb',15,0,1]];
 			var bbmMask = [];
 			var bbsMask = [];
 			var Parent = window.parent;
@@ -34,8 +34,8 @@
 			aPop = new Array(
 				['txtStoreno_', 'btnStoreno_', 'store', 'noa,store', 'txtStoreno_,txtStore_', 'store_b.aspx'],
 				['txtCustno_', 'btnCustno_', 'cust', 'noa,nick', 'txtCustno_,txtComp_', 'cust_b.aspx'],
-				['txtOrdeno_', 'btnOrdeno_', 'workjs_fe', 'a.noa,b.noq,custno,cust,productno,product', 'txtOrdeno_,txtNo2_,txtCustno_,txtComp_,txtProductno_,txtProduct_', 'workjsfe_b.aspx', '95%', '60%'],
-				['txtProductno_', 'btnProductno_', 'ucaucc', 'noa,product', 'txtProductno_', 'ucaucc_b.aspx']
+				['txtOrdeno_', '', 'workjs_fe', 'a.noa,b.noq,custno,cust,productno,product', 'txtOrdeno_,txtNo2_,txtCustno_,txtComp_,txtProductno_,txtProduct_', '', '95%', '60%'],
+				['txtProductno_', 'btnProductno_', 'ucaucc', 'noa,product', 'txtProductno_,txtProduct_', 'ucaucc_b.aspx']
 			);
 			$(document).ready(function() {
 				bbmKey = [];
@@ -63,71 +63,42 @@
 				parent.$.fn.colorbox.resize({
 					height : "750px"
 				});
+				if (Parent.q_name && Parent.q_name == 'cub') {
+					$('#btnCubsin').show();
+				}
+				$('#btnCubsin').click(function() {
+					if(q_cur==1 || q_cur==2){
+						for (var j = 0; j < q_bbsCount; j++) {
+							$('#btnMinus_'+j).click();
+						}
+						for (var j = 0; j < cubBBsArray.length; j++) {
+							cubBBsArray[j].datea=q_date();
+						}
+						q_gridAddRow(bbsHtm, 'tbbs'
+						, 'txtOrdeno,txtNo2,txtCustno,txtComp,txtDatea,txtProductno,txtProduct,txtLengthb,txtMount,txtWeight,txtMemo'
+						, cubBBsArray.length, cubBBsArray
+						, 'ordeno,no2,custno,comp,datea,productno,product,lengthb,mount,weight,memo', 'txtOrdeno,txtProductno');
+					}
+				});
 			}
 
 			var toFocusOrdeno = 0;
 			function bbsAssign() {
 				_bbsAssign();
 				$('#lblUno').text('批號');
-				$('#lblOrdeno').text('訂單編號');	
+				$('#lblLengthb').text('長度');
+				$('#lblOrdeno').text('加工單號');	
 				$('#lblMemo').text('備註');
-				SetBBsReadonly(ReadOnlyUno); //鎖住已領料批號
 				for (var j = 0; j < q_bbsCount; j++) {
 					$('#lblNo_' + j).text((j + 1));
 					if (Parent.q_name && Parent.q_name == 'cub') {
 						
-						$('#txtOrdeno_' + j).change(function() {
-							var thisordeno = trim($(this).val());
-							if (cubBBsArray[dec(thisordeno) - 1] != undefined) {
-								var temp_bbs = cubBBsArray[dec(thisordeno) - 1];
-								var n = $(this).attr('id').split('_')[$(this).attr('id').split('_').length - 1];
-								$(this).val(temp_bbs.ordeno);
-								$('#txtNo2_' + n).val(temp_bbs.no2);
-								$('#txtCustno_' + n).val(temp_bbs.custno);
-								q_popsChange($('#txtCustno_' + n));
-								$('#txtProductno_' + n).val(temp_bbs.productno);
-								$('#txtProduct_' + n).val(temp_bbs.product);
-								$('#txtMount_' + n).val(temp_bbs.mount);
-								$('#txtWeight_' + n).val(temp_bbs.weight);
-								$('#txtUnit_' + n).val(temp_bbs.unit);
-							}
-						});
-										
 						$('#txtWeight_' + j).change(function() {
 							TotWeight();
 							var n = $(this).attr('id').split('_')[$(this).attr('id').split('_').length - 1];
 							var t_ordeno = $.trim($('#txtOrdeno_' + n).val());
 							var t_no2 = $.trim($('#txtNo2_' + n).val());
-							if (t_ordeno.length > 0) {
-								for (var i = 0; i < cubBBsArray.length; i++) {
-									if (cubBBsArray[i].ordeno == t_ordeno && cubBBsArray[i].no2 == t_no2) {
-										var t_weight = dec($('#txtWeight_' + n).val());
-										if (t_weight > dec(cubBBsArray[i].weight)) {
-											alert('重量不可大於訂單重量!!');
-											$('#txtWeight_' + n).val(dec(cubBBsArray[i].weight));
-											break;
-										}
-									}
-								}
-							}
-						});
-						
-						$('#txtMount_' + j).change(function() {
-							var n = $(this).attr('id').split('_')[$(this).attr('id').split('_').length - 1];
-							var t_ordeno = $.trim($('#txtOrdeno_' + n).val());
-							var t_no2 = $.trim($('#txtNo2_' + n).val());
-							if (t_ordeno.length > 0) {
-								for (var i = 0; i < cubBBsArray.length; i++) {
-									if (cubBBsArray[i].ordeno == t_ordeno && cubBBsArray[i].no2 == t_no2) {
-										var t_mount = dec($('#txtMount_' + n).val());
-										if (t_mount > dec(cubBBsArray[i].mount)) {
-											alert('數量不可大於訂單數量!!');
-											$('#txtMount_' + n).val(dec(cubBBsArray[i].mount));
-											break;
-										}
-									}
-								}
-							}
+							
 						});
 					}
 				}
@@ -135,32 +106,8 @@
 
 			function btnOk() {
 				TotWeight();
-			    bbsReSort();
                 t_key = q_getHref();
                 _btnOk(t_key[1], bbsKey[0], bbsKey[1], '', 2);
-			}
-			
-			function bbsReSort() {
-				var a_productno = new Array();
-				for (var i = 0; i < q_bbsCount; i++) {
-					var thisProductno = $.trim($('#txtProductno_' + i).val());
-					var valArray = new Array();
-					for (var j = 0; j < fbbs.length; j++) {
-						valArray[fbbs[j]] = $('#' + fbbs[j] + '_' + i).val();
-					}
-					a_productno.push([i, thisProductno, valArray]);
-				}
-				a_productno.sort(function(a, b) {
-					return a[1].charCodeAt() - b[1].charCodeAt();
-				});
-				for (var k = 0; k < q_bbsCount; k++) {
-					$('#btnMinus_' + k).click();
-				};
-				for (var s = 0; s < a_productno.length; s++) {
-					for (var key in a_productno[s][2]) {
-						$('#' + key + '_' + s).val(a_productno[s][2][key]);
-					}
-				}
 			}
 
 			function bbsSave(as) {
@@ -177,7 +124,6 @@
 				if (!t_key)
 					return;
 				_btnModi(1);
-				SetBBsReadonly(ReadOnlyUno);
 				$('#btnOk').before($('#btnOk').clone().attr('id', 'btnOk2').show()).hide();
 				$('#btnOk2').click(function() {
 					var t_errMsg = '';
@@ -197,8 +143,6 @@
 						//不存檔提示!!
 						if ((t_mount > 0) && (t_weight <= 0))
 							t_errMsg += '第 ' + (i + 1) + " 筆重量小於等於0。\n";
-						/*if ((t_mount > 0) && (t_uno.length == 0))
-							t_errMsg += '第 ' + (i + 1) + " 筆批號為空。\n";*/
 					}
 					
 					//判斷 定尺入庫 3#.4#.5#
@@ -211,7 +155,8 @@
 								//材質號數長度
 								tspec=tproduct.substr(tproduct.indexOf('S'),tproduct.indexOf(' ')-tproduct.indexOf('S'))
 								tsize=tproduct.split(' ')[1].split('*')[0];
-								tlength=dec(tproduct.split('*')[1])*100;
+								tlength=dec($('#txtLengthb_'+i).val()); //長度欄位
+								plength=dec(tproduct.split('*')[1])*100; //產品名稱取尺寸
 								
 								var t_ordeno=$('#txtOrdeno_'+i).val();
 								var t_no2=$('#txtNo2_'+i).val();
@@ -245,7 +190,7 @@
 								}
 
 								if(tsize=='3#' || tsize=='4#' || tsize=='5#'){
-									var t_where = "where=^^ style='"+tsize+"' and charindex('"+tlength+"',memo)>0 ^^";
+									var t_where = "where=^^ style='"+tsize+"' and charindex('/"+(tlength>0?tlength:plength)+"cm','/'+memo)>0 ^^";
 									q_gt('adknife', t_where, 0, 0, 0, 'adknifecheck', r_accy,1);
 									var as = _q_appendData("adknife", "", true);
 									if (as[0] == undefined) {
@@ -273,6 +218,7 @@
                             }
                         }
                     }
+                    
                     //parent.$('#txtNoa').val()
                     var t_where = '';
                     for (var i = 0; i < q_bbsCount; i++) {
@@ -288,50 +234,9 @@
 				});
 			}
 
-			function SetBBsReadonly(UnoArr) {
-				for (var j = 0; j < UnoArr.length; j++) {
-					var thisUno = $.trim(UnoArr[j]);
-					for (var k = 0; k < q_bbsCount; k++) {
-						var bbsUno = $.trim($('#txtUno_' + k).val());
-						if (thisUno == bbsUno) {
-							$('#btnMinus_' + k).attr('disabled', 'disabled');
-							$('#txtUno_' + k).attr('readonly', true).css({
-								'color' : t_color2,
-								'background' : t_background2
-							});
-						}
-					}
-				}
-			}
-
-			function GetBBsUno() {
-				var ReturnStr = '';
-				var TmpArr = [];
-				for (var i = 0; i < q_bbsCount; i++) {
-					var thisVal = $.trim($('#txtUno_' + i).val());
-					if (thisVal.length > 0) {
-						TmpArr.push(thisVal);
-					}
-				}
-				if (TmpArr.length > 0) {
-					ReturnStr = "'" + TmpArr.toString().replace(/\,/g, "','") + "'";
-					return ReturnStr;
-				} else {
-					return '';
-				}
-			}
-
 			function refresh() {
 				_refresh();
-				$('input[id*="txtProduct_"]').each(function() {
-					thisId = $(this).attr('id').split('_')[$(this).attr('id').split('_').length - 1];
-					$(this).attr('OldValue', $('#txtProductno_' + thisId).val());
-				});
-				var UnoList = $.trim(GetBBsUno());
-				if (UnoList.length > 0) {
-					var t_where = 'where=^^ (1=1) and (uno in(' + UnoList + '))^^';
-					q_gt('uccy', t_where, 0, 0, 0, 'deleUccy', r_accy);
-				}
+				
 				TotWeight();
 			}
 			function TotWeight(){
@@ -362,19 +267,6 @@
                             parent.$.fn.colorbox.close();
                         }
                         break;
-					
-					case 'deleUccy':
-						var as = _q_appendData("uccy", "", true);
-						if (as[0] != undefined) {
-							ReadOnlyUno = new Array;
-							for (var i = 0; i < as.length; i++) {
-								var asUno = $.trim(as[i].uno);
-								if (dec(as[i].gweight) > 0) {
-									ReadOnlyUno.push(asUno);
-								}
-							}
-						}
-						break;
 					case q_name:
 						t_uccArray = _q_appendData("ucc", "", true);
 						break;
@@ -393,31 +285,9 @@
 				}
 			}
 
-			function getUno(t_id, s_ouno, s_datea) {
-				var t_buno = '　';
-				var t_datea = '　';
-				var t_style = '　';
-				t_buno += s_ouno;
-				t_datea += s_datea;
-				t_style += $('#txtStyle_' + t_id).val();
-				q_func('qtxt.query.getuno^^' + t_id, 'uno.txt,getuno,' + t_buno + ';' + t_datea + ';' + t_style + ';');
-			}
-
 			function q_funcPost(t_func, result) {
 				switch(t_func) {
-					default:
-						if (t_func.split('^^')[0] == 'qtxt.query.getuno') {
-							var as = _q_appendData("tmp0", "", true, true);
-							var t_id = t_func.split('^^')[1];
-							if (as[0] != undefined) {
-								if (as.length != 1) {
-									alert('批號取得異常。');
-								} else {
-									$('#txtUno_' + t_id).val(as[0].uno);
-								}
-							}
-						}
-						break;
+					
 				}
 			}
 
@@ -443,7 +313,7 @@
 				float: left;
 			}
 			.c1 {
-				width: 90%;
+				width: 97%;
 			}
 			.c2 {
 				width: 85%;
@@ -458,7 +328,7 @@
 				text-align: right;
 			}
 			#dbbs {
-				width: 1120px;
+				width: 1280px;
 			}
 			.btn {
 				font-weight: bold;
@@ -472,6 +342,7 @@
 	ondragenter="event.dataTransfer.dropEffect='none'; event.stopPropagation(); event.preventDefault();"
 	ondragover="event.dataTransfer.dropEffect='none';event.stopPropagation(); event.preventDefault();"
 	ondrop="event.dataTransfer.dropEffect='none';event.stopPropagation(); event.preventDefault();">
+		<input id="btnCubsin" type="button" value="代入裁剪表身" style="display: none;">
 		<div id="dbbs">
 			<table id="tbbs" class='tbbs'  border="2"  cellpadding='2' cellspacing='1' style='width:100%;font-size: medium;'>
 				<tr style='color:White; background:#003366;' >
@@ -483,13 +354,14 @@
 					<td align="center" style="width:100px;"><a id='lblDatea'> </a></td>
 					<td align="center" style="width:100px;"><a id='lblStoreno'> </a></td>
 					<td align="center" style="width:150px;"><a id='lblProductno'> </a></td>
+					<td align="center" style="width:80px;"><a id='lblLengthb'> </a></td>
 					<td align="center" style="width:80px;"><a id='lblMount'> </a></td>
 					<td align="center" style="width:90px;"><a id='lblWeight'> </a><br><a id='totWeight'> </a></td>
 					<td align="center" ><a id='lblMemo'> </a></td>
 					
 				</tr>
 				<tr style="background:#cad3ff;font-size: 14px;">
-					<td style="width:1%;">
+					<td style="width:1%;" align="center">
 						<input class="btn"  id="btnMinus.*" type="button" value="-" style="font-weight: bold;"/>
 					</td>
 					<td style="text-align:center;"><a id="lblNo.*"> </a></td>
@@ -498,25 +370,26 @@
 						<input type="text" id="txtUno.*" class="txt c1"/>
 					</td>
 					<td>
-						<input type="text" id="txtOrdeno.*" class="txt" style="width:65%;"/>
+						<input type="text" id="txtOrdeno.*" class="txt" style="width:70%;"/>
 						<input type="text" id="txtNo2.*" class="txt" style="width:20%;"/>
 					</td>
 					<td>
-						<input id="btnCustno.*" type="button" value="." class="txt btn" style="width:1%;"/>
-						<input type="text" id="txtCustno.*" class="txt c3"/>
+						<!--<input id="btnCustno.*" type="button" value="." class="txt btn" style="width:1%;"/>-->
+						<input type="text" id="txtCustno.*" class="txt c1"/>
 						<input type="text" id="txtComp.*" class="txt c1"/>
 					</td>
 					<td><input type="text" id="txtDatea.*" class="txt c1"/></td>
 					<td>
-						<input id="btnStoreno.*" type="button" value="." class="txt btn" style="width:1%;"/>
-						<input type="text" id="txtStoreno.*" class="txt c3"/>
+						<!--<input id="btnStoreno.*" type="button" value="." class="txt btn" style="width:1%;"/>-->
+						<input type="text" id="txtStoreno.*" class="txt c1"/>
 						<input type="text" id="txtStore.*" class="txt c1"/>
 					</td>
 					<td>
-						<input id="btnProductno.*" type="button" value="." class="txt btn" style="width:1%;"/>
-						<input type="text" id="txtProductno.*" style="width:65%;"/>
-						<input type="text" id="txtProduct.*" class="txt c4"/>
+						<!--<input id="btnProductno.*" type="button" value="." class="txt btn" style="width:1%;"/>-->
+						<input type="text" id="txtProductno.*" class="txt c1"/>
+						<input type="text" id="txtProduct.*" class="txt c1"/>
 					</td>
+					<td><input type="text" id="txtLengthb.*" class="txt c1 num"/></td>
 					<td><input type="text" id="txtMount.*" class="txt c1 num"/></td>
 					<td><input type="text" id="txtWeight.*" class="txt c1 num"/></td>
 					<td>

@@ -228,6 +228,12 @@
 							}
 							cutlengthb.sort(function(a, b) { if(a > b) {return -1;} if (a < b) {return 1;} return 0;});
 							
+							if(cutlengthb.length>20){
+								if(!confirm('裁剪'+tspec1+' '+tsize1 +'的長度超過20組，電腦配料會花費較長時間配對，請確認是否繼續?')){
+									break;
+								}
+							}
+							
 							//取得裁切組合
 							var t_cups=[];
 							/*for(var j=0;j<t_cutlength.length;j++){
