@@ -461,16 +461,31 @@
 			//取得組合陣列
 			var rep='';
 			function getmlength (olength,lengthb,cut,cutlength,cutall,cutarry,repall){//原長度,目前長度,本次裁剪長度,可裁剪長度,裁剪樣式,回傳陣列
+				if(rep=="@@"){ //已找到損耗0的組合後續不再處理
+					return cutarry;
+				}
 				if(cut>=0 && lengthb-cut>=0){
 					lengthb=lengthb-cut;
 					if(cut>0)
 						cutall=cutall+(cutall.length>0? ',':'')+cut;
 						
-					for(var i=0;i<cutlength.length;i++){
-						if(lengthb-cutlength[i]>=0){
-							repall=repall+Math.pow(2,i);
-							getmlength(olength,lengthb,cutlength[i],cutlength,cutall,cutarry,repall);
-						}else{
+					if(lengthb==0){
+						//if(rep.indexOf(repall.toString()+'#')==-1){
+						//	rep=rep+repall.toString()+'#';
+							cutarry.push({'olength':olength,'cutlength':cutall,'wlenhth':lengthb,'wrate':round(lengthb/olength,4)});
+						//}
+						rep='@@';
+						return cutarry;
+					}else{
+						var nn=0;
+						for(var i=0;i<cutlength.length;i++){
+							if(lengthb-cutlength[i]>=0){
+								repall=repall+Math.pow(2,i);
+								getmlength(olength,lengthb,cutlength[i],cutlength,cutall,cutarry,repall);
+								nn++;
+							}
+						}
+						if(nn==0){
 							cutall=cutall+'#'+lengthb;
 							if(rep.indexOf(repall.toString()+'#')==-1){
 								rep=rep+repall.toString()+'#';
