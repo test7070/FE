@@ -576,7 +576,7 @@ z_ummfe03:--z_ummfe03
 	declare @a04 float --預　　收
 	declare @a05 float --應收總計
 	
-	declare @linecount int = 33 --每頁行數
+	declare @linecount int = 30 --每頁行數
 	declare @endcount int --總計行數
 	declare @mm int
 	
