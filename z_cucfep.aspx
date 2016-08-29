@@ -24,7 +24,7 @@
 			});
 			function q_gfPost() {
 				$('#q_report').q_report({
-					fileName : 'z_cubfep',
+					fileName : 'z_cucfep',
 					options : [{
 						type : '0',//[1]
 						name : 'accy',

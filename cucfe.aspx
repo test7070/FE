@@ -48,7 +48,8 @@
                 }
                 mainForm(1);
             }
-
+			
+			var aimgs='';
             function mainPost() {
             	document.title='鋼筋彎曲單';
             	bbsNum = [['txtMount', 15, 0, 1], ['txtWeight', 15, 2, 1], ['txtLengthb', 10, 0, 1]];
@@ -57,6 +58,8 @@
                 bbsMask = [];
                 q_mask(bbmMask);
                 
+                q_gt('img', "where=^^1=1 ^^" , 0, 0, 0, "getimgs",r_accy,1); //最小與最大可彎曲尺寸
+                aimgs = _q_appendData("imgs", "", true);
                 
                 $('#btnWorkjImport').click(function() {
 					var t_mech=$('#txtMechno').val();
@@ -214,6 +217,15 @@
 						$('#imgPic_'+j).attr('src',$('#txtImgdata_'+j).val()).show();
 					}else{
 						$('#imgPic_'+j).hide();
+					}
+					$('#lblImgs_'+j).text('');
+					if(!emp($('#txtMechno').val()) && !emp($('#txtPicno_'+j).val())){
+						for (var i = 0; i < aimgs.length; i++) {
+							if(aimgs[i].noa==$('#txtPicno_'+j).val() && aimgs[i].mechno==$('#txtMechno').val()){
+								$('#lblImgs_'+j).text('底，最長'+aimgs[i].lbottom+'公分，最短'+aimgs[i].sbottom+'公分<BR>腳，最長'+aimgs[i].lfoot+'公分，最短'+aimgs[i].sfoot+'公分');
+								break;
+							}
+						}
 					}
 				}
             }
@@ -487,6 +499,7 @@
 							<img id="imgPic.*" src="" style="display:none;"/>
 							<textarea id="txtImgdata.*" style="display:none;"> </textarea>
 							<input class="txt" id="txtPicno.*" type="text" style="width:95%;display:none;"/>
+							<a id='lblImgs.*'> </a>
 						</td>
 						<td><input id="txtLengthb.*" type="text" class="txt c1 num"/></td>
 						<td><input id="txtMount.*" type="text" class="txt c1 num"/></td>

@@ -990,7 +990,7 @@
 				//$('#lblW06_s').text('安全存量');
 				//$('#lblW07_s').text('裁剪數量');
 				$('#lblScolor_s').text('位置');
-				$('#lblMech_s').text('彎曲機台');
+				$('#lblMech_s').text('指定彎曲機台');
 				$('#lblSale_s').text('彎曲');
 				$('#lblStoreno').text('中料倉庫');
 			}
