@@ -42,6 +42,9 @@
 			function bbsAssign() {
 				_bbsAssign();
 				for (var j = 0; j < q_bbsCount; j++) {
+					if(!emp($('#txtImgdata_'+j).val())){
+						$('#imgPic_'+j).attr('src',$('#txtImgdata_'+j).val()).show();
+					}
 				}
 				$('#checkAllCheckbox').click(function() {
                     $('input[type=checkbox][id^=chkSel]').each(function() {
@@ -75,15 +78,16 @@
 		<div  id="dbbs"  >
 			<table id="tbbs" class='tbbs'  border="2"  cellpadding='2' cellspacing='1' style='width:100%'  >
 				<tr style='color:White; background:#003366;' >
-					<td align="center" style="width:1%;"><input type="checkbox" id="checkAllCheckbox"/></td>
-					<td align="center" style="width:6%;"><a id='lblOdate'>預交日</a></td>
-					<td align="center" style="width:8%;"><a id='lblCust'>客戶</a></td>
-					<td align="center" style="width:15%;"><a id='lblProduct'>品名</a></td>
-					<td align="center" style="width:5%;"><a id='lblLengthb'>長度</a></td>
-					<td align="center" style="width:5%;"><a id='lblMonnt'>數量</a></td>
-					<td align="center" style="width:5%;"><a id='lblWeight'>重量</a></td>
-					<td align="center" style="width:9%;"><a id='lblMemo'>備註</a></td>
-					<td align="center" style="width:11%;"><a id='lblNoa'>加工單</a></td>
+					<td align="center" style="width:30px;"><input type="checkbox" id="checkAllCheckbox"/></td>
+					<td align="center" style="width:110px;"><a id='lblOdate'>預交日</a></td>
+					<td align="center" style="width:150px;"><a id='lblCust'>客戶</a></td>
+					<td align="center" style="width:180px;"><a id='lblProduct'>品名</a></td>
+					<td align="center" style="width:100px;"><a id='lblPlace'>位置</a></td>
+					<td align="center" style="width:170px;"><a id='lblImgdata'>型狀</a></td>
+					<td align="center" style="width:80px;"><a id='lblLengthb'>長度</a></td>
+					<td align="center" style="width:80px;"><a id='lblMonnt'>數量</a></td>
+					<td align="center" style="width:95px;"><a id='lblWeight'>重量</a></td>
+					<td align="center"><a id='lblMemo'>備註</a><BR><a id='lblNoa'>加工單</a></td>
 				</tr>
 				<tr  style='background:#cad3ff;'>
 					<td align="center"><input id="chkSel.*" type="checkbox"/></td>
@@ -94,14 +98,19 @@
 						<input class="txt" id="txtNick.*" type="text" style="width:98%; text-align:left;"/>
 					</td>
 					<td>
-						<input class="txt" id="txtProductno.*" type="text" style="width:35%; text-align:left;"/>
-						<input class="txt" id="txtProduct.*" type="text" style="width:60%; text-align:left;"/>
+						<input class="txt" id="txtProductno.*" type="text" style="text-align:left;"/>
+						<input class="txt" id="txtProduct.*" type="text" style="text-align:left;"/>
+					</td>
+					<td><input class="txt" id="txtPlace.*" type="text" style="width:98%; text-align:right;"/></td>
+					<td>
+						<img id="imgPic.*" src="" style="display:none;"/>
+						<input class="txt" id="txtImgdata.*" type="text" style="width:98%; text-align:right;display:none;"/>
 					</td>
 					<td><input class="txt" id="txtLengthb.*" type="text" style="width:98%; text-align:right;"/></td>
-					<td><input class="txt" id="txtMonnt.*" type="text" style="width:98%; text-align:right;"/></td>
+					<td><input class="txt" id="txtMount.*" type="text" style="width:98%; text-align:right;"/></td>
 					<td><input class="txt" id="txtWeight.*" type="text" style="width:98%; text-align:right;"/></td>
-					<td><input class="txt" id="txtMemo.*" type="text" style="width:98%; text-align:left;"/></td>
 					<td>
+						<input class="txt" id="txtMemo.*" type="text" style="width:98%; text-align:left;"/>
 						<input class="txt" id="txtNoa.*" type="text" style="width:75%;"/>
 						<input class="txt" id="txtNoq.*" type="text" style="width:20%;"/>
 						<input id="recno.*" type="hidden" />
