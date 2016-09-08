@@ -13,10 +13,11 @@ set @t_bnoa = case when '#non' = [5] then '' else [5] end
 set @t_enoa = case when '#non' = [6] then CHAR(255) else [6] end
 set @t_bcust = case when '#non' = [7] then '' else [7] end
 set @t_ecust = case when '#non' = [8] then CHAR(255) else [8] end
-set @t_order = case when '#non' = [9] then '' else [9] end
+set @t_order = case when '#non' = [11] then '' else [11] end
 --************************************************************************
 declare @tmp table( 
 	noa nvarchar(50), 
+	noq nvarchar(50),
 	productno nvarchar(100),
 	product nvarchar(100),
 	spec nvarchar(100),
@@ -29,22 +30,49 @@ declare @tmp table(
 	d float,--裁剪
 	e float,--卸料/刀
 	dmount float,--每次可裁支數
-	minlength float--最小裁剪長度
+	cutcount float,--刀次
+	memo2 nvarchar(MAX)--裁剪內容
 )
 
 insert @tmp
-select a.noa,b.productno,b.product
+select a.noa,b.noq,b.productno,b.product
 ,SUBSTRING(b.product,CHARINDEX('SD',b.product),CHARINDEX(' ',b.product)-CHARINDEX('SD',b.product)) spec
 ,SUBSTRING(b.product,CHARINDEX(' ',b.product)+1,CHARINDEX('#',b.product)-CHARINDEX(' ',b.product))size
 ,cast(SUBSTRING(b.product,CHARINDEX('*',b.product)+1,CHARINDEX('M',b.product)-CHARINDEX('*',b.product)-1) as float)lengthb
-,sum(b.mount),0,0,0,0,0,0
-,MIN(isnull(c.lengthb,0))
+,b.mount,0,0,0,0,0,0,0,b.memo2
 from view_cub a left join view_cubt b on a.noa=b.noa
-outer apply (
-	select MIN(lengthb)lengthb from (select cast(ROW_NUMBER() over (order by noa,noq)as nvarchar(10))rr,lengthb 
-	from view_cubs where noa=a.noa)tmp where CHARINDEX(','+rr+',',','+b.nor+',')>0
-)c
-group by a.noa,b.productno,b.product
+
+declare @noa nvarchar(50)
+declare @noq nvarchar(50)
+declare @memo2 nvarchar(MAX)
+declare @tmemo2 nvarchar(MAX)
+declare @cutlength float
+declare @count int
+
+declare cursor_table cursor for
+select noa,noq,memo2 from @tmp
+open cursor_table
+fetch next from cursor_table
+into @noa,@noq,@memo2
+while(@@FETCH_STATUS <> -1)
+begin
+	set @count=0
+	set @tmemo2=@memo2+'+'
+	while(charindex('+',@tmemo2)>0)
+	begin
+		set @count=@count+cast(dbo.split(dbo.split(@tmemo2,'+',0),'*',1) as int)
+		set @tmemo2=SUBSTRING(@tmemo2,CHARINDEX('+',@tmemo2)+1,len(@tmemo2))
+	end
+	
+	update @tmp
+	set cutcount=@count
+	where noa=@noa and noq=@noq
+
+	fetch next from cursor_table
+	into @noa,@noq,@memo2
+end
+close cursor_table
+deallocate cursor_table
 
 update a
 set a=cast(b.m2 as float)
@@ -63,13 +91,13 @@ and isNumeric(isnull(m6,0))=1 or len(isnull(m6,0))=0
 and isNumeric(isnull(m7,0))=1 or len(isnull(m7,0))=0
 and isNumeric(isnull(m8,0))=1 or len(isnull(m8,0))=0
 
-update a --時間*(總數量/每次可裁支數)裁剪次數*最大刀次
---整料時間*(總數量/每次可裁支數)裁剪次數*換料次數
-set a=a*case when dmount=0 then 1 else CEILING(mount/dmount) end*(select count(*) from @tmp where noa=a.noa) 
-,b=b*case when dmount=0 then 1 else CEILING(mount/dmount) end*case when minlength=0 then 1 else CEILING(lengthb/minlength) end
-,c=c*case when dmount=0 then 1 else CEILING(mount/dmount) end*case when minlength=0 then 1 else CEILING(lengthb/minlength) end
-,d=d*case when dmount=0 then 1 else CEILING(mount/dmount) end*case when minlength=0 then 1 else CEILING(lengthb/minlength) end
-,e=e*case when dmount=0 then 1 else CEILING(mount/dmount) end*case when minlength=0 then 1 else CEILING(lengthb/minlength) end
+update a --時間*(總數量/每次可裁支數)裁剪次數*刀次
+--整料時間*(總數量/每次可裁支數)裁剪次數
+set a=a*case when dmount=0 then 1 else CEILING(mount/dmount) end 
+,b=b*case when dmount=0 then 1 else CEILING(mount/dmount) end*cutcount
+,c=c*case when dmount=0 then 1 else CEILING(mount/dmount) end*cutcount
+,d=d*case when dmount=0 then 1 else CEILING(mount/dmount) end*cutcount
+,e=e*case when dmount=0 then 1 else CEILING(mount/dmount) end*cutcount
 from @tmp a
 
 declare @tmpa table( 
@@ -102,20 +130,23 @@ from view_cub a left join view_cubs b on a.noa=b.noa
 left join workj c on b.ordeno=c.noa
 
 update a
-set a=mount*(select SUM(isnull(a,0))/SUM(mount) from @tmp where noa=a.noa and spec=a.spec and size=a.size)
-,b=mount*(select SUM(isnull(b,0))/SUM(mount) from @tmp where noa=a.noa and spec=a.spec and size=a.size)
-,c=mount*(select SUM(isnull(c,0))/SUM(mount) from @tmp where noa=a.noa and spec=a.spec and size=a.size)
-,d=mount*(select SUM(isnull(d,0))/SUM(mount) from @tmp where noa=a.noa and spec=a.spec and size=a.size)
-,e=mount*(select SUM(isnull(e,0))/SUM(mount) from @tmp where noa=a.noa and spec=a.spec and size=a.size)
+set a=mount*isnull((select SUM(isnull(a,0))/SUM(mount) from @tmp where noa=a.noa and spec=a.spec and size=a.size),0)
+,b=mount*isnull((select SUM(isnull(b,0))/SUM(mount) from @tmp where noa=a.noa and spec=a.spec and size=a.size),0)
+,c=mount*isnull((select SUM(isnull(c,0))/SUM(mount) from @tmp where noa=a.noa and spec=a.spec and size=a.size),0)
+,d=mount*isnull((select SUM(isnull(d,0))/SUM(mount) from @tmp where noa=a.noa and spec=a.spec and size=a.size),0)
+,e=mount*isnull((select SUM(isnull(e,0))/SUM(mount) from @tmp where noa=a.noa and spec=a.spec and size=a.size),0)
 ,timea=mount*(select SUM(isnull(a,0)+isnull(b,0)+isnull(c,0)+isnull(d,0)+isnull(e,0))/SUM(mount) from @tmp where noa=a.noa and spec=a.spec and size=a.size)
 from @tmpa a
 
 --select* from @tmp
 
 --總計
-insert @tmpa(gno,noa,datea,ordeno,workjno,no2,custno,a,b,c,d,e,timea)
-select '2',char(255),char(255),char(255),char(255),char(255),char(255),sum(a),sum(b),sum(c),sum(d),sum(e),sum(timea)
-from @tmpa where gno='0'
+if((select count(*) from @tmpa)>0)
+begin
+	insert @tmpa(gno,noa,datea,ordeno,workjno,no2,custno,a,b,c,d,e,timea)
+	select '2',char(255),char(255),char(255),char(255),char(255),char(255),sum(a),sum(b),sum(c),sum(d),sum(e),sum(timea)
+	from @tmpa where gno='0'
+end
 
 --cub@裁剪單號,orde@訂單號碼,cust@客戶,datea@裁剪日
 if(@t_order='orde')
@@ -347,3 +378,55 @@ begin
 	* from @tmpa order by gno,datea,noa,ordeno,no2
 end
 ;
+----------------------------------------------------------------------------------------------------------------------------------------
+z_cubfep02:--z_cubfep02
+declare @t_bdate nvarchar(10)
+declare @t_edate nvarchar(10)
+declare @t_bmech nvarchar(50)
+declare @t_emech nvarchar(50)
+
+set @t_bdate = case when '#non' = [3] then '' else [3] end
+set @t_edate = case when '#non' = [4] then CHAR(255) else [4] end
+set @t_bmech = case when '#non' = [9] then '' else [9] end
+set @t_emech = case when '#non' = [10] then CHAR(255) else [10] end
+--************************************************************************
+declare @tmp table( 
+	gno nvarchar(50),
+	noa nvarchar(50),
+	noq nvarchar(50),
+	mechno nvarchar(50),
+	mech nvarchar(50), 
+	datea nvarchar(50),
+	ordeno nvarchar(50),
+	no2 nvarchar(50),
+	custno nvarchar(100),
+	comp nvarchar(100),
+	productno nvarchar(50),
+	products nvarchar(100),
+	lengthb float,
+	mount float,
+	weight float
+)
+
+insert @tmp
+select '0',a.noa,b.noq,a.mechno,c.mech,a.datea,b.ordeno,b.no2,b.custno,b.comp
+,b.productno,b.product,b.lengthb,b.mount,b.weight
+from view_cub a left join view_cubs b on a.noa=b.noa
+left join mech c on a.mechno=c.noa
+where a.datea between @t_bdate and @t_edate 
+and a.mechno between @t_bmech and @t_emech
+
+if((select count(*) from @tmp)>0)
+begin
+	insert @tmp (gno,mechno,mech,datea,mount,weight)
+	select '1' ,mechno,MAX(mech),datea,sum(mount),sum(weight)
+	from @tmp
+	group by mechno,datea
+end
+
+select  
+dbo.getComma(lengthb,-1)lengthb
+,dbo.getComma(mount,-1)mount
+,dbo.getComma(weight,-1)weight
+,*
+from @tmp order by mechno,datea,gno;

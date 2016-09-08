@@ -163,8 +163,6 @@
 								var texists=false;
 								var t_w01=0;//容許公差
 								var t_w02=0;//容許公差
-								var t_w03=0;//容許損耗長度
-								var t_w04=0;//容許損耗%
 								var olength=0;//訂單長度
 								//檢查客戶允許公差
 								if(t_ordeno.length>0){ //非訂單就不判斷
@@ -172,8 +170,6 @@
 										if(cubBBsArray[j].ordeno==t_ordeno && cubBBsArray[j].no2==t_no2){
 											t_w01=dec(cubBBsArray[j].w01);
 											t_w02=dec(cubBBsArray[j].w02);
-											t_w03=dec(cubBBsArray[j].w03);
-											t_w04=dec(cubBBsArray[j].w04);
 											olength=dec(cubBBsArray[j].lengthb);
 											texists=true;
 											break;

@@ -17,12 +17,12 @@
 			this.errorHandler = null;
 			q_tables = 't';
 			var q_name = "cub";
-			var q_readonly = ['txtNoa','txtC1'];
-			var q_readonlys = ['txtDate2', 'txtOrdeno', 'txtNo2','txtProduct','txtScolor','txtProcess'];
+			var q_readonly = ['txtNoa','txtC1','textStksafe'];
+			var q_readonlys = ['txtDate2', 'txtOrdeno', 'txtNo2','txtProduct','txtScolor','txtLengthb','txtMount','txtWeight','txtProcess'];
 			var q_readonlyt = [];
 			var bbmNum = [['txtM2',10,0,1],['txtM3',10,0,1],['txtM4',10,0,1],['txtM5',10,0,1],['txtM6',10,0,1],['txtM7',10,0,1],['txtM8',10,0,1]
-			,['txtBdime',10,0,1],['txtEdime',10,0,1],['txtOdime',10,0,1],['txtC1',15,0,1],['txtWaste',15,0,1],['txtMo',15,1,1]];
-			var bbsNum = [['txtMount',15,0,1],['txtWeight',15,2,1],['txtLengthb',10,0,1],['txtW01',10,2,1],['txtW02',10,2,1]];//,['txtW03',10,2,1],['txtW04',10,2,1]
+			,['txtBdime',10,0,1],['txtEdime',10,0,1],['txtOdime',10,0,1],['txtC1',15,0,1]];
+			var bbsNum = [['txtMount',10,0,1],['txtWeight',10,2,1],['txtW01',10,2,1],['txtW02',10,2,1],['txtW03',10,2,1],['txtW04',10,2,1]];
 			var bbtNum = [['txtGmount',10,0,1],['txtGweight',10,2,1],['txtLengthc',10,0,1]];
 			var bbmMask = [];
 			var bbsMask = [];
@@ -64,8 +64,8 @@
 				for (var j = 0; j < q_bbtCount; j++) {
 					var t_lengthc = dec($('#txtLengthc__' + j).val());
 					var t_gmount = dec($('#txtGmount__' + j).val());
-					//var t_hard= dec($('#txtHard__' + j).val());
-					t_c1=q_add(t_c1,q_mul(t_lengthc,t_gmount));
+					var t_hard= dec($('#txtHard__' + j).val());
+					t_c1=q_add(t_c1,q_sub(q_mul(t_lengthc,t_gmount),t_hard));
 				}
 				
 				$('#txtC1').val(t_c1);
@@ -119,7 +119,7 @@
 					var t_mech=$('#cmbMechno').val();
 					var t_bdate = trim($('#txtBdate').val());
 					var t_edate = trim($('#txtEdate').val());
-					var t_spec = $('#cmbSpec').val();
+					var t_spec = trim($('#cmbSpec').val());
 					var t_m1 = trim($('#cmbM1').val());
 					//外調定尺不用裁剪
 					//var t_where = " 1=1 and (mech1='"+t_mech+"' or mech2='"+t_mech+"' or mech3='"+t_mech+"' or mech4='"+t_mech+"' or mech5='"+t_mech+"')";
@@ -128,16 +128,7 @@
 					t_edate = (emp(t_edate) ? r_picd : t_edate);
 					t_where += " and (a.odate between '" + t_bdate + "' and '" + t_edate + "') ";
 					if(t_spec.length>0){
-						var specwhere='';
-						for (var i=0;i<t_spec.length;i++){
-							if(trim(t_spec[i])!=''){
-								specwhere = specwhere+" or (case when b.product like '%基礎螺栓%' then 'SD420W' else b.product end) like '%" + t_spec[i] + "%'";
-							}
-						}
-						if (specwhere.length>0){
-							specwhere='1=0'+specwhere;
-							t_where += " and ("+specwhere+") ";
-						}
+						t_where += " and (b.product like '%" + t_spec + "%') ";
 					}
 					if(t_m1.length>0){
 						t_where += " and (b.product like '%" + t_m1 + "%') ";
@@ -149,10 +140,8 @@
 				
 				$('#btnCubu').click(function() {
 					if (q_cur == 0 || q_cur==4) {
-						if(!emp(trim($('#txtNoa').val()))){
-							var t_where = "noa='" + trim($('#txtNoa').val()) + "'";
-							q_box("cubufe_b.aspx?" + r_userno + ";" + r_name + ";" + q_time + ";" + t_where + ";"+r_accy, 'cubu', "95%", "95%", q_getMsg('popCubu'));
-						}
+						var t_where = "noa='" + trim($('#txtNoa').val()) + "'";
+						q_box("cubufe_b.aspx?" + r_userno + ";" + r_name + ";" + q_time + ";" + t_where + ";"+r_accy, 'cubu', "95%", "95%", q_getMsg('popCubu'));
 					}
 				});
 				
@@ -161,39 +150,17 @@
 					Lock();
 					var t_err='';
 					var t_same=[];
-					var t_cutlength=$('#cmbStatus').val();//可裁剪的板料長度
-					var maxcutlength=0;
-					if(t_cutlength.length==0){
-						t_cutlength='12';
-						t_cutlength=t_cutlength.split(',');
-					}
-					for (var i = 0; i < t_cutlength.length; i++) {
-						if(maxcutlength<dec(t_cutlength[i])*100){
-							maxcutlength=dec(t_cutlength[i])*100;
-						}
-					}
 					//相同材質號數長度合併
-					//105/08/25 基礎螺栓 不用餘料裁剪 一起帶入組合裁剪 SD420W
-					//105/08/25 安全存量 連同帶入表身資料
 					for (var i = 0; i < q_bbsCount; i++) {
-						if(!emp($('#txtProductno_'+i).val()) && !emp($('#txtProduct_'+i).val()) 
-						&& ($('#txtProduct_'+i).val().indexOf('鋼筋')>-1 || $('#txtProduct_'+i).val().indexOf('螺栓')>-1)
-						&& dec($('#txtLengthb_'+i).val())<=maxcutlength){
+						if(!emp($('#txtProductno_'+i).val()) && !emp($('#txtProduct_'+i).val()) && $('#txtProduct_'+i).val().indexOf('鋼筋')>-1){
 							var tproduct=$('#txtProduct_'+i).val();
-							var tmount=dec($('#txtMount_'+i).val());//裁剪數量
+							var tmount=dec($('#txtW07_'+i).val());//dec($('#txtMount_'+i).val());//裁剪數量
 							//材質號數長度
-							var tspec='';
-							var tsize='';
-							if(tproduct.indexOf('螺栓')>-1){
-								tspec='SD420W';
-								tsize=replaceAll(replaceAll(tproduct.split('#')[0]+'#','基礎螺栓',''),'抗震專利','');
-							}else{ //鋼筋
-								tspec=tproduct.substr(tproduct.indexOf('S'),tproduct.indexOf(' ')-tproduct.indexOf('S'));
-								tsize=tproduct.split(' ')[1].split('*')[0];
-							}
+							var tspec=tproduct.substr(tproduct.indexOf('S'),tproduct.indexOf(' ')-tproduct.indexOf('S'))
+							var tsize=tproduct.split(' ')[1].split('*')[0];
 							var tlength=dec($('#txtLengthb_'+i).val());
-							var tw03=dec($('#txtWaste').val()); //容許損耗長度
-							var tw04=dec($('#txtMo').val()); //容許損耗%
+							var tw03=dec($('#txtW03_'+i).val()); //容許損耗長度
+							var tw04=dec($('#txtW04_'+i).val()); //容許損耗%
 							
 							var t_j=-1;
 							for (var j=0;j<t_same.length;j++){
@@ -201,7 +168,9 @@
 									t_j=j;
 									t_same[j].data.push({
 										'nor':i,
-										'mount':tmount
+										'mount':tmount,
+										'w03':tw03,
+										'w04':tw04
 									})
 									t_same[j].mount=t_same[j].mount+tmount;
 									break;
@@ -216,7 +185,9 @@
 									'mount':tmount,
 									'data':[{
 										'nor':i,
-										'mount':tmount
+										'mount':tmount,
+										'w03':tw03,
+										'w04':tw04
 									}]
 								});
 							}
@@ -224,7 +195,12 @@
 					}
 					
 					var getucc=[];
-										
+					var t_cutlength=$('#cmbStatus').val();//可裁剪的板料長度
+					if(t_cutlength.length==0){
+						t_cutlength='12';
+						t_cutlength=t_cutlength.split(',');
+					}
+					
 					//推算選料
 					//先裁剪最大長度
 					t_same.sort(function(a, b) {if(a.lengthb>b.lengthb) {return -1;} if (a.lengthb < b.lengthb) {return 1;} return 0;});
@@ -260,14 +236,23 @@
 							}
 							cutlengthb.sort(function(a, b) { if(a > b) {return -1;} if (a < b) {return 1;} return 0;});
 							
-							if(cutlengthb.length>30){
-								if(!confirm('裁剪'+tspec1+' '+tsize1 +'的長度超過30組，電腦配料會花費較長時間配對，請確認是否繼續?')){
+							if(cutlengthb.length>20){
+								if(!confirm('裁剪'+tspec1+' '+tsize1 +'的長度超過20組，電腦配料會花費較長時間配對，請確認是否繼續?')){
 									break;
 								}
 							}
 							
 							//取得裁切組合
 							var t_cups=[];
+							/*for(var j=0;j<t_cutlength.length;j++){
+								var clength=dec(t_cutlength[j])*100; //原單位M
+								var t_cup=getmlength(clength,clength,0,cutlengthb,'',[]);
+								t_cups=t_cups.concat(t_cup);
+							}
+							
+							//損耗率排序
+							t_cups.sort(function(a, b) { if(a.wrate > b.wrate) {return 1;} if (a.wrate < b.wrate) {return -1;} return 0;});*/
+							
 							//材質號數最大長度 先處理
 							for(var j=0;j<cutlengthb.length;j++){//已排序過 由大到小
 								//取得所需數量
@@ -384,10 +369,8 @@
 									}
 								}
 								//更新最後一個物料的配料項次
-								if(getucc.length>0){
-									if(getucc[getucc.length-1].nor=='')
-										getucc[getucc.length-1].nor=t_nor;
-								}
+								if(getucc[getucc.length-1].nor=='')
+									getucc[getucc.length-1].nor=t_nor;
 								
 								//已裁剪完的長度已不需要
 								cutlengthb.splice(j, 1);
@@ -415,6 +398,138 @@
 					}
 					while(getucc.length>q_bbtCount){
 						$('#btnPlut').click()
+					}
+					
+					//整合基礎螺栓的資料
+					var bolt=[],bolts='';
+					for (var i = 0; i < q_bbsCount; i++) {
+						if(!emp($('#txtProductno_'+i).val()) && !emp($('#txtProduct_'+i).val()) && $('#txtProduct_'+i).val().indexOf('基礎螺栓')>-1){
+							var tproduct=$('#txtProduct_'+i).val();
+							var tmount=dec($('#txtW07_'+i).val());//dec($('#txtMount_'+i).val());//裁剪數量
+							//號數長度
+							var tsize=replaceAll(replaceAll(tproduct.split('#')[0]+'#','基礎螺栓',''),'抗震專利','');
+							var tlength=dec($('#txtLengthb_'+i).val());
+							var n=-1;
+							for (var j=0;j<bolt.length;j++){
+								if(bolt[j].size==tsize && bolt[j].lengthb==tlength){
+									n=j;
+									bolt[j].mount=dec(bolt[j].mount)+tmount;
+									break;
+								}	
+							}
+							if(n==-1){
+								bolt.push({'size': tsize,'lengthb':tlength,'mount':tmount});
+							}
+						}
+					}
+					//基礎螺栓 餘料扣除
+					var tgetucc=$.extend(true,[], getucc);//getucc.slice();
+					tgetucc.sort(function(a, b) { if(dec(a.wlengthb) > dec(b.wlengthb)) {return -1;} if (dec(a.wlengthb) < dec(b.wlengthb)) {return 1;} return 0;});
+					//先扣除不用裁剪的螺栓餘料
+					for (var i = 0; i < tgetucc.length; i++) {
+						var usize=tgetucc[i].size;
+						var uwlen=tgetucc[i].wlengthb;
+						var umount=tgetucc[i].mount;
+						tgetucc[i].wnocut=0;
+						if(umount>0){
+							for (var j = 0; j < bolt.length; j++) {
+								var bsize=bolt[j].size;
+								var blen=bolt[j].lengthb;
+								var bmount=bolt[j].mount;
+								if(usize==bsize && uwlen==blen && bmount>0){//一樣的號數 且長度=螺栓長度
+									if(umount>=bmount){
+										tgetucc[i].wnocut=tgetucc[i].wnocut+bmount;
+										umount=umount-bmount;
+										bolt[j].mount=0;
+									}else{
+										tgetucc[i].wnocut=tgetucc[i].wnocut+umount;
+										umount=0;
+										bolt[j].mount=bolt[j].mount-umount;
+									}
+								}
+								tgetucc[i].mount=umount;
+								if(umount<=0){
+									break;
+								}
+							}
+						}
+					}
+					bolt.sort(function(a, b) { if(a.lengthb > b.lengthb) {return -1;} if (a.lengthb < b.lengthb) {return 1;} return 0;});
+					//扣除需裁剪的螺栓餘料
+					for (var i = 0; i < tgetucc.length; i++) {
+						var usize=tgetucc[i].size;
+						var uwlen=tgetucc[i].wlengthb;
+						var umount=tgetucc[i].mount;
+						if(umount>0){
+							var t_cuttmp=[];
+							for (var j = 0; j < bolt.length; j++) {
+								var bsize=bolt[j].size;
+								var blen=bolt[j].lengthb;
+								var bmount=bolt[j].mount;
+								if(usize==bsize && uwlen>=blen && bmount>0){//一樣的號數 且長度大於螺栓長度
+									while(umount>0 &&bmount>0){
+										var bcutlen='';
+										for (var k = 0; k < bolt.length; k++) {
+											if(bsize==bolt[k].size && bolt[k].mount>0)
+												bcutlen=bcutlen+(bcutlen.length>0?',':'')+bolt[k].lengthb;
+										}
+										bcutlen=bcutlen.split(',');
+										rep='';
+										var t_cup=getmlength(uwlen,uwlen,blen,bcutlen,'',[],0);
+										t_cup.sort(function(a, b) { if(a.wrate > b.wrate) {return 1;} if (a.wrate < b.wrate) {return -1;} return 0;});
+										//取第一個做最小損耗扣除
+										var cupcutlength=t_cup[0].cutlength.split('#')[0].split(',');//切割長度
+										var cupcutwlength=t_cup[0].cutlength.split('#')[1];//損耗長度
+										var tt_nor='';
+										for(var k=0;k<cupcutlength.length;k++){
+											if(blen==cupcutlength[k])
+												bmount--;
+											for(var l=0;l<bolt.length;l++){
+												if(cupcutlength[k]==bolt[l].lengthb && bsize==bolt[l].size){
+													bolt[l].mount=bolt[l].mount-1;
+												}
+											}
+											var t_n=-1;
+											for(var l=0;l<t_cuttmp.length;l++){
+												if(t_cuttmp[l].lengthb==cupcutlength[k]){
+													t_cuttmp[l].mount=t_cuttmp[l].mount+1;
+													t_n=l;
+													break;
+												}
+											}
+											if(t_n==-1){
+												t_cuttmp.push({'lengthb':cupcutlength[k],'mount':1});
+											}
+										}
+										umount--;
+									}
+									tgetucc[i].mount=umount;
+									if(umount<=0)
+										break;
+								}
+							}
+							tgetucc[i].wcut=t_cuttmp;
+						}
+					}
+					//整合基礎螺栓 扣除長度*數量
+					for (var i = 0; i < getucc.length; i++) {
+						var t_cut='',tlength=0;
+						for (var j = 0; j < tgetucc.length; j++) {
+							if(getucc[i].size==tgetucc[j].size && getucc[i].spec==tgetucc[j].spec && getucc[i].lengthb==tgetucc[j].lengthb && getucc[i].nor==tgetucc[j].nor){
+								if(tgetucc.wnocut>0){
+									t_cut=t_cut+(t_cut.length>0?'+':'')+(tgetucc[j].wlengthb+'*'+wnocut.toString());
+									tlength=q_add(tlength,q_mul(dec(tgetucc[j].wlengthb),wnocut));
+								}
+								if(tgetucc[j].wcut!=undefined){
+									for (var k = 0; k < tgetucc[j].wcut.length; k++) {
+										t_cut=t_cut+(t_cut.length>0?'+':'')+(tgetucc[j].wcut[k].lengthb+'*'+tgetucc[j].wcut[k].mount.toString());
+										tlength=q_add(tlength,q_mul(dec(tgetucc[j].wcut[k].lengthb),tgetucc[j].wcut[k].mount));
+									}
+								}
+							}
+						}
+						getucc[i].bolt=t_cut;
+						getucc[i].blength=tlength;
 					}
 					
 					var t_n=0;
@@ -468,8 +583,8 @@
 							$('#txtNor__'+t_n).val(getucc[i].nor);
 							$('#txtMemo2__'+t_n).val(t_memo2);
 							$('#txtLengthc__'+t_n).val(dec(t_lens));
-							/*$('#txtScolor__'+t_n).val(getucc[i].bolt);
-							$('#txtHard__'+t_n).val(getucc[i].tlength);*/
+							$('#txtScolor__'+t_n).val(getucc[i].bolt);
+							$('#txtHard__'+t_n).val(getucc[i].tlength);
 						}else{
 							$('#txtProductno__'+t_n).val('');
 							$('#txtProduct__'+t_n).val('鋼筋熱軋'+getucc[i].spec+' '+getucc[i].size+'*'+(getucc[i].lengthb/100).toString()+'M');
@@ -479,8 +594,8 @@
 							$('#txtNor__'+t_n).val(getucc[i].nor);
 							$('#txtMemo2__'+t_n).val(t_memo2);
 							$('#txtLengthc__'+t_n).val(dec(t_lens));
-							/*$('#txtScolor__'+t_n).val(getucc[i].bolt);
-							$('#txtHard__'+t_n).val(getucc[i].tlength);*/
+							$('#txtScolor__'+t_n).val(getucc[i].bolt);
+							$('#txtHard__'+t_n).val(getucc[i].tlength);
 						}
 						t_n++;
 					}
@@ -492,7 +607,7 @@
 			//取得組合陣列
 			var rep='';
 			function getmlength (olength,lengthb,cut,cutlength,cutall,cutarry,repall){//原長度,目前長度,本次裁剪長度,可裁剪長度,裁剪樣式,回傳陣列
-				if(rep.indexOf("@@")>-1){ //已找到損耗0的組合後續不再處理
+				if(rep=="@@"){ //已找到損耗0的組合後續不再處理
 					return cutarry;
 				}
 				if(cut>=0 && lengthb-cut>=0){
@@ -579,6 +694,20 @@
 								return;
 							}
 							
+							var t_pwhere='1=0';
+							for (var j = 0; j < b_ret.length; j++) {
+								var t_product=b_ret[j].product;
+								t_product=t_product.substr(0,t_product.indexOf('*'))+'*'+(dec(b_ret[j].lengthb)/100).toString()+'M';
+								t_pwhere=t_pwhere+" or product='"+t_product+"'"
+							}
+							
+							q_gt('ucc', "where=^^ "+t_pwhere+" ^^" , 0, 0, 0, "getuccsafe",r_accy,1);
+							var asucc = _q_appendData("ucc", "", true);
+							
+							var t_where = "where=^^ ['" + q_date() + "','','') where "+t_pwhere+" group by productno ^^";
+							q_gt('work_stk', t_where, 0, 0, 0, "stk", r_accy,1);
+							var asstk = _q_appendData("stkucc", "", true);
+							
 							//不重覆帶入
 							for (var j = 0; j < b_ret.length; j++) {
 								for (var i = 0; i < q_bbsCount; i++) {
@@ -591,82 +720,31 @@
 									}
 								}
 							}
-							
 							//帶入安全存量和庫存
-							//低於安全存量 //105/08/25 在加工單匯入時才帶入
-							var addwork=[];
-							var t_spec = $('#cmbSpec').val();
-							var t_m1 = trim($('#cmbM1').val());
-							var t_uwhere = " 1=1";
-							if(t_spec.length>0){
-								var specwhere='';
-								for (var i=0;i<t_spec.length;i++){
-									if(trim(t_spec[i])!=''){
-										specwhere = specwhere+" or (case when product like '%基礎螺栓%' then 'SD420W' else product end) like '%" + t_spec[i] + "%'";
-									}
-								}
-								if (specwhere.length>0){
-									specwhere='1=0'+specwhere;
-									t_uwhere += " and ("+specwhere+") ";
-								}
-							}
-							if(t_m1.length>0){
-								t_uwhere += " and (product like '%" + t_m1 + "%') ";
-							}
-							
-							q_gt('ucc', "where=^^ product like '鋼筋%' and product like '%M' and "+t_uwhere+" ^^" , 0, 0, 0, "getuccsafe",r_accy,1);
-							var asucc = _q_appendData("ucc", "", true);
-							
-							var t_where = "where=^^ ['" + q_date() + "','','') where product like '鋼筋%' and product like '%M' and "+t_uwhere+" group by productno ^^";
-							q_gt('work_stk', t_where, 0, 0, 0, "stk", r_accy,1);
-							var asstk = _q_appendData("stkucc", "", true);
-							
-							for (var i = 0; i < asucc.length; i++) {
-								var t_safe=dec(asucc[i].safemount);
-								var t_pro=asucc[i].noa;
-								var t_product=asucc[i].product;
-								var t_size=t_product.split(' ')[1].split('*')[0];
-								var t_lengthb=dec(t_product.split('*')[1])*100;
-								for (var j = 0; j < asstk.length; j++) {
-									if(t_pro==asstk[j].productno){
-										if(t_safe>dec(asstk[j].mount)){
-											addwork.push({
-												'productno':t_pro,
-												'product':t_product,
-												'size':t_size,
-												'lengthb':t_lengthb,
-												'mount':q_sub(t_safe,dec(asstk[j].mount)),
-												'weight':0,
-												'memo':'補足安全存量'
-											});
-										}
-										break;	
-									}
-								}
-							}
-							
-							for(var i=0;i<addwork.length;i++){
-								var t_weight=0;
-								switch(addwork[i].size){
-						            case '3#': t_weight=0.560; break;
-						            case '4#': t_weight=0.994; break;
-						            case '5#': t_weight=1.560; break;
-						            case '6#': t_weight=2.250; break;
-						            case '7#': t_weight=3.040; break;
-						            case '8#': t_weight=3.980; break;
-						            case '9#': t_weight=5.080; break;
-						            case '10#': t_weight=6.390; break;
-						            case '11#': t_weight=7.900; break;
-						            case '12#': t_weight=9.570; break;
-						            case '14#': t_weight=11.40; break;
-						            case '16#': t_weight=15.50; break;
-						            case '18#': t_weight=20.20; break;
-								}	
-								addwork[i].weight=q_mul(addwork[i].mount,t_weight);
-							}
-							
-							//處理 是否要彎曲
 							for (var j = 0; j < b_ret.length; j++) {
+								var t_product=b_ret[j].product;
+								t_product=t_product.substr(0,t_product.indexOf('*'))+'*'+(dec(b_ret[j].lengthb)/100).toString()+'M';
+								var t_pno='';
+								for (var i = 0; i < asucc.length; i++) {
+									if(t_product==asucc[i].product){
+										b_ret[j].w06=dec(asucc[i].safemount);
+										t_pno=asucc[i].noa;
+										break;
+									}
+								}
+								for (var i = 0; i < asstk.length; i++) {
+									if(t_pno==asstk[i].productno)
+										b_ret[j].w05=dec(asstk[i].mount);
+										break;
+								}
+								if(b_ret[j].w05>b_ret[j].w06 && b_ret[j].w05-b_ret[j].mount>b_ret[j].w06){ //庫存足夠
+									b_ret[j].w07=0;
+								}if(b_ret[j].w06>b_ret[j].w05) //庫存低於安全存量
+									b_ret[j].w07=b_ret[j].w06-b_ret[j].w05+dec(b_ret[j].mount);
+								else{
+									b_ret[j].w07=dec(b_ret[j].mount);
+								}
+								//處理 是否要彎曲
 								if(dec(b_ret[j].fold)>0){
 									b_ret[j].sale=true;
 								}else{
@@ -675,8 +753,8 @@
 							}
 							
 							if (b_ret && b_ret[0] != undefined) {
-								ret = q_gridAddRow(bbsHtm, 'tbbs', 'txtCustno,txtComp,txtProductno,txtProduct,txtScolor,txtOrdeno,txtNo2,txtLengthb,txtWeight,txtMount,txtMemo,txtW01,txtW02,txtDate2'
-								, b_ret.length, b_ret, 'custno,cust,productno,product,place,noa,noq,lengthb,weight,mount,memo,btol,etol,odate', 'txtProductno');
+								ret = q_gridAddRow(bbsHtm, 'tbbs', 'txtCustno,txtComp,txtProductno,txtProduct,txtScolor,txtOrdeno,txtNo2,txtLengthb,txtWeight,txtMount,txtMemo,txtDate2,txtW05,txtW06,txtW07'
+								, b_ret.length, b_ret, 'custno,cust,productno,product,place,noa,noq,lengthb,weight,mount,memo,odate,w05,w06,w07', 'txtProductno');
 								
 								for (var i = 0; i < q_bbsCount; i++) {
 									for (var j = 0; j < b_ret.length; j++) {
@@ -689,13 +767,14 @@
 											break;
 										}
 									}
+									$('#chkSale_'+i).attr('disabled','disabled');
+									if($('#chkSale_'+i).prop('checked')){
+										$('#txtProcessno_'+i).removeAttr('disabled');
+									}else{
+										$('#txtProcessno_'+i).attr('disabled','disabled');
+									}
 								}
 							}
-							if(addwork.length>0){
-								q_gridAddRow(bbsHtm, 'tbbs', 'txtProductno,txtProduct,txtLengthb,txtWeight,txtMount,txtMemo'
-								, addwork.length, addwork, 'productno,product,lengthb,weight,mount,memo', 'txtProductno,txtOrdeno');
-							}
-							bbsreadonly();
 							b_ret = '';
 						}
 						break;
@@ -709,7 +788,6 @@
 			function _btnSeek() {
 				if (q_cur > 0 && q_cur < 4)
 					return;
-				q_box('cubfe_s.aspx', q_name + '_s', "500px", "310px", q_getMsg("popSeek"));
 			}
 
 			function btnIns() {
@@ -791,13 +869,13 @@
 				for (var i = 0; i < q_bbsCount; i++) {
 					if(!emp($('#txtProductno_'+i).val()) && !emp($('#txtProduct_'+i).val()) && $('#txtProduct_'+i).val().indexOf('鋼筋')>-1){
 						var tproduct=$('#txtProduct_'+i).val();
-						var tmount=dec($('#txtMount_'+i).val());//裁剪數量
+						var tmount=dec($('#txtW07_'+i).val());//dec($('#txtMount_'+i).val());//裁剪數量
 						//材質號數長度
 						var tspec=tproduct.substr(tproduct.indexOf('S'),tproduct.indexOf(' ')-tproduct.indexOf('S'))
 						var tsize=tproduct.split(' ')[1].split('*')[0];
 						var tlength=dec($('#txtLengthb_'+i).val());
-						var tw03=dec($('#txtWaste').val()); //容許損耗長度
-						var tw04=dec($('#txtMo').val()); //容許損耗%
+						var tw03=dec($('#txtW03_'+i).val()); //容許損耗長度
+						var tw04=dec($('#txtW04_'+i).val()); //容許損耗%
 						
 						var t_j=-1;
 						for (var j=0;j<t_same.length;j++){
@@ -805,7 +883,9 @@
 								t_j=j;
 								t_same[j].data.push({
 									'nor':i+1,
-									'mount':tmount
+									'mount':tmount,
+									'w03':tw03,
+									'w04':tw04
 								})
 								t_same[j].mount=t_same[j].mount+tmount;
 								break;
@@ -820,7 +900,9 @@
 								'mount':tmount,
 								'data':[{
 									'nor':i+1,
-									'mount':tmount
+									'mount':tmount,
+									'w03':tw03,
+									'w04':tw04
 								}]
 							});
 						}
@@ -846,8 +928,8 @@
 									for (var n=0;n<t_same[i].data.length;n++){
 										var t_ccmount=0;
 										if(t_nor.indexOf(','+t_same[i].data[n].nor.toString()+',')>-1 && cmount>0){
-											if((t_lengthc>tw03 && tw03>0) 
-											|| (t_lengthc>tw04*tlength && tw04>0)){
+											if((t_lengthc>t_same[i].data[n].w03 && t_same[i].data[n].w03>0) 
+											|| (t_lengthc>t_same[i].data[n].w04*tlength && t_same[i].data[n].w04>0)){
 												t_err=t_err+'領料 第'+(j+1)+'項 裁剪組料損耗 超出訂單可損耗長度!! \n';
 											}
 											
@@ -883,6 +965,128 @@
 					alert(t_err);
 					return;
 				}
+				
+				/*var t_err='';
+				var ordearry=[],getarry=[];
+				for (var i = 0; i < q_bbtCount; i++) {
+					var k=-1;
+					var tproduct=$('#txtProduct__'+i).val();
+					var tmount=dec($('#txtGmount__'+i).val());
+					var tnor=$('#txtNor__'+i).val(); //指定配料
+					if(tproduct.length>0){
+						//材質號數長度
+						var tspec=tproduct.substr(tproduct.indexOf('S'),tproduct.indexOf(' ')-tproduct.indexOf('S'))
+						var tsize=tproduct.split(' ')[1].split('*')[0];
+						var tlength=dec(tproduct.split('*')[1])*100;
+						
+						for(var j = 0; j<getarry.length; j++){
+							if(getarry[j].spec==tspec&& getarry[j].size==tsize && getarry[j].lengthb==tlength && getarry[j].nor==tnor){
+								k=j
+								break;
+							}
+						}
+						if(k>-1){
+							getarry[k].mount=dec(getarry[k].mount)+tmount;
+						}else{
+							getarry.push({
+								'spec':tspec,
+								'size':tsize,
+								'lengthb':tlength,
+								'nor':tnor,
+								'mount':tmount,
+								'w03':0,
+								'w04':0,
+								'data':[]
+							});
+						}
+					}
+				}
+				for(var j = 0; j<getarry.length; j++){
+					var ttmount=getarry[j].mount;
+					while(ttmount>0){
+						getarry[j].data.push({
+							'lengthb':getarry[j].lengthb
+						});
+						ttmount--;
+					}
+				}
+				//訂單裁剪存在陣列排序 由最大長度開始裁剪 減少損耗
+				for (var i = 0; i < q_bbsCount; i++) {
+					if(!emp($('#txtProductno_'+i).val()) && !emp($('#txtProduct_'+i).val())){
+						var tproduct=$('#txtProduct_'+i).val();
+						var tmount=dec($('#txtMount_'+i).val());//裁剪數量
+						//材質號數長度
+						var tspec=tproduct.substr(tproduct.indexOf('S'),tproduct.indexOf(' ')-tproduct.indexOf('S'))
+						var tsize=tproduct.split(' ')[1].split('*')[0];
+						var tlength=dec($('#txtLengthb_'+i).val());
+						var tw03=dec($('#txtW03_'+i).val());
+						var tw04=dec($('#txtW04_'+i).val());
+						ordearry.push({
+							'nor':i+1,
+							'spec':tspec,
+							'size':tsize,
+							'lengthb':tlength,
+							'mount':tmount,
+							'w03':tw03,
+							'w04':tw04
+						});
+					}
+				}
+				
+				ordearry.sort(function(a, b) {if(a.lengthb>b.lengthb) {return -1;}if (a.lengthb < b.lengthb) {return 1;}return 0;})
+				
+				//計算損耗
+				for (var i = 0; i < ordearry.length; i++) {
+					var tmount=ordearry[i].mount;//裁剪數量
+					//材質號數長度
+					var tnor=ordearry[i].nor.toString();
+					var tspec=ordearry[i].spec;
+					var tsize=ordearry[i].size;
+					var tlength=ordearry[i].lengthb;
+					var tw03=ordearry[i].w03;
+					var tw04=ordearry[i].w04;
+					
+					for(var j = 0; j<getarry.length; j++){
+						if(getarry[j].nor.toString().split(',').indexOf(tnor)>-1){
+							if(getarry[j].spec==tspec&& getarry[j].size==tsize){
+								if(getarry[j].lengthb>=tlength && getarry[j].data.length>0){
+									//找出底下可以被裁減的長度
+									for(var k = 0;k<getarry[j].data.length;k++){
+										while(getarry[j].data[k].lengthb>=tlength && tmount>0){
+											getarry[j].data[k].lengthb=getarry[j].data[k].lengthb-tlength;
+											tmount--;
+										}
+										if(getarry[j].data[k].lengthb==0){
+											getarry[j].data.splice(k, 1);
+											k--;
+										}else{ //檢查損耗
+											if(tw03>0){
+												if(getarry[j].data[k].lengthb>tw03 && tw03>0){
+													t_err=t_err+"第"+tnor+"項 訂單裁剪損耗超過指定損耗長度!!\n";
+												}
+											}else{
+												var wlength=getarry[j].lengthb*tw04;//可損耗%長度
+												if(getarry[j].data[k].lengthb>wlength && wlength>0){
+													t_err=t_err+"第"+tnor+"項 訂單裁剪損耗超過指定損耗%!!\n";
+												}
+											}
+										}
+										if(tmount==0){
+											break;
+										}
+									}
+								}else{
+									t_err=t_err+"第"+tnor+"項 與配料長度小於可裁剪長度!!\n";
+								}
+							}else{
+								t_err=t_err+"第"+tnor+"項 與配料材質和號數不符!!\n";
+							}
+						}
+					}
+					if(tmount>0){
+						t_err=t_err+"第"+tnor+"項 訂單需求數量不符合可裁剪數量!!\n";
+					}
+				}*/
 				
 				sum();
 				$('#txtWorker').val(r_name);
@@ -922,16 +1126,39 @@
 
 			function refresh(recno) {
 				_refresh(recno);
+				//低於安全存量
+				var t_err='';
+				q_gt('ucc', "where=^^ product like '鋼筋%' and product like '%M' and product not like '%中料%' ^^" , 0, 0, 0, "getuccsafe",r_accy,1);
+				var asucc = _q_appendData("ucc", "", true);
 				
+				var t_where = "where=^^ ['" + q_date() + "','','') where product like '鋼筋%' and product like '%M' and product not like '%中料%' group by productno ^^";
+				q_gt('work_stk', t_where, 0, 0, 0, "stk", r_accy,1);
+				var asstk = _q_appendData("stkucc", "", true);
+				
+				for (var i = 0; i < asucc.length; i++) {
+					var t_safe=dec(asucc[i].safemount);
+					var t_pro=asucc[i].noa;
+					var t_product=asucc[i].product;
+					for (var j = 0; j < asstk.length; j++) {
+						if(t_pro==asstk[j].productno){
+							if(t_safe>dec(asstk[j].mount)){
+								t_err=t_err+(t_err.length>0?'\n':'')+t_product+' 庫存量('+asstk[j].mount+')低於安全存量('+t_safe+')!!';
+							}
+							break;	
+						}
+					}
+				}
+				if(t_err.length>0){
+					$('#textStksafe').val(t_err);
+					$('#textStksafe').show();
+				}else{
+					$('#textStksafe').val('');
+					$('#textStksafe').hide();
+				}
 			}
 
 			function readonly(t_para, empty) {
 				_readonly(t_para, empty);
-				if(t_para){
-					$('#btnCubu').removeAttr('disabled');
-				}else{
-					$('#btnCubu').attr('disabled','disabled');
-				}
 				bbsreadonly();
 			}
 
@@ -959,8 +1186,7 @@
 				$('#lblMech').text('裁剪機台');
 				$('#lblSpec').text('材質');
 				$('#lblM1').text('號數');
-				$('#lblMo').text('容許損耗%');
-				$('#lblWaste').text('容許損耗長度');
+				$('#lblMo').text('長度');
 				$('#lblC1').text('總損耗長度');
 				$('#lblCustno_s').text('客戶');
 				$('#lblProductno_s').text('品號');
@@ -969,7 +1195,7 @@
 				$('#lblSize_s').text('號數');
 				$('#lblLengthb_s').text('裁剪長度');
 				$('#lblMount_s').text('訂單數量');
-				$('#lblWeight_s').text('訂單重量');
+				$('#lblWeight_s').text('重量');
 				$('#lblNeed_s').text('需求');
 				$('#lblMemo_s').text('備註');
 				$('#lblDate2_s').text('預交日');
@@ -980,17 +1206,17 @@
 				$('#lblDatea_s').text('預定出貨日期');
 				$('#lblUnit_s').text('單位');
 				$('#lblW01_s').text('容許公差+/-');
-				//$('#lblW03_s').text('容許損耗長度');
-				//$('#lblW04_s').text('容許損耗%');
+				$('#lblW03_s').text('容許損耗長度');
+				$('#lblW04_s').text('容許損耗%');
 				$('#btnWorkjImport').val('1 = 加工單匯入');
 				$('#btnUcccstk').val('2 = 電腦配料');
 				$('#lblStatus').text('板料可用長度');
 				$('#btnStk').val('庫存量');
-				//$('#lblW05_s').text('庫存數量');
-				//$('#lblW06_s').text('安全存量');
-				//$('#lblW07_s').text('裁剪數量');
+				$('#lblW05_s').text('庫存數量');
+				$('#lblW06_s').text('安全存量');
+				$('#lblW07_s').text('裁剪數量');
 				$('#lblScolor_s').text('位置');
-				$('#lblMech_s').text('指定彎曲機台');
+				$('#lblMech_s').text('彎曲機台');
 				$('#lblSale_s').text('彎曲');
 				$('#lblStoreno').text('中料倉庫');
 			}
@@ -1043,9 +1269,9 @@
 				$('#lblUnit_t').text('單位');
 				$('#lblNor_t').text('配料項次');
 				$('#lblMemo2_t').html('裁剪內容/支<br>(裁剪長度*數量+...)');
-				$('#lblLengthc_t').text('損耗長度/支');
-				//$('#lblScolor_t').html('基礎螺栓餘料裁剪內容<br>(裁剪長度*數量+...)');
-				//$('#lblHard_t').text('基礎螺栓扣除餘料長度');
+				$('#lblLengthc_t').text('餘料長度/支');
+				$('#lblScolor_t').html('基礎螺栓餘料裁剪內容<br>(裁剪長度*數量+...)');
+				$('#lblHard_t').text('基礎螺栓扣除餘料長度');
 			}
 
 			function q_appendData(t_Table) {
@@ -1110,8 +1336,19 @@
 			function bbsreadonly() {
 				for (var j = 0; j < q_bbsCount; j++) {
 					var t_productno=$('#txtProductno_'+j).val();
-					var t_ordeno=$('#txtOrdeno_'+j).val();
 					var t_product=$('#txtProduct_'+j).val();
+					if(t_productno.length>0 && t_product.length>0 
+						&& t_product.indexOf('3#')==-1 && t_product.indexOf('4#')==-1 && t_product.indexOf('5#')==-1
+						&& t_product.indexOf('螺栓')==-1){
+						if(q_cur==1 || q_cur==2){
+							$('#txtW03_'+j).removeAttr('disabled');
+							$('#txtW04_'+j).removeAttr('disabled');
+						}
+					}else{
+						$('#txtW03_'+j).attr('disabled', 'disabled').val('');
+						$('#txtW04_'+j).attr('disabled', 'disabled').val('');
+					}
+					
 					$('#chkSale_'+j).attr('disabled','disabled')
 					if($('#chkSale_'+j).prop('checked')){
 						if(q_cur==1 || q_cur==2){
@@ -1119,21 +1356,6 @@
 						}
 					}else{
 						$('#txtProcessno_'+j).attr('disabled','disabled');
-					}
-					if(t_ordeno.length>0){
-						if(q_cur==1 || q_cur==2){
-							$('#txtProductno_'+j).attr('disabled','disabled');
-							$('#txtLengthb_'+j).attr('disabled','disabled');
-							$('#txtMount_'+j).attr('disabled','disabled');
-							$('#txtWeight_'+j).attr('disabled','disabled');
-						}
-					}else{
-						if(q_cur==1 || q_cur==2){
-							$('#txtProcessno_'+j).removeAttr('disabled');
-							$('#txtLengthb_'+j).removeAttr('disabled');
-							$('#txtMount_'+j).removeAttr('disabled');
-							$('#txtWeight_'+j).removeAttr('disabled');
-						}
 					}
 				}
 			}
@@ -1230,7 +1452,7 @@
 				font-size: medium;
 			}
 			.dbbs {
-				width: 1800px;
+				width: 2200px;
 			}
 			.dbbs .tbbs {
 				margin: 0;
@@ -1258,7 +1480,7 @@
 				font-size: medium;
 			}
 			#dbbt {
-				width: 1500px;
+				width: 1850px;
 			}
 			#tbbt {
 				margin: 0;
@@ -1351,11 +1573,8 @@
 					</tr>
 					<tr>
 						<td><span> </span><a id="lblSpec" class="lbl" > </a></td>
-						<td  rowspan='2'><select id="cmbSpec" class="txt c1"  multiple="multiple" size="3"> </select></td>
-						<td>
-							<a id="lblM1" class="lbl" style="float: left;"> </a><span style="float: left;"> </span>
-							<select id="cmbM1" class="txt c1" style="width: 70px;"> </select>
-						</td>
+						<td><select id="cmbSpec" class="txt c1"> </select></td>
+						<td> </td>
 						<td> </td>
 						<td> </td>
 						<td class="cut"><a style="margin-left: 50px;">1.5M內</a></td>
@@ -1363,7 +1582,8 @@
 						<td class="cut"> </td>
 					</tr>
 					<tr>
-						<td> </td>
+						<td><span> </span><a id="lblM1" class="lbl" > </a></td>
+						<td><select id="cmbM1" class="txt c1"> </select></td>
 						<td> </td>
 						<td> </td>
 						<td> </td>
@@ -1407,8 +1627,8 @@
 						<td><input id="txtTggno" type="text" class="txt c1"/></td>
 						<td><input id="txtTgg" type="text" class="txt c1"/></td>
 						<td> </td>-->
-						<td><span> </span><a id="lblWaste" class="lbl" > </a></td>
-						<td><input id="txtWaste" type="text" class="txt num c1"/></td>
+						<td><span> </span><a id="lblC1" class="lbl" > </a></td>
+						<td><input id="txtC1" type="text" class="txt num c1"/></td>
 						<td> </td>
 						<td><input type="button" id="btnCubu" style="width:120px;text-align: left;"/></td>
 						<td> </td>
@@ -1417,28 +1637,25 @@
 						<td class="cut"> </td>
 					</tr>
 					<tr>
-						<td><span> </span><a id="lblMo" class="lbl" > </a></td>
-						<td><input id="txtMo" type="text" class="txt num c1"/></td>
-						<td> </td>
-						<td> </td>
+						<td><span> </span><a id="lblMemo" class="lbl" > </a></td>
+						<td colspan="3"><input id="txtMemo" type="text" class="txt c1"/></td>
 						<td> </td>
 						<td class="cut"><a style="margin-left: 50px;">1.5M內</a></td>
 						<td class="cut"><input id="txtBdime" type="text" class="txt num c1" style="width: 70%;" />秒</td>
 						<td class="cut"> </td>
 					</tr>
 					<tr>
-						<td><span> </span><a id="lblC1" class="lbl" > </a></td>
-						<td><input id="txtC1" type="text" class="txt num c1"/></td>
-						<td> </td>
-						<td><input type="button" id="btnStk" style="width:120px;"/></td>
+						<td align="right"><input type="button" id="btnStk" style="text-align:left;"/></td>
+						<td colspan="3" rowspan='2'>
+							<textarea id="textStksafe" cols="10" rows="5" style="width: 99%;height: 50px;display: none;"> </textarea>
+						</td>
 						<td> </td>
 						<td class="cut"><a style="margin-left: 50px;">1.5~8M</a></td>
 						<td class="cut"><input id="txtEdime" type="text" class="txt num c1" style="width: 70%;"/>秒</td>
 						<td class="cut"> </td>
 					</tr>
 					<tr>
-						<td><span> </span><a id="lblMemo" class="lbl" > </a></td>
-						<td colspan="3"><input id="txtMemo" type="text" class="txt c1"/></td>
+						<td> </td>
 						<td> </td>
 						<td class="cut"><a style="margin-left: 50px;">8~16M</a></td>
 						<td class="cut"><input id="txtOdime" type="text" class="txt num c1" style="width: 70%;"/>秒</td>
@@ -1464,12 +1681,12 @@
 						<td style="width:80px;"><a id='lblLengthb_s'> </a></td>
 						<td style="width:80px;"><a id='lblMount_s'> </a></td>
 						<td style="width:100px;"><a id='lblWeight_s'> </a></td>
-						<!--<td style="width:80px;"><a id='lblW05_s'> </a></td>
+						<td style="width:80px;"><a id='lblW05_s'> </a></td>
 						<td style="width:80px;"><a id='lblW06_s'> </a></td>
-						<td style="width:100px;"><a id='lblW07_s'> </a></td>-->
+						<td style="width:100px;"><a id='lblW07_s'> </a></td>
 						<td style="width:170px;"><a id='lblW01_s'> </a></td>
-						<!--<td style="width:100px;"><a id='lblW03_s'> </a></td>
-						<td style="width:100px;"><a id='lblW04_s'> </a></td>-->
+						<td style="width:100px;"><a id='lblW03_s'> </a></td>
+						<td style="width:100px;"><a id='lblW04_s'> </a></td>
 						<!--<td style="width:150px;"><a id='lblNeed_s'> </a></td>-->
 						<td><a id='lblMemo_s'> </a></td>
 						<td style="width:90px;"><a id='lblDate2_s'> </a></td>
@@ -1501,16 +1718,16 @@
 						<td><input id="txtLengthb.*" type="text" class="txt c1 num"/></td>
 						<td><input id="txtMount.*" type="text" class="txt c1 num"/></td>
 						<td><input id="txtWeight.*" type="text" class="txt c1 num"/></td>
-						<!--<td><input id="txtW05.*" type="text" class="txt c1 num"/></td>
+						<td><input id="txtW05.*" type="text" class="txt c1 num"/></td>
 						<td><input id="txtW06.*" type="text" class="txt c1 num"/></td>
-						<td><input id="txtW07.*" type="text" class="txt c1 num"/></td>-->
+						<td><input id="txtW07.*" type="text" class="txt c1 num"/></td>
 						<td>
 							<input id="txtW01.*" type="text" class="txt c1 num" style="width: 43%;"/>
 							<a style="float: left;">~</a>
 							<input id="txtW02.*" type="text" class="txt c1 num" style="width: 43%;"/>
 						</td>
-						<!--<td><input id="txtW03.*" type="text" class="txt c1 num"/></td>
-						<td><input id="txtW04.*" type="text" class="txt c1 num"/></td>-->
+						<td><input id="txtW03.*" type="text" class="txt c1 num"/></td>
+						<td><input id="txtW04.*" type="text" class="txt c1 num"/></td>
 						<!--<td><input id="txtNeed.*" type="text" class="txt c1"/></td>-->
 						<td><input id="txtMemo.*" type="text" class="txt c1"/></td>
 						<td><input id="txtDate2.*" type="text" class="txt c1"/></td>
@@ -1550,8 +1767,8 @@
 					<td style="text-align: center;"><a id='lblMemo_t'> </a></td>
 					<td style="width:200px;text-align: center;"><a id='lblMemo2_t'> </a></td>
 					<td style="width:100px;text-align: center;"><a id='lblLengthc_t'> </a></td>
-					<!--<td style="width:200px;text-align: center;"><a id='lblScolor_t'> </a></td>
-					<td style="width:100px;text-align: center;"><a id='lblHard_t'> </a></td>-->
+					<td style="width:200px;text-align: center;"><a id='lblScolor_t'> </a></td>
+					<td style="width:100px;text-align: center;"><a id='lblHard_t'> </a></td>
 				</tr>
 				<tr>
 					<td>
@@ -1576,8 +1793,8 @@
 					<td><input id="txtMemo..*" type="text" class="txt c1"/></td>
 					<td><input id="txtMemo2..*" type="text" class="txt c1"/></td>
 					<td><input id="txtLengthc..*" type="text" class="txt c1 num"/></td>
-					<!--<td><input id="txtScolor..*" type="text" class="txt c1"/></td>
-					<td><input id="txtHard..*" type="text" class="txt c1 num"/></td>-->
+					<td><input id="txtScolor..*" type="text" class="txt c1"/></td>
+					<td><input id="txtHard..*" type="text" class="txt c1 num"/></td>
 				</tr>
 			</table>
 		</div>

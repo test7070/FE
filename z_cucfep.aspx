@@ -20,11 +20,11 @@
 			}
 			$(document).ready(function() {
 				q_getId();
-				q_gf('', 'z_cubfep');
+				q_gf('', 'z_cucfep');
 			});
 			function q_gfPost() {
 				$('#q_report').q_report({
-					fileName : 'z_cubfep',
+					fileName : 'z_cucfep',
 					options : [{
 						type : '0',//[1]
 						name : 'accy',
@@ -51,10 +51,6 @@
                         dbf : 'mech',
                         index : 'noa,mech',
                         src : 'mech_b.aspx'
-                    },{
-                        type : '5', //[11]
-                        name : 'xorder',
-                        value : 'cub@裁剪單號,orde@訂單號碼,cust@客戶,datea@裁剪日'.split(',')
                     }]
 				});
 				q_popAssign();
