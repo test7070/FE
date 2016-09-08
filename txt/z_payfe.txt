@@ -285,7 +285,8 @@ z_payfe03:--z_payfe03
 		
 		--空白行
 		select @mm=0
-		select @mm = COUNT(1) from @tmp where cno=@cno and tggno=@tggno and cast(gno as int) between 1 and 3
+		select @mm = COUNT(1) from @tmp where cno=@cno and tggno=@tggno 
+			and (cast(gno as int) between 1 and 3 or cast(gno as int)=15 or cast(gno as int)=16)
 		if(@mm+@endcount)%@linecount != 0
 		begin
 			insert into @tmp(gno,pno,cno,tggno,datea,typea)
