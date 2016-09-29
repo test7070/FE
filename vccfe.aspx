@@ -791,7 +791,11 @@
 
             var check_startdate = false;
             function btnOk() {
-            	
+            	if($('#txtDatea').val().length == 0 || !q_cd($('#txtDatea').val())){
+					alert('日期異常。');
+            		return;
+				}
+					
                 //判斷起算日,寫入帳款月份
                 if (!check_startdate && emp($('#txtMon').val())) {
                     var t_where = "where=^^ noa='" + $('#txtCustno').val() + "' ^^";
@@ -801,7 +805,7 @@
                 /*if (emp($('#txtMon').val()))
                  $('#txtMon').val($('#txtDatea').val().substr(0, 6));*/
                 check_startdate = false;
-
+				
 				//檢查庫存量
 				var t_noa = $.trim($('#txtNoa').val());
 				t_noa = t_noa.length==0?'AUTO':t_noa;
