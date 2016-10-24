@@ -990,103 +990,125 @@ declare @b2mon nvarchar(max) = LEFT(dbo.AD2ChineseEraName(CONVERT(char, DATEADD(
 	from @tmp order by rec,gno;
 --*******************************************************************************
 z_ummfe01:--z_ummfe01
-SET QUOTED_IDENTIFIER OFF
+	SET QUOTED_IDENTIFIER OFF
+	declare @t_bcustno nvarchar(20) = case when '#non' = [2] then '' else [2] end
+	declare @t_ecustno nvarchar(20) =case when '#non' = [3] then CHAR(255) else [3] end
+	declare @t_bdate nvarchar(20) = case when '#non' = [4] then '' else [4] end
+	declare @t_edate nvarchar(20) = case when '#non' = [5] then CHAR(255) else [5] end
+	---------------------------------------------------------------------------------
+	IF OBJECT_ID('tempdb..#z_ummfe01')is not null
+	BEGIN
+		drop table #z_ummfe01
+	END
+	
+	create table #z_ummfe01(
+		sel int identity(1,1)
+		,recno int
+		,gno nvarchar(10)
+		,pno int
+		,custno nvarchar(20)
+		,cust nvarchar(50)
+		
+		,datea nvarchar(20)
+		,noa nvarchar(20)
+		,noq nvarchar(10)
+		,acc1 nvarchar(20)
+		,acc2 nvarchar(50)
+		,[money] float
+		,checkno nvarchar(20)
+		,bankno nvarchar(20)
+		,bank nvarchar(50)
+		,indate nvarchar(20)
+		,opay float
+		,unopay float
+		,result float
+	)
+	insert into #z_ummfe01 (gno,pno,custno,datea,noa,noq,acc1,acc2,[money],checkno,bankno,bank,indate)
+	select '2',2,b.custno,b.datea,a.noa,a.noq,a.acc1,a.acc2,a.[money],a.checkno,a.bankno,a.bank,a.indate
+	from umms a
+	left join umm b on a.noa=b.noa
+	where b.datea between @t_bdate and @t_edate
+	and ISNULL(b.custno,'') between @t_bcustno and @t_ecustno
+	and ISNULL([money],0)!=0
 
-declare @t_bcustno nvarchar(20) = case when '#non' = [2] then '' else [2] end
-declare @t_ecustno nvarchar(20) =case when '#non' = [3] then CHAR(255) else [3] end
-declare @t_bdate nvarchar(20) = case when '#non' = [4] then '' else [4] end
-declare @t_edate nvarchar(20) = case when '#non' = [5] then CHAR(255) else [5] end
----------------------------------------------------------------------------------
-declare @tmp table(
-	gno nvarchar(1),
-	rec int,
-	custno nvarchar(25),
-	comp nvarchar(90),
-	noa nvarchar(35),
-	datea nvarchar(10),
-	acc2 nvarchar(50),
-	money float,
-	checkno nvarchar(40),
-	bank nvarchar(60),
-	indate nvarchar(10),
-	opay float, --預收
-	mopay float --預收餘額
-)
-insert into @tmp
-select
-	'2',ROW_NUMBER()over(partition by a.noa order by a.noa),a.custno,c.comp,a.noa,a.datea,b.acc2,b.money,b.checkno,b.bank,b.indate,
-	case when opay =0 then -1 * ISNULL(unopay,0) else ISNULL(opay,0) end,0
-from umm a
-left join umms b on a.noa = b.noa
-left join cust c on a.custno = c.noa
-where (LEN(b.acc1)>0) and (a.datea between @t_bdate and @t_edate) and (a.custno between @t_bcustno and @t_ecustno) 
+	declare @custno nvarchar(20)
+	declare @datea nvarchar(20)
+	declare @noa nvarchar(20)
+	declare @opay float
+	declare @unopay float
+	declare @sel int
+	
+	insert into #z_ummfe01(gno,pno,custno,datea,opay,unopay,result)
+	select '1',1,custno,'',SUM(isnull(opay,0)),SUM(isnull(unopay,0)),SUM(isnull(opay,0)-isnull(unopay,0))
+	from umm 
+	where datea < @t_bdate
+	and ISNULL(custno,'') between @t_bcustno and @t_ecustno
+	group by custno
+	having SUM(isnull(opay,0)-isnull(unopay,0))!=0
 
---前期累積預收
-insert into @tmp(gno,custno,comp,mopay)
-select '1',a.custno,c.comp,0
-from umm a
-left join cust c on a.custno = c.noa
-where EXISTS(select * from @tmp b where a.custno = b.custno)
-group by a.custno,c.comp
-
-update @tmp set opay = ISNULL(B.opay,0),mopay = ISNULL(B.opay,0)
-from @tmp A
-left join (
-	select custno,SUM(opay - unopay) opay
-	from umm a
-	where EXISTS(select * from @tmp b where a.custno = b.custno)and(a.datea < @t_bdate)
-	group by a.custno
-)B on A.custno = B.custno
-where gno = '1'
-
---計算預收餘額
-declare @custno nvarchar(25)
-declare @xcustno nvarchar(25) = 'xxxxxx'
-declare	@noa nvarchar(35)
-declare @opay float
-declare @b4pay float
-
-declare cursor_table cursor for 
-select custno,noa,opay from @tmp where rec = '1' order by custno,noa
-open cursor_table 
-fetch next from cursor_table 
-into @custno,@noa,@opay
-while(@@FETCH_STATUS <> -1) 
-begin
-	if(@custno != @xcustno)
+	declare cursor_table cursor for
+	select custno,datea,noa,opay,unopay
+	from umm 
+	where datea between @t_bdate and @t_edate
+	and ISNULL(custno,'') between @t_bcustno and @t_ecustno
+	and not(isnull(opay,0)=0 and isnull(unopay,0)=0)
+	open cursor_table
+	fetch next from cursor_table
+	into @custno,@datea,@noa,@opay,@unopay
+	while(@@FETCH_STATUS <> -1)
 	begin
-		set @b4pay = (select opay from @tmp where gno = '1' and custno = @custno)
+		if not exists(select * from #z_ummfe01 where noa=@noa)
+		begin
+			insert into #z_ummfe01(gno,pno,custno,datea,noa,noq,opay,unopay)
+			select '3',2,@custno,@datea,@noa,'',@opay,@unopay
+		end
+		else
+		begin
+			select top 1 @sel=sel from #z_ummfe01 where noa=@noa order by noq
+			update #z_ummfe01 set opay=@opay,unopay=@unopay where sel=@sel
+		end
+		
+		fetch next from cursor_table
+		into @custno,@datea,@noa,@opay,@unopay
 	end
+	close cursor_table
+	deallocate cursor_table
+
+	update #z_ummfe01 set recno=b.recno
+	from #z_ummfe01 a
+	left join (select sel,ROW_NUMBER()over(partition by custno order by datea,noa,noq,sel) recno from #z_ummfe01 ) b on a.sel=b.sel
+
+	update #z_ummfe01 set result = isnull(b.result,0)
+	from #z_ummfe01 a
+	outer apply(select SUM(ISNULL(opay,0)-isnull(unopay,0)) result from #z_ummfe01 where custno=a.custno and recno<=a.recno) b
+
+	insert into #z_ummfe01(gno,pno,custno,[money])
+	select '4',3,custno,SUM(ISNULL([money],0))
+	from #z_ummfe01 
+	group by custno
+
+	update #z_ummfe01 set result = b.result
+	from #z_ummfe01 a
+	outer apply(select top 1 result from #z_ummfe01 where gno!='4' and custno=a.custno order by recno desc) b
+	where gno='4'
+
+	update #z_ummfe01 set cust=ISNULL(b.nick,'')
+	from #z_ummfe01 a
+	left join cust b on a.custno=b.noa
+
+	select gno
+		,custno a01
+		,cust a02
+		
+		,datea b01
+		,acc2 b02
+		,dbo.getComma([money],-1) b03 
+		,checkno b04
+		,bank b05
+		,indate b06
+		,case when isnull(opay,0)-isnull(unopay,0)= 0 then '' else dbo.getComma(isnull(opay,0)-isnull(unopay,0),-1) end b07
+		,dbo.getComma(result,0) b08
+	from #z_ummfe01 
+	order by custno,pno,recno
 	
-	update @tmp set mopay = @b4pay + @opay where noa = @noa
-	set @b4pay = @b4pay + @opay
-	
-	set @xcustno = @custno
-
-	fetch next from cursor_table 
-	into @custno,@noa,@opay
-end 
-close cursor_table 
-deallocate cursor_table 
-
-insert into @tmp(gno,custno,noa,money)
-select '4',custno,'zzzzzzzzzzz',SUM(money) from @tmp where gno = '2' group by custno
-
---排版
-delete @tmp where gno = '1' and opay = 0
-
-update @tmp set datea = '' where rec > 1
-
-update @tmp set gno = '3' 
-from @tmp a 
-left join(
-	select noa,MAX(rec)rec from @tmp where gno = '2' group by noa
-)b on a.noa = b.noa and a.rec = b.rec 
-where a.noa = b.noa and a.rec = b.rec 
-
-select 
-	*,
-	dbo.getComma(money,0)mny1,
-	dbo.getComma(opay ,0)mny2,
-	dbo.getComma(mopay,0)mny3 
-from @tmp order by custno,noa;
+	drop table #z_ummfe01;
