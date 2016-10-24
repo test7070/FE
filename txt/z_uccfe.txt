@@ -1001,7 +1001,7 @@ z_uccfe2:--z_uccfe2
 		,-1
 		,b.mount,b.[weight]
 		,isnull(a.storeno,''),a.store
-		,a.accy,'cng'+@qhref_acomp+'_Ｘ',a.noa,b.noq
+		,a.accy,'cngfe'+'_Ｘ',a.noa,b.noq
 	from view_cng a
 	left join view_cngs b on a.accy=b.accy and a.noa=b.noa
 	where  not(b.mount=0 and b.[weight]=0)
@@ -1017,7 +1017,7 @@ z_uccfe2:--z_uccfe2
 		,1
 		,b.mount,b.[weight]
 		,isnull(a.storeinno,''),a.store
-		,a.accy,'cng'+@qhref_acomp+'_Ｚ',a.noa,b.noq
+		,a.accy,'cngfe'+'_Ｚ',a.noa,b.noq
 	from view_cng a
 	left join view_cngs b on a.accy=b.accy and a.noa=b.noa
 	where  not(b.mount=0 and b.[weight]=0)
