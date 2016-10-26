@@ -25,7 +25,7 @@
             var q_readonly = ['txtNoa', 'txtAccno', 'txtComp', 'txtCardeal', 'txtSales', 'txtAcomp', 'txtMoney', 'txtTax', 'txtTotal', 'txtTotalus', 'txtWorker', 'txtWorker2', 'txtTranstart', 'txtWeight','txtApv','txtApvname','txtApvmemo'];
             var q_readonlys = ['txtTotal', 'txtOrdeno', 'txtNo2', 'txtNoq', 'txtProfit', 'txtChecker'];
             var bbmNum = [];
-            var bbsNum = [];
+            var bbsNum = [['txtWeight',10,2]];
             var bbmMask = [];
             var bbsMask = [];
             q_sqlCount = 6;
