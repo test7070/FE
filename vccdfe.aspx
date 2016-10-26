@@ -85,6 +85,7 @@
                            $('#txtApv').val(as[0].apv);
                            $('#vtapv_'+q_recno).text(as[0].apv);
                            abbm[q_recno]['apv']=as[0].apv;
+                           q_func('vccd_post.post', r_accy+','+$('#txtNoa').val()+',1'); 	
                         }
                         break;
                 }

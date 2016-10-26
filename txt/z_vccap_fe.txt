@@ -126,6 +126,8 @@ z_vccap_fe01:--z_vccap_fe01
 	where a.recno=@n-1
 	
 	update @tmp set product_s = REPLACE(product_s,"~#$","'")
+	--有買受人優先顯示
+	update @tmp set comp=case when len(buyer)>0 then buyer else comp end
 	
 	select noa vccano
 		,dbo.getComma(mount_s,2) mount
