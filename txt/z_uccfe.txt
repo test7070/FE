@@ -1352,6 +1352,7 @@ z_uccfe1:--z_uccfe1
 	declare @t_showcarton nvarchar(20) = case when '#non'=[9] then '' else [9] end
 	declare @t_project nvarchar(20) = case when '#non'='[10]' then '' else '[10]' end
 	declare @t_showprice nvarchar(20) = case when '#non'=[14] then '0' else [14] end
+	declare @t_ucctype nvarchar(60) = case when '#non'=[21] then '' else [21] end
 	------------------------------------------------------------------------------------
 --前期
 	declare @tmpa table(
@@ -1361,7 +1362,7 @@ z_uccfe1:--z_uccfe1
 		[weight] decimal(18, 4)
 	)
 	insert into @tmpa
-	execute dbo.stkucc2 @t_enddate,@t_bstoreno,@t_estoreno,@t_bproductno,@t_eproductno 
+	execute dbo.stkucc2 @t_enddate,@t_bstoreno,@t_estoreno,@t_bproductno,@t_eproductno
 	--select productno,storeno,mount,[weight]
 	--from dbo.stkucc(@t_enddate,'','')
 	
@@ -1386,7 +1387,8 @@ z_uccfe1:--z_uccfe1
 		mount decimal(18, 4),
 		[weight] decimal(18, 4),
 		price decimal(18, 4),
-		[money] float
+		[money] float,
+		typea nvarchar(100)
 	)
 	insert into #z_uccfe1(gno,recno,storeno,productno,mount,[weight])
 	select '1',ROW_NUMBER()over(partition by productno order by storeno)
@@ -1396,7 +1398,7 @@ z_uccfe1:--z_uccfe1
 	and productno between @t_bproductno and @t_eproductno
 	and storeno between @t_bstoreno and @t_estoreno
 	
-	update #z_uccfe1 set product=ISNULL(b.product,''),unit=UPPER(ISNULL(b.unit,'')),store=ISNULL(c.store,'')
+	update #z_uccfe1 set product=ISNULL(b.product,''),unit=UPPER(ISNULL(b.unit,'')),store=ISNULL(c.store,''),typea=b.groupano
 	from #z_uccfe1 a
 	left join ucc b on a.productno=b.noa
 	left join store c on a.storeno=c.noa
@@ -1421,17 +1423,19 @@ z_uccfe1:--z_uccfe1
 		outer apply(select price from view_costs where mon=LEFT(@t_enddate,6) and productno=a.productno ) b	
 	end
 	---------------------------------------------------------------------------------------------
-	insert into #z_uccfe1(gno,recno,productno,product,unit,mount,[weight],price,[money])
-	select '2',0,productno,product,unit,sum(mount),sum([weight]),price,sum(isnull([money],0))
+	insert into #z_uccfe1(gno,recno,productno,product,unit,mount,[weight],price,[money],typea)
+	select '2',0,productno,product,unit,sum(mount),sum([weight]),price,sum(isnull([money],0)),typea
 	from #z_uccfe1
 	where gno = '1' 
 	and (mount!=0 or [weight]!=0)
-	group by productno,product,unit,price
+	and (typea=@t_ucctype or len(@t_ucctype)=0)
+	group by productno,product,unit,price,typea
 	
 	insert into #z_uccfe1(gno,recno,productno,mount,[weight],[money])
 	select '3',0,CHAR(255),sum(mount),sum([weight]),sum(isnull([money],0))
 	from #z_uccfe1
-	where gno = '1' 
+	where gno = '1'
+	and (typea=@t_ucctype or len(@t_ucctype)=0) 
 	and (mount!=0 or [weight]!=0)
 	---------------------------------------------------------------------------------------------
 	if len(@t_option01)=0
@@ -1455,7 +1459,8 @@ z_uccfe1:--z_uccfe1
 		[weight] decimal(18, 4),
 		price decimal(18, 4),
 		[money] float,
-		carton float
+		carton float,
+		typea nvarchar(20)
 	)
 	declare @counts int 
 	declare @t_counts int 
@@ -1466,17 +1471,17 @@ z_uccfe1:--z_uccfe1
 		insert @tmp
 		select case when a.gno='1' then '5' when a.gno='3' then '6' else a.gno end gno,
 			case when a.gno ='3' then 999999 else a.grecno end ,a.recno,a.storeno,a.store,a.productno,a.product,a.unit,a.mount,a.[weight],
-			a.price,a.[money],CEILING(a.mount/NULLIF(b.stdmount,0)) carton
-		from #z_uccfe1 a left join ucc b on a.productno = b.noa order by productno,recno
+			a.price,a.[money],CEILING(a.mount/NULLIF(b.stdmount,0)) carton,a.typea
+		from #z_uccfe1 a left join ucc b on a.productno = b.noa 
+		order by productno,recno
 	end
 	else
 	begin
 		insert @tmp
 		select case when a.gno='1' then '7' when a.gno='2' then '4' when a.gno='3' then '8' else a.gno end gno,
 			case when a.gno ='3' then 999999 else a.grecno end ,a.recno,a.storeno,a.store,a.productno,a.product,a.unit,a.mount,a.[weight],
-			a.price,a.[money],CEILING(a.mount/NULLIF(b.stdmount,0)) carton
-		from #z_uccfe1 a left join ucc b on a.productno = b.noa order by productno,recno
-		
+			a.price,a.[money],CEILING(a.mount/NULLIF(b.stdmount,0)) carton,a.typea
+		from #z_uccfe1 a left join ucc b on a.productno = b.noa order by productno,recno	
 		update @tmp
 		set carton=(select SUM(isnull(carton,0)) from @tmp where gno in ('2','4')) where gno='8'
 	end
