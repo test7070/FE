@@ -499,12 +499,24 @@
 					lengthb=lengthb-cut;
 					if(cut>0)
 						cutall=cutall+(cutall.length>0? ',':'')+cut;
+					
+					var twrate=dec($('#txtMo').val())/100;
+					var twlength=dec($('#txtWaste').val());
 						
 					if(lengthb==0){
 						//if(rep.indexOf(repall.toString()+'#')==-1){
 						//	rep=rep+repall.toString()+'#';
 							cutarry.push({'olength':olength,'cutlength':cutall,'wlenhth':lengthb,'wrate':round(lengthb/olength,4)});
 						//}
+						rep='@@';
+						return cutarry;
+					}else if (((round(lengthb/olength,4)<=twrate || lengthb<twlength) && cutarry.length>5000) || cutarry.length>20000){
+						cutall=cutall+'#'+lengthb;
+						if(rep.indexOf(repall.toString()+'#')==-1){
+							rep=rep+repall.toString()+'#';
+							cutarry.push({'olength':olength,'cutlength':cutall,'wlenhth':lengthb,'wrate':round(lengthb/olength,4)});
+						}
+						
 						rep='@@';
 						return cutarry;
 					}else{
@@ -732,6 +744,7 @@
 				$('#txtBdime').val(5);
 				$('#txtEdime').val(8);
 				$('#txtOdime').val(12);
+				$('#txtMo').val(3);
 			}
 
 			function btnModi() {
