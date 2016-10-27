@@ -1,4 +1,4 @@
-<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.1//EN" "http://www.w3.org/TR/xhtml11/DTD/xhtml11.dtd">
+﻿<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.1//EN" "http://www.w3.org/TR/xhtml11/DTD/xhtml11.dtd">
 <html xmlns="http://www.w3.org/1999/xhtml" dir="ltr" >
 	<head>
 		<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
@@ -20,7 +20,9 @@
 				_q_boxClose();
 				q_getId();
 				q_gf('', 'z_uccfe');
-				
+				if (uccgaItem.length == 0) {
+                    q_gt('uccga', '', 0, 0, 0, "");
+                }
 				$('#q_report').click(function() {
 					if (q_getPara('sys.project').toUpperCase()!='YC'){
 						$('#Xcarton').hide();
@@ -100,6 +102,10 @@
 						type : '8',
 						name : 'xsel',//[20]
 						value : "1@僅顯示退貨,2@客戶別統計,3@業務分析,4@業務排行榜,5@中類分析".split(',')
+					}, {
+						type : '5',
+						name : 'xgroupano', //[21]
+						value : uccgaItem.split(',')
 					}]
 				});
 				q_popAssign();
@@ -189,6 +195,13 @@
 							maxproduct='';
 						}
 						break;
+					case 'uccga':
+                        var as = _q_appendData("uccga", "", true);
+                        uccgaItem = " @全部";
+                        for ( i = 0; i < as.length; i++) {
+                            uccgaItem = uccgaItem + (uccgaItem.length > 0 ? ',' : '') + as[i].noa + '@' + as[i].noa + ' . ' + as[i].namea;
+                        }
+                        break;
 					default:
 						break;
 				}
