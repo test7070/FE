@@ -545,7 +545,7 @@ z_ummfe03:--z_ummfe03
 	
 	--發票
 	insert into @tmp(recno,gno,cno,custno,tablea,accy,noa,noq,tax,datea,typea,moneys,product)
-	select 1,'2',cno,custno,'vcca','',noa,'',tax,datea,'稅',total,ISNULL(acomp,'')+' '+ISNULL(comp,'')
+	select 1,'2',cno,custno,'vcca','',noa,'',tax,datea,'稅',total,ISNULL(acomp,'')+' '+case when len(buyer)>0 then buyer else ISNULL(comp,'') end
 	from vcca
 	where (len(@t_cno)=0 or cno=@t_cno)
 	and ISNULL(custno,'') between @t_bcustno and @t_ecustno
