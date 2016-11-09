@@ -229,17 +229,34 @@
 					//先裁剪最大長度
 					t_same.sort(function(a, b) {if(a.lengthb>b.lengthb) {return -1;} if (a.lengthb < b.lengthb) {return 1;} return 0;});
 					
-					var specsize='';
+					var specsize='',as_add5=[];
 					for (var i=0;i<t_same.length;i++){
 						var blength=''; //版料可用長度
 						//材質號數
 						var tspec1=t_same[i].spec;
 						var tsize1=t_same[i].size;
 						//取得設定可使用的板料長度
-						q_gt('add5', "where=^^typea='"+tsize1+"'^^" , 0, 0, 0, "getadd5",r_accy,1); //號數
-						var as = _q_appendData("add5s", "", true);
-						for (var j=0;j<as.length;j++){
-							blength=blength+as[j].postno+',';
+						var add5n=-1;
+						for(var x5n=0;x5n<as_add5.length;x5n++){
+							if(as_add5[x5n].size==tsize1){
+								add5n=x5n;
+								break;
+							}
+						}
+						
+						if(as_add5.length>0 && add5n!=-1){
+							blength=as_add5[0].blength;
+						}else{
+							q_gt('add5', "where=^^typea='"+tsize1+"'^^" , 0, 0, 0, "getadd5",r_accy,1); //號數
+							var as = _q_appendData("add5s", "", true);
+							for (var j=0;j<as.length;j++){
+								blength=blength+as[j].postno+',';
+							}
+							
+							as_add5.push({
+									'size':tsize1,
+									'blength':blength
+							});
 						}
 						
 						if(specsize.indexOf(tspec1+tsize1+'#')==-1){//已做過的相同材質號數 不在做一次
@@ -260,11 +277,11 @@
 							}
 							cutlengthb.sort(function(a, b) { if(a > b) {return -1;} if (a < b) {return 1;} return 0;});
 							
-							if(cutlengthb.length>30){
+							/*if(cutlengthb.length>30){
 								if(!confirm('裁剪'+tspec1+' '+tsize1 +'的長度超過30組，電腦配料會花費較長時間配對，請確認是否繼續?')){
 									break;
 								}
-							}
+							}*/
 							
 							//取得裁切組合
 							var t_cups=[];
@@ -417,7 +434,7 @@
 						$('#btnPlut').click()
 					}
 					
-					var t_n=0;
+					var t_n=0,as_where=[];
 					for (var i = 0; i < getucc.length; i++) {
 						var t_weight=0;
 						switch(getucc[i].size){
@@ -457,12 +474,19 @@
 						t_where=t_where+" and product like '%"+getucc[i].size+"%' ";
 						t_where=t_where+" and (product like '%"+(getucc[i].lengthb/100).toString()+"M' or product like '%"+(getucc[i].lengthb/100).toString()+".0M' )";
 						t_where="where=^^"+t_where+"^^";
-						q_gt('ucc', t_where , 0, 0, 0, "getucc",r_accy,1); //號數
-						var as = _q_appendData("ucc", "", true);
-						if (as[0] != undefined) {
-							$('#txtProductno__'+t_n).val(as[0].noa);
-							$('#txtProduct__'+t_n).val(as[0].product);
-							$('#txtUnit__'+t_n).val(as[0].unit);
+						
+						var txn=-1;
+						for(var nas=0;nas<as_where.length;nas++){
+							if(as_where[nas].t_where==t_where){
+								txn=nas;
+								break;
+							}
+						}
+						
+						if(as_where.length>0 && txn!=-1){
+							$('#txtProductno__'+t_n).val(as_where[txn].noa);
+							$('#txtProduct__'+t_n).val(as_where[txn].product);
+							$('#txtUnit__'+t_n).val(as_where[txn].unit);
 							$('#txtGmount__'+t_n).val(getucc[i].mount);
 							$('#txtGweight__'+t_n).val(round(getucc[i].mount*t_weight*getucc[i].lengthb/100,0));
 							$('#txtNor__'+t_n).val(getucc[i].nor);
@@ -471,16 +495,38 @@
 							/*$('#txtScolor__'+t_n).val(getucc[i].bolt);
 							$('#txtHard__'+t_n).val(getucc[i].tlength);*/
 						}else{
-							$('#txtProductno__'+t_n).val('');
-							$('#txtProduct__'+t_n).val('鋼筋熱軋'+getucc[i].spec+' '+getucc[i].size+'*'+(getucc[i].lengthb/100).toString()+'M');
-							$('#txtUnit__'+t_n).val('KG');
-							$('#txtGmount__'+t_n).val(getucc[i].mount);
-							$('#txtGweight__'+t_n).val(round(getucc[i].mount*t_weight*getucc[i].lengthb/100,2));
-							$('#txtNor__'+t_n).val(getucc[i].nor);
-							$('#txtMemo2__'+t_n).val(t_memo2);
-							$('#txtLengthc__'+t_n).val(dec(t_lens));
-							/*$('#txtScolor__'+t_n).val(getucc[i].bolt);
-							$('#txtHard__'+t_n).val(getucc[i].tlength);*/
+							q_gt('ucc', t_where , 0, 0, 0, "getucc",r_accy,1); //號數
+							var as = _q_appendData("ucc", "", true);
+							if (as[0] != undefined) {
+								$('#txtProductno__'+t_n).val(as[0].noa);
+								$('#txtProduct__'+t_n).val(as[0].product);
+								$('#txtUnit__'+t_n).val(as[0].unit);
+								$('#txtGmount__'+t_n).val(getucc[i].mount);
+								$('#txtGweight__'+t_n).val(round(getucc[i].mount*t_weight*getucc[i].lengthb/100,0));
+								$('#txtNor__'+t_n).val(getucc[i].nor);
+								$('#txtMemo2__'+t_n).val(t_memo2);
+								$('#txtLengthc__'+t_n).val(dec(t_lens));
+								/*$('#txtScolor__'+t_n).val(getucc[i].bolt);
+								$('#txtHard__'+t_n).val(getucc[i].tlength);*/
+								
+								as_where.push({
+									't_where':t_where,
+									'noa':as[0].noa,
+									'product':as[0].product,
+									'unit':as[0].unit
+								});
+							}else{
+								$('#txtProductno__'+t_n).val('');
+								$('#txtProduct__'+t_n).val('鋼筋熱軋'+getucc[i].spec+' '+getucc[i].size+'*'+(getucc[i].lengthb/100).toString()+'M');
+								$('#txtUnit__'+t_n).val('KG');
+								$('#txtGmount__'+t_n).val(getucc[i].mount);
+								$('#txtGweight__'+t_n).val(round(getucc[i].mount*t_weight*getucc[i].lengthb/100,2));
+								$('#txtNor__'+t_n).val(getucc[i].nor);
+								$('#txtMemo2__'+t_n).val(t_memo2);
+								$('#txtLengthc__'+t_n).val(dec(t_lens));
+								/*$('#txtScolor__'+t_n).val(getucc[i].bolt);
+								$('#txtHard__'+t_n).val(getucc[i].tlength);*/
+							}
 						}
 						t_n++;
 					}
@@ -516,7 +562,6 @@
 							rep=rep+repall.toString()+'#';
 							cutarry.push({'olength':olength,'cutlength':cutall,'wlenhth':lengthb,'wrate':round(lengthb/olength,4)});
 						}
-						
 						rep='@@';
 						return cutarry;
 					}else{
@@ -524,7 +569,8 @@
 						for(var i=0;i<cutlength.length;i++){
 							if(lengthb-cutlength[i]>=0){
 								repall=repall+Math.pow(2,i);
-								getmlength(olength,lengthb,cutlength[i],cutlength,cutall,cutarry,repall);
+								if(rep.indexOf(repall.toString()+'#')==-1)
+									getmlength(olength,lengthb,cutlength[i],cutlength,cutall,cutarry,repall);
 								nn++;
 							}
 						}
