@@ -134,7 +134,13 @@
                     q_pop('txtAccno', "accc.aspx?" + r_userno + ";" + r_name + ";" + q_time + ";accc3='" + $('#txtAccno').val() + "';" + $('#txtDatea').val().substring(0, 3) + '_' + r_cno, 'accc', 'accc3', 'accc2', "92%", "1054px", q_getMsg('lblAccc'), true);
                 });
                 $('#lblOrdc').click(function() {
-                    lblOrdc();
+                    //lblOrdc();
+                    if(!(q_cur==1 || q_cur==2))
+						return;
+					var t_noa = $('#txtNoa').val();
+                	var t_tggno = $('#txtTggno').val();
+                	var t_where ='';
+                	q_box("ordc_fe_b.aspx?" + r_userno + ";" + r_name + ";" + q_time + ";" + t_where+";"+";"+JSON.stringify({noa:t_noa,tggno:t_tggno}), "ordc_fe", "95%", "95%", '');
                 });
                 $('#lblInvono').click(function() {
                     t_where = '';
@@ -203,6 +209,21 @@
             function q_boxClose(s2) {
                 var ret;
                 switch (b_pop) {
+                	case 'ordc_fe':
+                        if (b_ret != null) {
+                        	//取得採購的資料
+                            var t_where = "where=^^ noa='" + b_ret[0].noa + "' ^^";
+                            q_gt('ordc', t_where, 0, 0, 0, "", r_accy);
+
+                            $('#txtOrdcno').val(b_ret[0].noa);
+                            ret = q_gridAddRow(bbsHtm, 'tbbs', 'txtProductnoc,txtProduct,txtUnit,txtMount,txtWeight,txtOrdeno,txtNo2,txtPrice,txtMemo'
+                            , b_ret.length, b_ret, 'productno,product,unit,emount,eweight,noa,no2,price,memo', 'txtProductno,txtProduct');
+                            bbsAssign();
+                            sum();
+                        }else{
+                        	Unlock(1);
+                        }
+                        break;
                     case 'ordcs':
                         if (q_cur > 0 && q_cur < 4) {
                             b_ret = getb_ret();
