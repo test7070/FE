@@ -1,3 +1,4 @@
+
 ALTER  function [dbo].[vcc_orde_fe](@t_custno nvarchar(max),@t_vccno nvarchar(max), @para nvarchar(max))
 returns @tmp table(
 	sel bit
@@ -10,7 +11,7 @@ returns @tmp table(
 	,odate nvarchar(20)
 	,datea nvarchar(20)
 	,productno nvarchar(50)
-	,product nvarchar(50)
+	,product nvarchar(100)
 	,unit nvarchar(20)
 	,mount float
 	,[weight] float
@@ -24,12 +25,14 @@ begin
 	select a.accy,a.noa,a.no2,b.custno,isnull(b.comp,''),isnull(b.nick,''),b.odate,a.datea
 		,a.productno,a.product,a.unit, a.mount,a.[weight],a.price,ISNULL(a.mount,0)-ISNULL(c.mount,0),ISNULL(a.[weight],0)-ISNULL(c.[weight],0)
 	from view_ordes a
-	left join view_orde b on a.accy=b.accy and a.noa=b.noa and ISNULL(b.custno,0)=@t_custno and isnull(b.cancel,0)=0
+	left join view_orde b on a.accy=b.accy and a.noa=b.noa
 	left join (select ordeno,no2, SUM(ISNULL(mount,0)) mount,SUM(ISNULL([weight],0)) [weight] 
 		from view_vccs where noa!=@t_vccno and len(isnull(ordeno,''))>0
 		group by ordeno,no2) c on a.noa=c.ordeno and a.no2=c.no2
 	where b.noa is not null
 	and isnull(a.cancel,0)=0
+	and isnull(b.cancel,0)=0
+	and ISNULL(b.custno,0)=@t_custno
 	--要注意是訂單是否有勾專案,沒勾才不匯入已結案的
 	and (isnull(b.isproj,0)=1 or (isnull(b.isproj,0)=0 and ISNULL(b.enda,0)=0 and ISNULL(a.enda,0)=0))
 	and ISNULL(a.mount,0)-ISNULL(c.mount,0)>0
