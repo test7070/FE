@@ -1,4 +1,3 @@
-<!--2016/01/14-->
 <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
 <html xmlns="http://www.w3.org/1999/xhtml" dir="ltr">
 	<head>
@@ -1487,7 +1486,8 @@
                 margin: -1px;
             }
             .dbbs {
-                width: 1800px;
+            	width: 1800px;
+				float:left;/*for CHROME  XP*/
             }
             .tbbs a {
                 font-size: medium;
