@@ -195,6 +195,11 @@
 					var t_custno = $('#txtNoa').val();
                     q_box("upcust.aspx?" + r_userno + ";" + r_name + ";" + q_time + ";custno='" + t_custno + "';" + r_accy, 'rc2tfe', "95%", "95%", q_getMsg('popPrint'));
 				});
+				
+				$('#btnCredit2zero').click(function(e){
+					var t_noa = $('#txtNoa').val();	
+					q_func('qtxt.query.credit2zero', 'cust.txt,credit2zero,'+ encodeURI(r_userno) + ';'+ encodeURI(t_noa));
+				});
 			}
 			
 			function q_boxClose(s2) {
@@ -367,7 +372,7 @@
 					t_err = t_err + q_getMsg("lblGetdate") + q_getMsg("msgErr") + '\r';
 					
 				if($('#txtNick').val() == ''){
-					$('#txtNick').val($('#txtComp').val().substr(0,2))
+					$('#txtNick').val($('#txtComp').val().substr(0,2));
 				}	
 					
 				if(q_cur==1)
@@ -422,14 +427,15 @@
 				if(t_para){
 					$('#btnConn').removeAttr('disabled');
 					$('#btnCustm').removeAttr('disabled');
-					//$('#btnUsecrd').attr('disabled', 'disabled');
 					
 					$('#btnUpcust').removeAttr('disabled');
+					$('#btnCredit2zero').removeAttr('disabled');
 				}else{
 					$('#btnConn').attr('disabled', 'disabled');
 					$('#btnCustm').attr('disabled', 'disabled');
-					//$('#btnUsecrd').removeAttr('disabled');
+					
 					$('#btnUpcust').attr('disabled', 'disabled');
+					$('#btnCredit2zero').attr('disabled', 'disabled');
 				}
 				
 			}
@@ -488,6 +494,26 @@
 
 			function q_funcPost(t_func, result) {
                 switch(t_func) {
+                	case 'qtxt.query.credit2zero':
+                		var t_noa = $('#txtNoa').val();
+                		var as = _q_appendData("tmp0", "", true, true);                     
+                        if(as[0]!=undefined){
+	                        	if(as[0].success == 0){
+	                        		alert(as[0].msg);
+	                        	}else{
+	                				$('#txtCredit').val(0);
+                        			for(var i=0;i<abbm.length;i++){
+                        				if(abbm[i].noa==t_noa){
+                        					abbm[i].credit = "0";
+                        					break;
+                        				}
+                        			}
+                        			alert(as[0].msg);
+	                        	}
+	                        } 
+                		break;
+                	default:
+                		break;
 				}
 			}
 		</script>
@@ -739,7 +765,11 @@
 					<tr>
 						<td><span> </span><a id="lblCredit" class="lbl" > </a></td>
 						<td><input id="txtCredit" type="text" class="txt c1 num"/></td>
-						<td class="isFE" colspan="2"><input id="btnUsecrd" type="button"/></td>
+						<td class="isFE" colspan="2">
+							<input id="btnUsecrd" type="button" style="float:left;width:120px;"/>
+							<span style="float:left;width:20px; display:block;"> </span>
+							<input id="btnCredit2zero" type="button" style="float:left;width:120px;" value="額度歸0"/>
+						</td>
 						<td><span> </span><a id="lblSales" class="lbl btn"> </a></td>
 						<td>
 							<input id="txtSalesno" type="text" class="txt c6"/>
