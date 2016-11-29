@@ -197,8 +197,10 @@
 				});
 				
 				$('#btnCredit2zero').click(function(e){
-					var t_noa = $('#txtNoa').val();	
-					q_func('qtxt.query.credit2zero', 'cust.txt,credit2zero,'+ encodeURI(r_userno) + ';'+ encodeURI(t_noa));
+					if (confirm("額度歸0，是否繼續!")) {
+					    var t_noa = $('#txtNoa').val();	
+						q_func('qtxt.query.credit2zero', 'cust.txt,credit2zero,'+ encodeURI(r_userno) + ';'+ encodeURI(t_noa));
+					}
 				});
 			}
 			
