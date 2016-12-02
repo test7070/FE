@@ -76,7 +76,7 @@
 				bbmMask = [['txtDatea', r_picd], ['txtBdate', r_picd], ['txtEdate', r_picd]];
 				bbsMask = [['txtDate2', r_picd], ['txtDatea', r_picd]];
 				q_mask(bbmMask);
-				q_cmbParse("cmbMechno", "01@剪台,02@火切");
+				q_cmbParse("cmbMechno", "01@剪台,02@火切,12@D10盤圓,13@D13盤圓,20@續接裁剪");
 				
 				document.title='鋼筋裁剪單';
 				q_gt('add5', "where=^^1=1^^" , 0, 0, 0, "getadd5",r_accy,1); //號數
@@ -116,6 +116,7 @@
 				});
 				
 				$('#btnWorkjImport').click(function() {
+					var t_workjno=$('#textWorkjno').val();
 					var t_mech=$('#cmbMechno').val();
 					var t_bdate = trim($('#txtBdate').val());
 					var t_edate = trim($('#txtEdate').val());
@@ -124,6 +125,9 @@
 					//外調定尺不用裁剪
 					//var t_where = " 1=1 and (mech1='"+t_mech+"' or mech2='"+t_mech+"' or mech3='"+t_mech+"' or mech4='"+t_mech+"' or mech5='"+t_mech+"')";
 					var t_where = " 1=1";
+					if(t_workjno.length>0){
+						t_where+=" and a.noa='"+t_workjno+"'";
+					}
 					t_bdate = (emp(t_bdate) ? '' : t_bdate);
 					t_edate = (emp(t_edate) ? r_picd : t_edate);
 					t_where += " and (a.odate between '" + t_bdate + "' and '" + t_edate + "') ";
@@ -652,7 +656,8 @@
 							
 							//帶入安全存量和庫存
 							//低於安全存量 //105/08/25 在加工單匯入時才帶入
-							var addwork=[];
+							//105/11/28自己再增加需要裁剪，可能要補的安全庫存
+							/*var addwork=[];
 							var t_spec = $('#cmbSpec').val();
 							var t_m1 = trim($('#cmbM1').val());
 							var t_uwhere = " 1=1";
@@ -721,7 +726,7 @@
 						            case '18#': t_weight=20.20; break;
 								}	
 								addwork[i].weight=q_mul(addwork[i].mount,t_weight);
-							}
+							}*/
 							
 							//處理 是否要彎曲
 							for (var j = 0; j < b_ret.length; j++) {
@@ -749,10 +754,10 @@
 									}
 								}
 							}
-							if(addwork.length>0){
+							/*if(addwork.length>0){
 								q_gridAddRow(bbsHtm, 'tbbs', 'txtProductno,txtProduct,txtLengthb,txtWeight,txtMount,txtMemo'
 								, addwork.length, addwork, 'productno,product,lengthb,weight,mount,memo', 'txtProductno,txtOrdeno');
-							}
+							}*/
 							bbsreadonly();
 							b_ret = '';
 						}
@@ -1052,6 +1057,7 @@
 				$('#lblMech_s').text('指定彎曲機台');
 				$('#lblSale_s').text('彎曲');
 				$('#lblStoreno').text('中料倉庫');
+				$('#lblWorkjno').text('加工單號');
 			}
 
 			function distinct(arr1) {
@@ -1388,8 +1394,9 @@
 					</tr>
 					<tr>
 						<td><span> </span><a id="lblMech" class="lbl" > </a></td>
-						<td colspan="2"><select id="cmbMechno" style="font-size: medium"> </select></td>
-						<td> </td>
+						<td><select id="cmbMechno" style="font-size: medium"> </select></td>
+						<td><span> </span><a id="lblWorkjno" class="lbl"> </a></td>
+						<td><input id="textWorkjno" type="text" class="txt c1"/></td>
 						<td> </td>
 						<td class="cut">撞齊/刀</td>
 						<td class="cut"><input id="txtM3" type="text" class="txt num c1" /></td>
