@@ -216,7 +216,7 @@
                             q_gt('ordc', t_where, 0, 0, 0, "", r_accy);
 
                             $('#txtOrdcno').val(b_ret[0].noa);
-                            ret = q_gridAddRow(bbsHtm, 'tbbs', 'txtProductnoc,txtProduct,txtUnit,txtMount,txtWeight,txtOrdeno,txtNo2,txtPrice,txtMemo'
+                            ret = q_gridAddRow(bbsHtm, 'tbbs', 'txtProductno,txtProduct,txtUnit,txtMount,txtWeight,txtOrdeno,txtNo2,txtPrice,txtMemo'
                             , b_ret.length, b_ret, 'productno,product,unit,emount,eweight,noa,no2,price,memo', 'txtProductno,txtProduct');
                             bbsAssign();
                             sum();
