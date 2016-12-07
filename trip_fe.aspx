@@ -34,7 +34,7 @@
             brwNowPage = 0;
             brwKey = 'Datea';
             brwCount2 = 5;
-            aPop = new Array(['txtSssno', 'lblSss', 'sss', 'noa,namea,part', 'txtSssno,txtNamea', 'sss_b.aspx'], ['txtCno_', 'btnAcomp_', 'custtgg', 'noa,comp', 'txtCno_,txtAcomp_', 'custtgg_b.aspx']);
+            aPop = new Array(['txtSssno', 'lblSss', 'sss', 'noa,namea,part', 'txtSssno,txtNamea', 'sss_b.aspx'], ['txtCno_', 'btnAcomp_', 'custtgg', 'noa,comp', 'txtCno_,txtAcomp_', 'custtgg_b.aspx'], ['txtAcomp_', '', 'custtgg', 'noa,comp', 'txtCno_,txtAcomp_', 'custtgg_b.aspx']);
 
             $(document).ready(function() {
                 bbmKey = ['noa'];
@@ -57,6 +57,10 @@
                 }
 
                 mainForm(1);
+                $('#vewDatea').text("拜訪日期");
+                $('#vewNamea').text("業務");
+				$('#lblDatea').text("拜訪日期");
+				$('#lblSss').text("業務");
             }
 
             function mainPost() {
@@ -630,7 +634,7 @@
 					<input class="btn"  id="btnPlus" type="button" value='+' style="font-weight: bold; width:90%;"  />
 					</td>
 					<td align="center" style="width:20px;"> </td>
-					<td align="center" style="width:200px;"><a id='lblTimes'> </a></td>
+					<td align="center" style="width:200px;"><a id='lblTimesa'> 拜訪時間 </a></td>
 					<td align="center" style="width:120px;"><a id='lblCnos'> </a></td>
 					<td align="center" style="width:200px;"><a id='lblAcomps'> </a></td>
 					<td align="center" style="width:100px;"><a id='lblConns'> 接洽人 </a></td>
