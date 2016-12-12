@@ -1035,12 +1035,20 @@
 				var t_same=[];
 				//相同材質號數長度合併
 				for (var i = 0; i < q_bbsCount; i++) {
-					if(!emp($('#txtProductno_'+i).val()) && !emp($('#txtProduct_'+i).val()) && $('#txtProduct_'+i).val().indexOf('鋼筋')>-1){
+					if(!emp($('#txtProductno_'+i).val()) && !emp($('#txtProduct_'+i).val()) 
+					&& ($('#txtProduct_'+i).val().indexOf('鋼筋')>-1|| $('#txtProduct_'+i).val().indexOf('螺栓')>-1)){
 						var tproduct=$('#txtProduct_'+i).val();
 						var tmount=dec($('#txtMount_'+i).val());//裁剪數量
 						//材質號數長度
-						var tspec=tproduct.substr(tproduct.indexOf('S'),tproduct.indexOf(' ')-tproduct.indexOf('S'))
-						var tsize=tproduct.split(' ')[1].split('*')[0];
+						var tspec='';
+						var tsize='';
+						if(tproduct.indexOf('螺栓')>-1){
+							tspec='SD420W';
+							tsize=replaceAll(replaceAll(tproduct.split('#')[0]+'#','基礎螺栓',''),'抗震專利','');
+						}else{ //鋼筋
+							tspec=tproduct.substr(tproduct.indexOf('S'),tproduct.indexOf(' ')-tproduct.indexOf('S'));
+							tsize=tproduct.split(' ')[1].split('*')[0];
+						}
 						var tlength=dec($('#txtLengthb_'+i).val());
 						var tw03=dec($('#txtWaste').val()); //容許損耗長度
 						var tw04=dec($('#txtMo').val()); //容許損耗%
