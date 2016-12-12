@@ -839,6 +839,8 @@
 					var t_mon = $.trim($('#txtMon').val());
             		var t_item = '';
 	               	for(var i=0;i<q_bbsCount;i++){
+	               		t_total = q_float('txtTotal_'+i);
+	               		t_total = isNaN(t_total)?0:t_total;
 	               		t_item += (t_item.length>0?'|':'') + $('#txtNoq_'+i).val()+'@'+q_float('txtTotal_'+i);
 	               	}
                		q_func('qtxt.query.vccfe_apv', 'vccfe.txt,vccfe_apv,'
