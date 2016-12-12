@@ -34,7 +34,7 @@
             brwNowPage = 0;
             brwKey = 'Datea';
             brwCount2 = 5;
-            aPop = new Array(['txtSssno', 'lblSss', 'sss', 'noa,namea,part', 'txtSssno,txtNamea', 'sss_b.aspx'], ['txtCno_', 'btnAcomp_', 'custtgg', 'noa,comp', 'txtCno_,txtAcomp_', 'custtgg_b.aspx'], ['txtAcomp_', '', 'custtgg', 'noa,comp', 'txtCno_,txtAcomp_', 'custtgg_b.aspx']);
+            aPop = new Array(['txtSssno', 'lblSss', 'sss', 'noa,namea,part', 'txtSssno,txtNamea', 'sss_b.aspx'], ['txtCno_', 'btnAcomp_', 'custtgg', 'noa,comp', 'txtCno_,txtAcomp_', 'custtgg_b.aspx'], ['txtAcomp_', '', 'custtgg', 'noa,comp', '0txtCno_,0txtAcomp_', 'custtgg_b.aspx']);
 
             $(document).ready(function() {
                 bbmKey = ['noa'];
@@ -358,7 +358,7 @@
             }
 
             function bbsSave(as) {
-                if (!as['cno'] && !as['btime'] && !as['memo']) {
+                if (!as['cno']&& !as['acomp'] && !as['btime'] && !as['memo']) {
                     as[bbsKey[1]] = '';
                     return;
                 }
