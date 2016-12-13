@@ -35,7 +35,13 @@
             $(document).ready(function() {
                 bbmKey = ['noa'];
                 q_brwCount();
-                q_gt(q_name, q_content, q_sqlCount, 1,0,'',r_accy);
+                
+                
+                if (r_rank <8){
+                	q_gt('acomp', 'where=^^1=1^^', 0, 1);
+				}else{
+					q_gt(q_name, q_content, q_sqlCount, 1,0,'',r_accy);
+				}
             });
 
             function main() {
@@ -104,6 +110,17 @@
 
             function q_gtPost(t_name) {
                 switch (t_name) {
+                	case 'acomp':
+						var as = _q_appendData("acomp", "", true);
+						if (q_getPara('sys.project').toUpperCase()=='FE' && (r_userno.substr(0,1).toUpperCase())=='B'){
+							q_content = "where=^^salesno='" + r_userno + "'^^";
+							q_gt(q_name, q_content, q_sqlCount, 1, 0, '', r_accy);
+		
+						}else{
+							q_content = "";
+							q_gt(q_name, q_content, q_sqlCount, 1);
+						}
+						break;
                 	case 'checkVccdno_change':
                 		var as = _q_appendData("vccd", "", true);
                         if (as[0] != undefined){

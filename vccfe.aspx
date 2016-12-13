@@ -59,7 +59,16 @@
                 bbmKey = ['noa'];
                 bbsKey = ['noa', 'noq'];
                 q_brwCount();
-                q_gt('acomp', '', 0, 0, 0, "");
+                
+                
+                if (r_rank <8){
+                	q_gt('sss', 'where=^^1=1^^', 0, 1);
+
+				}else{
+					q_gt('acomp', '', 0, 0, 0, "");
+
+				}
+                
             });
 
             function main() {
@@ -688,6 +697,14 @@
                         break;
                     case 'sss':
                         as = _q_appendData('sss', '', true);
+                        if (q_getPara('sys.project').toUpperCase()=='FE' && (r_userno.substr(0,1).toUpperCase())=='B'){
+							q_content = "where=^^salesno='" + r_userno + "'^^";
+							q_gt(q_name, q_content, q_sqlCount, 1, 0, '', r_accy);
+		
+						}else{
+							q_content = "";
+							q_gt(q_name, q_content, q_sqlCount, 1);
+						}
                         break;
                     case 'startdate':
                         var as = _q_appendData('cust', '', true);

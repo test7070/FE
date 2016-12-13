@@ -175,7 +175,13 @@
                 bbsKey = ['noa', 'noq'];
                 bbtKey = ['noa', 'noq'];
                 q_brwCount();
-                q_gt('mech', "", 0, 0, 0, 'mech'); 
+                q_gt('mech', "", 0, 0, 0, 'mech');
+				if (r_rank <8){
+					q_gt('acomp', 'where=^^1=1^^', 0, 1);
+				}else{
+					q_content = "";
+					q_gt(q_name, q_content, q_sqlCount, 1);
+				}
             });
 			
             function main() {
@@ -492,6 +498,17 @@
             }
             function q_gtPost(t_name) {
                 switch (t_name) {
+                	case 'acomp':
+						var as = _q_appendData("acomp", "", true);
+						if (q_getPara('sys.project').toUpperCase()=='FE' && (r_userno.substr(0,1).toUpperCase())=='B'){
+							q_content = "where=^^exists (select * from cust where noa=a.custno and salesno='" + r_userno + "'^^";
+							q_gt(q_name, q_content, q_sqlCount, 1, 0, '', r_accy);
+		
+						}else{
+							q_content = "";
+							q_gt(q_name, q_content, q_sqlCount, 1);
+						}
+						break;
                 	case 'getBno':
                 		var as = _q_appendData("workjt", "", true);
                 		if (as[0] != undefined) {

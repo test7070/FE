@@ -42,10 +42,10 @@
                 q_desc = 1;
                 q_brwCount();
                 //q_gt(q_name, q_content, q_sqlCount, 1)
-                if (r_rank < 9 && q_content==''){
-					q_gt('sss', "where=^^noa='" + r_userno + "'^^", 0, 1);
-                }else{
-                    q_gt(q_name, q_content, q_sqlCount, 1);
+				if (r_rank < 8){
+                	q_gt('acomp', 'where=^^1=1^^', 0, 1);
+				}else{
+					q_gt(q_name, q_content, q_sqlCount, 1, 0, '');
 				}
             });
 
@@ -129,47 +129,20 @@
 			var holiday;//存放holiday的資料
             function q_gtPost(t_name) {
                 switch (t_name) {
+                	case 'acomp':
+						var as = _q_appendData("acomp", "", true);
+						if (q_getPara('sys.project').toUpperCase()=='FE' && (r_userno.substr(0,1).toUpperCase())=='Z'){
+							q_content = "where=^^sssno='" + r_userno + "'^^";
+							q_gt(q_name, q_content, q_sqlCount, 1, 0, '', r_accy);
+		
+						}else{
+							q_content = "";
+							q_gt(q_name, q_content, q_sqlCount, 1);
+						}
+						break;
                 	case 'holiday':
 	            		holiday = _q_appendData("holiday", "", true);
 	            	break;
-                	case 'authority':
-                        var as = _q_appendData('authority', '', true);
-                        if (as[0] != undefined) {
-                        	if(q_getPara('sys.project').toUpperCase()=='DC'){
-                        		//105/10/13 限制部門主管(職稱達4經理以上)可查看同部門外勤內容,一般員工不可互相查看外勤內容
-                        		//105/10/14 特別助理 不限制
-                        		//105/10/28 040136調整
-                        		if(r_userno=='040136'){
-                        			//不限制
-                        		}else if(sssjobno<='04' || sssjobno=='09' ){
-                        			q_content = "where=^^partno='" + ssspartno + "'^^";
-                        		}else{
-                        			q_content = "where=^^sssno='" + r_userno + "'^^";
-                        		}
-	                            /*if (r_rank >= 7)
-	                                q_content = "";
-	                            else if (as.length > 0 && as[0]["pr_modi"] == "true")
-	                                q_content = "where=^^partno='" + ssspartno + "'^^";
-	                            else
-	                                q_content = "where=^^sssno='" + r_userno + "'^^";*/
-							}else{
-								if (r_rank >= 8)
-	                                q_content = "";
-	                            else
-	                                q_content = "where=^^sssno='" + r_userno + "'^^";
-							}
-                        }
-                        q_gt(q_name, q_content, q_sqlCount, 1);
-						break;
-                	case 'sss':
-                        var as = _q_appendData('sss', '', true);
-                        if (as[0] != undefined) {
-                            ssspartno = as[0].partno;
-                            sssjob=as[0].job;
-                            sssjobno=as[0].jobno;
-							q_gt('authority', "where=^^a.noa='trip' and a.sssno='" + r_userno + "'^^", q_sqlCount, 1);
-                        }
-                        break;
                 	case 'apop_sss':
                 		var as = _q_appendData("sss", "", true);
                         if (as[0] != undefined) {

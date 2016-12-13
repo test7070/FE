@@ -41,7 +41,9 @@
                 bbmKey = ['noa'];
                 bbsKey = ['noa', 'noq'];
                 q_brwCount();
-                q_gt(q_name, q_content, q_sqlCount, 1, 0, '');
+
+					q_gt(q_name, q_content, q_sqlCount, 1, 0, '');
+
             });
 
             function main() {
@@ -154,6 +156,7 @@
             }
             function q_gtPost(t_name) {
                 switch (t_name) {
+
                     case q_name:
                         if (q_cur == 4)
                             q_Seek_gtPost();

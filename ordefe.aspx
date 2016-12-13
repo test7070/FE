@@ -46,10 +46,16 @@
 				bbmKey = ['noa'];
 				bbsKey = ['noa', 'no2'];
 				q_brwCount();
-				q_gt(q_name, q_content, q_sqlCount, 1, 0, '', r_accy);
+				
 				q_gt('acomp', 'stop=1 ', 0, 0, 0, "cno_acomp");
 				$('#txtOdate').focus();
 				q_gt('flors_coin', '', 0, 0, 0, "flors_coin");
+				if (r_rank < 8){
+					q_gt('sss', 'where=^^1=1^^', 0, 1);
+				}else{
+					q_content = "";
+					q_gt(q_name, q_content, q_sqlCount, 1, 0, '', r_accy);
+				}
 			});
 
 			function main() {
@@ -285,6 +291,18 @@
 			var z_cno = r_cno, z_acomp = r_comp, z_nick = r_comp.substr(0, 2);
 			function q_gtPost(t_name) {
 				switch (t_name) {
+					case 'sss':
+						var as = _q_appendData("sss", "", true);
+						if (q_getPara('sys.project').toUpperCase()=='FE' && (r_userno.substr(0,1).toUpperCase())=='B'){
+							q_content = "where=^^salesno='" + r_userno + "'^^";
+							q_gt(q_name, q_content, q_sqlCount, 1, 0, '', r_accy);
+		
+						}else{
+							q_content = "";
+							q_gt(q_name, q_content, q_sqlCount, 1, 0, '', r_accy);
+						}
+						break;
+					
 					case 'cno_acomp':
 						var as = _q_appendData("acomp", "", true);
 						if (as[0] != undefined) {

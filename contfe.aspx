@@ -48,7 +48,11 @@
 				bbtKey = ['noa', 'noq'];
 				q_brwCount();
 				q_gt('style','',0,0,0,'');
-				q_gt(q_name, q_content, q_sqlCount, 1, 0, '');
+				if (r_rank < 8){
+                	q_gt('sss', 'where=^^1=1^^', 0, 1);
+				}else{
+					q_gt(q_name, q_content, q_sqlCount, 1, 0, '');
+				}
 			});
 			
 			function sum(){
@@ -147,6 +151,17 @@
 						 	$("#cmbCnonick").val(abbm[q_recno].cno);
 						 	$("#cmbGuarantorno").val(abbm[q_recno].guarantorno);
 						 }
+						break;
+					case 'sss':
+						var as = _q_appendData("sss", "", true);
+						if (q_getPara('sys.project').toUpperCase()=='FE' && (r_userno.substr(0,1).toUpperCase())=='B'){
+							q_content = "where=^^salesno='" + r_userno + "'^^";
+							q_gt(q_name, q_content, q_sqlCount, 1, 0, '', r_accy);
+		
+						}else{
+							q_content = "";
+							q_gt(q_name, q_content, q_sqlCount, 1);
+						}
 						break;
 					case 'style' :
 							var as = _q_appendData("style", "", true);
