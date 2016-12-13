@@ -19,7 +19,9 @@ declare @qhref_acomp nvarchar(10) ='fe'
 declare @vcctypea nvarchar(10) =''
 declare @t_partno nvarchar(30)
 declare @t_cno nvarchar(max) = case when '#non'=[35] then '' else [35] end
-declare @taxtype nvarchar(10) 
+declare @taxtype nvarchar(10)
+declare @t_userno nvarchar(100)='[37]'
+declare @t_rank nvarchar(100)='[38]' 
 -------------------------------------------------------------------------------------------------------
 set @t_bdate = case when '#non'=[4] then '' else [4] end
 set @t_edate = case when '#non'=[5] then char(255) else [5] end
@@ -54,7 +56,7 @@ declare @result table(
 	custno nvarchar(30),
 	comp nvarchar(90),
 	productno nvarchar(30),
-	xproduct nvarchar(90),
+	xproduct nvarchar(250),
 	unit nvarchar(12),
 	lengthb float,
 	mount float,
@@ -66,13 +68,15 @@ declare @result table(
 	idate nvarchar(30),
 	imoney float,
 	itax float,
-	itotal float
+	itotal float,
+	sssno nvarchar(30),
+	sss nvarchar(30)
 )
 insert into @result
 	select '91' gno, a.noa noa, b.noq noq, a.typea typea, a.datea datea, (case when a.mon='' then left(a.datea,6) else a.mon end)
 		,a.cno,a.acomp, a.custno, a.comp, b.productno, b.product, b.unit, 
 		   b.lengthb,b.mount, b.weight, b.price, b.total,'vcc'+@qhref_acomp+'?noa=$noa?'+a.accy
-		   ,a.invono,v.datea,v.money,v.tax,v.total
+		   ,a.invono,v.datea,v.money,v.tax,v.total,a.salesno,a.sales
 	from view_vccs b
 	left join view_vcc a on a.noa = b.noa
 	left join view_ucaucc c on b.productno = c.noa
@@ -89,6 +93,11 @@ insert into @result
 		  and (len(@t_partno)=0 or s.partno=@t_partno)
 		  and (len(@taxtype)=0 or @taxtype=a.taxtype)
 	order by a.datea,gno,noa,noq
+	
+if(@t_rank<'8' and left(@t_userno,1)='B' and @t_project='FE')
+begin
+	delete @result where sssno!=@t_userno
+end
 	
 if(@t_showinvono='1')
 begin
@@ -154,6 +163,8 @@ declare @t_showinvono nvarchar(10)
 declare @t_project nvarchar(MAX)='[3]'
 declare @vcctypea nvarchar(10) =''
 declare @t_cno nvarchar(max) = case when '#non'=[35] then '' else [35] end
+declare @t_userno nvarchar(100)='[37]'
+declare @t_rank nvarchar(100)='[38]' 
 
 set @t_bdate = case when '#non'=[4] then '' else [4] end
 set @t_edate = case when '#non'=[5] then char(255) else [5] end
@@ -175,12 +186,14 @@ set @vcctypea = case when '#non' = [20] then '' else [20] end
 declare @tmp table(
 	gno nvarchar(1),
 	productno nvarchar(30),
-	products nvarchar(90),
+	products nvarchar(250),
 	cno nvarchar(30),
 	custnick nvarchar(90),
 	mount float,
 	weight float,
-	total float
+	total float,
+	sssno nvarchar(90),
+	sss nvarchar(90)
 )
 	insert into @tmp
 	select '9',b.productno,b.product,a.custno,
@@ -188,6 +201,7 @@ declare @tmp table(
 		,(case when a.typea='1' then 1 else -1 end)*b.mount
 		,(case when a.typea='1' then 1 else -1 end)*b.weight
 		,(case when a.typea='1' then 1 else -1 end)*b.total
+		,a.salesno,a.sales
 	from view_vcc a
 	left join view_vccs b on a.noa = b.noa and a.accy = b.accy
 	left join cust c on a.custno = c.noa
@@ -202,10 +216,15 @@ declare @tmp table(
 	order by b.productno,b.product,a.custno,c.nick,c.comp
 	
 	insert into @tmp 
-	select '0',productno,products,cno,custnick,SUM(mount),SUM(weight),SUM(total) from @tmp
-	group by productno,products,cno,custnick
+	select '0',productno,products,cno,custnick,SUM(mount),SUM(weight),SUM(total),sssno,sss from @tmp
+	group by productno,products,cno,custnick,sssno,sss
 	
 	delete @tmp where gno='9'
+	
+	if(@t_rank<'8' and left(@t_userno,1)='B' and @t_project='FE')
+	begin
+		delete @tmp where sssno!=@t_userno
+	end
 
 	insert into @tmp(gno,cno,custnick,mount,weight,total) 
 	select '1',cno,custnick,sum(mount),sum(weight),sum(total) 
@@ -239,6 +258,8 @@ z_vccfe3:--z_vccfe3
 	declare @vcctypea nvarchar(10) =''
 	declare @t_partno nvarchar(30)
 	declare @t_cno nvarchar(max) = case when '#non'=[35] then '' else [35] end
+	declare @t_userno nvarchar(100)='[37]'
+	declare @t_rank nvarchar(100)='[38]' 
 	---------------------------------------------------------------------------------------------------------
 	set @t_bdate = case when '#non'=[4] then '' else [4] end
 	set @t_edate = case when '#non'=[5] then char(255) else [5] end
@@ -270,10 +291,12 @@ z_vccfe3:--z_vccfe3
 		mon nvarchar(7),
 		custno nvarchar(20),
 		comp nvarchar(40),
+		sssno nvarchar(50),
+		sss nvarchar(50),
 		addr_invo nvarchar(90),
 		tel nvarchar(90),
 		productno nvarchar(30),
-		xproduct nvarchar(40),
+		xproduct nvarchar(250),
 		unit nvarchar(8),
 		lengthb float,
 		mount float,
@@ -294,7 +317,7 @@ z_vccfe3:--z_vccfe3
 	
 	insert into @result
 	select '0' gno, a.typea, a.noa noa, b.noq noq, a.datea datea, a.mon mon, 
-		   a.custno custno, isnull(c.comp,''), isnull(c.addr_invo,''), isnull(c.tel,''), b.productno, b.product, b.unit, 
+		   a.custno custno, isnull(c.comp,''),a.salesno,a.sales, isnull(c.addr_invo,''), isnull(c.tel,''), b.productno, b.product, b.unit, 
 	       b.lengthb,b.mount, b.weight, b.price, b.total, 0 money, 0 back, 0 tax, 0 total1, 0 pay, 0 unpay, 0 total2, 0 pcount
 	       ,'vcc'+@qhref_acomp+'?noa=$noa?'+a.accy
 	from view_vccs b
@@ -313,6 +336,11 @@ z_vccfe3:--z_vccfe3
 		  and (len(@t_partno)=0 or s.partno=@t_partno)
 		  and (len(@t_cno)=0 or a.cno=@t_cno)
 	order by custno,productno,gno,datea,noa,noq
+	
+	if(@t_rank<'8' and left(@t_userno,1)='B' and @t_project='FE')
+	begin
+		delete @result where sssno!=@t_userno
+	end
 
 	--***********************************************************************
 	declare @gno nvarchar(1)
@@ -324,6 +352,8 @@ z_vccfe3:--z_vccfe3
 	declare @datea nvarchar(10)
 	declare @custno nvarchar(20)
 	declare @comp nvarchar(40)
+	declare @sssno nvarchar(20)
+	declare @sss nvarchar(40)
 	declare @productno nvarchar(30)
 	declare @xproduct nvarchar(40)
 	declare @t_custno1 nvarchar(20)
@@ -351,10 +381,10 @@ z_vccfe3:--z_vccfe3
 
 	--***********************************************************************
 	declare cursor_table cursor for
-	select gno,typea,custno,comp,productno,xproduct,datea,total,mount,weight from @result
+	select gno,typea,custno,comp,sssno,sss,productno,xproduct,datea,total,mount,weight from @result
 	open cursor_table
 	fetch next from cursor_table
-	into @gno,@typea,@custno,@comp,@productno,@xproduct,@datea,@total,@mount,@weight
+	into @gno,@typea,@custno,@comp,@sssno,@sss,@productno,@xproduct,@datea,@total,@mount,@weight
 	while(@@FETCH_STATUS <> -1)
 	begin
 		if @gno='0'
@@ -364,7 +394,7 @@ z_vccfe3:--z_vccfe3
 				if NOT(@t_custno1 = '#zzzz#zzzz' and @t_productno = '#zzzz#zzzz')
 				begin   
 					insert into @result
-					select '1' gno, '' typea, '' noa, '' noq, '' datea, '' mon, @t_custno1, @t_comp1 comp, '' addr_invo, '' tel, 
+					select '1' gno, '' typea, '' noa, '' noq, '' datea, '' mon, @t_custno1, @t_comp1 comp,@sssno sssno,@sss sss, '' addr_invo, '' tel, 
 						   @t_productno, @xproduct xproduct, '' unit,'', @t_mount1 mount, @t_weight1 weight, 0 price, @t_total1 total, 
 						   0 money, 0 back, 0 tax, 0 total1, 0 pay, 0 unpay, 0 total2, 0 pcount,''
 				end
@@ -410,7 +440,7 @@ z_vccfe3:--z_vccfe3
 				if @t_custno2 != '#zzzz#zzzz'
 				begin
 					insert into @result
-					select '2' gno, '' typea, '' noa, '' noq, '' datea, '' mon, @t_custno2, @t_comp2 comp, '' addr_invo, '' tel, 
+					select '2' gno, '' typea, '' noa, '' noq, '' datea, '' mon, @t_custno2, @t_comp2 comp,@sssno sssno,@sss sss, '' addr_invo, '' tel, 
 						   CHAR(255) productno, '' xproduct, '' unit,'', @t_mount2 mount, @t_weight2 weight, 0 price, @t_total2 total, 
 						   0 money, 0 back, 0 tax, 0 total1, 0 pay, 0 unpay, 0 total2, 0 pcount,''
 				end
@@ -450,21 +480,21 @@ z_vccfe3:--z_vccfe3
 			end
 		end
 		fetch next from cursor_table
-		into @gno,@typea,@custno,@comp,@productno,@xproduct,@datea,@total,@mount,@weight
+		into @gno,@typea,@custno,@comp,@sssno,@sss,@productno,@xproduct,@datea,@total,@mount,@weight
 	end
 	close cursor_table
 	deallocate cursor_table
 	if NOT(@t_custno1 = '#zzzz#zzzz' and @t_productno = '#zzzz#zzzz')
 	begin
 		insert into @result
-		select '1' gno, '' typea, '' noa, '' noq, '' datea, '' mon, @t_custno1, @t_comp1 comp, '' addr_invo, '' tel, 
+		select '1' gno, '' typea, '' noa, '' noq, '' datea, '' mon, @t_custno1, @t_comp1 comp,@sssno sssno,@sss sss, '' addr_invo, '' tel, 
 		       @t_productno, @xproduct xproduct, '' unit,'', @t_mount1 mount, @t_weight1 weight, 0 price, @t_total1 total, 
 			   0 money, 0 back, 0 tax, 0 total1, 0 pay, 0 unpay, 0 total2, 0 pcount,''
 	end
 	if @t_custno2 != '#zzzz#zzzz'
 	begin
 		insert into @result
-		select '2' gno, '' typea, '' noa, '' noq, '' datea, '' mon, @t_custno2, @t_comp2 comp, '' addr_invo, '' tel, 
+		select '2' gno, '' typea, '' noa, '' noq, '' datea, '' mon, @t_custno2, @t_comp2 comp,@sssno,@sss, '' addr_invo, '' tel, 
 		       CHAR(255) productno, '' xproduct, '' unit,'', @t_mount2 mount, @t_weight2 weight, 0 price, @t_total2 total, 
 			   0 money, 0 back, 0 tax, 0 total1, 0 pay, 0 unpay, 0 total2, 0 pcount,''
 	end
@@ -511,6 +541,8 @@ declare @t_showinvono nvarchar(10)
 declare @t_project nvarchar(MAX)='[3]'
 declare @vcctypea nvarchar(10) =''
 declare @t_cno nvarchar(max) = case when '#non'=[35] then '' else [35] end
+declare @t_userno nvarchar(100)='[37]'
+declare @t_rank nvarchar(100)='[38]' 
 
 set @t_bdate = case when '#non'=[4] then '' else [4] end
 set @t_edate = case when '#non'=[5] then char(255) else [5] end
@@ -533,12 +565,14 @@ set @vcctypea = case when '#non' = [20] then '' else [20] end
 declare @tmp table(
 	gno nvarchar(1),
 	productno nvarchar(30),
-	products nvarchar(90),
+	products nvarchar(250),
 	cno nvarchar(30),
 	custnick nvarchar(90),
 	mount float,
 	weight float,
-	total float
+	total float,
+	sssno nvarchar(30),
+	sss nvarchar(30)
 )
 
 	insert into @tmp
@@ -547,6 +581,7 @@ declare @tmp table(
 		,(case when a.typea='1' then 1 else -1 end)*b.mount
 		,(case when a.typea='1' then 1 else -1 end)*b.weight
 		,(case when a.typea='1' then 1 else -1 end)*b.total
+		,a.salesno,a.sales
 	from view_vcc a
 	left join view_vccs b on a.noa = b.noa and a.accy = b.accy
 	left join cust c on a.custno = c.noa
@@ -559,9 +594,14 @@ declare @tmp table(
 			and (len(@t_cno)=0 or a.cno=@t_cno)
 	order by b.productno,b.product,a.custno,c.nick,c.comp
 	
+	if(@t_rank<'8' and left(@t_userno,1)='B' and @t_project='FE')
+	begin
+		delete @tmp where sssno!=@t_userno
+	end
+	
 	insert into @tmp 
-	select '0',productno,products,cno,custnick,SUM(mount),SUM(weight),SUM(total) from @tmp
-	group by productno,products,cno,custnick
+	select '0',productno,products,cno,custnick,SUM(mount),SUM(weight),SUM(total),sssno,sss from @tmp
+	group by productno,products,cno,custnick,sssno,sss
 	
 	delete @tmp where gno='9'
 
@@ -598,6 +638,8 @@ declare @qhref_acomp nvarchar(10) ='fe'
 declare @vcctypea nvarchar(10) =''
 declare @t_partno nvarchar(30)
 declare @t_cno nvarchar(max) = case when '#non'=[35] then '' else [35] end
+declare @t_userno nvarchar(100)='[37]'
+declare @t_rank nvarchar(100)='[38]' 
 
 set @t_bdate = case when '#non'=[4] then '' else [4] end
 set @t_edate = case when '#non'=[5] then char(255) else [5] end
@@ -631,7 +673,7 @@ declare @result table(
 	addr_invo nvarchar(90),
 	tel nvarchar(90),
 	productno nvarchar(30),
-	xproduct nvarchar(40),
+	xproduct nvarchar(250),
 	unit nvarchar(8),
 	lengthb float,
 	mount float,
@@ -639,13 +681,15 @@ declare @result table(
 	price float,
 	total float,
 	pcount int,
-	qhref nvarchar(MAX)
+	qhref nvarchar(MAX),
+	sssno nvarchar(30),
+	sss nvarchar(30)
 )
 
 insert into @result
 	select '0' gno, a.typea, a.noa noa, b.noq noq, a.datea datea, a.mon mon, 
 		   a.custno custno, isnull(c.comp,''), isnull(c.addr_invo,''), isnull(c.tel,''), b.productno, b.product, b.unit, 
-		   b.lengthb,b.mount, b.weight, b.price, b.total, 0 pcount,'vcc'+@qhref_acomp+'?noa=$noa?'+a.accy
+		   b.lengthb,b.mount, b.weight, b.price, b.total, 0 pcount,'vcc'+@qhref_acomp+'?noa=$noa?'+a.accy,a.salesno,a.sales
 	from view_vccs b
 	left join view_vcc a on a.noa = b.noa
 	left join cust c on  a.custno = c.noa
@@ -662,6 +706,11 @@ insert into @result
 		  and (len(@t_partno)=0 or s.partno=@t_partno)
 		  and (len(@t_cno)=0 or a.cno=@t_cno)
 	order by custno,gno,mon,datea,noa,noq
+		
+	if(@t_rank<'8' and left(@t_userno,1)='B' and @t_project='FE')
+	begin
+		delete @result where sssno!=@t_userno
+	end
 	
 insert into @result(gno,custno,pcount,mount,weight,total)
 	select '1',custno,
@@ -706,6 +755,8 @@ declare @t_showinvono nvarchar(10)
 declare @t_project nvarchar(MAX)='[3]'
 declare @vcctypea nvarchar(10) =''
 declare @t_cno nvarchar(max) = case when '#non'=[35] then '' else [35] end
+declare @t_userno nvarchar(100)='[37]'
+declare @t_rank nvarchar(100)='[38]' 
 
 set @t_bdate = case when '#non'=[4] then '' else [4] end
 set @t_edate = case when '#non'=[5] then char(255) else [5] end
@@ -732,7 +783,9 @@ declare @tmp table(
 	mount float,
 	weight float,
 	total float,
-	tax float
+	tax float,
+	sssno nvarchar(30),
+	sss nvarchar(30)
 )
 
 insert into @tmp
@@ -743,6 +796,7 @@ insert into @tmp
 		,sum((case when a.typea='1' then 1 else -1 end)*b.weight)
 		,sum((case when a.typea='1' then 1 else -1 end)*b.total)
 		,sum((case when a.typea='1' then 1 else -1 end)*a.tax)
+		,isnull(a.salesno,''),a.sales
 	from view_vcc a
 	left join view_vccs b on a.noa = b.noa and a.accy = b.accy
 	left join cust c on a.custno = c.noa
@@ -752,7 +806,12 @@ insert into @tmp
 			 and (len(@t_typea)=0 or isnull(d.typea,'null') = @t_typea) and (len(@t_stype)=0 or a.stype = @t_stype) 
 			 and (isnull(d.tggno,'') between @t_btggno and @t_etggno) and (len(@vcctypea)=0 or a.typea = @vcctypea) 
 			and (len(@t_cno)=0 or a.cno=@t_cno)
-	group by a.custno,c.nick,c.comp,case when isnull(a.mon,'')!='' then a.mon else left(a.datea,6) end
+	group by a.custno,c.nick,c.comp,case when isnull(a.mon,'')!='' then a.mon else left(a.datea,6) end,a.salesno,a.sales
+	
+	if(@t_rank<'8' and left(@t_userno,1)='B' and @t_project='FE')
+	begin
+		delete @tmp where sssno!=@t_userno
+	end
 	
 if((select count(*) from @tmp)>0)
 begin

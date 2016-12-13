@@ -102,7 +102,19 @@
                         type : '5', //[16]  11
                         name : 'lostorder',
                         value : "0@交易日,1@業務".split(',')
-					}]
+					}, {
+                        type : '0', //[17]
+                        name : 'project',
+                        value : q_getPara('sys.project').toUpperCase()
+                    }, {
+                        type : '0', //[18]
+                        name : 'userno',
+                        value : r_userno.toUpperCase()
+                    }, {
+                        type : '0', //[19]
+                        name : 'rank',
+                        value : r_rank
+                    }]
                 });
                 q_popAssign();
                 q_langShow();

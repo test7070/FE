@@ -34,6 +34,18 @@
                         dbf : 'cust',
                         index : 'noa,comp',
                         src : 'cust_b.aspx'
+                    }, {
+                        type : '0', //[21]
+                        name : 'project',
+                        value : q_getPara('sys.project').toUpperCase()
+                    }, {
+                        type : '0', //[22]
+                        name : 'userno',
+                        value : r_userno.toUpperCase()
+                    }, {
+                        type : '0', //[23]
+                        name : 'rank',
+                        value : r_rank
                     }]
                 });
                 q_popAssign();

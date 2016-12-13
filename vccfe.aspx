@@ -60,13 +60,12 @@
                 bbsKey = ['noa', 'noq'];
                 q_brwCount();
                 
-                
                 if (r_rank <8){
                 	q_gt('sss', 'where=^^1=1^^', 0, 1);
-
+                	q_gt('acomp', '', 0, 0, 0, "");
 				}else{
-					q_gt('acomp', '', 0, 0, 0, "");
-
+					q_content = "";
+					q_gt(q_name, q_content, q_sqlCount, 1);
 				}
                 
             });
