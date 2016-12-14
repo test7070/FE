@@ -60,14 +60,7 @@
                 bbsKey = ['noa', 'noq'];
                 q_brwCount();
                 
-                if (r_rank <8){
-                	q_gt('sss', 'where=^^1=1^^', 0, 1);
-                	q_gt('acomp', '', 0, 0, 0, "");
-				}else{
-					q_content = "";
-					q_gt(q_name, q_content, q_sqlCount, 1);
-				}
-                
+                q_gt('acomp', 'where=^^1=1^^', 0, 1);
             });
 
             function main() {
@@ -372,6 +365,14 @@
                 switch (t_name) {
                 	case 'acomp':
                 		var as = _q_appendData("acomp", "", true);
+                		if(r_rank<='8' && q_getPara('sys.project').toUpperCase()=='FE' && (r_userno.substr(0,1).toUpperCase())=='B'){
+                			q_content = "where=^^salesno='" + r_userno + "'^^";
+                			q_gt(q_name, q_content, q_sqlCount, 1, 0, '', r_accy);
+                		}else{
+                			q_content = "";
+							q_gt(q_name, q_content, q_sqlCount, 1);
+                		}
+                		
 		                if (as[0] != undefined) {
 		                	t_acomp = new Array();
 		                	for (i = 0; i < as.length; i++) {
@@ -693,17 +694,6 @@
                     case q_name:
                         if (q_cur == 4)
                             q_Seek_gtPost();
-                        break;
-                    case 'sss':
-                        as = _q_appendData('sss', '', true);
-                        if (q_getPara('sys.project').toUpperCase()=='FE' && (r_userno.substr(0,1).toUpperCase())=='B'){
-							q_content = "where=^^salesno='" + r_userno + "'^^";
-							q_gt(q_name, q_content, q_sqlCount, 1, 0, '', r_accy);
-		
-						}else{
-							q_content = "";
-							q_gt(q_name, q_content, q_sqlCount, 1);
-						}
                         break;
                     case 'startdate':
                         var as = _q_appendData('cust', '', true);
