@@ -44,7 +44,8 @@
             brwNowPage = 0;
             brwKey = 'Datea';
             brwCount2 = 5;
-            aPop = new Array(['txtSssno', 'lblSss', 'sss', 'noa,namea,part', 'txtSssno,txtNamea', 'sss_b.aspx'], ['txtCno_', 'btnAcomp_', 'custtgg', 'noa,comp', 'txtCno_,txtAcomp_', 'custtgg_b.aspx'], ['txtAcomp_', '', 'custtgg', 'noa,comp', '0txtCno_,0txtAcomp_', 'custtgg_b.aspx']);
+            aPop = new Array(['txtSssno', 'lblSss', 'sss', 'noa,namea,part', 'txtSssno,txtNamea', 'sss_b.aspx'], ['txtCno_', 'btnAcomp_', 'custtgg', 'noa,comp,tel', 'txtCno_,txtAcomp_,txtTel_', 'custtgg_b.aspx']
+            				, ['txtAcomp_', '', 'custtgg', 'noa,comp,tel', '0txtCno_,txtAcomp_,txtTel_', 'custtgg_b.aspx'], ['txtTel_', '', 'custtgg', 'noa,comp,tel', '0txtCno_,txtAcomp_,txtTel_', 'custtgg_b.aspx']);
 
             $(document).ready(function() {
                 bbmKey = ['noa'];
@@ -225,12 +226,12 @@
                     return;
                 }
                 
-                //105/10/03 只能改當天之後的外勤
+                /*//105/10/03 只能改當天之後的外勤
                 if(q_date()>$('#txtDatea').val() && r_rank<9){
                 	alert('禁止修改'+q_date()+'之前的外勤資料!!');
                     Unlock();
                     return;
-                }
+                }*/
                 
                 for (var i = 0; i < q_bbsCount; i++) {
                     for (var j = 0; j < q_bbsCount; j++) {

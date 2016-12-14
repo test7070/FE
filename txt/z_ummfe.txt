@@ -4,6 +4,9 @@ z_ummfe06:--z_ummfe06
 	declare @t_ecustno nvarchar(20) =case when '#non' = [3] then CHAR(255) else [3] end
 	declare @t_mon nvarchar(20) = case when '#non' = [11] then '' else [11] end
 	declare @t_option nvarchar(max) = case when '#non' = [12] then '' else [12] end
+	declare @t_project nvarchar(MAX)='[21]'
+	declare @t_userno nvarchar(100)='[22]'
+	declare @t_rank nvarchar(100)='[23]'
 	----------------------------------------------------------------------------------------
 		declare @bbmon nvarchar(20)
 	begin try
@@ -15,6 +18,8 @@ z_ummfe06:--z_ummfe06
 
 	declare @tmp table(
 		custno nvarchar(20),
+		sssno nvarchar(20),
+		sss nvarchar(20),
 		
 		unpay1 float,--出貨未收
 		unpay2 float,--出貨呆帳
@@ -29,13 +34,19 @@ z_ummfe06:--z_ummfe06
 		unpay float
 	)
 	
-	insert into @tmp (custno,unpay1,unpay2)
-	select noa
-	,sum(case when mon>=@bbmon then unpay else 0 end)
-	,sum(case when mon<@bbmon then unpay else 0 end)
-	from cust_2s
-	where noa between @t_bcustno and @t_ecustno
-	group by noa
+	insert into @tmp (custno,sssno,sss,unpay1,unpay2)
+	select a.noa,b.salesno,b.sales
+	,sum(case when a.mon>=@bbmon then unpay else 0 end)
+	,sum(case when a.mon<@bbmon then unpay else 0 end)
+	from cust_2s a left join cust b on a.noa=b.noa
+	where a.noa between @t_bcustno and @t_ecustno
+	group by a.noa,b.salesno,b.sales
+	
+	if(@t_rank<'8' and left(@t_userno,1)='Z' and @t_project='FE')
+	begin
+		delete @tmp where isnull(sssno,'')!=@t_userno
+	end
+	
 	---------------------------------------------------------------------------------------------------
 	declare @tmpa table(
 		tablea nvarchar(20),
@@ -263,7 +274,10 @@ z_ummfe05:--z_ummfe05
 	declare @t_bcustno nvarchar(20) = case when '#non' = [2] then '' else [2] end
 	declare @t_ecustno nvarchar(20) =case when '#non' = [3] then CHAR(255) else [3] end
 	declare @t_bmon nvarchar(20) = case when '#non' = [6] then '' else [6] end
-	declare @t_emon nvarchar(20) = case when '#non' = [7] then CHAR(255) else [7] end	
+	declare @t_emon nvarchar(20) = case when '#non' = [7] then CHAR(255) else [7] end
+	declare @t_project nvarchar(MAX)='[21]'
+	declare @t_userno nvarchar(100)='[22]'
+	declare @t_rank nvarchar(100)='[23]'	
 	----------------------------------------------------------------------------------------
 	declare @tmp table(
 		custno nvarchar(20),
@@ -382,6 +396,8 @@ z_ummfe05:--z_ummfe05
 		recno int,
 		custno nvarchar(20),
 		nick nvarchar(20),
+		sssno nvarchar(30),
+		sss nvarchar(30),
 		vccmoney float,
 		vcctax float,
 		vcctotal float,
@@ -394,17 +410,22 @@ z_ummfe05:--z_ummfe05
 		unpay float
 	)
 	
-	insert into @tmpc(gno,recno,custno,nick
+	insert into @tmpc(gno,recno,custno,nick,sssno,sss
 		,vccmoney,vcctax,vcctotal,vccamoney,vccatax,vccatotal,vccamount,acccmoney
 		,pay,unpay)
-	select '1',row_number()over(order by a.custno),a.custno,b.nick,SUM(ISNULL(a.vccmoney,0)),SUM(ISNULL(a.vcctax,0)),SUM(ISNULL(a.vcctotal,0))
+	select '1',row_number()over(order by a.custno),a.custno,b.nick,b.salesno,b.sales,SUM(ISNULL(a.vccmoney,0)),SUM(ISNULL(a.vcctax,0)),SUM(ISNULL(a.vcctotal,0))
 		,SUM(ISNULL(a.vccamoney,0)),SUM(ISNULL(a.vccatax,0)),SUM(ISNULL(a.vccatotal,0)),SUM(ISNULL(a.vccamount,0))
 		,SUM(ISNULL(acccmoney,0))
 		,SUM(ISNULL(a.pay,0)),SUM(ISNULL(a.unpay,0))
 	from @tmp a
 	left join cust b on a.custno=b.noa
 	where len(a.custno)>0
-	group by a.custno,b.nick
+	group by a.custno,b.nick,b.salesno,b.sales
+	
+	if(@t_rank<'8' and left(@t_userno,1)='B' and @t_project='FE')
+	begin
+		delete @tmpc where isnull(sssno,'')!=@t_userno
+	end
 	
 	insert into @tmpc(gno,custno
 		,vccmoney,vcctax,vcctotal,vccamoney,vccatax,vccatotal,vccamount,acccmoney
@@ -441,7 +462,10 @@ z_ummfe04:--z_ummfe04
 	declare @t_bcustno nvarchar(20) = case when '#non' = [2] then '' else [2] end
 	declare @t_ecustno nvarchar(20) =case when '#non' = [3] then CHAR(255) else [3] end
 	declare @t_bmon nvarchar(20) = case when '#non' = [6] then '' else [6] end
-	declare @t_emon nvarchar(20) = case when '#non' = [7] then CHAR(255) else [7] end		
+	declare @t_emon nvarchar(20) = case when '#non' = [7] then CHAR(255) else [7] end
+	declare @t_project nvarchar(MAX)='[21]'
+	declare @t_userno nvarchar(100)='[22]'
+	declare @t_rank nvarchar(100)='[23]'		
 	----------------------------------------------------------------
 	declare @tmp table(
 		gno nvarchar(10),
@@ -469,6 +493,11 @@ z_ummfe04:--z_ummfe04
 	from @tmp a
 	left join cust b on a.custno=b.noa
 	
+	if(@t_rank<'8' and left(@t_userno,1)='B' and @t_project='FE')
+	begin
+		delete @tmp where salesno!=@t_userno
+	end
+	
 	select custno a01
 		,cust a02
 		,sales a03
@@ -488,8 +517,10 @@ z_ummfe03:--z_ummfe03
 	declare @t_emon nvarchar(20) = case when '#non' = [7] then CHAR(255) else [7] end	
 	declare @curdate nvarchar(max) = convert(nvarchar,getDate(),120) 
 	declare @t_datea nvarchar(20) = case when '#non' = [20] then '' else [20] end --預付截止日
-	declare @t_userno nvarchar(20) = ''
 	declare @t_user nvarchar(20) = N'[14]'
+	declare @t_project nvarchar(MAX)='[21]'
+	declare @t_userno nvarchar(100)='[22]'
+	declare @t_rank nvarchar(100)='[23]'
 	---------------------------------------------------------------------------------
 	declare @tmp table(
 		sel int identity(1,1)
@@ -521,6 +552,8 @@ z_ummfe03:--z_ummfe03
 		,tweight float
 		,paytype nvarchar(50)
 		,memo nvarchar(max)
+		,sssno  nvarchar(50)
+		,sss nvarchar(50)
 	)
 	
 	--出貨單
@@ -743,6 +776,15 @@ z_ummfe03:--z_ummfe03
 			set @endcount = @endcount + 1
 		end
 		
+		update @tmp 
+		set sssno=b.salesno,sss=b.sales
+		from @tmp a left join cust b on a.custno=b.noa
+				
+		if(@t_rank<'8' and left(@t_userno,1)='Z' and @t_project='FE')
+		begin
+			delete @tmp where isnull(sssno,0)!=@t_userno
+		end
+				
 		--空白行
 		select @mm=0
 		select @mm = COUNT(1) from @tmp where cno=@cno and custno=@custno and cast(gno as int) between 1 and 3
@@ -815,6 +857,10 @@ declare @t_emon nvarchar(20) = case when '#non' = [7] then CHAR(255) else [7] en
 declare @t_bsssno nvarchar(20) = case when '#non' = [17] then '' else [17] end
 declare @t_esssno nvarchar(20) = case when '#non' = [18] then CHAR(255) else [18] end
 declare @t_option nvarchar(max) = case when '#non' = [19] then '' else [19] end
+declare @t_project nvarchar(MAX)='[21]'
+declare @t_userno nvarchar(100)='[22]'
+declare @t_rank nvarchar(100)='[23]'
+
 --前2個月
 declare @b2mon nvarchar(max) = LEFT(dbo.AD2ChineseEraName(CONVERT(char, DATEADD(MONTH,-2,dbo.ChineseEraName2AD(@t_bmon+'/01')), 111)),6)
 ---------------------------------------------------------------------------------
@@ -853,6 +899,11 @@ declare @b2mon nvarchar(max) = LEFT(dbo.AD2ChineseEraName(CONVERT(char, DATEADD(
 		select noa,salesno,sales
 		from cust
 	)b on a.custno = b.noa
+	
+	if(@t_rank<'8' and left(@t_userno,1)='Z' and @t_project='FE')
+	begin
+		delete @tmp where isnull(salesno,'')!=@t_userno
+	end
 
 	--前期未收明細
 	declare @custno nvarchar(20)
@@ -995,6 +1046,9 @@ z_ummfe01:--z_ummfe01
 	declare @t_ecustno nvarchar(20) =case when '#non' = [3] then CHAR(255) else [3] end
 	declare @t_bdate nvarchar(20) = case when '#non' = [4] then '' else [4] end
 	declare @t_edate nvarchar(20) = case when '#non' = [5] then CHAR(255) else [5] end
+	declare @t_project nvarchar(MAX)='[21]'
+	declare @t_userno nvarchar(100)='[22]'
+	declare @t_rank nvarchar(100)='[23]'
 	---------------------------------------------------------------------------------
 	IF OBJECT_ID('tempdb..#z_ummfe01')is not null
 	BEGIN
@@ -1009,6 +1063,8 @@ z_ummfe01:--z_ummfe01
 		,custno nvarchar(20)
 		,cust nvarchar(50)
 		
+		,sssno nvarchar(50) 
+		,sss nvarchar(50)
 		,datea nvarchar(20)
 		,noa nvarchar(20)
 		,noq nvarchar(10)
@@ -1095,6 +1151,15 @@ z_ummfe01:--z_ummfe01
 	update #z_ummfe01 set cust=ISNULL(b.nick,'')
 	from #z_ummfe01 a
 	left join cust b on a.custno=b.noa
+	
+	update #z_ummfe01
+	set sssno=b.salesno,sss=b.sales
+	from #z_ummfe01 a left join cust b on a.custno=b.noa
+
+	if(@t_rank<'8' and left(@t_userno,1)='Z' and @t_project='FE')
+	begin
+		delete #z_ummfe01 where isnull(sssno,'')!=@t_userno
+	end
 
 	select gno
 		,custno a01
