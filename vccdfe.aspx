@@ -118,7 +118,7 @@
 		
 						}else{
 							q_content = "";
-							q_gt(q_name, q_content, q_sqlCount, 1);
+							q_gt(q_name, q_content, q_sqlCount, 1, 0, '', r_accy);
 						}
 						break;
                 	case 'checkVccdno_change':
