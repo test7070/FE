@@ -224,11 +224,11 @@
                     t_tranmoney = q_add(t_tranmoney,q_float('txtTranmoney_'+i)*t_type);
                     t_tranmoney2 = q_add(t_tranmoney2,(q_float('txtTranmoney2_'+i)+q_float('txtTranmoney3_'+i))*t_type);
 
-                    t_mount = $('#txtUnit_'+i).val().toUpperCase()=='KG' || $('#txtUnit_'+i).val().length==0?q_float('txtWeight_'+i):q_float('txtMount_'+i);
+                    t_mount = $.trim($('#txtUnit_'+i).val()).toUpperCase()=='KG' || $.trim($('#txtUnit_'+i).val()).length==0?q_float('txtWeight_'+i):q_float('txtMount_'+i);
                     t_wcost = q_add(t_wcost, round(q_mul(t_mount,q_float('txtWcost_'+i)),0)*t_type);
                     
                     t_sprice = q_float('txtSprice2_'+i)>0?q_float('txtSprice2_'+i):q_float('txtSprice_'+i);
-                    t_spricemoney = q_add(t_spricemoney, round(q_mul(t_mount,t_sprice),0)*t_type)
+                    t_spricemoney = q_add(t_spricemoney, round(q_mul(t_mount,t_sprice),0)*t_type);
                 
                 	t_total = q_add(t_total,q_float('txtTotal_'+i)*t_type);
                 }
