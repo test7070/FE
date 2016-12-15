@@ -1,7 +1,7 @@
 <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
 <html xmlns="http://www.w3.org/1999/xhtml" dir="ltr">
 	<head>
-		<title> </title>
+		<title></title>
 		<script src="../script/jquery.min.js" type="text/javascript"></script>
 		<script src='../script/qj2.js' type="text/javascript"></script>
 		<script src='qset.js' type="text/javascript"></script>
@@ -175,10 +175,7 @@
                 bbsKey = ['noa', 'noq'];
                 bbtKey = ['noa', 'noq'];
                 q_brwCount();
-                
-					q_gt('acomp', 'where=^^1=1^^', 0, 1);
-					q_gt('mech', "", 0, 0, 0, 'mech');
-
+                q_gt('mech', "", 0, 0, 0, 'mech'); 
             });
 			
             function main() {
@@ -495,17 +492,6 @@
             }
             function q_gtPost(t_name) {
                 switch (t_name) {
-                	case 'acomp':
-						var as = _q_appendData("acomp", "", true);
-						if (r_rank<'8' && q_getPara('sys.project').toUpperCase()=='FE' && (r_userno.substr(0,1).toUpperCase())=='B'){
-							q_content = "where=^^exists (select * from cust where noa=workj.custno and salesno='" + r_userno + "')^^";
-							q_gt(q_name, q_content, q_sqlCount, 1, 0, '', r_accy);
-		
-						}else{
-							q_content = "";
-							q_gt(q_name, q_content, q_sqlCount, 1, 0, '', r_accy);
-						}
-						break;
                 	case 'getBno':
                 		var as = _q_appendData("workjt", "", true);
                 		if (as[0] != undefined) {
@@ -730,9 +716,6 @@
                 		$('#txtParae_'+i).val('0');
             		if(!patt.test($('#txtParaf_'+i).val()))
                 		$('#txtParaf_'+i).val('0');	
-                		
-                	//105/12/07 指定機台
-                	//changemech(i);
                 }
                 
                 for(var i=0;i<q_bbtCount;i++){
@@ -772,15 +755,6 @@
 
             function bbsSave(as) {
                 if (!as['product'] && !as['para']) {
-                    as[bbsKey[1]] = '';
-                    return;
-                }
-                q_nowf();
-                return true;
-            }
-            
-            function bbtSave(as) {
-                if (!as['uno'] && !as['productno']) {
                     as[bbsKey[1]] = '';
                     return;
                 }
@@ -1042,8 +1016,7 @@
 	                ,{key:'8#',value:3.98,m300:130,m600:60,m1000:40,m1600:30,w300:1500,w600:1500,w1000:1500,w1600:1500}
 	                ,{key:'9#',value:5.08,m300:100,m600:50,m1000:30,m1600:20,w300:1500,w600:1500,w1000:1500,w1600:1500}
 	                ,{key:'10#',value:6.39,m300:80,m600:40,m1000:25,m1600:20,w300:1500,w600:1500,w1000:1500,w1600:1500}
-	                ,{key:'11#',value:7.9,m300:70,m600:30,m1000:20,m1600:15,w300:1500,w600:1500,w1000:1500,w1600:1500}
-	                ,{key:'12#',value:9.57,m300:70,m600:30,m1000:20,m1600:15,w300:1500,w600:1500,w1000:1500,w1600:1500}];
+	                ,{key:'11#',value:7.9,m300:70,m600:30,m1000:20,m1600:15,w300:1500,w600:1500,w1000:1500,w1600:1500}];
 	             
 	            var t_weight=0,t_mount=0,t_weights;
                 for(var i=0;i<q_bbsCount;i++){
@@ -1160,374 +1133,6 @@
             function onPageError(error) {
                 alert("An error occurred:\r\n" + error.Message);
             }
-            
-            //105/12/07 指定機台
-            function changemech(n) {
-                if(!emp($('#txtProductno_'+n).val()) && !emp($('#txtProduct_'+n).val())
-                    && ($('#txtProduct_'+n).val().indexOf('鋼筋')>-1 || $('#txtProduct_'+n).val().indexOf('螺栓')>-1)
-                    && dec($('#txtMount_'+n).val())>0 && dec($('#txtLengthb_'+n).val())>0
-                    && emp($('#cmbMech1_'+n).val()) && emp($('#cmbMech2_'+n).val()) && emp($('#cmbMech3_'+n).val())
-                    && emp($('#cmbMech4_'+n).val()) && emp($('#cmbMech5_'+n).val())
-				){
-					var tpicno=$('#txtPicno_'+n).val();
-					var t_iscoupler='';
-					q_gt('img', "where=^^ noa='"+tpicno+"' ^^", 0, 0, 0, 'getiscoupler',r_accy,1);
-					var as = _q_appendData("img", "", true);
-                	if (as[0] != undefined) {
-                		t_iscoupler=as[0].iscoupler;
-					}
-                	var tproduct=$('#txtProduct_'+n).val();
-					var tmount=dec($('#txtMount_'+n).val());//裁剪數量
-					var tweight=dec($('#txtWeight_'+n).val());//裁剪重量
-					//材質號數長度
-					var tspec='';
-					var tsize='';
-					if(tproduct.indexOf('螺栓')>-1){
-						tspec='SD420W';
-						tsize=replaceAll(replaceAll(tproduct.split('#')[0]+'#','基礎螺栓',''),'抗震專利','');
-					}else{ //鋼筋
-						tspec=tproduct.substr(tproduct.indexOf('S'),tproduct.indexOf(' ')-tproduct.indexOf('S'));
-						tsize=tproduct.split(' ')[1].split('*')[0];
-					}
-					var tlength=dec($('#txtLengthb_'+n).val());
-					
-					//指定條件
-					//庫存足夠>>>直接從庫存理貨
-					if(1==0){
-						
-					}else if (tlength<=55 && (tsize=='3#' || tsize=='4#')){//55cm以下的3#4#所有材質尺寸>>>選定盤圓  4# 用 D13盤圓，其餘用D10盤圓
-						if(tsize=='4#'){
-							$('#cmbMech1_'+n).val('13');
-						}else{
-							$('#cmbMech1_'+n).val('12');
-						}
-					}else if (tlength<=75 && (tsize=='3#' || tsize=='4#') && dec($('#txtParab_'+n).val())>0){//長度在75cm以下的，需要彎曲的尺寸>>>選定盤圓
-						//有打參數B幾乎會打彎
-						if(tsize=='4#'){
-							$('#cmbMech1_'+n).val('13');
-						}else{
-							$('#cmbMech1_'+n).val('12');
-						}
-					}else if ((tsize=='6#' || tsize=='7#' || tsize=='8#') && tmount<5){//6#7#8#各長度數量不超過5支者>>>選定火切
-						$('#cmbMech1_'+n).val('02');
-					}else if ((tlength==600 || tlength==650 || tlength==700 || tlength==750 || tlength==800) && tweight>2500){//(零損耗+只切一刀+超過2.5噸)12-16M>>>選定火切
-						$('#cmbMech1_'+n).val('02');
-					}else if (t_iscoupler=='true' && couplersheet(tspec,tsize)){//必須續接的尺寸
-						//板料12-16M 試算
-						//損耗在20cm以內>>>選定續接裁剪機
-						//配料後，所使用的板料在10支以內>>>選定續接裁剪機
-						$('#cmbMech1_'+n).val('20');
-						//同規格一樣
-						q_gt('img', "where=^^ iscoupler=1 ^^", 0, 0, 0, 'getiscoupler',r_accy,1);
-						var as = _q_appendData("img", "", true);
-						for (var i = 0; i < q_bbsCount && i>n; i++) {
-							var tpicno2=$('#txtPicno_'+i).val();
-							var tproduct2=$('#txtProduct_'+i).val();
-							var tmount2=dec($('#txtMount_'+i).val());//裁剪數量
-							if(tproduct2.length>0 && tmount2>0
-								&& emp($('#cmbMech1_'+i).val()) && emp($('#cmbMech2_'+i).val()) && emp($('#cmbMech3_'+i).val())
-                    			&& emp($('#cmbMech4_'+i).val()) && emp($('#cmbMech5_'+i).val())
-							){
-								//材質號數長度
-								var tspec2='';
-								var tsize2='';
-								if(tproduct2.indexOf('螺栓')>-1){
-									tspec2='SD420W';
-									tsize2=replaceAll(replaceAll(tproduct2.split('#')[0]+'#','基礎螺栓',''),'抗震專利','');
-								}else{ //鋼筋
-									tspec2=tproduct2.substr(tproduct2.indexOf('S'),tproduct2.indexOf(' ')-tproduct2.indexOf('S'));
-									tsize2=tproduct2.split(' ')[1].split('*')[0];
-								}
-								if(tspec==tspec2 && tsize==tsize2){
-									for(var j=0;j<as.length;j++){
-										if(tpicno2==as[j].noa){
-											$('#cmbMech1_'+i).val('20');
-											break;
-										}
-									}
-								}
-							}
-						}
-					}else{//最後未排定的尺寸 >>>選定裁剪
-						$('#cmbMech1_'+n).val('01');
-					}
-				}
-            }
-            
-            //續接板料試算
-            function couplersheet(xspec,xsize) {
-            	var cancoupler=false;
-            	var t_sortlen=0;//最短裁剪限制長度
-				q_gt('mech', "where=^^noa='20'^^" , 0, 0, 0, "getmech",r_accy,1); //號數
-				var as = _q_appendData("mech", "", true);
-				if (as[0] != undefined) {
-					t_sortlen=as[0].dime1;
-				}
-            	q_gt('img', "where=^^ iscoupler=1 ^^", 0, 0, 0, 'getiscoupler',r_accy,1);
-				var as = _q_appendData("img", "", true);
-				var cutlengthb=[];//續接長度
-				var t_same=[]; //相同材質號數長度的數量
-				var getucc=[];//板料數
-				
-				//讀取表身全部的相同材質號數的續接長度
-				for (var i = 0; i < q_bbsCount; i++) {
-					var tproduct=$('#txtProduct_'+i).val();
-					var tmount=dec($('#txtMount_'+i).val());//裁剪數量
-					if(tproduct.length>0 && tmount>0){
-						//材質號數長度
-						var tspec='';
-						var tsize='';
-						if(tproduct.indexOf('螺栓')>-1){
-							tspec='SD420W';
-							tsize=replaceAll(replaceAll(tproduct.split('#')[0]+'#','基礎螺栓',''),'抗震專利','');
-						}else{ //鋼筋
-							tspec=tproduct.substr(tproduct.indexOf('S'),tproduct.indexOf(' ')-tproduct.indexOf('S'));
-							tsize=tproduct.split(' ')[1].split('*')[0];
-						}
-						var tlength=dec($('#txtLengthb_'+i).val());
-						if(xspec==tspec && xsize==tsize){
-							for (var j = 0; j < as.length; j++) {
-								if(!emp($('#txtProductno_'+i).val()) && !emp($('#txtProduct_'+i).val()) && $('#txtPicno_'+i).val()==as[j].noa){
-									var t_k=-1;
-									for (var k=0;k<t_same.length;k++){
-										if(t_same[k].lengthb==tlength){
-											t_k=k;
-											t_same[k].mount=q_add(dec(t_same[k].mount),tmount);
-											break;
-										}
-									}
-									if(t_k<0){
-										t_same.push({
-											'lengthb':tlength,
-											'mount':tmount
-										})
-										cutlengthb.push(tlength);
-									}
-									break;
-								}
-							}
-						}
-					}
-				}
-				//排序
-				cutlengthb.sort();
-				var tmp1='',tmp2='';
-				for (var n=0;n<cutlengthb.length;n++){
-					if(n==0){
-						tmp1=cutlengthb[n];
-					}else{
-						tmp2=cutlengthb[n];
-						cutlengthb[n]=tmp1;
-						tmp1=tmp2;
-						if (n==(cutlengthb.length-1)){
-							cutlengthb[0]=tmp1;
-						}
-					}
-				}
-				
-				var t_cutsheet='12,13,14,15,16';//可裁剪的板料長度
-				t_cutsheet=t_cutsheet.split(',');
-				
-				while(cutlengthb.length>0){
-					//裁切組合
-					var t_cups=[];
-					
-					for(var k=0;k<t_cutsheet.length;k++){
-						var clength=dec(t_cutsheet[k])*100; //原單位M
-						rep='';
-						var t_cup=getmlength(clength,clength,cutlengthb[0],cutlengthb,'',[],0);
-						t_cups=t_cups.concat(t_cup);
-					}
-					
-					//處理最短裁剪長度限制
-					if(t_sortlen>0 && t_cups.length>0){
-						for(var k=0;k<t_cups.length;k++){
-							var cupolength=t_cups[k].olength;//裁剪的板料長度
-							var cupcutlength=t_cups[k].cutlength.split('#')[0].split(',');//切割長度
-							var cupcutlength2=t_cups[k].cutlength.split('#')[0].split(',');//切割長度(無損耗長度)
-							var cupcutwlength=dec(t_cups[k].cutlength.split('#')[1]);//損耗長度
-							cupcutlength=cupcutlength.concat(cupcutwlength);//加損耗
-							var changecup=true;
-							for (var m=0;m<cupcutlength.length;m++){
-								if(dec(cupcutlength[m])>=t_sortlen){
-									changecup=false;
-									break;
-								}
-							}
-							if(changecup){ //剪裁長度低於最短裁剪長度
-								//拿最小損耗長度當尾刀 加價損失(最小長度限制,已損耗長度,可配對長度,已裁剪長度,暫存裁剪陣列)
-								var t_sortcup=getsortlen(dec(t_sortlen),dec(cupcutwlength),cupcutlength2,cupcutwlength,[]);
-								t_sortcup.sort(function(a, b) { if(a.wrate > b.wrate) {return 1;} if (a.wrate < b.wrate) {return -1;} return 0;});
-												
-								if(t_sortcup.length>0){
-									var tt_cutlength='';
-									var tt_scutlength=t_sortcup[0].cutlength.split(',');
-														
-									if(dec(cupcutwlength)>0){//原裁剪已有損耗 排除第一筆長度
-										tt_scutlength.splice(0, 1);
-									}
-									//將原裁剪內容變動
-									for (var m=0;m<cupcutlength2.length;m++){
-										for (var n=0;n<tt_scutlength.length;n++){
-											if(cupcutlength2[m]==tt_scutlength[n]){
-												cupcutlength2.splice(m, 1);
-												m--;
-												tt_scutlength.splice(n, 1);
-												n--;
-											}
-										}
-									}
-									for (var m=0;m<cupcutlength2.length;m++){
-										tt_cutlength=tt_cutlength+(tt_cutlength.length>0?',':'')+cupcutlength2[m];
-									}
-									tt_cutlength=tt_cutlength+'#'+t_sortcup[0].wlength;
-									t_cups[k].cutlength=tt_cutlength;
-									t_cups[k].wlenhth=t_sortcup[0].wlength;
-									t_cups[k].wrate=t_sortcup[0].wlength/t_cups[k].olength;
-								}
-							}
-						}
-					}
-					//損耗率排序
-					t_cups.sort(function(a, b) { if(a.wrate > b.wrate) {return 1;} if (a.wrate < b.wrate) {return -1;} return 0;});
-					
-					var tt_zero=false;
-					if(t_same.length>0){
-						//找出目前最大長度數量的組合與最小損耗
-						for(var k=0;k<t_cups.length;k++){//最小損耗排序
-							var cupcutlength=t_cups[k].cutlength.split('#')[0].split(',');//切割長度
-							var cupcutwlength=dec(t_cups[k].cutlength.split('#')[1]);//損耗長度
-							var cupolength=t_cups[k].olength;//裁剪的板料長度
-							
-							if(cutlengthb[0]==dec(cupcutlength[0])){//取得第一個組合
-								var bmount=0;//板料使用數量
-								cupcutlength=cupcutlength.concat(cupcutwlength);//加損耗
-								while(!tt_zero){ //當最大長度需裁剪量數量<0 或 其他剪裁長度需才剪量<0
-									bmount++;
-									for (var m=0;m<cupcutlength.length;m++){//裁切數量
-										for (var n=0;n<t_same.length;n++){
-											if(t_same[n].lengthb==dec(cupcutlength[m])){
-												t_same[n].mount=q_sub(t_same[n].mount,1);
-												if(t_same[n].mount<0){
-													tt_zero=true;
-												}
-											}
-										}
-									}
-								}
-								getucc.push({
-									'lengthb':cupolength,
-									'wlengthb':cupcutwlength,
-									'mount':bmount,
-									'cutlen':cupcutlength
-								});
-								break;
-							}
-						}
-					}
-					
-					for(var m=0;m<cutlengthb.length;m++){
-						for(var k=0;k<t_same.length;k++){
-							var lengthb2=t_same[k].lengthb;
-							var mount2=t_same[k].mount;
-							if( cutlengthb[m]==lengthb2 && mount2<=0){
-								cutlengthb.splice(m, 1);
-								m--;
-							}
-						}	
-					}
-				}
-				
-				
-				var tucc_mount=0,max_wleng=0;
-				for(var i=0;i<getucc.length;i++){
-					if(dec(getucc[i].wlengthb)>max_wleng){
-						max_wleng=dec(getucc[i].wlengthb);
-					}
-					tucc_mount=q_add(tucc_mount,dec(getucc[i].mount));
-				}
-				
-				if(getucc.length>0 && (max_wleng<=20 || tucc_mount<=10)){//損耗在20cm以內 或 板料數量小於10支
-					cancoupler=true;
-				}
-				
-				return cancoupler;
-            }
-            
-            var rep='';//存放已完成陣列配對數值
-			//取得組合陣列
-			function getmlength (olength,lengthb,cut,cutlength,cutall,cutarry,repall){//原長度,目前長度,本次裁剪長度,可裁剪長度,裁剪樣式,回傳陣列,陣列配對數值
-				if(rep.indexOf("@@")>-1){ //已找到損耗0的組合後續不再處理
-					return cutarry;
-				}
-				//可繼續裁剪
-				if(cut>=0 && lengthb-cut>=0){
-					lengthb=lengthb-cut;
-					if(cut>0)
-						cutall=cutall+(cutall.length>0? ',':'')+cut;
-					
-					var twrate=dec($('#txtMo').val())/100;
-					var twlength=dec($('#txtWaste').val());
-					
-					//損耗0的組合
-					if(lengthb==0){
-						//if(rep.indexOf(repall.toString()+'#')==-1){
-						//	rep=rep+repall.toString()+'#';
-							cutarry.push({'olength':olength,'cutlength':cutall,'wlenhth':lengthb,'wrate':round(lengthb/olength,4)});
-						//}
-						rep='@@';
-						return cutarry;
-					}else//在損耗範圍內組合 
-					if (((round(lengthb/olength,4)<=twrate || lengthb<twlength) && cutarry.length>5000) || cutarry.length>20000){
-						cutall=cutall+'#'+lengthb;
-						if(rep.indexOf(repall.toString()+'#')==-1){
-							rep=rep+repall.toString()+'#';
-							cutarry.push({'olength':olength,'cutlength':cutall,'wlenhth':lengthb,'wrate':round(lengthb/olength,4)});
-						}
-						rep='@@';
-						return cutarry;
-					}else{//繼續裁剪
-						var nn=0;
-						for(var i=0;i<cutlength.length;i++){
-							if(lengthb-cutlength[i]>=0){
-								repall=repall+Math.pow(2,i);
-								if(rep.indexOf(repall.toString()+'#')==-1)
-									getmlength(olength,lengthb,cutlength[i],cutlength,cutall,cutarry,repall);
-								nn++;
-							}
-						}
-						if(nn==0){//無法再裁剪>損耗
-							cutall=cutall+'#'+lengthb;
-							if(rep.indexOf(repall.toString()+'#')==-1){
-								rep=rep+repall.toString()+'#';
-								cutarry.push({'olength':olength,'cutlength':cutall,'wlenhth':lengthb,'wrate':round(lengthb/olength,4)});
-							}
-							return cutarry;
-						}
-					}
-				}else{//無法再裁剪>損耗
-					cutall=cutall+'#'+lengthb;
-					if(rep.indexOf(repall.toString()+'#')==-1){
-						rep=rep+repall.toString()+'#';
-						cutarry.push({'olength':olength,'cutlength':cutall,'wlenhth':lengthb,'wrate':round(lengthb/olength,4)});
-					}
-					return cutarry;
-				}
-				return cutarry;
-			}
-			
-			//最小長度限制,已損耗長度,可配對長度,已裁剪長度,暫存裁剪陣列
-			function getsortlen(sortlen,wlength,cutlength,cutall,cutarry){
-				if(wlength>=sortlen){
-					cutarry.push({'wlength':wlength,'cutlength':cutall,'wrate':(wlength-sortlen)});
-					return cutarry;
-				}else{
-					for(var i=0;i<cutlength.length;i++){
-						getsortlen(sortlen,wlength+dec(cutlength[i]),cutlength,cutall.toString()+(cutall.toString().length>0?',':'')+cutlength[i],cutarry)
-					}
-				}
-				return cutarry;
-			}
             
 		</script>
 		<style type="text/css">
@@ -1691,9 +1296,9 @@
 		<div id="divImport" style="position:absolute; top:100px; left:400px; display:none; width:400px; height:170px; background-color: pink; border: 5px solid gray;">
 			<table style="width:100%;">
 				<tr style="height:1px;">
-					<td style="width:80px;"> </td>
-					<td style="width:220px;"> </td>
-					<td style="width:40px;"> </td>
+					<td style="width:80px;"></td>
+					<td style="width:220px;"></td>
+					<td style="width:40px;"></td>
 				</tr>
 				<tr style="height:35px;">
 					<td><span> </span><a id="lblPrint_d" style="float:right; color: blue; font-size: medium;"> </a></td>
@@ -1705,12 +1310,12 @@
 							<option value="barfe1-4.bat">藍色、桃紅色</option>
 						</select>
 					</td>
-					<td> </td>
+					<td></td>
 					<td><input id="btnPrint_d" type="button" value="列印"/></td>
 				</tr>
 				<tr style="height:20px;">
 					<td colspan="6">
-						<a style="color:darkred;">&nbsp; &nbsp; &nbsp; &nbsp; 【列印】有勾、【品名】有輸入的才會印。</a>
+						<a style="color:darkred;">&nbsp;&nbsp;&nbsp;&nbsp;【列印】有勾、【品名】有輸入的才會印。</a>
 					</td>
 					<td><input id="btnCancel_d" type="button" value="關閉"/></td>
 				</tr>
@@ -1742,14 +1347,14 @@
 			<div class='dbbm'>
 				<table class="tbbm"  id="tbbm">
 					<tr style="height:1px;">
-						<td> </td>
-						<td> </td>
-						<td> </td>
-						<td> </td>
-						<td> </td>
-						<td> </td>
-						<td> </td>
-						<td class="tdZ"> </td>
+						<td></td>
+						<td></td>
+						<td></td>
+						<td></td>
+						<td></td>
+						<td></td>
+						<td></td>
+						<td class="tdZ"></td>
 					</tr>
 					<tr>
 						<td><span> </span><a id="lblNoa" class="lbl"> </a></td>
@@ -1769,29 +1374,29 @@
 							<input id="txtNick"  type="text"  class="txt" style="display:none;"/>
 						</td>
 						<td><span> </span><a id="lblTrantype" class="lbl"> </a></td>
-						<td><select id="cmbTrantype" class="txt c1"> </select></td>
-						<td><select id="cmbTrantype1" class="txt c1"> </select></td>
-						<td><select id="cmbTrantype2" class="txt c1"> </select></td>
+						<td><select id="cmbTrantype" class="txt c1"></select></td>
+						<td><select id="cmbTrantype1" class="txt c1"></select></td>
+						<td><select id="cmbTrantype2" class="txt c1"></select></td>
 					</tr>
 					<tr>
 						<td><span> </span><a id="lblSite" class="lbl"> </a></td>
 						<td colspan="2"><input id="txtSite"  type="text"  class="txt c1"/></td>
 						<td><span> </span><a id="lblTagcolor" class="lbl"> </a></td>
-						<td><select id="cmbTagcolor" class="txt c1"> </select></td>
+						<td><select id="cmbTagcolor" class="txt c1"></select></td>
 						<td><span> </span><a id="lblTolerance" class="lbl"> </a></td>
 						<td><input id="txtTolerance"  type="text"  class="txt c1"/></td>
 					</tr>
 					<tr>
 						<td><span> </span><a id="lblMemo" class="lbl"> </a></td>
-						<td colspan="2" rowspan="2"><textarea id="txtMemo" class="txt c1" rows="3"> </textarea></td>
+						<td colspan="2" rowspan="2"><textarea id="txtMemo" class="txt c1" rows="3"></textarea></td>
 						<td><span> </span><a id="lblChktype" class="lbl"> </a></td>
 						<td><input id="txtChktype"  type="text"  class="txt c1"/></td>
 						<td><span> </span><a id="lblMount" class="lbl"> </a></td>
 						<td><input id="txtMount"  type="text"  class="num txt c1"/></td>
 					</tr>
 					<tr>
-						<td> </td>
-						<td> </td>
+						<td></td>
+						<td></td>
 						<td><input type="button" id="btnBarcode" value="條碼列印" /></td>
 						<td><span> </span><a id="lblWeight" class="lbl"> </a></td>
 						<td><input id="txtWeight"  type="text"  class="num txt c1"/></td>
@@ -1822,7 +1427,7 @@
 					<td style="width:20px;"> </td>
 					<td style="width:20px;">列印<input class="checkAll" type="checkbox" onclick="checkAll()"/></td>
 					<td style="width:380px;"><a id='lbl_product'>品名</a><br><a id='lbl_memo'>備註</a></td>
-					<td style="width:80px;"><a id='lbl_place'>位置</a></td>
+					<td style="width:80px;"><a id='lbl_pic'>位置</a></td>
 					<td style="width:170px;"><a id='lbl_pic'>形狀</a></td>
 					<td style="width:80px;"><a id='lbl_picno'>形狀<br>編號</a></td>
 					<td style="width:60px;"><a id='lbl_imgparaa'>參數A</a></td>
@@ -1833,7 +1438,7 @@
 					<td style="width:60px;"><a id='lbl_imgparaf'>參數F</a></td>
 					<td style="width:80px;"><a id='lbl_lengthb'>長度</a><br><a id='lbl_monnt'>數量</a><br><a id='lbl_weight'>重量</a></td>
 					<td style="width:150px;"><a id='lbl_mech'>機台</a></td>
-					<td style="width:100px;"><a id='lbl_places'>儲位</a></td>
+					<td style="width:100px;"><a id='lbl_place'>儲位</a></td>
 					<td style="width:180px;"><a id='lbl_timea'>加工時間</a></td>
 					<td style="width:100px;"><a id='lbl_worker'>入庫人員</a></td>
 					<td style="width:180px;"><a id='lbl_cont'>合約單號</a></td>
@@ -1934,7 +1539,7 @@
 						<td style="width:20px;">
 						<input id="btnPlut" type="button" style="font-size: medium; font-weight: bold;" value="＋"/>
 						</td>
-						<td style="width:20px;"> </td>
+						<td style="width:20px;"></td>
 						<td style="width:20px;">列印<input class="checkAll2" type="checkbox" onclick="checkAll2()"/></td>
 						<td style="width:200px; text-align: center;">批號</td>
 						<td style="width:200px; text-align: center;">品名</td>
