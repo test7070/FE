@@ -78,7 +78,7 @@ z_uccafe06:--z_uccafe06 銷售分析明細表(產品)
 		,inte float
 		,profit float
 		,productno nvarchar(30)
-		,product nvarchar(50)
+		,product nvarchar(100)
 		,unit nvarchar(20)
 		,mount float
 		,[weight] float
@@ -132,7 +132,7 @@ z_uccafe06:--z_uccafe06 銷售分析明細表(產品)
 		,recno int --出貨單
 		,recno2 int --出貨單明細 
 		,productno nvarchar(20)
-		,product nvarchar(50)
+		,product nvarchar(100)
 		,total float
 		,tranmoney1 float
 		,tranmoney2 float
@@ -146,7 +146,7 @@ z_uccafe06:--z_uccafe06 銷售分析明細表(產品)
 		,vccno nvarchar(20)
 		,sales nvarchar(50)
 		
-		,xproduct nvarchar(50)
+		,xproduct nvarchar(100)
 		,unit nvarchar(20)
 		,mount float
 		,[weight] float
@@ -281,7 +281,7 @@ z_uccafe05:--z_uccafe05 銷售分析表(產品)
 		,inte float
 		,profit float
 		,productno nvarchar(30)
-		,product nvarchar(50)
+		,product nvarchar(100)
 		,unit nvarchar(20)
 		,mount float
 		,[weight] float
@@ -333,7 +333,7 @@ z_uccafe05:--z_uccafe05 銷售分析表(產品)
 		,rr int
 		,gno nvarchar(10)
 		,productno nvarchar(20)
-		,product nvarchar(50)
+		,product nvarchar(100)
 		,unit nvarchar(20)
 		,total float
 		,tranmoney1 float
@@ -449,7 +449,7 @@ z_uccafe04:--z_uccafe04 銷售分析明細表(客戶)
 		,inte float
 		,profit float
 		,productno nvarchar(30)
-		,product nvarchar(50)
+		,product nvarchar(100)
 		,unit nvarchar(20)
 		,mount float
 		,[weight] float
@@ -519,7 +519,7 @@ z_uccafe04:--z_uccafe04 銷售分析明細表(客戶)
 		,sales nvarchar(50)
 		
 		,productno nvarchar(30)
-		,product nvarchar(50)
+		,product nvarchar(100)
 		,unit nvarchar(20)
 		,mount float
 		,[weight] float
@@ -663,7 +663,7 @@ z_uccafe03:--z_uccafe03 銷售分析表(客戶)
 		,inte float
 		,profit float
 		,productno nvarchar(30)
-		,product nvarchar(50)
+		,product nvarchar(100)
 		,unit nvarchar(20)
 		,mount float
 		,[weight] float
@@ -810,7 +810,7 @@ z_uccafe02:--z_uccafe02 銷售分析明細表(業務)
 		,inte float
 		,profit float
 		,productno nvarchar(30)
-		,product nvarchar(50)
+		,product nvarchar(100)
 		,unit nvarchar(20)
 		,mount float
 		,[weight] float
@@ -879,7 +879,7 @@ z_uccafe02:--z_uccafe02 銷售分析明細表(業務)
 		,cust nvarchar(50)
 		
 		,productno nvarchar(30)
-		,product nvarchar(50)
+		,product nvarchar(100)
 		,unit nvarchar(20)
 		,mount float
 		,[weight] float
@@ -1020,7 +1020,7 @@ z_uccafe01:--z_uccafe01 銷售分析明細表(業務)
 		,inte float
 		,profit float
 		,productno nvarchar(30)
-		,product nvarchar(50)
+		,product nvarchar(100)
 		,unit nvarchar(20)
 		,mount float
 		,[weight] float
