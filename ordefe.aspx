@@ -1,4 +1,14 @@
-﻿<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+﻿<%@ Page Language="C#" Debug="true"%>
+    <script language="c#" runat="server">  
+		protected void Page_Load(object sender, EventArgs e)
+		{
+		    jwcf wcf = new jwcf();
+		
+		    wcf.q_content("orde", " left( $r_userno,1)!='B' or ( salesno=$r_userno or $r_rank >= 8 )");
+		    
+		}
+	</script>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
 <html xmlns="http://www.w3.org/1999/xhtml" dir="ltr">
 	<head>
 		<title></title>
@@ -50,12 +60,7 @@
 				q_gt('acomp', 'stop=1 ', 0, 0, 0, "cno_acomp");
 				$('#txtOdate').focus();
 				q_gt('flors_coin', '', 0, 0, 0, "flors_coin");
-				if (r_rank < 8){
-					q_gt('sss', 'where=^^1=1^^', 0, 1);
-				}else{
-					q_content = "";
-					q_gt(q_name, q_content, q_sqlCount, 1, 0, '', r_accy);
-				}
+				q_gt(q_name, q_content, q_sqlCount, 1, 0, '', r_accy);
 			});
 
 			function main() {
@@ -290,19 +295,7 @@
 			var focus_addr = '';
 			var z_cno = r_cno, z_acomp = r_comp, z_nick = r_comp.substr(0, 2);
 			function q_gtPost(t_name) {
-				switch (t_name) {
-					case 'sss':
-						var as = _q_appendData("sss", "", true);
-						if (q_getPara('sys.project').toUpperCase()=='FE' && (r_userno.substr(0,1).toUpperCase())=='B'){
-							q_content = "where=^^salesno='" + r_userno + "'^^";
-							q_gt(q_name, q_content, q_sqlCount, 1, 0, '', r_accy);
-		
-						}else{
-							q_content = "";
-							q_gt(q_name, q_content, q_sqlCount, 1, 0, '', r_accy);
-						}
-						break;
-					
+				switch (t_name) {		
 					case 'cno_acomp':
 						var as = _q_appendData("acomp", "", true);
 						if (as[0] != undefined) {
