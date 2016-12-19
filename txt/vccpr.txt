@@ -76,7 +76,7 @@ import:--vccpr import
 		[profit] [float] NULL,
 		[total] [float] NULL,
 		[productno] [nvarchar](20) NULL,
-		[product] [nvarchar](50) NULL,
+		[product] [nvarchar](100) NULL,
 		[cash] [float] null,
 		[inte] [float] NULL,
 		[daya] [float] NULL,
