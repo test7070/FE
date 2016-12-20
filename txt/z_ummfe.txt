@@ -18,8 +18,6 @@ z_ummfe06:--z_ummfe06
 
 	declare @tmp table(
 		custno nvarchar(20),
-		sssno nvarchar(20),
-		sss nvarchar(20),
 		
 		unpay1 float,--出貨未收
 		unpay2 float,--出貨呆帳
@@ -34,18 +32,13 @@ z_ummfe06:--z_ummfe06
 		unpay float
 	)
 	
-	insert into @tmp (custno,sssno,sss,unpay1,unpay2)
-	select a.noa,b.salesno,b.sales
-	,sum(case when a.mon>=@bbmon then unpay else 0 end)
-	,sum(case when a.mon<@bbmon then unpay else 0 end)
-	from cust_2s a left join cust b on a.noa=b.noa
-	where a.noa between @t_bcustno and @t_ecustno
-	group by a.noa,b.salesno,b.sales
-	
-	if(@t_rank<'8' and left(@t_userno,1)='Z' and @t_project='FE')
-	begin
-		delete @tmp where isnull(sssno,'')!=@t_userno
-	end
+	insert into @tmp (custno,unpay1,unpay2)
+	select noa
+	,sum(case when mon>=@bbmon then unpay else 0 end)
+	,sum(case when mon<@bbmon then unpay else 0 end)
+	from cust_2s
+	where noa between @t_bcustno and @t_ecustno
+	group by noa
 	
 	---------------------------------------------------------------------------------------------------
 	declare @tmpa table(
@@ -179,6 +172,11 @@ z_ummfe06:--z_ummfe06
 		and SUM(ISNULL(a.acccmoney2,0))=0
 		and SUM(ISNULL(a.opay,0))=0
 		and SUM(ISNULL(a.acccmoney3,0))=0)
+		
+	if(@t_rank<'8' and left(@t_userno,1)='B' and @t_project='FE')
+	begin
+		delete @result where isnull(salesno,'')!=@t_userno
+	end 
 		
 	update @result set diff3 = (unpay1+unpay2)-opay
 		
@@ -780,7 +778,7 @@ z_ummfe03:--z_ummfe03
 		set sssno=b.salesno,sss=b.sales
 		from @tmp a left join cust b on a.custno=b.noa
 				
-		if(@t_rank<'8' and left(@t_userno,1)='Z' and @t_project='FE')
+		if(@t_rank<'8' and left(@t_userno,1)='B' and @t_project='FE')
 		begin
 			delete @tmp where isnull(sssno,0)!=@t_userno
 		end
@@ -900,7 +898,7 @@ declare @b2mon nvarchar(max) = LEFT(dbo.AD2ChineseEraName(CONVERT(char, DATEADD(
 		from cust
 	)b on a.custno = b.noa
 	
-	if(@t_rank<'8' and left(@t_userno,1)='Z' and @t_project='FE')
+	if(@t_rank<'8' and left(@t_userno,1)='B' and @t_project='FE')
 	begin
 		delete @tmp where isnull(salesno,'')!=@t_userno
 	end
@@ -1156,7 +1154,7 @@ z_ummfe01:--z_ummfe01
 	set sssno=b.salesno,sss=b.sales
 	from #z_ummfe01 a left join cust b on a.custno=b.noa
 
-	if(@t_rank<'8' and left(@t_userno,1)='Z' and @t_project='FE')
+	if(@t_rank<'8' and left(@t_userno,1)='B' and @t_project='FE')
 	begin
 		delete #z_ummfe01 where isnull(sssno,'')!=@t_userno
 	end
