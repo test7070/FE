@@ -5,6 +5,9 @@ z_creditfe01:--z_creditfe01
 	declare @t_ecustno nvarchar(20) = case when '#non'=[2] then char(255) else [2] end
 	declare @t_bgrpno nvarchar(20) = case when '#non'=[3] then '' else [3] end
 	declare @t_egrpno nvarchar(20) = case when '#non'=[4] then char(255) else [4] end
+	declare @t_project nvarchar(MAX)='[5]'
+	declare @t_userno nvarchar(100)='[6]'
+	declare @t_rank nvarchar(100)='[7]' 
 	------------------------------------------------------------------------------------------
 	declare @t_rate float = 0.05
 	----------------------------------------------------------------------------------
@@ -107,6 +110,8 @@ z_creditfe01:--z_creditfe01
 	declare @tmp table(
 		custno nvarchar(20),
 		cust nvarchar(50),
+		sssno nvarchar(50),
+		sss nvarchar(50),
 		grpno nvarchar(20),
 		grpname nvarchar(50),
 		credit float,
@@ -120,9 +125,9 @@ z_creditfe01:--z_creditfe01
 		gqb float,
 		total float
 	)
-	insert into @tmp(custno,cust,grpno,grpname
+	insert into @tmp(custno,cust,sssno,sss,grpno,grpname
 		,credit,orde,ordetax,vccmoney,vcctax,vcctotal,vcca,umm,gqb,total)
-	select a.custno,c.comp,a.grpno,d.comp
+	select a.custno,c.comp,c.salesno,c.sales,a.grpno,d.comp
 		,b.credit,b.orde,b.ordetax,b.vccmoney,b.vcctax,b.vcctotal,b.vcca,b.umm,b.gqb
 		,(b.credit - b.orde - b.ordetax - b.vcctotal - b.vcca - b.gqb + b.umm)
 	from #tmpcust a
@@ -142,6 +147,11 @@ z_creditfe01:--z_creditfe01
 	left join cust c on a.custno=c.noa
 	left join cust d on a.grpno=d.noa
 	where a.custno between @t_bcustno and @t_ecustno
+	
+	if(@t_rank<'8' and left(@t_userno,1)='B' and @t_project='FE')
+	begin
+		delete @tmp where sssno!=@t_userno
+	end 
 	
 	select case when total>=0 then '1' else '2' end gno 
 		,ROW_NUMBER()over(order by custno) rr

@@ -492,6 +492,22 @@
             }
             function q_gtPost(t_name) {
                 switch (t_name) {
+                	case 'acomp':
+  						var as = _q_appendData("acomp", "", true);
+                		if (r_rank<'8' && q_getPara('sys.project').toUpperCase()=='FE' && (r_userno.substr(0,1).toUpperCase())=='B'){
+  							q_content = "where=^^exists (select * from cust where noa=workj.custno and salesno='" + r_userno + "')^^";
+  							q_gt(q_name, q_content, q_sqlCount, 1, 0, '', r_accy);
+  		
+  						}else{
+  							if(q_content.length>0){
+	                        	q_content = replaceAll(q_content,'where=^^','');
+	                        }else{
+	                        	q_content = "";
+	                        }
+  							q_gt(q_name, q_content, q_sqlCount, 1, 0, '', r_accy);
+  						}
+                		break;
+                		
                 	case 'getBno':
                 		var as = _q_appendData("workjt", "", true);
                 		if (as[0] != undefined) {
@@ -532,7 +548,7 @@
 	                			z_mech += (z_mech.length>0?',':'')+as[i].noa+'@'+as[i].mech;
 	                		}
                 		}
-                		q_gt(q_name, q_content, q_sqlCount, 1);
+                		q_gt('acomp', 'where=^^1=1^^', 0, 1);
                 		break;
                 	case 'btnModi':
                 		var as = _q_appendData("view_vccs", "", true);

@@ -35,15 +35,15 @@
                         index : 'noa,comp',
                         src : 'cust_b.aspx'
                     }, {
-                        type : '0', //[21]
+                        type : '0', //[5]
                         name : 'project',
                         value : q_getPara('sys.project').toUpperCase()
                     }, {
-                        type : '0', //[22]
+                        type : '0', //[6]
                         name : 'userno',
                         value : r_userno.toUpperCase()
                     }, {
-                        type : '0', //[23]
+                        type : '0', //[7]
                         name : 'rank',
                         value : r_rank
                     }]
