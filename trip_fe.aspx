@@ -90,6 +90,7 @@
                 $('#lblAgent').click(function () {
 	            	q_box("sss_b2.aspx", 'sss', "95%", "95%", q_getMsg("popSss"));
 	        	});
+					
 
             }
 
@@ -261,7 +262,7 @@
                             t_IdSeq = -1;
                             q_bodyId($(this).attr('id'));
                             b_seq = t_IdSeq;
-
+						
                             if (!emp($('#txtBtime_' + b_seq).val()) && !emp($('#txtEtime_' + b_seq).val()) && $('#txtBtime_' + b_seq).val() > $('#txtEtime_' + b_seq).val()) {
                                 var t_time = $('#txtBtime_' + b_seq).val();
                                 $('#txtBtime_' + b_seq).val($('#txtEtime_' + b_seq).val());
@@ -515,7 +516,7 @@
                 font-size: medium;
             }
             .dbbs {
-                width: 1280px;
+                width: 1300px;
             }
             .dbbs .tbbs {
                 margin: 0;
@@ -629,6 +630,7 @@
 					<td align="center" style="width:60px;"><a id='lblTele_pollings'> </a></td>
 					<td align="center" style="width:60px;"><a id='lblTele_coming'> 來電  </a></td>
 					<td align="center" style="width:60px;"><a id='lblInterview'> 面談  </a></td>
+					<td align="center" style="width:100px;"><a id='lblUploadimg'> 圖片上傳 </a></td>
 				</tr>
 				<tr style='background:#cad3ff;'>
 					<td align="center">
@@ -654,6 +656,7 @@
 					<td><input id="chkTele_polling.*" type="checkbox"/></td>
 					<td><input id="chkTele_coming.*" type="checkbox"/></td>
 					<td><input id="chkInterview.*" type="checkbox"/></td>
+					<td><input class="btn" id="btnUploadimg.*" type="button" style="width:10px;" /></td>
 				</tr>
 			</table>
 		</div>
