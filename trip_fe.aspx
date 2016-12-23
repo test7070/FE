@@ -93,6 +93,30 @@
 					
 
             }
+            
+            var guid = (function() {
+				function s4() {return Math.floor((1 + Math.random()) * 0x10000).toString(16).substring(1);}
+				return function() {return s4() + s4() + s4() + s4();};
+			})();
+            
+            function ShowDownlbl() {				
+				$('.lblDownload').text('').hide();
+				$('.lblDownload').each(function(){
+					var txtfiles=replaceAll($(this).attr('id'),'lbl','txt');
+					var lblfiles=replaceAll($(this).attr('id'),'lbl','lbl');
+					var txtOrgName = replaceAll($(this).attr('id'),'lbl','txt').split('_');
+					
+					if(!emp($('#'+txtfiles).val()))
+						$(this).text('下載').show();
+											
+					$('#'+lblfiles).click(function(e) {
+                        if(txtfiles.length>0)
+                        	$('#xdownload').attr('src','trip_download.aspx?FileName='+$('#'+txtOrgName[0]+'name_'+txtOrgName[1]).val()+'&TempName='+$('#'+txtfiles).val());
+                        else
+                        	alert('無資料...!!');
+					});
+				});
+			}
 
             function q_boxClose(s2) {///   q_boxClose 2/4
                 var ret;
@@ -307,6 +331,69 @@
                 }
 
                 _bbsAssign();
+                
+                if(q_cur==1 || q_cur==2){
+					$('.btnFiles').removeAttr('disabled', 'disabled');
+				}else{
+					$('.btnFiles').attr('disabled', 'disabled');
+				}
+		        $('.btnFiles').change(function() {
+					event.stopPropagation(); 
+					event.preventDefault();
+					if(q_cur==1 || q_cur==2){}else{return;}
+					var txtOrgName = replaceAll($(this).attr('id'),'btn','txt').split('_');
+					var txtName = replaceAll($(this).attr('id'),'btn','txt');
+					file = $(this)[0].files[0];
+					if(file){
+						Lock(1);
+						var ext = '';
+						var extindex = file.name.lastIndexOf('.');
+						if(extindex>=0){
+							ext = file.name.substring(extindex,file.name.length);
+						}
+						$('#'+txtOrgName[0]+'name_'+txtOrgName[1]).val(file.name);
+						$('#'+txtName).val(guid()+Date.now()+ext);
+						
+						fr = new FileReader();
+						fr.fileName = $('#'+txtName).val();
+					    fr.readAsDataURL(file);
+					    fr.onprogress = function(e){
+							if ( e.lengthComputable ) { 
+								var per = Math.round( (e.loaded * 100) / e.total) ; 
+								$('#FileList').children().last().find('progress').eq(0).attr('value',per);
+							}; 
+						}
+						fr.onloadstart = function(e){
+							$('#FileList').append('<div styly="width:100%;"><progress id="progress" max="100" value="0" ></progress><progress id="progress" max="100" value="0" ></progress><a>'+fr.fileName+'</a></div>');
+						}
+						fr.onloadend = function(e){
+							$('#FileList').children().last().find('progress').eq(0).attr('value',100);
+							console.log(fr.fileName+':'+fr.result.length);
+							var oReq = new XMLHttpRequest();
+							oReq.upload.addEventListener("progress",function(e) {
+								if (e.lengthComputable) {
+									percentComplete = Math.round((e.loaded / e.total) * 100,0);
+									$('#FileList').children().last().find('progress').eq(1).attr('value',percentComplete);
+								}
+							}, false);
+							oReq.upload.addEventListener("load",function(e) {
+								Unlock(1);
+							}, false);
+							oReq.upload.addEventListener("error",function(e) {
+								alert("資料上傳發生錯誤!");
+							}, false);
+								
+							oReq.timeout = 360000;
+							oReq.ontimeout = function () { alert("Timed out!!!"); }
+							oReq.open("POST", 'trip_upload.aspx', true);
+							oReq.setRequestHeader("Content-type", "text/plain");
+							oReq.setRequestHeader("FileName", escape(fr.fileName));
+							oReq.send(fr.result);//oReq.send(e.target.result);
+						};
+					}
+					ShowDownlbl();
+				});
+				ShowDownlbl();
             }
 
             function btnIns() {
@@ -314,6 +401,7 @@
                 $('#txtNoa').val('AUTO');
                 $('#txtDatea').val(q_date());
                 $('#txtDatea').focus();
+                ShowDownlbl();
             }
 
             function btnModi() {
@@ -329,6 +417,7 @@
 				
                 _btnModi();
                 $('#txtMemo').focus();
+                ShowDownlbl();
             }
 
             function btnPrint() {
@@ -366,10 +455,16 @@
             function refresh(recno) {
                 _refresh(recno);
                 q_gt('holiday', "where=^^ noa<='"+q_date()+"' and isnull(iswork,0)=0 ^^ stop=50" , 0, 0, 0, "", r_accy);
+                ShowDownlbl();
             }
 
             function readonly(t_para, empty) {
                 _readonly(t_para, empty);
+                if(t_para){
+                 	$('.btnFiles').attr('disabled', 'disabled');
+                }else{
+                	$('.btnFiles').removeAttr('disabled', 'disabled');
+                }
 
             }
 
@@ -516,7 +611,7 @@
                 font-size: medium;
             }
             .dbbs {
-                width: 1300px;
+                width: 1810px;
             }
             .dbbs .tbbs {
                 margin: 0;
@@ -541,6 +636,15 @@
                 border-width: 1px;
                 padding: 0px;
                 margin: -1px;
+                font-size: medium;
+            }
+            .dbbs tr td .lbl.btn {
+                color: #4297D7;
+                font-weight: bolder;
+                cursor: pointer;
+            }
+			
+            input[type="text"], input[type="button"] {
                 font-size: medium;
             }
 		</style>
@@ -619,7 +723,7 @@
 					<input class="btn"  id="btnPlus" type="button" value='+' style="font-weight: bold; width:90%;"  />
 					</td>
 					<td align="center" style="width:20px;"> </td>
-					<td align="center" style="width:200px;"><a id='lblTimesa'> 拜訪時間 </a></td>
+					<td align="center" style="width:180px;"><a id='lblTimesa'> 拜訪時間 </a></td>
 					<td align="center" style="width:120px;"><a id='lblCnos'> </a></td>
 					<td align="center" style="width:200px;"><a id='lblAcomps'> </a></td>
 					<td align="center" style="width:100px;"><a id='lblConns'> 接洽人 </a></td>
@@ -627,10 +731,11 @@
 					<td align="center" style="width:100px;"><a id='lblFaxs'> 傳真  </a></td>
 					<td align="center" style="width:100px;"><a id='lblmobiles'> 手機  </a></td>
 					<td align="center" style="width:300px;"><a id='lblMemos'> </a></td>
-					<td align="center" style="width:60px;"><a id='lblTele_pollings'> </a></td>
-					<td align="center" style="width:60px;"><a id='lblTele_coming'> 來電  </a></td>
-					<td align="center" style="width:60px;"><a id='lblInterview'> 面談  </a></td>
-					<td align="center" style="width:100px;"><a id='lblUploadimg'> 圖片上傳 </a></td>
+					<td align="center" style="width:50px;"><a id='lblTele_pollings'> </a></td>
+					<td align="center" style="width:50px;"><a id='lblTele_coming'> 來電  </a></td>
+					<td align="center" style="width:50px;"><a id='lblInterview'> 面談  </a></td>
+					<td align="center" style="width:280px;"><a id='lblFiles_s'> 圖片上傳 </a></td>
+					<td align="center" style="width:130px;"><a id='lblFilesname_s'> 上傳檔名  </a></td>
 				</tr>
 				<tr style='background:#cad3ff;'>
 					<td align="center">
@@ -656,10 +761,17 @@
 					<td><input id="chkTele_polling.*" type="checkbox"/></td>
 					<td><input id="chkTele_coming.*" type="checkbox"/></td>
 					<td><input id="chkInterview.*" type="checkbox"/></td>
-					<td><input class="btn" id="btnUploadimg.*" type="button" style="width:10px;" /></td>
+					<td style="text-align: left;">
+						<span style="float: left;"> </span>
+						<input type="file" id="btnFiles.*" class="btnFiles" value="選擇檔案"/>
+						<input id="txtFiles.*"  type="hidden"/>
+						<a id="lblFiles.*" class='lblDownload lbl btn'></a>
+					</td>
+					<td><input type="text" id="txtFilesname.*" style="width:90%;"/></td>
 				</tr>
 			</table>
 		</div>
+		<iframe id="xdownload" style="display:none;"> </iframe>
 		<input id="q_sys" type="hidden" />
 	</body>
 </html>
