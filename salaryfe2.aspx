@@ -33,7 +33,9 @@
             	,'p01','p02','p03','p04','p05','p06','p07','p08','p09'
             	,'p10','p11','p12','p13','p14','p15','p16','p17','p18'
             	,'m01','m02','m03','m04'];
-            var q_readonlys = ['txtNoq','txtPlus','txtMinus','txtTransfer','txtTotal'];
+            var q_readonlys = ['txtNoq','txtPlus','txtMinus','txtTransfer','txtTotal'
+            	,'txtC01','txtC02','txtC03','txtC04'
+            	,'txtD01','txtD02','txtD03','txtD04','txtD05'];
             var bbmNum = [['txtBase',10,0,1],['txtPlus',10,0,1],['txtMinus',10,0,1],['txtTransfer',10,0,1],['txtCash',10,0,1],['txtTotal',10,0,1]
             	,['txtP01',10,0,1],['txtP02',10,0,1],['txtP03',10,0,1],['txtP04',10,0,1],['txtP05',10,0,1]
             	,['txtP06',10,0,1],['txtP07',10,0,1],['txtP08',10,0,1],['txtP09',10,0,1],['txtP10',10,0,1]
@@ -45,7 +47,8 @@
             	,['txtP06',10,0,1],['txtP07',10,0,1],['txtP08',10,0,1],['txtP09',10,0,1],['txtP10',10,0,1]
             	,['txtP11',10,0,1],['txtP12',10,0,1],['txtP13',10,0,1],['txtP14',10,0,1],['txtP15',10,0,1]
             	,['txtP16',10,0,1],['txtP17',10,0,1],['txtP18',10,0,1]
-            	,['txtM01',10,0,1],['txtM02',10,0,1],['txtM03',10,0,1],['txtM04',10,0,1]];
+            	,['txtM01',10,0,1],['txtM02',10,0,1],['txtM03',10,0,1],['txtM04',10,0,1]
+            	,['txtC01',10,1,1],['txtC02',10,1,1],['txtC03',10,1,1],['txtC04',10,1,1]];
             var bbmMask = [];
             var bbsMask = [];
             q_sqlCount = 6;
@@ -214,28 +217,46 @@
 								$('#txtC02_'+j).val(0);
 								$('#txtC03_'+j).val(0);
 								$('#txtC04_'+j).val(0);
+								
+								$('#txtD01_'+j).val(0);
+								$('#txtD02_'+j).val(0);
+								$('#txtD03_'+j).val(0);
+								$('#txtD04_'+j).val(0);
+								$('#txtD05_'+j).val(0);
 							}   
                         	for(var i=0;i<as.length;i++){
 								isFound = false;
 								for(var j=0;j<q_bbsCount;j++){
-									if($('#txtSssno').val()==as[i].sssno){
+									if($('#txtSssno_'+j).val()==as[i].sssno){
 										$('#txtC01_'+j).val(as[i].c01);
 										$('#txtC02_'+j).val(as[i].c02);
 										$('#txtC03_'+j).val(as[i].c03);
 										$('#txtC04_'+j).val(as[i].c04);
+										
+										$('#txtD01_'+j).val(as[i].d01);
+										$('#txtD02_'+j).val(as[i].d02);
+										$('#txtD03_'+j).val(as[i].d03);
+										$('#txtD04_'+j).val(as[i].d04);
+										$('#txtD05_'+j).val(as[i].d05);
 										isFound = true;
 										break;
 									}
 								}                        		
                         		if(!isFound){
                         			for(var j=0;j<q_bbsCount;j++){
-                        				if($('#txtSssno').val().length==0){
-                        					$('#txtSssno').val(as[i].sssno);
-                        					$('#txtSss').val(as[i].namea);
+                        				if($('#txtSssno_'+j).val().length==0){
+                        					$('#txtSssno_'+j).val(as[i].sssno);
+                        					$('#txtSss_'+j).val(as[i].namea);
                         					$('#txtC01_'+j).val(as[i].c01);
 											$('#txtC02_'+j).val(as[i].c02);
 											$('#txtC03_'+j).val(as[i].c03);
 											$('#txtC04_'+j).val(as[i].c04);
+											
+											$('#txtD01_'+j).val(as[i].d01);
+											$('#txtD02_'+j).val(as[i].d02);
+											$('#txtD03_'+j).val(as[i].d03);
+											$('#txtD04_'+j).val(as[i].d04);
+											$('#txtD05_'+j).val(as[i].d05);
 											isFound = true;
 											break;
                         				}
@@ -243,13 +264,19 @@
                         			if(!isFound){
                         				$('#btnPlus').click();
                         				for(var j=0;j<q_bbsCount;j++){
-	                        				if($('#txtSssno').val().length==0){
-	                        					$('#txtSssno').val(as[i].sssno);
-	                        					$('#txtSss').val(as[i].namea);
+	                        				if($('#txtSssno_'+j).val().length==0){
+	                        					$('#txtSssno_'+j).val(as[i].sssno);
+	                        					$('#txtSss_'+j).val(as[i].namea);
 	                        					$('#txtC01_'+j).val(as[i].c01);
 												$('#txtC02_'+j).val(as[i].c02);
 												$('#txtC03_'+j).val(as[i].c03);
 												$('#txtC04_'+j).val(as[i].c04);
+												
+												$('#txtD01_'+j).val(as[i].d01);
+												$('#txtD02_'+j).val(as[i].d02);
+												$('#txtD03_'+j).val(as[i].d03);
+												$('#txtD04_'+j).val(as[i].d04);
+												$('#txtD05_'+j).val(as[i].d05);
 												isFound = true;
 												break;
 	                        				}
@@ -258,7 +285,7 @@
                         		}
                         	}
                         }else{
-                    		alert('進貨單檢查異常，無法儲存。');
+                    		alert('無資料。');
                         	return;
                         }
 						break;
@@ -529,7 +556,7 @@
 				margin: -1px;
 			}
 			.dbbs {
-                width: 2400px;
+                width: 3000px;
             }
             .tbbs a {
                 font-size: medium;
@@ -642,7 +669,7 @@
                         <td><input id="txtM01" type="text" class="txt num c1"/></td>
                         <td><span> </span><a id='lblM02' class="lbl">勞保</a></td>
                         <td><input id="txtM02" type="text" class="txt num c1"/></td>
-                        <td><span> </span><a id='lblP03' class="lbl">健保</a></td>
+                        <td><span> </span><a id='lblM03' class="lbl">健保</a></td>
                         <td><input id="txtM03" type="text" class="txt num c1"/></td>
                     </tr>
                     <tr>
@@ -671,7 +698,7 @@
 						<td><span> </span><a id='lblWorker2' class="lbl">修改人</a></td>
 						<td><input id="txtWorker2"  type="text" class="txt c1"/></td>
 						<td> </td>
-						<td><input type="button" id="btnOvertime" value="匯入加班時數"/></td>
+						<td><input type="button" id="btnOvertime" value="匯入加班、休假時數"/></td>
 					</tr>
                 </table>
             </div>
@@ -715,6 +742,12 @@
            			<td align="center" style="width:120px;"><a>薪轉</a></td>
            			<td align="center" style="width:120px;"><a>領現</a></td>
            			<td align="center" style="width:120px;"><a>實領</a></td>
+           			
+           			<td align="center" style="width:120px;"><a>年休時數</a></td>
+           			<td align="center" style="width:120px;"><a>本月<BR>年休時數</a></td>
+           			<td align="center" style="width:120px;"><a>尚餘<BR>年休時數</a></td>
+           			<td align="center" style="width:120px;"><a>累積<BR>事假時數</a></td>
+           			<td align="center" style="width:120px;"><a>累積<BR>病假時數</a></td>
                 </tr>
                 <tr style='background:#cad3ff;'>
                     <td>
@@ -759,6 +792,12 @@
                     <td> <input id="txtTransfer.*" type="text" class="txt num" style="width:95%;"/></td>
                     <td> <input id="txtCash.*" type="text" class="txt num" style="width:95%;"/></td>
                     <td> <input id="txtTotal.*" type="text" class="txt num" style="width:95%;"/></td>
+                
+                	<td> <input id="txtD01.*" type="text" class="txt num" style="width:95%;"/></td>
+                	<td> <input id="txtD02.*" type="text" class="txt num" style="width:95%;"/></td>
+                	<td> <input id="txtD03.*" type="text" class="txt num" style="width:95%;"/></td>
+                	<td> <input id="txtD04.*" type="text" class="txt num" style="width:95%;"/></td>
+                	<td> <input id="txtD05.*" type="text" class="txt num" style="width:95%;"/></td>
                 </tr>
             </table>
         </div>

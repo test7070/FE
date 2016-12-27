@@ -1,6 +1,24 @@
 overtime:--salaryfe  overtime 
 	declare @t_mon nvarchar(20) = [1]
 
+	declare @tmp table(
+		sel int identity(1,1)
+		,sssno nvarchar(20)
+		,namea nvarchar(50)
+		,c01 float
+		,c02 float
+		,c03 float
+		,c04 float
+		,d01 float--年休日
+		,d02 float--本月年休日
+		,d03 float--尚餘年假日
+		,d03x float--累積年假時數
+		,d04 float--累積事假時數
+		,d05 float--累積病假時數
+		
+	)
+	
+	insert into @tmp(sssno,namea,c01,c02,c03,c04)
 	select sssno,namea
 		,SUM(ISNULL(w133,0)) c01
 		,SUM(ISNULL(w166,0)) c02
@@ -8,4 +26,48 @@ overtime:--salaryfe  overtime
 		,SUM(ISNULL(hr_special,0)) c04 
 	from salpresents
 	where LEFT(noa,6)=@t_mon and len(isnull(sssno,''))>0
-	group by sssno,namea;
+	group by sssno,namea 
+	having not(SUM(ISNULL(w133,0))=0 and SUM(ISNULL(w166,0))=0 and SUM(ISNULL(w100,0))=0 and SUM(ISNULL(hr_special,0))=0)
+	order by sssno
+	
+	update @tmp set d02=b.hr04x,d03x=b.hr04,d04=b.hr01,d05=b.hr02
+	from @tmp a
+	left join (select sssno,namea
+		,SUM(case when htype='01' then isnull(hr_used,0) else 0 end) hr01 --累積事假
+		,SUM(case when htype='02' then isnull(hr_used,0) else 0 end) hr02 --累積病假
+		,SUM(case when htype='04' then isnull(hr_used,0) else 0 end) hr04 --累積年假
+		,SUM(case when htype='04' and LEFT(datea,6)<=@t_mon then isnull(hr_used,0) else 0 end) hr04x --本月年假
+	from salvacause 
+	where LEFT(datea,3)=LEFT(@t_mon,3) and LEFT(datea,6)<=@t_mon
+	group by sssno,namea
+	having not(SUM(case when htype='04' and LEFT(datea,6)<=@t_mon then isnull(hr_used,0) else 0 end)=0
+		and SUM(case when htype='04' then isnull(hr_used,0) else 0 end)=0
+		and SUM(case when htype='01' then isnull(hr_used,0) else 0 end)=0
+		and SUM(case when htype='02' then isnull(hr_used,0) else 0 end)=0)) b on a.sssno=b.sssno
+	where b.sssno is not null
+	
+	insert into @tmp(sssno,namea,c01,c02,c03,c04,d01,d02,d03,d03x,d04,d05)
+	select sssno,namea,0 c01,0 c02,0 c03,0 c04
+		,0 d01
+		,SUM(case when htype='04' and LEFT(datea,6)<=@t_mon then isnull(hr_used,0) else 0 end) d02 --本月年假
+		,0 d03
+		,SUM(case when htype='04' then isnull(hr_used,0) else 0 end) d03x --累積年假
+		,SUM(case when htype='01' then isnull(hr_used,0) else 0 end) d04 --累積事假
+		,SUM(case when htype='02' then isnull(hr_used,0) else 0 end) d05--累積病假
+	from salvacause a
+	where LEFT(datea,3)=LEFT(@t_mon,3) and LEFT(datea,6)<=@t_mon
+	and not exists(select * from @tmp where sssno=a.sssno)
+	group by sssno,namea 
+	having not(SUM(case when htype='04' and LEFT(datea,6)<=@t_mon then isnull(hr_used,0) else 0 end)=0
+		and SUM(case when htype='04' then isnull(hr_used,0) else 0 end)=0
+		and SUM(case when htype='01' then isnull(hr_used,0) else 0 end)=0
+		and SUM(case when htype='02' then isnull(hr_used,0) else 0 end)=0)
+	order by sssno
+	
+	update @tmp set d01=ISNULL(b.inday,0)
+	from @tmp a
+	left join salvacas b on a.sssno=b.sssno and LEFT(@t_mon,3)=b.noa
+
+	update @tmp set d03 = ISNULL(d01,0)-ISNULL(d03x,0)
+	
+	select * from @tmp order by sssno;

@@ -34,6 +34,12 @@ z_salaryfe02:--z_salaryfe02
 		,dbo.getComma(a.[transfer],-1) [transfer]
 		,dbo.getComma(a.cash,-1) cash
 		,dbo.getComma(a.total,-1) total
+		
+		,dbo.getComma(a.d01,-1) d01
+		,dbo.getComma(a.d02,-1) d02
+		,dbo.getComma(a.d03,-1) d03
+		,dbo.getComma(a.d04,-1) d04
+		,dbo.getComma(a.d05,-1) d05
 	from salaryfes a 
 	left join salaryfe b on a.noa=b.noa
 	where b.mon=@t_mon and b.typea='業務'
@@ -75,6 +81,12 @@ z_salaryfe01:--z_salaryfe01
 		,dbo.getComma(a.[transfer],-1) [transfer]
 		,dbo.getComma(a.cash,-1) cash
 		,dbo.getComma(a.total,-1) total
+		
+		,dbo.getComma(a.d01,-1) d01
+		,dbo.getComma(a.d02,-1) d02
+		,dbo.getComma(a.d03,-1) d03
+		,dbo.getComma(a.d04,-1) d04
+		,dbo.getComma(a.d05,-1) d05
 	from salaryfes a 
 	left join salaryfe b on a.noa=b.noa
 	where b.mon=@t_mon and b.typea='員工'
