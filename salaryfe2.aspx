@@ -3,8 +3,8 @@
 		protected void Page_Load(object sender, EventArgs e)
 		{
 		    jwcf wcf = new jwcf();
-		
-		    wcf.q_content("salarys", " left( $r_userno,1)!='B' or ( sno=$r_userno or $r_rank >= 8 )");
+			wcf.q_content("salaryfe", " typea='員工'");
+		    wcf.q_content("salaryfes", " left( $r_userno,1)!='B' or ( sno=$r_userno or $r_rank >= 8 )");
 		    
 		}
 	</script>
@@ -28,31 +28,38 @@
             var q_name = "salaryfe";
             var decbbs = [];
             var decbbm = [];
-            var q_readonly = ['txtNoa','txtWorker','txtWorker2','txtBase','txtTotal'
-            	,'txtAllowance01','txtAllowance02','txtAllowance03','txtAllowance04'
-            	,'txtAllowance05','txtAllowance06','txtAllowance07','txtAllowance08'
-            	,'txtAllowance09','txtAllowance10','txtAllowance11','txtAllowance12'];
-            var q_readonlys = ['txtNoq','txtTotal'];
-            var bbmNum = [['txtTotal',10,0,1],['txtBase',10,0,1]
-            	,['txtAllowance01',10,0,1],['txtAllowance02',10,0,1],['txtAllowance03',10,0,1],['txtAllowance04',10,0,1],['txtAllowance05',10,0,1],['txtAllowance06',10,0,1]
-            	,['txtAllowance07',10,0,1],['txtAllowance08',10,0,1],['txtAllowance09',10,0,1],['txtAllowance10',10,0,1],['txtAllowance11',10,0,1],['txtAllowance12',10,0,1]];
-            var bbsNum = [['txtTotal',10,0,1],['txtBase',10,0,1]
-            	,['txtAllowance01',10,0,1],['txtAllowance02',10,0,1],['txtAllowance03',10,0,1],['txtAllowance04',10,0,1],['txtAllowance05',10,0,1],['txtAllowance06',10,0,1]
-            	,['txtAllowance07',10,0,1],['txtAllowance08',10,0,1],['txtAllowance09',10,0,1],['txtAllowance10',10,0,1],['txtAllowance11',10,0,1],['txtAllowance12',10,0,1]];
+            var q_readonly = ['txtNoa','txtWorker','txtWorker2','txtBase'
+            	,'txtPlus','txtMinus','txtTransfer','txtCash','txtTotal'
+            	,'p01','p02','p03','p04','p05','p06','p07','p08','p09'
+            	,'p10','p11','p12','p13','p14','p15','p16','p17','p18'
+            	,'m01','m02','m03','m04'];
+            var q_readonlys = ['txtNoq','txtPlus','txtMinus','txtTransfer','txtTotal'];
+            var bbmNum = [['txtBase',10,0,1],['txtPlus',10,0,1],['txtMinus',10,0,1],['txtTransfer',10,0,1],['txtCash',10,0,1],['txtTotal',10,0,1]
+            	,['txtP01',10,0,1],['txtP02',10,0,1],['txtP03',10,0,1],['txtP04',10,0,1],['txtP05',10,0,1]
+            	,['txtP06',10,0,1],['txtP07',10,0,1],['txtP08',10,0,1],['txtP09',10,0,1],['txtP10',10,0,1]
+            	,['txtP11',10,0,1],['txtP12',10,0,1],['txtP13',10,0,1],['txtP14',10,0,1],['txtP15',10,0,1]
+            	,['txtP16',10,0,1],['txtP17',10,0,1],['txtP18',10,0,1]
+            	,['txtM01',10,0,1],['txtM02',10,0,1],['txtM03',10,0,1],['txtM04',10,0,1]];
+            var bbsNum = [['txtBase',10,0,1],['txtPlus',10,0,1],['txtMinus',10,0,1],['txtTransfer',10,0,1],['txtCash',10,0,1],['txtTotal',10,0,1]
+            	,['txtP01',10,0,1],['txtP02',10,0,1],['txtP03',10,0,1],['txtP04',10,0,1],['txtP05',10,0,1]
+            	,['txtP06',10,0,1],['txtP07',10,0,1],['txtP08',10,0,1],['txtP09',10,0,1],['txtP10',10,0,1]
+            	,['txtP11',10,0,1],['txtP12',10,0,1],['txtP13',10,0,1],['txtP14',10,0,1],['txtP15',10,0,1]
+            	,['txtP16',10,0,1],['txtP17',10,0,1],['txtP18',10,0,1]
+            	,['txtM01',10,0,1],['txtM02',10,0,1],['txtM03',10,0,1],['txtM04',10,0,1]];
             var bbmMask = [];
             var bbsMask = [];
             q_sqlCount = 6;
             brwCount = 6;
             brwList = [];
             brwNowPage = 0;
-            brwKey = 'datea';
-            aPop = new Array(['txtSalesno_', 'btnSales', 'sss', 'noa,namea', 'txtSalesno_,txtSales_', 'sss_b.aspx']);
+            brwKey = 'noa';
+            aPop = new Array(['txtSssno_', 'btnSss_', 'sss', 'noa,namea', 'txtSssno_,txtSss_', 'sss_b.aspx']);
             $(document).ready(function() {
                 bbmKey = ['noa'];
                 bbsKey = ['noa', 'noq'];
                 q_brwCount();
 
-					q_gt(q_name, q_content, q_sqlCount, 1, 0, '');
+				q_gt(q_name, q_content, q_sqlCount, 1, 0, '');
 
             });
 
@@ -68,44 +75,81 @@
             	if(!(q_cur=='1' || q_cur=='2')){
             		return;
             	}
-            	var base=0,total=0
-            		,allowance01=0,allowance02=0,allowance03=0,allowance04=0
-            		,allowance05=0,allowance06=0,allowance07=0,allowance08=0
-            		,allowance09=0,allowance10=0,allowance11=0,allowance12=0;
+            	var base=0,plus=0,minus=0,transfer=0,cash=0,total=0
+            		,p01=0,p02=0,p03=0,p04=0,p05=0,p06=0,p07=0,p08=0,p09=0
+            		,p10=0,p11=0,p12=0,p13=0,p14=0,p15=0,p16=0,p17=0,p18=0
+            		,m01=0,m02=0,m03=0,m04=0;
             	for(var i=0;i<q_bbsCount;i++){
-            		$('#txtTotal_'+i).val(q_float('txtBase_'+i)
-            			+q_float('txtAllowance01_'+i)+q_float('txtAllowance02_'+i)+q_float('txtAllowance03_'+i)
-            			+q_float('txtAllowance04_'+i)+q_float('txtAllowance05_'+i)+q_float('txtAllowance06_'+i)
-            			+q_float('txtAllowance07_'+i)+q_float('txtAllowance08_'+i)+q_float('txtAllowance09_'+i)
-            			+q_float('txtAllowance10_'+i)+q_float('txtAllowance11_'+i)+q_float('txtAllowance12_'+i));
+            		//plus  可領   base + p01~p18
+            		//minus 應扣  m01~m04
+            		//transfer 薪轉   total - cash	
+            		//cash  領現
+            		$('#txtPlus_'+i).val(q_float('txtBase_'+i)
+            			+q_float('txtP01_'+i)+q_float('txtP02_'+i)+q_float('txtP03_'+i)+q_float('txtP04_'+i)
+            			+q_float('txtP05_'+i)+q_float('txtP06_'+i)+q_float('txtP07_'+i)+q_float('txtP08_'+i)
+            			+q_float('txtP09_'+i)+q_float('txtP10_'+i)+q_float('txtP11_'+i)+q_float('txtP12_'+i)
+            			+q_float('txtP13_'+i)+q_float('txtP14_'+i)+q_float('txtP15_'+i)+q_float('txtP16_'+i)
+            			+q_float('txtP17_'+i)+q_float('txtP18_'+i));
+            		$('#txtMinus_'+i).val(q_float('txtM01_'+i)+q_float('txtM02_'+i)+q_float('txtM03_'+i)+q_float('txtM04_'+i));
+            		$('#txtTotal_'+i).val(q_float('txtPlus_'+i)-q_float('txtMinus_'+i));
+            		$('#txtTransfer_'+i).val(q_float('txtTotal_'+i)-q_float('txtCash_'+i));
+            		
             		base += q_float('txtBase_'+i);
-            		allowance01 += q_float('txtAllowance01_'+i);
-            		allowance02 += q_float('txtAllowance02_'+i);
-            		allowance03 += q_float('txtAllowance03_'+i);
-            		allowance04 += q_float('txtAllowance04_'+i);
-            		allowance05 += q_float('txtAllowance05_'+i);
-            		allowance06 += q_float('txtAllowance06_'+i);
-            		allowance07 += q_float('txtAllowance07_'+i);
-            		allowance08 += q_float('txtAllowance08_'+i);
-            		allowance09 += q_float('txtAllowance09_'+i);
-            		allowance10 += q_float('txtAllowance10_'+i);
-            		allowance11 += q_float('txtAllowance11_'+i);
-            		allowance12 += q_float('txtAllowance12_'+i);
+            		p01 += q_float('txtP01_'+i);
+            		p02 += q_float('txtP02_'+i);
+            		p03 += q_float('txtP03_'+i);
+            		p04 += q_float('txtP04_'+i);
+            		p05 += q_float('txtP05_'+i);
+            		p06 += q_float('txtP06_'+i);
+            		p07 += q_float('txtP07_'+i);
+            		p08 += q_float('txtP08_'+i);
+            		p09 += q_float('txtP09_'+i);
+            		p10 += q_float('txtP10_'+i);
+            		p11 += q_float('txtP11_'+i);
+            		p12 += q_float('txtP12_'+i);
+            		p13 += q_float('txtP13_'+i);
+            		p14 += q_float('txtP14_'+i);
+            		p15 += q_float('txtP15_'+i);
+            		p16 += q_float('txtP16_'+i);
+            		p17 += q_float('txtP17_'+i);
+            		p18 += q_float('txtP18_'+i);
+            		plus += q_float('txtPlus_'+i);
+            		m01 += q_float('txtM01_'+i);
+            		m02 += q_float('txtM02_'+i);
+            		m03 += q_float('txtM03_'+i);
+            		m04 += q_float('txtM04_'+i);
+            		minus += q_float('txtMinus_'+i);
+            		transfer += q_float('txtTransfer_'+i);
+            		cash += q_float('txtCash_'+i); 
             		total += q_float('txtTotal_'+i);
             	}	
             	$('#txtBase').val(FormatNumber(base));
-            	$('#txtAllowance01').val(FormatNumber(allowance01));
-            	$('#txtAllowance02').val(FormatNumber(allowance02));
-            	$('#txtAllowance03').val(FormatNumber(allowance03));
-            	$('#txtAllowance04').val(FormatNumber(allowance04));
-            	$('#txtAllowance05').val(FormatNumber(allowance05));
-            	$('#txtAllowance06').val(FormatNumber(allowance06));
-            	$('#txtAllowance07').val(FormatNumber(allowance07));
-            	$('#txtAllowance08').val(FormatNumber(allowance08));
-            	$('#txtAllowance09').val(FormatNumber(allowance09));
-            	$('#txtAllowance10').val(FormatNumber(allowance10));
-            	$('#txtAllowance11').val(FormatNumber(allowance11));
-            	$('#txtAllowance12').val(FormatNumber(allowance12));
+            	$('#txtP01').val(FormatNumber(p01));
+            	$('#txtP02').val(FormatNumber(p02));
+            	$('#txtP03').val(FormatNumber(p03));
+            	$('#txtP04').val(FormatNumber(p04));
+            	$('#txtP05').val(FormatNumber(p05));
+            	$('#txtP06').val(FormatNumber(p06));
+            	$('#txtP07').val(FormatNumber(p07));
+            	$('#txtP08').val(FormatNumber(p08));
+            	$('#txtP09').val(FormatNumber(p09));
+            	$('#txtP10').val(FormatNumber(p10));
+            	$('#txtP11').val(FormatNumber(p11));
+            	$('#txtP12').val(FormatNumber(p12));
+            	$('#txtP13').val(FormatNumber(p13));
+            	$('#txtP14').val(FormatNumber(p14));
+            	$('#txtP15').val(FormatNumber(p15));
+            	$('#txtP16').val(FormatNumber(p16));
+            	$('#txtP17').val(FormatNumber(p17));
+            	$('#txtP18').val(FormatNumber(p18));
+            	$('#txtPlus').val(FormatNumber(plus));
+            	$('#txtM01').val(FormatNumber(m01));
+            	$('#txtM02').val(FormatNumber(m02));
+            	$('#txtM03').val(FormatNumber(m03));
+            	$('#txtM04').val(FormatNumber(m04));
+            	$('#txtMinus').val(FormatNumber(minus));
+            	$('#txtTransfer').val(FormatNumber(transfer));
+            	$('#txtCash').val(FormatNumber(cash));
               	$('#txtTotal').val(FormatNumber(total));
             }
 
@@ -114,45 +158,11 @@
                 bbmMask = [['txtMon', r_picm]];
                 q_mask(bbmMask);
                 
-                /*$('#txtBase').change(function(e){
-                	sum();
+                $('#btnOvertime').click(function(e){
+                	var t_mon = $.trim($('#txtMon').val());
+                	q_func('qtxt.query.overtime', 'salaryfe.txt,overtime,'+t_mon);
                 });
-                $('#txtAllowance01').change(function(e){
-                	sum();
-                });
-             	$('#txtAllowance02').change(function(e){
-                	sum();
-                });
-                $('#txtAllowance03').change(function(e){
-                	sum();
-                });
-                $('#txtAllowance04').change(function(e){
-                	sum();
-                });
-                $('#txtAllowance05').change(function(e){
-                	sum();
-                });
-                $('#txtAllowance06').change(function(e){
-                	sum();
-                });
-                $('#txtAllowance07').change(function(e){
-                	sum();
-                });
-                $('#txtAllowance08').change(function(e){
-                	sum();
-                });
-                $('#txtAllowance09').change(function(e){
-                	sum();
-                });
-                $('#txtAllowance10').change(function(e){
-                	sum();
-                });
-                $('#txtAllowance11').change(function(e){
-                	sum();
-                });
-                $('#txtAllowance12').change(function(e){
-                	sum();
-                });*/
+                document.title= '員工薪資';
             }
 
             function q_boxClose(s2) {
@@ -166,8 +176,8 @@
             }
             function q_gtPost(t_name) {
                 switch (t_name) {
-
                     case q_name:
+                    	
                         if (q_cur == 4)
                             q_Seek_gtPost();
                         break;
@@ -175,14 +185,13 @@
                      	break;
                 }
             }
-
             function q_stPost() {
                 if (!(q_cur == 1 || q_cur == 2))
                     return false;
             }
             
             function btnOk() {
-
+				$('#txtTypea').val('員工');
                 sum();
                 if (q_cur == 1)
                     $('#txtWorker').val(r_name);
@@ -197,8 +206,64 @@
             }
             function q_funcPost(t_func, result) {
                 switch(t_func) {
-                    default:
-                       break;
+					case 'qtxt.query.overtime':
+						var as = _q_appendData("tmp0", "", true);
+                        if (as[0] != undefined) {
+                        	for(var j=0;j<q_bbsCount;j++){
+								$('#txtC01_'+j).val(0);
+								$('#txtC02_'+j).val(0);
+								$('#txtC03_'+j).val(0);
+								$('#txtC04_'+j).val(0);
+							}   
+                        	for(var i=0;i<as.length;i++){
+								isFound = false;
+								for(var j=0;j<q_bbsCount;j++){
+									if($('#txtSssno').val()==as[i].sssno){
+										$('#txtC01_'+j).val(as[i].c01);
+										$('#txtC02_'+j).val(as[i].c02);
+										$('#txtC03_'+j).val(as[i].c03);
+										$('#txtC04_'+j).val(as[i].c04);
+										isFound = true;
+										break;
+									}
+								}                        		
+                        		if(!isFound){
+                        			for(var j=0;j<q_bbsCount;j++){
+                        				if($('#txtSssno').val().length==0){
+                        					$('#txtSssno').val(as[i].sssno);
+                        					$('#txtSss').val(as[i].namea);
+                        					$('#txtC01_'+j).val(as[i].c01);
+											$('#txtC02_'+j).val(as[i].c02);
+											$('#txtC03_'+j).val(as[i].c03);
+											$('#txtC04_'+j).val(as[i].c04);
+											isFound = true;
+											break;
+                        				}
+                        			}
+                        			if(!isFound){
+                        				$('#btnPlus').click();
+                        				for(var j=0;j<q_bbsCount;j++){
+	                        				if($('#txtSssno').val().length==0){
+	                        					$('#txtSssno').val(as[i].sssno);
+	                        					$('#txtSss').val(as[i].namea);
+	                        					$('#txtC01_'+j).val(as[i].c01);
+												$('#txtC02_'+j).val(as[i].c02);
+												$('#txtC03_'+j).val(as[i].c03);
+												$('#txtC04_'+j).val(as[i].c04);
+												isFound = true;
+												break;
+	                        				}
+	                        			}
+                        			}
+                        		}
+                        	}
+                        }else{
+                    		alert('進貨單檢查異常，無法儲存。');
+                        	return;
+                        }
+						break;
+					default:
+						break;
                 }
             }
 
@@ -213,25 +278,36 @@
                 	$('#lblNo_'+i).text(i+1);
                     if ($('#btnMinus_' + i).hasClass('isAssign'))
 						continue;
-					$('#txtSalesno_' + i).bind('contextmenu', function(e) {
+					$('#txtSssno_' + i).bind('contextmenu', function(e) {
                         /*滑鼠右鍵*/
                         e.preventDefault();
                         var n = $(this).attr('id').replace(/^(.*)_(\d+)$/,'$2');
-                        $('#btnSales_' + n).click();
+                        $('#btnSss_' + n).click();
                     });
                     $('#txtBase_'+i).change(function(e){sum();});
-                    $('#txtAllowance01_'+i).change(function(e){sum();});
-                    $('#txtAllowance02_'+i).change(function(e){sum();});
-                    $('#txtAllowance03_'+i).change(function(e){sum();});
-                    $('#txtAllowance04_'+i).change(function(e){sum();});
-                    $('#txtAllowance05_'+i).change(function(e){sum();});
-                    $('#txtAllowance06_'+i).change(function(e){sum();});
-                    $('#txtAllowance07_'+i).change(function(e){sum();});
-                    $('#txtAllowance08_'+i).change(function(e){sum();});
-                    $('#txtAllowance09_'+i).change(function(e){sum();});
-                    $('#txtAllowance10_'+i).change(function(e){sum();});
-                    $('#txtAllowance11_'+i).change(function(e){sum();});
-                    $('#txtAllowance12_'+i).change(function(e){sum();});
+                    $('#txtP01_'+i).change(function(e){sum();});
+                    $('#txtP02_'+i).change(function(e){sum();});
+                    $('#txtP03_'+i).change(function(e){sum();});
+                    $('#txtP04_'+i).change(function(e){sum();});
+                    $('#txtP05_'+i).change(function(e){sum();});
+                    $('#txtP06_'+i).change(function(e){sum();});
+                    $('#txtP07_'+i).change(function(e){sum();});
+                    $('#txtP08_'+i).change(function(e){sum();});
+                    $('#txtP09_'+i).change(function(e){sum();});
+                    $('#txtP10_'+i).change(function(e){sum();});
+                    $('#txtP11_'+i).change(function(e){sum();});
+                    $('#txtP12_'+i).change(function(e){sum();});
+                    $('#txtP13_'+i).change(function(e){sum();});
+                    $('#txtP14_'+i).change(function(e){sum();});
+                    $('#txtP15_'+i).change(function(e){sum();});
+                    $('#txtP16_'+i).change(function(e){sum();});
+                    $('#txtP17_'+i).change(function(e){sum();});
+                    $('#txtP18_'+i).change(function(e){sum();});
+                    $('#txtM01_'+i).change(function(e){sum();});
+                    $('#txtM02_'+i).change(function(e){sum();});
+                    $('#txtM03_'+i).change(function(e){sum();});
+                    $('#txtM04_'+i).change(function(e){sum();});
+                	$('#txtCash_'+i).change(function(e){sum();});
                 }
                 _bbsAssign();
             }
@@ -255,8 +331,8 @@
             }
 
             function btnPrint() {
-				//q_box("z_rc2fep.aspx?;;;noa=" + trim($('#txtNoa').val()) + ";" + r_accy, '', "95%", "95%", q_getMsg("popPrint"));
-            }
+				q_box("z_salaryfe.aspx?" + r_userno + ";" + r_name + ";" + q_time + ";" + JSON.stringify({noa:trim($('#txtNoa').val())}) + ";" + r_accy + "_" + r_cno, 'salaryfe', "95%", "95%", m_print);
+			}
 
             function wrServer(key_value) {
                 var i;
@@ -265,7 +341,7 @@
             }
 
             function bbsSave(as) {
-                if (!as['salesno']) {
+                if (!as['sssno']) {
                     as[bbsKey[1]] = '';
                     return;
                 }
@@ -279,11 +355,11 @@
 
             function readonly(t_para, empty) {
                 _readonly(t_para, empty);
-                /*if (t_para) {
-                    $('#txtDatea').datepicker('destroy');
+                if (t_para) {
+                    $('#btnOvertime').attr('disabled','disabled');
                 } else {	
-                    $('#txtDatea').datepicker();
-                }*/
+                    $('#btnOvertime').removeAttr('disabled');
+                }
             }
 
             function btnMinus(id) {
@@ -453,7 +529,7 @@
 				margin: -1px;
 			}
 			.dbbs {
-                width: 2000px;
+                width: 2400px;
             }
             .tbbs a {
                 font-size: medium;
@@ -501,52 +577,90 @@
 					</tr>
                     <tr>
                         <td><span> </span><a id='lblNoa' class="lbl">電腦編號</a></td>
-                        <td><input id="txtNoa" type="text" class="txt c1"/></td>
+                        <td>
+                        	<input id="txtNoa" type="text" class="txt c1"/>
+                        	<input id="txtTypea" type="text" style="display:none;"/>
+                    	</td>
                         <td><span> </span><a id='lblMon' class="lbl">月份</a></td>
                         <td><input id="txtMon" type="text" class="txt c1"/></td>
                         <td><span> </span><a id='lblBase' class="lbl">本薪</a></td>
                         <td><input id="txtBase" type="text" class="txt num c1"/></td>
                     </tr>
                     <tr>
-                    	<td><span> </span><a id='lblAllowance01' class="lbl">全勤</a></td>
-                        <td><input id="txtAllowance01" type="text" class="txt num c1"/></td>
-                        <td><span> </span><a id='lblAllowance02' class="lbl">無遲到</a></td>
-                        <td><input id="txtAllowance02" type="text" class="txt num c1"/></td>
-                        <td><span> </span><a id='lblAllowance03' class="lbl">團體獎金</a></td>
-                        <td><input id="txtAllowance03" type="text" class="txt num c1"/></td>
+                    	<td><span> </span><a id='lblP01' class="lbl">職級</a></td>
+                        <td><input id="txtP01" type="text" class="txt num c1"/></td>
+                        <td><span> </span><a id='lblP02' class="lbl">全勤獎金</a></td>
+                        <td><input id="txtP02" type="text" class="txt num c1"/></td>
+                        <td><span> </span><a id='lblP03' class="lbl">無遲到</a></td>
+                        <td><input id="txtP03" type="text" class="txt num c1"/></td>
                     </tr>
                     <tr>
-                    	<td><span> </span><a id='lblAllowance04' class="lbl">個人獎金</a></td>
-                        <td><input id="txtAllowance04" type="text" class="txt num c1"/></td>
-                        <td><span> </span><a id='lblAllowance05' class="lbl">會議出勤</a></td>
-                        <td><input id="txtAllowance05" type="text" class="txt num c1"/></td>
-                        <td><span> </span><a id='lblAllowance06' class="lbl">成交獎金</a></td>
-                        <td><input id="txtAllowance06" type="text" class="txt num c1"/></td>
+                    	<td><span> </span><a id='lblP04' class="lbl">加班</a></td>
+                        <td><input id="txtP04" type="text" class="txt num c1"/></td>
+                        <td><span> </span><a id='lblP05' class="lbl">假日加班</a></td>
+                        <td><input id="txtP05" type="text" class="txt num c1"/></td>
+                        <td><span> </span><a id='lblP06' class="lbl">廠務工時加班費</a></td>
+                        <td><input id="txtP06" type="text" class="txt num c1"/></td>
                     </tr>
                     <tr>
-                    	<td><span> </span><a id='lblAllowance07' class="lbl">收現獎金</a></td>
-                        <td><input id="txtAllowance07" type="text" class="txt num c1"/></td>
-                        <td><span> </span><a id='lblAllowance08' class="lbl">早收獎金</a></td>
-                        <td><input id="txtAllowance08" type="text" class="txt num c1"/></td>
-                        <td><span> </span><a id='lblAllowance09' class="lbl">簽約獎金</a></td>
-                        <td><input id="txtAllowance09" type="text" class="txt num c1"/></td>
+                    	<td><span> </span><a id='lblP07' class="lbl">司機工時加班費</a></td>
+                        <td><input id="txtP07" type="text" class="txt num c1"/></td>
+                        <td><span> </span><a id='lblP08' class="lbl">團體獎金(毛利、生產)</a></td>
+                        <td><input id="txtP08" type="text" class="txt num c1"/></td>
+                        <td><span> </span><a id='lblP09' class="lbl">個人績效獎金</a></td>
+                        <td><input id="txtP09" type="text" class="txt num c1"/></td>
                     </tr>
                     <tr>
-                    	<td><span> </span><a id='lblAllowance10' class="lbl">職等級</a></td>
-                        <td><input id="txtAllowance10" type="text" class="txt num c1"/></td>
-                        <td><span> </span><a id='lblAllowance11' class="lbl">報價獎金</a></td>
-                        <td><input id="txtAllowance11" type="text" class="txt num c1"/></td>
-                        <td><span> </span><a id='lblAllowance12' class="lbl">拜訪獎金</a></td>
-                        <td><input id="txtAllowance12" type="text" class="txt num c1"/></td>
+                    	<td><span> </span><a id='lblP10' class="lbl">司機績效獎金</a></td>
+                        <td><input id="txtP10" type="text" class="txt num c1"/></td>
+                        <td><span> </span><a id='lblP11' class="lbl">專業獎金</a></td>
+                        <td><input id="txtP11" type="text" class="txt num c1"/></td>
+                        <td><span> </span><a id='lblP12' class="lbl">工作獎金</a></td>
+                        <td><input id="txtP12" type="text" class="txt num c1"/></td>
                     </tr> 
                     <tr>
-                    	<td> </td>
-                    	<td> </td>
+                    	<td><span> </span><a id='lblP13' class="lbl">裝卸獎金</a></td>
+                        <td><input id="txtP13" type="text" class="txt num c1"/></td>
+                        <td><span> </span><a id='lblP14' class="lbl">主管津貼</a></td>
+                        <td><input id="txtP14" type="text" class="txt num c1"/></td>
+                        <td><span> </span><a id='lblP15' class="lbl">電話補貼</a></td>
+                        <td><input id="txtP15" type="text" class="txt num c1"/></td>
+                    </tr>
+                    <tr>
+                    	<td><span> </span><a id='lblP16' class="lbl">伙食津貼</a></td>
+                        <td><input id="txtP16" type="text" class="txt num c1"/></td>
+                        <td><span> </span><a id='lblP17' class="lbl">舊旗鋼津貼</a></td>
+                        <td><input id="txtP17" type="text" class="txt num c1"/></td>
+                        <td><span> </span><a id='lblPlus' class="lbl">可領</a></td>
+                        <td>
+                        	<input id="txtP18" type="text" style="display:none;"/>
+                        	<input id="txtPlus" type="text" class="txt num c1"/>
+                    	</td>
+                    </tr>
+                    <tr>
+                    	<td><span> </span><a id='lblM01' class="lbl">借支</a></td>
+                        <td><input id="txtM01" type="text" class="txt num c1"/></td>
+                        <td><span> </span><a id='lblM02' class="lbl">勞保</a></td>
+                        <td><input id="txtM02" type="text" class="txt num c1"/></td>
+                        <td><span> </span><a id='lblP03' class="lbl">健保</a></td>
+                        <td><input id="txtM03" type="text" class="txt num c1"/></td>
+                    </tr>
+                    <tr>
+                    	<td><span> </span><a id='lblM04' class="lbl">團康基金</a></td>
+                        <td><input id="txtM04" type="text" class="txt num c1"/></td>
                         <td> </td>
                         <td> </td>
+                        <td><span> </span><a id='lblMinus' class="lbl">應扣</a></td>
+                        <td><input id="txtMinus" type="text" class="txt num c1"/></td>
+                    </tr>
+                    <tr>
+                    	<td><span> </span><a id='lblTransfer' class="lbl">薪轉</a></td>
+                        <td><input id="txtTransfer" type="text" class="txt num c1"/></td>
+                    	<td><span> </span><a id='lblCash' class="lbl">領現</a></td>
+                        <td><input id="txtCash" type="text" class="txt num c1"/></td>
                         <td><span> </span><a id='lblTotal' class="lbl">總計</a></td>
                         <td><input id="txtTotal" type="text" class="txt num c1"/></td>
-                    </tr>             
+                    </tr>
                     <tr>
 						<td><span> </span><a id='lblMemo' class="lbl">備註</a></td>
 						<td colspan="5"><textarea id="txtMemo" rows="3" class="txt c1"> </textarea></td>
@@ -556,11 +670,13 @@
 						<td><input id="txtWorker"  type="text" class="txt c1"/></td>
 						<td><span> </span><a id='lblWorker2' class="lbl">修改人</a></td>
 						<td><input id="txtWorker2"  type="text" class="txt c1"/></td>
+						<td> </td>
+						<td><input type="button" id="btnOvertime" value="匯入加班時數"/></td>
 					</tr>
                 </table>
             </div>
-        </div>
-        <div class='dbbs' style="width: 1500px;">
+        </div>   
+        <div class='dbbs'>
             <table id="tbbs" class='tbbs' style=' text-align:center'>
                 <tr style='color:white; background:#003366;' >
                     <td align="center" style="width:1%;">
@@ -569,29 +685,36 @@
                     <td align="center" style="width:20px;"> </td>
                     <td align="center" style="width:200px;"><a>員工</a></td>
                     <td align="center" style="width:120px;"><a>本薪</a></td>
-                    <td align="center" style="width:120px;"><a>全勤</a></td>
+                    <td align="center" style="width:120px;"><a>職級</a></td>
+                    <td align="center" style="width:120px;"><a>全勤獎金</a></td>
                     <td align="center" style="width:120px;"><a>無遲到</a></td>
+                    <td align="center" style="width:120px;"><a>加班 HR&lt;2</a></td>
+                    <td align="center" style="width:120px;"><a>加班 HR&gt;2</a></td>
                     <td align="center" style="width:120px;"><a>加班</a></td>
-                    <td align="center" style="width:120px;"><a>假日<BR>加班</a></td>
-                    <td align="center" style="width:120px;"><a>評分</a></td>
-                    <td align="center" style="width:120px;"><a>主管<BR>津貼</a></td>
-                    <td align="center" style="width:120px;"><a>電話<BR>補貼</a></td>
-                    <td align="center" style="width:120px;"><a>團體<BR>生產獎金</a></td>
-                    <td align="center" style="width:120px;"><a>個人<BR>獎金</a></td>
-                    <td align="center" style="width:120px;"><a>(廠務/司機)<BR>工時加班費</a></td>
+                    <td align="center" style="width:120px;"><a>假日加班<BR>時數</a></td>
+                    <td align="center" style="width:120px;"><a>假日加班</a></td>
+                    <td align="center" style="width:120px;"><a>換休時數</a></td>
+                    <td align="center" style="width:120px;"><a>廠務工時<BR>加班費</a></td>
+                    <td align="center" style="width:120px;"><a>司機工時<BR>加班費</a></td>
+                    <td align="center" style="width:120px;"><a>團體獎金<BR>(毛利、生產)</a></td>
+                    <td align="center" style="width:120px;"><a>個人績效<BR>獎金</a></td>
+                    <td align="center" style="width:120px;"><a>司機績效<BR>獎金</a></td>
+                    <td align="center" style="width:120px;"><a>專業獎金</a></td>
+                    <td align="center" style="width:120px;"><a>工作獎金</a></td>
+                    <td align="center" style="width:120px;"><a>裝卸獎金</a></td>
+                    <td align="center" style="width:120px;"><a>主管津貼</a></td>
+                    <td align="center" style="width:120px;"><a>電話補貼</a></td>
+                    <td align="center" style="width:120px;"><a>伙食津貼</a></td>
                     <td align="center" style="width:120px;"><a>舊旗鋼<BR>津貼</a></td>
-                    <td align="center" style="width:120px;"><a>伙食<BR>津貼</a></td>
-                    <td align="center" style="width:120px;"><a>電話<BR>補貼</a></td>
                     <td align="center" style="width:120px;"><a>可領</a></td>
                     <td align="center" style="width:120px;"><a>借支</a></td>
-                    <td align="center" style="width:120px;"><a>勞保<BR>自付</a></td>
-                    <td align="center" style="width:120px;"><a>健保<BR>自付</a></td>
-                    <td align="center" style="width:120px;"><a>健保<BR>自付</a></td>
-                    <td align="center" style="width:120px;"><a>團康<BR>基金</a></td>
-                	<td align="center" style="width:120px;"><a>應扣</a></td>
-                    <td align="center" style="width:120px;"><a>薪轉</a></td>
-                    <td align="center" style="width:120px;"><a>領現</a></td>
-                    <td align="center" style="width:120px;"><a>實領</a></td>
+                    <td align="center" style="width:120px;"><a>勞保</a></td>
+                    <td align="center" style="width:120px;"><a>健保</a></td>
+           			<td align="center" style="width:120px;"><a>團康基金</a></td>
+           			<td align="center" style="width:120px;"><a>應扣</a></td>
+           			<td align="center" style="width:120px;"><a>薪轉</a></td>
+           			<td align="center" style="width:120px;"><a>領現</a></td>
+           			<td align="center" style="width:120px;"><a>實領</a></td>
                 </tr>
                 <tr style='background:#cad3ff;'>
                     <td>
@@ -600,33 +723,41 @@
                     </td>
                     <td><a id="lblNo.*" style="font-weight: bold;text-align: center;display: block;"> </a></td>
                     <td>
-                    	<input id="txtSalesno.*" type="text" class="txt" style="float:left;width:40%;"/>
-                        <input id="txtSales.*" type="text" class="txt" style="float:left;width:50%;"/>
-                        <input id='btnSales.*' type="button" style="display:none;"/>
+                    	<input id="txtSssno.*" type="text" class="txt" style="float:left;width:40%;"/>
+                        <input id="txtSss.*" type="text" class="txt" style="float:left;width:50%;"/>
+                        <input id='btnSss.*' type="button" style="display:none;"/>
                     </td>
                     <td> <input id="txtBase.*" type="text" class="txt num" style="width:95%;"/></td>
-                    <td> <input id="txtAllowance01.*" type="text" class="txt num" style="width:95%;"/></td>
-                    <td> <input id="txtAllowance02.*" type="text" class="txt num" style="width:95%;"/></td>
-                    <td> <input id="txtAllowance03.*" type="text" class="txt num" style="width:95%;"/></td>
-                    <td> <input id="txtAllowance04.*" type="text" class="txt num" style="width:95%;"/></td>
-                    <td> <input id="txtAllowance05.*" type="text" class="txt num" style="width:95%;"/></td>
-                    <td> <input id="txtAllowance06.*" type="text" class="txt num" style="width:95%;"/></td>
-                    <td> <input id="txtAllowance07.*" type="text" class="txt num" style="width:95%;"/></td>
-                    <td> <input id="txtAllowance08.*" type="text" class="txt num" style="width:95%;"/></td>
-                    <td> <input id="txtAllowance09.*" type="text" class="txt num" style="width:95%;"/></td>
-                    <td> <input id="txtAllowance10.*" type="text" class="txt num" style="width:95%;"/></td>
-                    <td> <input id="txtAllowance11.*" type="text" class="txt num" style="width:95%;"/></td>
-                    <td> <input id="txtAllowance12.*" type="text" class="txt num" style="width:95%;"/></td>
-                    <td> <input id="txtAllowance13.*" type="text" class="txt num" style="width:95%;"/></td>
-                    <td> <input id="txtAllowance14.*" type="text" class="txt num" style="width:95%;"/></td>
-                    <td> <input id="txtAllowance15.*" type="text" class="txt num" style="width:95%;"/></td>
-                    <td> <input id="txtAllowance16.*" type="text" class="txt num" style="width:95%;"/></td>
-                    <td> <input id="txtAllowance17.*" type="text" class="txt num" style="width:95%;"/></td>
-                    <td> <input id="txtAllowance18.*" type="text" class="txt num" style="width:95%;"/></td>
-                    <td> <input id="txtAllowance19.*" type="text" class="txt num" style="width:95%;"/></td>
-                    <td> <input id="txtAllowance20.*" type="text" class="txt num" style="width:95%;"/></td>
-                    <td> <input id="txtAllowance21.*" type="text" class="txt num" style="width:95%;"/></td>
-                    <td> <input id="txtAllowance22.*" type="text" class="txt num" style="width:95%;"/></td>
+                    <td> <input id="txtP01.*" type="text" class="txt num" style="width:95%;"/></td>
+                    <td> <input id="txtP02.*" type="text" class="txt num" style="width:95%;"/></td>
+                    <td> <input id="txtP03.*" type="text" class="txt num" style="width:95%;"/></td>
+                    <td> <input id="txtC01.*" type="text" class="txt num" style="width:95%;"/></td>
+                   	<td> <input id="txtC02.*" type="text" class="txt num" style="width:95%;"/></td>
+                    <td> <input id="txtP04.*" type="text" class="txt num" style="width:95%;"/></td>
+                   	<td> <input id="txtC03.*" type="text" class="txt num" style="width:95%;"/></td>
+                    <td> <input id="txtP05.*" type="text" class="txt num" style="width:95%;"/></td>
+                    <td> <input id="txtC04.*" type="text" class="txt num" style="width:95%;"/></td>
+                    <td> <input id="txtP06.*" type="text" class="txt num" style="width:95%;"/></td>
+                    <td> <input id="txtP07.*" type="text" class="txt num" style="width:95%;"/></td>
+                    <td> <input id="txtP08.*" type="text" class="txt num" style="width:95%;"/></td>
+                    <td> <input id="txtP09.*" type="text" class="txt num" style="width:95%;"/></td>
+                    <td> <input id="txtP10.*" type="text" class="txt num" style="width:95%;"/></td>
+                    <td> <input id="txtP11.*" type="text" class="txt num" style="width:95%;"/></td>
+                    <td> <input id="txtP12.*" type="text" class="txt num" style="width:95%;"/></td>
+                    <td> <input id="txtP13.*" type="text" class="txt num" style="width:95%;"/></td>
+                    <td> <input id="txtP14.*" type="text" class="txt num" style="width:95%;"/></td>
+                    <td> <input id="txtP15.*" type="text" class="txt num" style="width:95%;"/></td>
+                    <td> <input id="txtP16.*" type="text" class="txt num" style="width:95%;"/></td>
+                    <td> <input id="txtP17.*" type="text" class="txt num" style="width:95%;"/></td>
+                    <td style="display:none;"> <input id="txtP18.*" type="text" class="txt num" style="width:95%;"/></td>
+                    <td> <input id="txtPlus.*" type="text" class="txt num" style="width:95%;"/></td>
+                    <td> <input id="txtM01.*" type="text" class="txt num" style="width:95%;"/></td>
+                    <td> <input id="txtM02.*" type="text" class="txt num" style="width:95%;"/></td>
+                    <td> <input id="txtM03.*" type="text" class="txt num" style="width:95%;"/></td>
+                    <td> <input id="txtM04.*" type="text" class="txt num" style="width:95%;"/></td>
+                    <td> <input id="txtMinus.*" type="text" class="txt num" style="width:95%;"/></td>
+                    <td> <input id="txtTransfer.*" type="text" class="txt num" style="width:95%;"/></td>
+                    <td> <input id="txtCash.*" type="text" class="txt num" style="width:95%;"/></td>
                     <td> <input id="txtTotal.*" type="text" class="txt num" style="width:95%;"/></td>
                 </tr>
             </table>

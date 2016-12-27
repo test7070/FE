@@ -1,0 +1,82 @@
+z_salaryfe02:--z_salaryfe02
+	SET QUOTED_IDENTIFIER OFF
+	declare @t_path nvarchar(max) = '[1]'
+	declare @t_db nvarchar(max) = '[2]'
+	declare @t_mon nvarchar(max) = case when '#non' = [3] then '' else [3] end
+	---------------------------------------------------------------------------------------
+	select '0' gno
+		,b.mon mon
+		,a.sss sss
+		,dbo.getComma(a.base,-1) base
+		,dbo.getComma(a.p01,-1) p01
+		,dbo.getComma(a.p02,-1) p02
+		,dbo.getComma(a.p03,-1) p03
+		,dbo.getComma(a.p04,-1) p04
+		,dbo.getComma(a.p05,-1) p05
+		,dbo.getComma(a.p06,-1) p06
+		,dbo.getComma(a.p07,-1) p07
+		,dbo.getComma(a.p08,-1) p08
+		,dbo.getComma(a.p09,-1) p09
+		,dbo.getComma(a.p10,-1) p10
+		,dbo.getComma(a.p11,-1) p11
+		,dbo.getComma(a.p12,-1) p12
+		,dbo.getComma(a.p13,-1) p13
+		,dbo.getComma(a.p14,-1) p14
+		,dbo.getComma(a.p15,-1) p15
+		,dbo.getComma(a.p16,-1) p16
+		,dbo.getComma(a.p17,-1) p17
+		,dbo.getComma(a.plus,-1) plus
+		,dbo.getComma(a.m01,-1) m01
+		,dbo.getComma(a.m02,-1) m02
+		,dbo.getComma(a.m03,-1) m03
+		,dbo.getComma(a.m04,-1) m04
+		,dbo.getComma(a.minus,-1) minus
+		,dbo.getComma(a.[transfer],-1) [transfer]
+		,dbo.getComma(a.cash,-1) cash
+		,dbo.getComma(a.total,-1) total
+	from salaryfes a 
+	left join salaryfe b on a.noa=b.noa
+	where b.mon=@t_mon and b.typea='業務'
+	order by a.sssno;	
+
+z_salaryfe01:--z_salaryfe01	
+	SET QUOTED_IDENTIFIER OFF
+	declare @t_path nvarchar(max) = '[1]'
+	declare @t_db nvarchar(max) = '[2]'
+	declare @t_mon nvarchar(max) = case when '#non' = [3] then '' else [3] end
+	---------------------------------------------------------------------------------------
+	select '0' gno
+		,b.mon mon
+		,a.sss sss
+		,dbo.getComma(a.base,-1) base
+		,dbo.getComma(a.p01,-1) p01
+		,dbo.getComma(a.p02,-1) p02
+		,dbo.getComma(a.p03,-1) p03
+		,dbo.getComma(a.p04,-1) p04
+		,dbo.getComma(a.p05,-1) p05
+		,dbo.getComma(a.p06,-1) p06
+		,dbo.getComma(a.p07,-1) p07
+		,dbo.getComma(a.p08,-1) p08
+		,dbo.getComma(a.p09,-1) p09
+		,dbo.getComma(a.p10,-1) p10
+		,dbo.getComma(a.p11,-1) p11
+		,dbo.getComma(a.p12,-1) p12
+		,dbo.getComma(a.p13,-1) p13
+		,dbo.getComma(a.p14,-1) p14
+		,dbo.getComma(a.p15,-1) p15
+		,dbo.getComma(a.p16,-1) p16
+		,dbo.getComma(a.p17,-1) p17
+		,dbo.getComma(a.plus,-1) plus
+		,dbo.getComma(a.m01,-1) m01
+		,dbo.getComma(a.m02,-1) m02
+		,dbo.getComma(a.m03,-1) m03
+		,dbo.getComma(a.m04,-1) m04
+		,dbo.getComma(a.minus,-1) minus
+		,dbo.getComma(a.[transfer],-1) [transfer]
+		,dbo.getComma(a.cash,-1) cash
+		,dbo.getComma(a.total,-1) total
+	from salaryfes a 
+	left join salaryfe b on a.noa=b.noa
+	where b.mon=@t_mon and b.typea='員工'
+	order by a.sssno;	
+

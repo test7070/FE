@@ -1,0 +1,11 @@
+overtime:--salaryfe  overtime 
+	declare @t_mon nvarchar(20) = [1]
+
+	select sssno,namea
+		,SUM(ISNULL(w133,0)) c01
+		,SUM(ISNULL(w166,0)) c02
+		,SUM(ISNULL(w100,0)) c03
+		,SUM(ISNULL(hr_special,0)) c04 
+	from salpresents
+	where LEFT(noa,6)=@t_mon and len(isnull(sssno,''))>0
+	group by sssno,namea;
