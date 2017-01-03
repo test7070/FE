@@ -540,7 +540,7 @@ z_ummfe03:--z_ummfe03
 		,datea nvarchar(20)
 		,typea nvarchar(20)
 		,productno nvarchar(50)
-		,product nvarchar(50)
+		,product nvarchar(100)
 		,size nvarchar(max)
 		,unit nvarchar(20)
 		,mount float
