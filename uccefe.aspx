@@ -34,7 +34,7 @@
 			aPop = new Array(
 				['txtStoreno', 'lblStoreno', 'store', 'noa,store', 'txtStoreno,txtStore', 'store_b.aspx'],
 				['txtStoreno2', 'lblStore2', 'store', 'noa,store', 'txtStoreno2,txtStore2', 'store_b.aspx'],
-				['txtProductno_', 'btnProduct_', 'ucaucc', 'noa,product,unit', 'txtProductno_,txtProduct_,txtUnit_', 'ucaucc_b.aspx'],
+				['txtProductno_', 'btnProduct_', 'ucaucc', 'noa,product,unit,uweight', 'txtProductno_,txtProduct_,txtUnit_,txtWeight_', 'ucaucc_b.aspx'],
 				['txtUno_', 'btnUno_', 'view_uccc', 'uno,productno,product,unit', 'txtUno_,txtProductno_,txtProduct_,txtUnit_', 'uccc_seek_b.aspx?;;;1=0', '95%', '60%'],
 				['txtStoreno_', 'btnStore_', 'store', 'noa,store', 'txtStoreno_,txtStore_', 'store_b.aspx']
 			);
