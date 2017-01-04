@@ -154,6 +154,7 @@
 							b_seq = t_IdSeq;
 							q_tr('txtAdjmount_' + b_seq, q_sub(q_float('txtMount_' + b_seq), q_float('txtEmount2_' + b_seq)));
 						});
+						
 					}
 				}
 				_bbsAssign();
