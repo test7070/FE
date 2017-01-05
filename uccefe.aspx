@@ -31,6 +31,7 @@
 			brwList = [];
 			brwNowPage = 0;
 			brwKey = 'Datea';
+			q_desc = 1;
 			aPop = new Array(
 				['txtStoreno', 'lblStoreno', 'store', 'noa,store', 'txtStoreno,txtStore', 'store_b.aspx'],
 				['txtStoreno2', 'lblStore2', 'store', 'noa,store', 'txtStoreno2,txtStore2', 'store_b.aspx'],
@@ -42,7 +43,7 @@
 			$(document).ready(function() {
 				bbmKey = ['noa'];
 				bbsKey = ['noa', 'noq'];
-				brwCount2 = 2;
+				brwCount2 = 3;
 				q_bbsLen = 15;
 				q_brwCount();
 				q_gt(q_name, q_content, q_sqlCount, 1, 0, '', r_accy);
@@ -73,8 +74,7 @@
 			}
 
 			function q_boxClose(s2) {
-				var
-				ret;
+				var ret;
 				switch (b_pop) {
 					case q_name + '_s':
 						q_boxClose2(s2);
@@ -146,35 +146,6 @@
 			function bbsAssign() {
 				for (var j = 0; j < q_bbsCount; j++) {
 					$('#lblNo_' + j).text(j + 1);
-<<<<<<< HEAD
-					if (!$('#btnMinus_' + j).hasClass('isAssign')) {
-						$('#txtProductno_' + j).bind('contextmenu', function(e) {
-                            /*滑鼠右鍵*/
-                            e.preventDefault();
-                            var n = $(this).attr('id').replace('txtProductno_', '');
-                            $('#btnProduct_' + n).click();
-                        });
-                        $('#txtStoreno_' + j).bind('contextmenu', function(e) {
-                            /*滑鼠右鍵*/
-                            e.preventDefault();
-                            var n = $(this).attr('id').replace('txtStoreno_', '');
-                            $('#btnStore_' + n).click();
-                        });
-						$('#txtMount_' + j).change(function() {
-							t_IdSeq = -1;
-							q_bodyId($(this).attr('id'));
-							b_seq = t_IdSeq;
-							q_tr('txtAdjmount_' + b_seq, q_sub(q_float('txtMount_' + b_seq), q_float('txtEmount2_' + b_seq)));
-						});
-						$('#txtEmount2_' + j).change(function() {
-							t_IdSeq = -1;
-							q_bodyId($(this).attr('id'));
-							b_seq = t_IdSeq;
-							q_tr('txtAdjmount_' + b_seq, q_sub(q_float('txtMount_' + b_seq), q_float('txtEmount2_' + b_seq)));
-						});
-						
-					}
-=======
 					if ($('#btnMinus_' + j).hasClass('isAssign'))
 						continue;
 					$('#txtProductno_' + j).bind('contextmenu', function(e) {
@@ -193,8 +164,6 @@
 						var n = $(this).attr('id').replace(/^(.*)_(\d+)$/,'$2');
 						getWeight(n);
 					});
-					
->>>>>>> 4779d6609236e37b5657bac0a5618c8bf438c507
 				}
 				_bbsAssign();
 				if (q_getPara('sys.project').toUpperCase()!='FE'){
@@ -211,10 +180,10 @@
 
 			function btnIns() {
 				_btnIns();
-				$('#txt' + bbmKey[0].substr(0, 1).toUpperCase() + bbmKey[0].substr(1)).val('AUTO');
+				$('#txtNoa').val('AUTO');
 				$('#txtDatea').val(q_date());
 				$('#txtDatea').focus();
-				$('#cmbKind').val(1);
+				$('#cmbKind')[0].selectedIndex = 0;
 			}
 
 			function btnModi() {
@@ -266,6 +235,11 @@
 
 			function readonly(t_para, empty) {
 				_readonly(t_para, empty);
+				if(t_para){
+					$('#txtDatea').datepicker('destroy');
+				}else{
+					$('#txtDatea').datepicker();
+				}
 			}
 
 			function btnMinus(id) {
