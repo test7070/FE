@@ -481,11 +481,13 @@
                 	case 'txtProductno_':
                 		var n = b_seq;
                 		createImg(n);
+                		break;
                 	case 'txtPicno_':
                 		var n = b_seq;
                 		t_noa = $('#txtPicno_'+n).val();
                 		//console.log('popPost:'+t_noa);
                 		q_gt('img', "where=^^noa='"+t_noa+"'^^", 0, 0, 0, JSON.stringify({action:"getimg",n:n}),1);
+                   		break;
                     default:
                         break;
                 }

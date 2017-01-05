@@ -34,7 +34,7 @@
 			aPop = new Array(
 				['txtStoreno', 'lblStoreno', 'store', 'noa,store', 'txtStoreno,txtStore', 'store_b.aspx'],
 				['txtStoreno2', 'lblStore2', 'store', 'noa,store', 'txtStoreno2,txtStore2', 'store_b.aspx'],
-				['txtProductno_', 'btnProduct_', 'ucaucc', 'noa,product,unit,uweight', 'txtProductno_,txtProduct_,txtUnit_,txtWeight_', 'ucaucc_b.aspx'],
+				['txtProductno_', 'btnProduct_', 'ucaucc', 'noa,product,unit', 'txtProductno_,txtProduct_,txtUnit_', 'ucaucc_b.aspx'],
 				['txtUno_', 'btnUno_', 'view_uccc', 'uno,productno,product,unit', 'txtUno_,txtProductno_,txtProduct_,txtUnit_', 'uccc_seek_b.aspx?;;;1=0', '95%', '60%'],
 				['txtStoreno_', 'btnStore_', 'store', 'noa,store', 'txtStoreno_,txtStore_', 'store_b.aspx']
 			);
@@ -65,8 +65,6 @@
 								,['txtEmount2', 10, q_getPara('rc2.mountPrecision'), 1], ['txtEweight2', 10, q_getPara('rc2.weightPrecision'), 1],['txtAdjmount', 10, q_getPara('rc2.mountPrecision'), 1]
 								,['txtPrice', 10, q_getPara('rc2.pricePrecision'), 1], ['txtTotal', 15, 0, 1]];
 				q_cmbParse("cmbKind", q_getPara('ucce.kind'));
-				
-				
 				$('#cmbKind').change(function() {
 					for (var j = 0; j < q_bbsCount; j++) {
 						btnMinus('btnMinus_' + j);
@@ -84,13 +82,32 @@
 				}
 				b_pop = '';
 			}
-
+			function q_popPost(id) {
+                switch (id) {
+                	case 'txtProductno_':
+                		var n = b_seq;
+                		getWeight(n);
+                		break;
+                    default:
+                        break;
+                }
+            }
 			function q_gtPost(t_name) {
 				switch (t_name) {
 					case q_name:
 						if (q_cur == 4)
 							q_Seek_gtPost();
 						break;
+					default:
+						if(t_name.substring(0,10)=='getWeight_'){
+							var n = t_name.replace('getWeight_','');
+							var as = _q_appendData("ucc", "", true);
+							if(as[0]!=undefined){
+								var t_mount = q_float('txtMount_'+n);
+								var t_weight = as[0].uweight;
+								$('#txtWeight_'+n).val(round(q_mul(t_weight,t_mount),2));
+							}
+						}
 				}
 			}
 
@@ -129,6 +146,7 @@
 			function bbsAssign() {
 				for (var j = 0; j < q_bbsCount; j++) {
 					$('#lblNo_' + j).text(j + 1);
+<<<<<<< HEAD
 					if (!$('#btnMinus_' + j).hasClass('isAssign')) {
 						$('#txtProductno_' + j).bind('contextmenu', function(e) {
                             /*滑鼠右鍵*/
@@ -156,6 +174,27 @@
 						});
 						
 					}
+=======
+					if ($('#btnMinus_' + j).hasClass('isAssign'))
+						continue;
+					$('#txtProductno_' + j).bind('contextmenu', function(e) {
+                        /*滑鼠右鍵*/
+                        e.preventDefault();
+                        var n = $(this).attr('id').replace(/^(.*)_(\d+)$/,'$2');
+                        $('#btnProduct_' + n).click();
+                    });
+                    $('#txtStoreno_' + j).bind('contextmenu', function(e) {
+                        /*滑鼠右鍵*/
+                        e.preventDefault();
+                        var n = $(this).attr('id').replace(/^(.*)_(\d+)$/,'$2');
+                        $('#btnStore_' + n).click();
+                    });
+					$('#txtMount_' + j).change(function() {
+						var n = $(this).attr('id').replace(/^(.*)_(\d+)$/,'$2');
+						getWeight(n);
+					});
+					
+>>>>>>> 4779d6609236e37b5657bac0a5618c8bf438c507
 				}
 				_bbsAssign();
 				if (q_getPara('sys.project').toUpperCase()!='FE'){
@@ -163,6 +202,11 @@
 				}else{
 					$('.unfe').hide();
 				}
+			}
+			function getWeight(n){
+				var t_productno = $.trim($('#txtProductno_'+n).val());
+				if(t_productno.length>0)
+					q_gt('ucc', "where=^^ noa='"+t_productno+"'^^", 0, 0, 0, 'getWeight_'+n); 
 			}
 
 			function btnIns() {
@@ -203,10 +247,10 @@
 			}
 
 			function sum() {
-				var t1 = 0, t_unit, t_mount, t_weight = 0;
+				/*var t1 = 0, t_unit, t_mount, t_weight = 0;
 				for (var j = 0; j < q_bbsCount; j++) {
 					q_tr('txtAdjmount_' + j, q_sub(q_float('txtMount_' + j),q_float('txtEmount2_' + j)));
-				}
+				}*/
 
 			}
 
@@ -496,9 +540,9 @@
 					<td align="center" style="width:80px;" class="unfe"><a id='lblPrice_s'> </a></td>
 					<td align="center" style="width:80px;" class="unfe"><a id='lblTotal_s'> </a></td>
 					<td align="center" style="width:100px;"><a id='lblMemo_s'> </a></td>
-					<td align="center" style="width:80px;"><a id='lblEmount2_s'> </a></td>
-					<td align="center" style="width:80px;"><a id='lblEweight2_s'> </a></td>
-					<td align="center" style="width:80px;"><a id='lblAdjmount_s'> </a></td>
+					<!--<td align="center" style="width:80px;"><a id='lblEmount2_s'> </a></td>-->
+					<!--<td align="center" style="width:80px;"><a id='lblEweight2_s'> </a></td>-->
+					<!--<td align="center" style="width:80px;"><a id='lblAdjmount_s'> </a></td>-->
 					<td align="center" style="width:150px;"><a id='lblUno_s'> </a></td>
 				</tr>
 				<tr style='background:#cad3ff;'>
@@ -524,9 +568,9 @@
 						<input class="txt c1" id="txtMemo.*"type="text" style="width:95%;"/>
 						<input id="txtNoq.*" type="hidden" />
 					</td>
-					<td><input class="txt num c1" id="txtEmount2.*" type="text" style="width:95%;"/></td>
-					<td><input class="txt num c1" id="txtEweight2.*" type="text" style="width:95%;"/></td>
-					<td><input class="txt num c1" id="txtAdjmount.*" type="text" style="width:95%;"/></td>
+					<!--<td><input class="txt num c1" id="txtEmount2.*" type="text" style="width:95%;"/></td>-->
+					<!--<td><input class="txt num c1" id="txtEweight2.*" type="text" style="width:95%;"/></td>-->
+					<!--<td><input class="txt num c1" id="txtAdjmount.*" type="text" style="width:95%;"/></td>-->
 					<td><input class="txt c1" id="txtUno.*" type="text" style="width:95%;"/></td>
 				</tr>
 			</table>
