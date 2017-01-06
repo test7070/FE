@@ -202,7 +202,7 @@
 					//var t_where = " 1=1 and (mech1='"+t_mech+"' or mech2='"+t_mech+"' or mech3='"+t_mech+"' or mech4='"+t_mech+"' or mech5='"+t_mech+"')";
 					var t_where = " 1=1";
 					if(t_workjno.length>0){
-						t_where+=" and a.noa='"+t_workjno+"'";
+						t_where+=" and charindex(a.noa,'"+t_workjno+"')>0 ";
 					}
 					t_bdate = (emp(t_bdate) ? '' : t_bdate);
 					t_edate = (emp(t_edate) ? r_picd : t_edate);
