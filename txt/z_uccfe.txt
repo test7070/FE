@@ -607,7 +607,7 @@ if(@t_project='yc')
 	
 	delete a from @result a where not exists (select * from ucc where noa=a.productno)
 	
-	--105/01/06 若查詢起始日期=盤點日期 前期資料不顯示(經理)
+	--106/01/06 若查詢起始日期=盤點日期 前期資料不顯示(經理)
 	delete a from @result a
 	where gno='0' and typea='02'
 	and exists (select * from @result where productno=a.productno and storeno=a.storeno and typea='01' and datea=@t_bdate)
@@ -966,7 +966,7 @@ z_uccfe2:--z_uccfe2
 	and isnull(b.storeno,'') between @t_bstoreno and @t_estoreno
 	and a.datea between @t_bdate and @t_edate
 	
-	--105/01/06 若查詢起始日期=盤點日期 前期資料不顯示(經理)
+	--106/01/06 若查詢起始日期=盤點日期 前期資料不顯示(經理)
 	delete a from #z_uccfe2 a 
 	where gno='1' and exists (select * from #z_uccfe2 where productno=a.productno and storeno=a.storeno and datea=@t_bdate and gno='2')	
 	---------------------------------------------------------------------------------------------
