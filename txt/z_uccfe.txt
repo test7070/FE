@@ -379,7 +379,7 @@ if(@t_project='yc')
 		       a.noa, isNull(a.tgg,'') comp, c.unit, b.mount, b.weight,'vcf'+@qhref_acomp+'?noa=$noa?' qhref,0 price
 		from vcft b left join vcf a on a.noa = b.noa left join view_ucaucc c on b.productno=c.noa
 		where b.productno BETWEEN @t_bproductno AND @t_eproductno and a.datea<=@t_edate and isnull(b.storeno,'') between @t_bstoreno and @t_estoreno
-		) as R1
+		) as R1 where isnull(productno,'')!=''
 		
 	--*****************************************************************************************	
 	
@@ -605,7 +605,12 @@ if(@t_project='yc')
 	close cursor_table
 	deallocate cursor_table
 	
-	delete @result where productno in (select noa from uca)
+	delete a from @result a where not exists (select * from ucc where noa=a.productno)
+	
+	--105/01/06 若查詢起始日期=盤點日期 前期資料不顯示(經理)
+	delete a from @result a
+	where gno='0' and typea='02'
+	and exists (select * from @result where productno=a.productno and storeno=a.storeno and typea='01' and datea=@t_bdate)
 	
 	--*****************************************************************************************	
 	
@@ -961,6 +966,9 @@ z_uccfe2:--z_uccfe2
 	and isnull(b.storeno,'') between @t_bstoreno and @t_estoreno
 	and a.datea between @t_bdate and @t_edate
 	
+	--105/01/06 若查詢起始日期=盤點日期 前期資料不顯示(經理)
+	delete a from #z_uccfe2 a 
+	where gno='1' and exists (select * from #z_uccfe2 where productno=a.productno and storeno=a.storeno and datea=@t_bdate and gno='2')	
 	---------------------------------------------------------------------------------------------
 	insert into #z_uccfe2(gno,pno,productno,product,datea,[action],n,mount,[weight],storeno,store
 		,accy,tablea,noa,noq)
