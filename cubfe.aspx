@@ -369,7 +369,8 @@
 							
 							//裁剪長度排序(最長,最短,...,次長)
 							//cutlengthb.sort(function(a, b) { if(a > b) {return -1;} if (a < b) {return 1;} return 0;});
-							cutlengthb.sort();
+							//cutlengthb.sort();
+							cutlengthb.sort(function(a, b) {if(a>b) {return 1;} if (a < b) {return -1;} return 0;});
 							var tmp1='',tmp2='';
 							for (var n=0;n<cutlengthb.length;n++){
 								if(n==0){
@@ -627,12 +628,14 @@
 							
 						var t_lens='',t_mounts=0,t_memo2='';
 						for (var j = 0; j < getucc[i].cutlen.length; j++) {
-							if(t_lens!='' && t_lens!=getucc[i].cutlen[j]){
-								t_memo2=t_memo2+(t_memo2.length>0?'+':'')+t_lens+'*'+t_mounts;
-								t_mounts=0;
+							if(getucc[i].cutlen[j].toString()!='' && getucc[i].cutlen[j].toString()!='0'){
+								if(t_lens!='' && t_lens!=getucc[i].cutlen[j]){
+									t_memo2=t_memo2+(t_memo2.length>0?'+':'')+t_lens+'*'+t_mounts;
+									t_mounts=0;
+								}
+								t_mounts=t_mounts+1;
+								t_lens=getucc[i].cutlen[j].toString();
 							}
-							t_mounts=t_mounts+1;
-							t_lens=getucc[i].cutlen[j];
 						}
 						//含最後一筆損耗
 						if(dec(t_lens)>0){
