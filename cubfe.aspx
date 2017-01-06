@@ -645,7 +645,7 @@
 						//取得產品資料
 						var t_where="1=1 and product like '%"+getucc[i].spec+"%' ";
 						t_where=t_where+" and product like '%"+getucc[i].size+"%' ";
-						t_where=t_where+" and (product like '%"+(getucc[i].lengthb/100).toString()+"M' or product like '%"+(getucc[i].lengthb/100).toString()+".0M' )";
+						t_where=t_where+" and (product like '%*"+(getucc[i].lengthb/100).toString()+"M' or product like '%*"+(getucc[i].lengthb/100).toString()+".0M' )";
 						t_where="where=^^"+t_where+"^^";
 						
 						var txn=-1;
