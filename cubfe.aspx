@@ -558,7 +558,16 @@
 														tcusttmpmount=tcusttmpmount-t_same[k].data[n].mount;
 														t_same[k].data[n].mount=0;
 													}
-													if(t_nor.indexOf((t_same[k].data[n].nor+1).toString())==-1){
+													
+													var tt_nor=t_nor.split(',');
+													var tt_norexist=false;
+													for(var o=0;o<tt_nor.length;o++){
+														if(tt_nor[o]==(t_same[k].data[n].nor+1).toString()){
+															tt_norexist=true;
+															break;
+														}
+													}
+													if(!tt_norexist){
 														t_nor=t_nor+(t_nor.length>0?',':'')+(t_same[k].data[n].nor+1);
 													}
 												}
@@ -1023,7 +1032,7 @@
 							t_err=t_err+'領料 第'+(j+1)+'項 領料長度不等於裁剪總長度!! \n';
 						}
 						for(var k=0;k<t_nor.length;k++){
-							if(t_memo2s.indexOf('+'+$('#txtLengthb_'+(dec(t_nor[k])-1)).val()+'*')==-1){
+							if(t_memo2s.indexOf('+'+dec($('#txtLengthb_'+(dec(t_nor[k])-1)).val())+'*')==-1){
 								t_err=t_err+'領料 第'+(j+1)+'項 裁剪內容 裁剪長度不等於配料長度('+$('#txtLengthb_'+(dec(t_nor[k])-1)).val()+')!! \n';
 								break;
 							}
@@ -1095,6 +1104,7 @@
 						var t_memo2=$('#txtMemo2__'+j).val().split('+');
 						var t_nor=','+$('#txtNor__'+j).val()+',';
 						var t_lengthc=$('#txtLengthc__'+j).val();
+						var t_werr=false;
 						for(var k=0;k<t_memo2.length;k++){
 							var clength=dec(t_memo2[k].split('*')[0]);
 							var cmount=q_mul(dec(t_memo2[k].split('*')[1]),tmount);
@@ -1103,9 +1113,10 @@
 									for (var n=0;n<t_same[i].data.length;n++){
 										var t_ccmount=0;
 										if(t_nor.indexOf(','+t_same[i].data[n].nor.toString()+',')>-1 && cmount>0){
-											if((t_lengthc>tw03 && tw03>0) 
-											|| (t_lengthc>tw04*tlength && tw04>0)){
+											if(((t_lengthc>tw03 && tw03>0) 
+											|| (t_lengthc>tw04*tlength && tw04>0)) && !t_werr){
 												t_err=t_err+'領料 第'+(j+1)+'項 裁剪組料損耗 超出訂單可損耗長度!! \n';
+												t_werr=true;
 											}
 											
 											if(t_same[i].data[n].mount>=cmount){
