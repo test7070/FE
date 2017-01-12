@@ -134,6 +134,11 @@ import:--vccpr import
 	from #vccpr_import a
 	outer apply(select top 1 sprice from uccps where productno=a.productno and datea<=a.odate and sprice!=0 order by datea desc,noa desc) b
 	
+	--最多2元
+	update #vccpr_import set sprice = isnull(a.price,0) - isnull(a.wcost,0) - 2
+	from #vccpr_import a
+	where isnull(a.price,0) - isnull(a.sprice,0) -isnull(a.wcost,0) > 2
+	
 	--運費
 	update #vccpr_import set styleno=isnull(b.styleno,''),pprice=isnull(b.saleprice,0),tranmoney=
 	case when b.styleno between 'A' and 'H' then a.mount*b.uweight 
