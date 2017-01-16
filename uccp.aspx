@@ -26,7 +26,7 @@
             brwCount = 6;
             brwList = [];
             brwNowPage = 0;
-            brwKey = 'Noa';
+            brwKey = 'datea';
             q_desc = 1;
             brwCount2 = 5;
             q_bbsLen = 5;

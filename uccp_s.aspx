@@ -37,10 +37,12 @@
             }
 
             function q_seekStr() {
+            	t_noa = $('#txtNoa').val();
                 t_bdate = $('#txtBdate').val();
                 t_edate = $('#txtEdate').val();
                 t_productno = $('#txtProductno').val();
                 var t_where = " 1=1 " 
+                	+ q_sqlPara2("noa", t_noa)
                 	+ q_sqlPara2("datea", t_bdate, t_edate);
 				if(t_productno.length>0)
 					t_where += " and exists(select noa from uccps where uccps.noa=uccp.noa and uccps.productno='"+t_productno+"')";
@@ -69,9 +71,14 @@
 					</td>
 				</tr>
 				<tr class='seek_tr'>
+					<td style="width:35%;" ><a id='lblNoa'>單據編號</a></td>
+					<td style="width:65%;">
+					<input class="txt" id="txtNoa" type="text" style="width:150px; font-size:medium;" /></td>
+				</tr>
+				<tr class='seek_tr'>
 					<td style="width:35%;" ><a id='lblProductno'>物品編號</a></td>
-					<td style="width:65%;  ">
-					<input class="txt" id="txtProductno" type="text" style="width:150px; font-size:medium;" />
+					<td style="width:65%;">
+					<input class="txt" id="txtProductno" type="text" style="width:150px; font-size:medium;" /></td>
 				</tr>
 			</table>
 			<!--#include file="../inc/seek_ctrl.inc"-->
