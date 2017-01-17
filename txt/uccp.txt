@@ -157,10 +157,21 @@ import:--uccp import
 	and ISNULL(a.productno,'') between @t_bproductno and @t_eproductno
 	and len(ISNULL(ltrim(rtrim(a.productno)),''))>0 
 	group by ISNULL(ltrim(rtrim(a.productno)),'')
+
 	insert into @tmp(productno)
 	select ISNULL(ltrim(rtrim(a.productno)),'') productno 
 	from view_rc2s a 
 	left join view_rc2 b on a.accy=b.accy and a.noa=b.noa
+	where ISNULL(b.datea,'') between @t_bdate and @t_edate
+	and ISNULL(a.productno,'') between @t_bproductno and @t_eproductno
+	and len(ISNULL(ltrim(rtrim(a.productno)),''))>0 
+	group by ISNULL(ltrim(rtrim(a.productno)),'')
+
+	--2017/01/17 部分產品只經加工出入庫並沒有進出貨
+	insert into @tmp(productno)
+	select ISNULL(ltrim(rtrim(a.productno)),'') productno 
+	from view_inas a 
+	left join view_ina b on a.accy=b.accy and a.noa=b.noa
 	where ISNULL(b.datea,'') between @t_bdate and @t_edate
 	and ISNULL(a.productno,'') between @t_bproductno and @t_eproductno
 	and len(ISNULL(ltrim(rtrim(a.productno)),''))>0 
@@ -195,8 +206,9 @@ import:--uccp import
 	left join ucc b on a.productno=b.noa
 	order by a.productno
 	
-	update #uccp_import set lprice=isnull(b.sprice,0),ldate=isnull(b.datea,'')
+	update #uccp_import set lprice= case when isnull(b.sprice,0)=0 then (case when isnull(c.inprice,0)!=0 then c.inprice else isnull(c.saleprice,0) end) else isnull(b.sprice,0)end ,ldate=isnull(b.datea,'')
 	from #uccp_import a
+	left join ucc c on a.productno=c.noa
 	outer apply(select top 1 uccps.productno,uccps.sprice,uccp.datea 
 		from uccp 
 		left join uccps on uccp.noa=uccps.noa 

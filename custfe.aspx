@@ -110,11 +110,18 @@
 				
 				if (q_getPara('sys.project').toUpperCase()=='FE'){
 					q_readonly = ['txtCredit','txtWorker', 'txtKdate', 'txtSales', 'txtGrpname', 'txtCust2'];
+					if (r_rank<=7)
+						q_readonly = ['txtCredit','txtWorker', 'txtKdate', 'txtSales', 'txtGrpname', 'txtCust2','txtUacc1','txtUacc2','txtUacc3'];
 					$('#lblConn').css("display","");
 					$('#txtConn').css("display","");
 					$('#lblConn').text("接洽人");					
 				}else{
-					q_readonly = ['txtWorker', 'txtKdate', 'txtSales', 'txtGrpname', 'txtUacc1', 'txtUacc2', 'txtUacc3','txtCust2'];
+					if (r_rank<=7){
+						q_readonly = ['txtWorker', 'txtKdate', 'txtSales', 'txtGrpname', 'txtUacc1', 'txtUacc2', 'txtUacc3','txtCust2'];
+					}	
+					else{
+						q_readonly = ['txtWorker', 'txtKdate', 'txtSales', 'txtGrpname','txtCust2'];
+					}
 				}
 				
 				bbmMask = [['txtChkdate', r_picd], ['txtDueday', '999'], ['txtStartdate', '99'],['txtGetdate', '99']];
@@ -428,7 +435,6 @@
 				
 				if (q_getPara('sys.project').toUpperCase()=='FE'){
 					$('.isFE').show();
-					$('.isFEA').hide();
 				}else{
 					$('.isFE').hide();
 				}
@@ -808,16 +814,16 @@
 						<td><input id="txtChkdate" type="text" class="txt c1" /></td>
 						<td><span> </span><a id='lblStartdate' class="lbl"> </a></td>
 						<td><input id="txtStartdate" type="text" class="txt c1" /></td>
-						<td><span> </span><a id='lblUacc1' class="lbl isFEA"> </a></td>
-						<td><input id="txtUacc1" type="text" class="txt c1 isFEA"/></td>
+						<td><span> </span><a id='lblUacc1' class="lbl"> </a></td>
+						<td><input id="txtUacc1" type="text" class="txt c1"/></td>
 					</tr>
 					<tr>
 						<td><span> </span><a id='lblDueday' class="lbl"> </a></td>
 						<td><input id="txtDueday" type="text" class="txt num c1"/></td>
 						<td><span> </span><a id='lblGetdate' class="lbl"> </a></td>
 						<td><input id="txtGetdate" type="text" class="txt c1"/></td>
-						<td><span> </span><a id='lblUacc2' class="lbl isFEA"> </a></td>
-						<td><input id="txtUacc2" type="text" class="txt c1 isFEA"/></td>
+						<td><span> </span><a id='lblUacc2' class="lbl"> </a></td>
+						<td><input id="txtUacc2" type="text" class="txt c1"/></td>
 					</tr>
 					<tr>
 						<td><span> </span><a id='lblTrantype' class="lbl"> </a></td>
@@ -827,8 +833,8 @@
 							<input id="txtPaytype" type="text" class="txt c6"/>
 							<select id="combPaytype" class="txt c6" onchange='combPaytype_chg()'> </select>
 						</td>
-						<td><span> </span><a id='lblUacc3' class="lbl isFEA"> </a></td>
-						<td><input id="txtUacc3" type="text" class="txt c1 isFEA"/></td>
+						<td><span> </span><a id='lblUacc3' class="lbl"> </a></td>
+						<td><input id="txtUacc3" type="text" class="txt c1"/></td>
 					</tr>
 					<tr>
 						<td><span> </span><a id='lblMemo' class="lbl"> </a></td>
