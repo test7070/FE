@@ -20,7 +20,7 @@
             q_tables = 's';
             var q_name = "umm";
             var q_readonly = [ 'txtWorker', 'txtCno', 'txtAcomp', 'txtSale', 'txtTotal', 'txtPaysale', 'txtUnpay', 'txtOpay', 'textOpay','txtAccno','txtWorker2'];
-            var q_readonlys = ['txtUnpay', 'txtUnpayorg', 'txtAcc1', 'txtAcc2', 'txtPart2','txtMemo2','txtCoin','txtAcc1'];
+            var q_readonlys = ['txtUnpay', 'txtUnpayorg', 'txtAcc1', 'txtAcc2', 'txtPart2','txtMemo2','txtCoin','txtPaymon','txtAcc1'];
             var bbmNum = new Array(['txtSale', 10, 0, 1], ['txtTotal', 10, 0, 1], ['txtPaysale', 10, 0, 1], ['txtUnpay', 10, 0, 1], ['txtOpay', 10, 0, 1], ['txtUnopay', 10, 0, 1], ['textOpay', 10, 0, 1]);
             var bbsNum = [['txtMoney', 10, 0, 1], ['txtChgs', 10, 0, 1], ['txtPaysale', 10, 0, 1], ['txtUnpay', 10, 0, 1], ['txtUnpayorg', 10, 0, 1]];
             var bbmMask = [];
@@ -1344,7 +1344,7 @@
 						<input type="text" id="txtTablea.*" style="display:none;" />
 						<input type="text" id="textTypea.*" style="display:none;" />
 						<input type="text" id="txtCustno.*" style="display:none;" />
-						<input type="text" id="txtPaymon.*" style="display:none;" />
+						
 					</td>
 					<td>
 						<input type="text" id="txtPaysale.*" style="text-align:right;width:95%;"/>
@@ -1354,7 +1354,10 @@
 						<input type="text" id="txtUnpay.*"  style="width:95%; text-align: right;" />
 						<input type="text" id="txtPart2.*"  style="float:left;width: 95%;"/>
 					</td>
-					<td><input type="text" id="txtCoin.*" style="width:95%;"/></td>
+					<td>
+						<input type="text" id="txtCoin.*" style="width:95%;"/>
+						<input type="text" id="txtPaymon.*" style="width:95%;"/>
+					</td>
 				</tr>
 			</table>
 		</div>
