@@ -180,6 +180,17 @@
                         break;
                 }
             }
+            function q_boxClose(s2) {
+				var ret;
+				switch (b_pop) {
+					case q_name + '_s':
+						q_boxClose2(s2);
+						break;
+					default:
+						break;
+				}
+				b_pop = '';
+			}
             function q_stPost() {
                 if (!(q_cur == 1 || q_cur == 2))
                     return false;
