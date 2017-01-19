@@ -34,12 +34,13 @@
             aPop = new Array(['txtProductno_', 'btnProductno_', 'ucc', 'noa,product', 'txtProductno_,txtProduct_', 'ucc_b.aspx']
             	,['txtBproductno', 'btnBproductno', 'ucc', 'noa,product', 'txtBproductno', 'ucc_b.aspx']
             	,['txtEproductno', 'btnEproductno', 'ucc', 'noa,product', 'txtEproductno', 'ucc_b.aspx']);
+            t_groupano = "";
             t_groupbno = "";
             $(document).ready(function() {
                 bbmKey = ['noa'];
                 bbsKey = ['noa', 'noq'];
                 q_brwCount();
-                q_gt('uccgb', '', 0, 0, 0, "");
+                q_gt(q_name, q_content, q_sqlCount, 1);
             });
             function main() {
                 if (dataErr) {
@@ -51,9 +52,10 @@
             function mainPost() {
                 q_getFormat();
                 q_mask(bbmMask);
+               	q_gt('uccga', '', 0, 0, 0, "");
                 
-                $('.'+q_getPara('sys.project')).show();              
-                if(t_groupbno.length>0)
+                $('.'+q_getPara('sys.project')).show();
+               	if(t_groupbno.length>0)
                 	q_cmbParse("cmbGroupbno_import", t_groupbno);
             	$('#txtDatea_import').datepicker();
                 	
@@ -117,6 +119,10 @@
                 	q_func('qtxt.query.uccp_groupb', 'uccp.txt,groupb,' + encodeURI(t_date) + ';' + encodeURI(t_groupbno) + ';' + encodeURI(t_price)); 	
                 });
                 
+				$('#btnCancel_import').click(function(e){
+                	$('#divImport').hide();
+                });
+                
                 $('#divImport').mousedown(function(e) {
                     if (e.button == 2) {
                         $(this).data('xtop', parseInt($(this).css('top')) - e.clientY);
@@ -136,6 +142,17 @@
                     $('#divImport').toggle();
                     $('#txtDatea_import').focus();
                 });
+                $('#cmbGroupano_import').change(function(){
+					var thisVal = $(this).val();
+					var t_where = "where=^^ left(noa,1)=N'" + thisVal + "' ^^";
+					if (thisVal==' '){
+						q_gt('uccgb', '', 0, 0, 0, "");
+					}else{
+						q_gt('uccgb', t_where, 0, 0, 0, "uccgb");
+					}
+					
+				});
+                
             }
             function q_funcPost(t_func, result) {
                 switch(t_func) {
@@ -162,17 +179,38 @@
                     	break;
                 }
             }
+            var uccgbList=[];
+            var thisuccgbList='';
             function q_gtPost(t_name) {
                 switch (t_name) {
-                	case 'uccgb':
-						var as = _q_appendData("uccgb", "", true);
+                	case 'uccga':
+						var as = _q_appendData("uccga", "", true);
 						if (as[0] != undefined) {
-							t_groupbno = " @ ";
+							t_groupano = " @ ";
 							for ( i = 0; i < as.length; i++) {
-								t_groupbno = t_groupbno + (t_groupbno.length > 0 ? ',' : '') + as[i].noa + '@' + as[i].noa+' . '+as[i].namea;
+								t_groupano = t_groupano + (t_groupano.length > 0 ? ',' : '') + as[i].noa + '@' + as[i].noa+' . '+as[i].namea;
 							}
 						}
-						q_gt(q_name, q_content, q_sqlCount, 1, 0, '', r_accy);
+						q_cmbParse("cmbGroupano_import", t_groupano);
+						break;
+                	case 'uccgb':
+						var as = _q_appendData("uccgb", "", true);
+						var t_gnoa=$("#cmbGroupano_import").val();
+						//carnoList = as;
+						t_groupbno = " @ ";
+						if (as[0] != undefined) {
+							for ( i = 0; i < as.length; i++) {
+									t_groupbno = t_groupbno + (t_groupbno.length > 0 ? ',' : '') + as[i].noa + '@' + as[i].noa+' . '+as[i].namea;
+							}
+						}
+						/*for(var k=0;k<uccgbList.length;k++){
+							if(uccgbList[k].noa.substr(0,1)==t_gnoa){
+								thisuccgbList = uccgbList[k].noa;
+								break;
+							}
+						}*/
+						document.all.cmbGroupbno_import.options.length = 0;
+						q_cmbParse("cmbGroupbno_import", t_groupbno);
 						break;
                     case q_name:
                         if (q_cur == 4)
@@ -342,7 +380,6 @@
             }
             .dview {
                 float: left;
-                width: 200px;
                 border-width: 0px;
             }
             .tview {
@@ -472,6 +509,10 @@
 					</td>
 				</tr>
 				<tr style="height:35px;">
+					<td><span> </span><a id='lblGroupano_import' style="float:right; color: blue; font-size: medium;">大類群組</a></td>
+					<td colspan="4"><select id="cmbGroupano_import" class="txt c1"></select> </td>
+				</tr>
+				<tr style="height:35px;">
 					<td><span> </span><a id='lblGroupbno_import' style="float:right; color: blue; font-size: medium;">中類群組</a></td>
 					<td colspan="4"><select id="cmbGroupbno_import" class="txt c1"></select> </td>
 				</tr>
@@ -500,7 +541,7 @@
                 <table class="tview" id="tview">
                     <tr>
                         <td align="center" style="width:20px; color:black;"><a id="vewChk"> </a></td>
-                        <td align="center" style="width:80px; color:black;"><a id="vewDatea">基價日期</a></td>
+                        <td align="center" style="width:150px; color:black;"><a id="vewDatea">基價日期</a></td>
                     </tr>
                     <tr>
                         <td><input id="chkBrow.*" type="checkbox"/></td>
