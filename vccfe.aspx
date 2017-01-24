@@ -365,14 +365,11 @@
                 switch (t_name) {
                 	case 'acomp':
                 		var as = _q_appendData("acomp", "", true);
-                		if(r_rank<'8' && q_getPara('sys.project').toUpperCase()=='FE' && (r_userno.substr(0,1).toUpperCase())=='B'){
-                			q_content = "where=^^salesno='" + r_userno + "'^^";
-                			q_gt(q_name, q_content, q_sqlCount, 1, 0, '', r_accy);
-                		}else{
-                			q_content = "";
-							q_gt(q_name, q_content, q_sqlCount, 1, 0, '', r_accy);
+                		if(q_content.length>0){
+                			if(r_rank<'8' && q_getPara('sys.project').toUpperCase()=='FE' && (r_userno.substr(0,1).toUpperCase())=='B')
+                				q_content = "where=^^salesno='" + r_userno + "' and "+replaceAll(q_content,'where=^^','')+ "'^^";
                 		}
-                		
+                		q_gt(q_name, q_content, q_sqlCount, 1, 0, '', r_accy);
 		                if (as[0] != undefined) {
 		                	t_acomp = new Array();
 		                	for (i = 0; i < as.length; i++) {
