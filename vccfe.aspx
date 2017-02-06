@@ -882,6 +882,7 @@
                         	for(var i=0;i<as.length;i++){
                         		for(var j=0;j<q_bbsCount;j++){
 	                        		if($('#txtProductno_'+j).val() == as[i].productno){
+	                        			$('#txtUnit_'+j).val($.trim($('#txtUnit_'+j).val()));
 	                        			if($('#txtUnit_'+j).val().toUpperCase()=='KG' || $('#txtUnit_'+j).val().toUpperCase()=='公斤'){
 	                        				if(as[i].eweight<0)
                         						t_err += (t_err.length>0?'\n':'') + as[i].productno +' 重量不足：'+Math.abs(as[i].eweight);
