@@ -813,6 +813,10 @@
                  $('#txtMon').val($('#txtDatea').val().substr(0, 6));*/
                 check_startdate = false;
 				
+				if (q_cur == 1)
+                    $('#txtWorker').val(r_name);
+                else
+                    $('#txtWorker2').val(r_name);
 				//檢查庫存量
 				var t_noa = $.trim($('#txtNoa').val());
 				t_noa = t_noa.length==0?'AUTO':t_noa;
@@ -823,16 +827,10 @@
 					if(t_productno.length>0)
 					{
 						//用全形空白區隔資料
-						t_where += (t_where.length>0?'　':'')+ t_productno+'　'+q_float('txtMount_'+i)+'　'+q_float('txtWeight_'+i);
+						t_where += (t_where.length>0?'　':'')+ t_productno+' '+q_float('txtMount_'+i)+'　'+q_float('txtWeight_'+i);
 					}
 				}
 				q_func('qtxt.query.vccfe_checkMount', 'vccfe.txt,checkMount,'+t_noa+';'+t_datea+';' + t_where); 
-				
-                if (q_cur == 1)
-                    $('#txtWorker').val(r_name);
-                else
-                    $('#txtWorker2').val(r_name);
-               	chkPrice(0);
             }
             function chkPrice(n){
             	//如果是有產品編號的東西    出貨單價如無打 應該要自動跳最高單價
@@ -881,18 +879,35 @@
                 		var as = _q_appendData("tmp0", "", true);
                 		var t_err = '';
                         if (as[0] != undefined) {
+                        	for(var i=0;i<as.length;i++){
+                        		for(var j=0;j<q_bbsCount;j++){
+	                        		if($('#txtProductno_'+j).val() == as[i].productno){
+	                        			if($('#txtUnit_'+j).val().toUpperCase()=='KG' || $('#txtUnit_'+j).val().toUpperCase()=='公斤'){
+	                        				if(as[i].emount<0)
+	                        					t_err += (t_err.length>0?'\n':'') + as[i].productno +' 數量不足：'+Math.abs(as[i].emount);
+	                        			}else{
+	                        				if(as[i].eweight<0)
+                        						t_err += (t_err.length>0?'\n':'') + as[i].productno +' 重量不足：'+Math.abs(as[i].eweight);
+	                        			}
+	                        			break;
+	                        		}
+	                        	}
+                        	}
                         	for(var i=0;i<as.length;i++)
-                        		if(as[i].emount<0 && as[i].eweight<0)
-                        			t_err += (t_err.length>0?'\n':'') + as[i].productno +' 數量不足：'+Math.abs(as[i].emount)+' 重量不足：'+Math.abs(as[i].eweight);
-                        		else if(as[i].emount<0)
-                        			t_err += (t_err.length>0?'\n':'') + as[i].productno +' 數量不足：'+Math.abs(as[i].emount);
-                        		else if(as[i].eweight<0)
-                        			t_err += (t_err.length>0?'\n':'') + as[i].productno +' 重量不足：'+Math.abs(as[i].eweight);
-                        }else{
-                        	
+	                    		if(as[i].emount<0 && as[i].eweight<0)
+	                    			t_err += (t_err.length>0?'\n':'') + as[i].productno +' 數量不足：'+Math.abs(as[i].emount)+' 重量不足：'+Math.abs(as[i].eweight);
+	                    		else if(as[i].emount<0)
+	                    			t_err += (t_err.length>0?'\n':'') + as[i].productno +' 數量不足：'+Math.abs(as[i].emount);
+	                    		else if(as[i].eweight<0)
+	                    			t_err += (t_err.length>0?'\n':'') + as[i].productno +' 重量不足：'+Math.abs(as[i].eweight);
                         }
-                        if(t_err.length>0)
+                        if(t_err.length>0){
+                        	t_err += '庫存不足，禁止存檔：\n';
                         	alert(t_err);
+                        	return;
+                        }else{
+		               		chkPrice(0);
+                        }
                 		break;
                 	case 'qtxt.query.vcc_tranmoney':
                 		var as = _q_appendData("tmp0", "", true);
