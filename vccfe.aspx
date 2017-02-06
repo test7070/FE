@@ -1,3 +1,13 @@
+﻿<%@ Page Language="C#" Debug="true"%>
+    <script language="c#" runat="server">  
+		protected void Page_Load(object sender, EventArgs e)
+		{
+		    jwcf wcf = new jwcf();
+		
+		    wcf.q_content("vcc", " left( $r_userno,1)!='B' or ( salesno=$r_userno or $r_rank >= 8 )");
+		    
+		}
+	</script>
 <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
 <html xmlns="http://www.w3.org/1999/xhtml" dir="ltr">
 	<head>
@@ -61,6 +71,7 @@
                 q_brwCount();
                 
                 q_gt('acomp', 'where=^^1=1^^', 0, 1);
+                q_gt(q_name, q_content, q_sqlCount, 1, 0, '', r_accy);
             });
 
             function main() {
@@ -365,11 +376,6 @@
                 switch (t_name) {
                 	case 'acomp':
                 		var as = _q_appendData("acomp", "", true);
-                		if(q_content.length>0){
-                			if(r_rank<'8' && q_getPara('sys.project').toUpperCase()=='FE' && (r_userno.substr(0,1).toUpperCase())=='B')
-                				q_content = "where=^^salesno='" + r_userno + "' and "+replaceAll(q_content,'where=^^','')+ "'^^";
-                		}
-                		q_gt(q_name, q_content, q_sqlCount, 1, 0, '', r_accy);
 		                if (as[0] != undefined) {
 		                	t_acomp = new Array();
 		                	for (i = 0; i < as.length; i++) {
