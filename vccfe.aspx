@@ -883,26 +883,27 @@
                         		for(var j=0;j<q_bbsCount;j++){
 	                        		if($('#txtProductno_'+j).val() == as[i].productno){
 	                        			if($('#txtUnit_'+j).val().toUpperCase()=='KG' || $('#txtUnit_'+j).val().toUpperCase()=='公斤'){
-	                        				if(as[i].emount<0)
-	                        					t_err += (t_err.length>0?'\n':'') + as[i].productno +' 數量不足：'+Math.abs(as[i].emount);
-	                        			}else{
 	                        				if(as[i].eweight<0)
                         						t_err += (t_err.length>0?'\n':'') + as[i].productno +' 重量不足：'+Math.abs(as[i].eweight);
+	                        			}else{
+	                        				if(as[i].emount<0)
+	                        					t_err += (t_err.length>0?'\n':'') + as[i].productno +' 數量不足：'+Math.abs(as[i].emount);
 	                        			}
 	                        			break;
 	                        		}
 	                        	}
                         	}
-                        	for(var i=0;i<as.length;i++)
+                        	/*for(var i=0;i<as.length;i++)
 	                    		if(as[i].emount<0 && as[i].eweight<0)
 	                    			t_err += (t_err.length>0?'\n':'') + as[i].productno +' 數量不足：'+Math.abs(as[i].emount)+' 重量不足：'+Math.abs(as[i].eweight);
 	                    		else if(as[i].emount<0)
 	                    			t_err += (t_err.length>0?'\n':'') + as[i].productno +' 數量不足：'+Math.abs(as[i].emount);
 	                    		else if(as[i].eweight<0)
 	                    			t_err += (t_err.length>0?'\n':'') + as[i].productno +' 重量不足：'+Math.abs(as[i].eweight);
+                       		*/
                         }
                         if(t_err.length>0){
-                        	t_err += '庫存不足，禁止存檔：\n';
+                        	t_err = '庫存不足，禁止存檔：\n'+t_err;
                         	alert(t_err);
                         	return;
                         }else{
