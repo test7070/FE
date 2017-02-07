@@ -40,13 +40,16 @@
                 t_edate = $('#txtEdate').val();
                 t_driverno = $.trim($('#txtDriverno').val());
                 t_driver = $.trim($('#txtDriver').val());
-                
+                t_no2 = $.trim($('#txtNo2').val());
                 var t_where = " 1=1 " 
                 + q_sqlPara2("noa", t_noa) 
                 + q_sqlPara2("datea", t_bdate, t_edate)    
                 + q_sqlPara2("driverno", t_driverno);
                 if (t_driver.length>0)
                     t_where += " and charindex('" + t_driver + "',driver)>0";
+                if(t_no2.length>0)
+                    t_where += " and exists(select noa from drps where drps.noa=drp.noa and drps.no2='"+t_no2+"')";
+                    
                 t_where = ' where=^^' + t_where + '^^ ';
                 return t_where;
             }
@@ -68,13 +71,13 @@
         <div style='width:400px; text-align:center;padding:15px;' >
             <table id="seek"  border="1"   cellpadding='3' cellspacing='2' style='width:100%;' >
                 <tr class='seek_tr'>
-                    <td class='seek'  style="width:20%;"><a id='lblNoa'></a></td>
+                    <td class='seek'  style="width:20%;"><a id='lblNoa'>電腦編號</a></td>
                     <td>
                     <input class="txt" id="txtNoa" type="text" style="width:215px; font-size:medium;" />
                     </td>
                 </tr>
                 <tr class='seek_tr'>
-                    <td   style="width:35%;" ><a id='lblDatea'></a></td>
+                    <td   style="width:35%;" ><a id='lblDatea'>日期</a></td>
                     <td style="width:65%;  ">
                     <input class="txt" id="txtBdate" type="text" style="width:90px; font-size:medium;" />
                     <span style="display:inline-block; vertical-align:middle">&sim;</span>
@@ -82,15 +85,21 @@
                     </td>
                 </tr>
                 <tr class='seek_tr'>
-                    <td class='seek'  style="width:20%;"><a id='lblDriverno'></a></td>
+                    <td class='seek'  style="width:20%;"><a id='lblDriverno'>司機</a></td>
                     <td>
                     <input class="txt" id="txtDriverno" type="text" style="width:215px; font-size:medium;" />
                     </td>
                 </tr>
                 <tr class='seek_tr'>
-                    <td class='seek'  style="width:20%;"><a id='lblDriver'></a></td>
+                    <td class='seek'  style="width:20%;"><a id='lblDriver'>司機名稱</a></td>
                     <td>
                     <input class="txt" id="txtDriver" type="text" style="width:215px; font-size:medium;" />
+                    </td>
+                </tr>
+                <tr class='seek_tr'>
+                    <td class='seek'  style="width:20%;"><a id='lblNo2'>出/進貨單號</a></td>
+                    <td>
+                    <input class="txt" id="txtNo2" type="text" style="width:215px; font-size:medium;" />
                     </td>
                 </tr>
             </table>

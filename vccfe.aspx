@@ -1803,6 +1803,7 @@
 					<td align="center" style="width:80px;"><a id='lblTotal_s'> </a></td>
 					<td align="center" style="width:80px;"><a id='lblWcost_s'> </a></td>
 					<td align="center" style="width:80px;"><a id='lblTranmoney_s'> </a></td>
+					<td align="center" style="width:80px;"><a>補運費</a></td>
 					<td align="center" style="width:80px;"><a id='lblProfit_s'> </a></td>
 					<td align="center" style="width:60px;"><a id='lblChecker_s'> </a></td>
 					<td align="center" style="width:80px;"><a id='lblSprice_s'> </a></td>
@@ -1858,6 +1859,9 @@
 					</td>
 					<td>
 					<input id="txtTranmoney.*" type="text" class="txt num"style="width:95%;"/>
+					</td>
+					<td>
+					<input id="txtTranmoney2.*" type="text" class="txt num"style="width:95%;"/>
 					</td>
 					<td>
 					<input id="txtProfit.*" type="text" class="txt num"style="width:95%;"/>
