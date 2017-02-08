@@ -823,8 +823,14 @@
 				var t_datea = $.trim($('#txtDatea').val());
 				var t_where='';
 				for(var i=0;i<q_bbsCount;i++){
+					if($('#txtProduct_'+i).val().indexOf('費')>=0)
+						continue;
+					if($('#txtProduct_'+i).val().indexOf('租')>=0)
+						continue;
+					if($('#txtProduct_'+i).val().indexOf('工資')>=0)
+						continue;
 					t_productno = $.trim($('#txtProductno_'+i).val());
-					if(t_productno.length>0)
+					if(t_productno.length>0 && t_productno.substring(0,1).toUpperCase()<'Z')
 					{
 						//用全形空白區隔資料
 						t_where += (t_where.length>0?'　':'')+ t_productno+' '+q_float('txtMount_'+i)+'　'+q_float('txtWeight_'+i);
