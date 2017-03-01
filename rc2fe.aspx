@@ -114,7 +114,7 @@
                 q_cmbParse("combPaytype", q_getPara('rc2.paytype'));
                 
                 q_cmbParse("cmbTaxtype", q_getPara('sys.taxtype'));
-                var t_where = "where=^^ 1=1 ^^";
+                var t_where = "where=^^ 1=0 ^^ stop=100";
                 q_gt('custaddr', t_where, 0, 0, 0, "");
                 
                 //限制帳款月份的輸入 只有在備註的第一個字為*才能手動輸入                  
@@ -176,7 +176,7 @@
                 });
                 $('#txtTggno').change(function() {
                     if (!emp($('#txtTggno').val())) {
-                        var t_where = "where=^^ noa='" + $('#txtTggno').val() + "' ^^";
+                        var t_where = "where=^^ noa='" + $('#txtTggno').val() + "' ^^ stop=100";
                         q_gt('custaddr', t_where, 0, 0, 0, "");
                     }
                 });
@@ -354,7 +354,7 @@
                         Unlock(1);
                         $('#txtDatea').focus();
                         if (!emp($('#txtTggno').val())) {
-                            var t_where = "where=^^ noa='" + $('#txtTggno').val() + "'^^";
+                            var t_where = "where=^^ noa='" + $('#txtTggno').val() + "'^^ stop=100";
                             q_gt('custaddr', t_where, 0, 0, 0, "");
                         }
                         break;
@@ -637,7 +637,7 @@
                 $('#txtDatea').val(q_date());
                 $('#txtDatea').focus();
                 $('#cmbTaxtype').val(1);
-                var t_where = "where=^^ 1=1 ^^";
+                var t_where = "where=^^ 1=0 ^^ stop=100";
                 q_gt('custaddr', t_where, 0, 0, 0, "");
             }
 			var guid = (function() {

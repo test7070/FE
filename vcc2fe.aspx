@@ -271,7 +271,7 @@
 
                 $('#txtCustno').change(function() {
                     if (!emp($('#txtCustno').val())) {
-                        var t_where = "where=^^ noa='" + $('#txtCustno').val() + "' ^^";
+                        var t_where = "where=^^ noa='" + $('#txtCustno').val() + "' ^^ stop=100";
                         q_gt('custaddr', t_where, 0, 0, 0, "");
                     }
                 });
@@ -644,7 +644,7 @@
                         $('#txtDatea').focus();
 
                         if (!emp($('#txtCustno').val())) {
-                            var t_where = "where=^^ noa='" + $('#txtCustno').val() + "' ^^";
+                            var t_where = "where=^^ noa='" + $('#txtCustno').val() + "' ^^ stop=100";
                             q_gt('custaddr', t_where, 0, 0, 0, "");
                         }
                         break;
@@ -1225,7 +1225,7 @@
                         break;
                     case 'txtCustno':
                         if (!emp($('#txtCustno').val())) {
-                            var t_where = "where=^^ noa='" + $('#txtCustno').val() + "' ^^";
+                            var t_where = "where=^^ noa='" + $('#txtCustno').val() + "' ^^ stop=100";
                             q_gt('custaddr', t_where, 0, 0, 0, "");
                         }
                         bbsGetOrdeList();

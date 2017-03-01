@@ -98,7 +98,7 @@
 				q_cmbParse("combPaytype", q_getPara('vcc.paytype'));
 				q_cmbParse("cmbTrantype", q_getPara('sys.tran'));
 				q_cmbParse("cmbTaxtype", q_getPara('sys.taxtype'));
-				var t_where = "where=^^ 1=1 ^^";
+				var t_where = "where=^^ 1=0 ^^ stop=100";
 				q_gt('custaddr', t_where, 0, 0, 0, "");
 
 				$('#txtFloata').change(function() {
@@ -126,7 +126,7 @@
 
 				$('#txtCustno').change(function() {
 					if (!emp($('#txtCustno').val())) {
-						var t_where = "where=^^ noa='" + $('#txtCustno').val() + "' ^^";
+						var t_where = "where=^^ noa='" + $('#txtCustno').val() + "' ^^ stop=100";
 						q_gt('custaddr', t_where, 0, 0, 0, "");
 					}
 				});
@@ -448,7 +448,7 @@
 				$('#txtCno').val(z_cno);
 				$('#txtAcomp').val(z_acomp);
 
-				var t_where = "where=^^ 1=1 ^^";
+				var t_where = "where=^^ 1=0 ^^ stop=100";
 				q_gt('custaddr', t_where, 0, 0, 0, "");
 				loadData();
 			}
@@ -462,7 +462,7 @@
 				$('#txtProduct').focus();
 
 				if (!emp($('#txtCustno').val())) {
-					var t_where = "where=^^ noa='" + $('#txtCustno').val() + "' ^^";
+					var t_where = "where=^^ noa='" + $('#txtCustno').val() + "' ^^ stop=100";
 					q_gt('custaddr', t_where, 0, 0, 0, "");
 				}
 				loadData();
@@ -768,7 +768,7 @@
 						break;
 					case 'txtCustno':
 						if (!emp($('#txtCustno').val())) {
-							var t_where = "where=^^ noa='" + $('#txtCustno').val() + "' ^^";
+							var t_where = "where=^^ noa='" + $('#txtCustno').val() + "' ^^ stop=100";
 							q_gt('custaddr', t_where, 0, 0, 0, "");
 						}
 						break;
