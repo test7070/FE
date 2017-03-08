@@ -230,6 +230,8 @@
 				var obj = curObj.find('tr');
 				var string = '';
 				for(var i=0;i<obj.length;i++){
+					if(obj.eq(i).hasClass('ignore'))
+						continue;
 					string = getString(obj.eq(i));
 					if(string.length>0)
 						memo2 += (i==0?'':'\n') + string;
@@ -494,10 +496,12 @@
 			function refreshData(){
 				if($('#cmbTypea').val()=='加工成型'){
 					$('#divCC').hide();
-					refreshDivBB();
+					$('#divBB').show();
+					//refreshDivBB();
 				}else{
 					$('#divBB').hide();
-					refreshDivCC();
+					$('#divCC').show();
+					//refreshDivCC();
 				}
 			}
 			function loadData(){
@@ -974,6 +978,38 @@
 		
 		
 		<div id='divBB' style="font-family: '細明體';">
+			<table style="">
+				<tr style="color:white; background:#003366;" class="ignore">
+					<td>品名</td>
+					<td>規格</td>
+					<td>單位</td>
+					<td>數量</td>
+					<td>單價</td>
+					<td>備註</td>
+				</tr>
+				<tr class="ignore">
+					<td>熱軋鋼筋SD280</td>
+					<td>4#、5#</td>
+					<td>噸</td>
+					<td rowspan="3"><input type="text" style="width:60px;" id="b0_1_a" /></td>
+					<td><input type="text" style="width:60px;" id="b0_2_a" /></td>
+					<td>加工成型</td>
+				</tr>
+				<tr class="ignore">
+					<td>熱軋鋼筋SD280W</td>
+					<td>4#、5#</td>
+					<td>噸</td>
+					<td><input type="text" style="width:60px;" id="b0_2_b" /></td>
+					<td>加工成型</td>
+				</tr>
+				<tr class="ignore">
+					<td>熱軋鋼筋SD420W</td>
+					<td>6#、7#、8#、10#</td>
+					<td>噸</td>
+					<td><input type="text" style="width:60px;" id="b0_2_c" /></td>
+					<td>加工成型</td>
+				</tr>
+			</table>
 			<table>
 				<tr>
 					<td>
@@ -991,11 +1027,11 @@
 						<a>　(2)馬架10CM以下，圓型特殊框型不在此單價內。</a>
 					</td>
 				</tr>
-				<!-- 依BBS  動態產生
-		 		<tr class="b1_4"><td><a>　</a><a>（3）</a><a>鋼筋3#每噸加價</a><input type="text" style="width:60px;" id="c1_4_a" /><a>元。</a></td></tr>
-				<tr class="b1_4"><td><a>　</a><a>　</a><a>鋼筋9#每噸加價</a><input type="text" style="width:60px;" id="c1_4_b" /><a>元。</a></td></tr>
-				<tr class="b1_4"><td><a>　</a><a>　</a><a>鋼筋11#每噸加價</a><input type="text" style="width:60px;" id="c1_4_c" /><a>元。</a></td></tr>
-				-->
+				<!-- 依BBS  動態產生   XXXXXX-->
+		 		<tr class="b1_4"><td><a>　</a><a>（3）</a><a>鋼筋3#每噸加價</a><input type="text" style="width:60px;" id="b1_4_a" /><a>元。</a></td></tr>
+				<tr class="b1_4"><td><a>　</a><a>　　 鋼筋9#每噸加價</a><input type="text" style="width:60px;" id="b1_4_b" /><a>元。</a></td></tr>
+				<tr class="b1_4"><td><a>　</a><a>　　 鋼筋11#每噸加價</a><input type="text" style="width:60px;" id="b1_4_c" /><a>元。</a></td></tr>
+				
 				<tr><td><a>　</a><a>(4)</a><a>本報價單不含至續接廠運輸費用。</a></td></tr>
 				<tr><td><a>　</a><a>(5)</a><a>加工成型部份為不分板料、彎料、直料。</a></td></tr>
 				<tr><td><a>　</a><a>(6)</a><a>加工成型部份尺寸公差為±5公分。此單價不含裁切長度70CM以下直料。</a></td></tr>
@@ -1219,6 +1255,38 @@
 		</div>
 		
 		<div id='divCC' style="font-family: '細明體';">
+			<table style="">
+				<tr style="color:white; background:#003366;" class="ignore">
+					<td>品名</td>
+					<td>規格</td>
+					<td>單位</td>
+					<td>數量</td>
+					<td>單價</td>
+					<td>備註</td>
+				</tr>
+				<tr class="ignore">
+					<td>熱軋鋼筋SD280</td>
+					<td>4#、5#</td>
+					<td>噸</td>
+					<td rowspan="3"><input type="text" style="width:60px;" id="c0_1_a" /></td>
+					<td><input type="text" style="width:60px;" id="c0_2_a" /></td>
+					<td>板車料，以件數出貨</td>
+				</tr>
+				<tr class="ignore">
+					<td>熱軋鋼筋SD280W</td>
+					<td>4#、5#</td>
+					<td>噸</td>
+					<td><input type="text" style="width:60px;" id="c0_2_b" /></td>
+					<td>板車料，以件數出貨</td>
+				</tr>
+				<tr class="ignore">
+					<td>熱軋鋼筋SD420W</td>
+					<td>6#、7#、8#、10#</td>
+					<td>噸</td>
+					<td><input type="text" style="width:60px;" id="c0_2_c" /></td>
+					<td>板車料，以件數出貨</td>
+				</tr>
+			</table>
 			<table>
 				<tr>
 					<td>
@@ -1235,11 +1303,11 @@
 				<tr><td><a>　　 16米以上定尺價格另議。板料不拆支。</a></td></tr>
 				<tr class="c1_3"><td><a>　</a><a>(3)</a><a>定尺品每尺寸最少5噸，不足5噸依加工成型計價。</a></td></tr>
 			 	
-			 	<!-- 依BBS  動態產生
+			 	<!-- 依BBS  動態產生 XXXX-->
 		 		<tr class="c1_4"><td><a>　</a><a>(4)</a><a>鋼筋3#每噸加價</a><input type="text" style="width:60px;" id="c1_4_a" /><a>元。</a></td></tr>
-				<tr class="c1_4"><td><a>　</a><a>　</a><a>鋼筋9#每噸加價</a><input type="text" style="width:60px;" id="c1_4_b" /><a>元。</a></td></tr>
-				<tr class="c1_4"><td><a>　</a><a>　</a><a>鋼筋11#每噸加價</a><input type="text" style="width:60px;" id="c1_4_c" /><a>元。</a></td></tr>
-				-->
+				<tr class="c1_4"><td><a>　</a><a>　　 鋼筋9#每噸加價</a><input type="text" style="width:60px;" id="c1_4_b" /><a>元。</a></td></tr>
+				<tr class="c1_4"><td><a>　</a><a>　　 鋼筋11#每噸加價</a><input type="text" style="width:60px;" id="c1_4_c" /><a>元。</a></td></tr>
+				
 				<tr><td><a>　</a><a>(5)</a><a>本報價單不含至續接廠運輸費用。</a></td></tr>
 				<tr>
 					<td>
