@@ -455,7 +455,6 @@ set @t_emech = case when '#non' = [10] then CHAR(255) else [10] end
 declare @tmp table(
 	gno nvarchar(1),
 	noa nvarchar(100),
-	custno nvarchar(50),
 	comp nvarchar(100),
 	spec nvarchar(100),
 	m1 nvarchar(10),
@@ -470,20 +469,40 @@ declare @tmp table(
 )
 
 insert @tmp
-select '0',a.noa,b.custno,b.comp,a.spec,a.m1,a.mechno,a.mech,c.productno,c.product,sum(c.mount),c.nor,c.memo2,''
-from view_cubs b left join view_cub a on a.noa=b.noa
-left join view_cubt c on a.noa=c.noa
+select '0',a.noa,'',a.spec,a.m1,a.mechno,case a.mechno when '01' then '剪台' when '02' then '火切' when '12' then 'D1盤圓' when '13' then 'D13盤圓' when '20' then '續接裁剪' end
+		,c.productno,c.product,c.gmount,c.nor,c.memo2,''
+from  view_cubt c left join view_cub a on a.noa=c.noa
 where (a.datea between @t_bdate and @t_edate)
-and (b.custno between @t_bcust and @t_ecust)
 and (a.noa between @t_bnoa and @t_enoa)
 and (a.mechno between @t_bmech and @t_emech)
-group by a.noa,b.custno,b.comp,a.spec,a.m1,a.mechno,a.mech,c.productno,c.product,c.nor,c.memo2
 
-insert @tmp(gno,noa,custno,spec,m1,mech,productno)
-select '1',noa,custno,spec,m1,mech,productno
+declare @noa nvarchar(50)
+declare @comp nvarchar(200)
+
+declare cursor_table cursor for
+select noa,comp from view_cubs group by noa,comp
+open cursor_table
+fetch next from cursor_table
+into @noa,@comp
+while(@@FETCH_STATUS <> -1)
+begin		
+	update @tmp
+	set comp=comp+' ; '+@comp
+	where noa=@noa
+	
+	fetch next from cursor_table 
+	into @noa,@comp
+end
+close cursor_table 
+deallocate cursor_table
+
+insert @tmp(gno,noa,spec,m1,mech,productno)
+select '1',noa,spec,m1,mech,productno
 from @tmp
-group by noa,custno,spec,m1,mech,productno
+group by noa,spec,m1,mech,productno
 
-select * from @tmp
-order by noa,custno,spec,m1,mech,productno,gno
+select 
+SUBSTRING(comp,3,len(comp))comp,
+* from @tmp
+order by noa,spec,m1,mech,productno,gno
 ;
