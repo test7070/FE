@@ -42,10 +42,38 @@ z_contfep01:--z_contfep01
 	insert into @tmp(gno)values('8')
 	insert into @tmp(gno)values('9')
 	---------------------------------------------------------------------------
+	declare @mount float = 0
+	declare @price1 float = 0
+	declare @price2 float = 0
+	declare @price3 float = 0
+	declare @memos nvarchar(max)
+	if exists(select * from cont where noa=@t_noa and typea='加工成型')
+	begin
+		set @memos = '加工成型'
+		select @mount=value from contt where noa=@t_noa and keya='b0_1_a'
+		select @price1=value from contt where noa=@t_noa and keya='b0_2_a'
+		select @price2=value from contt where noa=@t_noa and keya='b0_2_b'
+		select @price3=value from contt where noa=@t_noa and keya='b0_2_c'
+	end
+	else
+	begin
+		set @memos = '板車料，以件數出貨'
+		select @mount=value from contt where noa=@t_noa and keya='c0_1_a'
+		select @price1=value from contt where noa=@t_noa and keya='c0_2_a'
+		select @price2=value from contt where noa=@t_noa and keya='c0_2_b'
+		select @price3=value from contt where noa=@t_noa and keya='c0_2_c'
+	end
+
 	insert into @tmp(gno,productno,product,size,unit,mount,price,memo)
-	select '10',b.productno,b.product,b.size,b.unit,b.mount,b.price,b.memo
+	select '10','','熱軋鋼筋SD280','4#、5#','噸',null,@price1,@memos
+	insert into @tmp(gno,productno,product,size,unit,mount,price,memo)
+	select '10','','熱軋鋼筋SD280W','4#、5#','噸',@mount,@price2,@memos
+	insert into @tmp(gno,productno,product,size,unit,mount,price,memo)
+	select '10','','熱軋鋼筋SD420W','6#、7#、8#、10#','噸',null,@price3,@memos
+
+	/*select '10',b.productno,b.product,b.size,b.unit,b.mount,b.price,b.memo
 	from conts b 
-	where b.noa=@t_noa
+	where b.noa=@t_noa*/
 	
 	update @tmp set gno='11'
 	from @tmp a
