@@ -1,4 +1,4 @@
-orde:-- workj -> orde 
+﻿orde:-- workj -> orde 
 	-- 一張鋼筋加工單 只會產生一張訂單
 	-- 訂單號碼先產生
 	SET QUOTED_IDENTIFIER OFF
@@ -119,3 +119,13 @@ orde:-- workj -> orde
 		return
 	end catch
 	select '匯出訂單【'+@ordeno+'】' msg,@accy ordeaccy,@ordeno ordeno;
+----------------------------------------------------------------------------------------------------------
+checker:--複檢人修改
+	SET QUOTED_IDENTIFIER OFF
+	declare @noa nvarchar(20) = [1]
+	declare @checker nvarchar(50) = [2]
+	
+	update workj
+	set checker=@checker
+	where noa=@noa
+;
