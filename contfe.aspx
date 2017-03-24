@@ -1173,7 +1173,7 @@
 						<a>吊車送達</a><input type="text" style="width:200px;" id="b5_1_b_a"/>
 						<a>，賣方負責卸貨。</a>
 						<br>
-						<a>　　 出貨需達10噸，未達10噸者須補貼運費至10噸，每噸</a><input type="text" style="width:60px;" id="b5_1_b_c"/><a>元。</a>
+						<a>　　 出貨需達15噸，未達15噸者須補貼運費至15噸，每噸</a><input type="text" style="width:60px;" id="b5_1_b_c"/><a>元。</a>
 					</td>
 				</tr>
 				<tr id="b5_1_c" class="b5_1x">
