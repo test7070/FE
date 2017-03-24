@@ -518,25 +518,6 @@
 			}
 			function refreshDivBB(){
 				$('#divBB').show();
-				$('#divBB').find('.b1_4').remove();
-				var obj = $('.b1_3');
-				var n=0;
-				for(var i=0;i<q_bbsCount;i++){
-					if($('#txtProduct_'+i).val().length>0){
-						n++;
-						obj.after('<tr class="b1_4"><td><a>　</a><a>'+(n==1?'(3)':'　 ')+'</a><a>'+$('#txtProduct_'+i).val()+'每噸加價</a><input type="text" style="width:60px;" id="b1_4_'+n+'" /><a>元。</a></td></tr>');
-						obj = obj.next();
-						if(!(q_cur==1 || q_cur==2))
-							$('#b1_4_'+n).attr('disabled', 'disabled');
-						for(var j=0;j<q_bbtCount;j++){
-							if($('#txtKeya__'+j).val()=='b1_4_'+n){
-								$('#b1_4_'+n).val($('#txtValue__'+j).val());
-								break;
-							}
-						}
-					}
-				}
-				
 				$('.b5_1x').hide();
 				if($('#b1_1_a').val()=='含'){
 					switch($('#b5_1').val()){
@@ -644,24 +625,6 @@
 			}
 			function refreshDivCC(){
 				$('#divCC').show();
-				$('#divCC').find('.c1_4').remove();
-				var obj = $('.c1_3');
-				var n=0;
-				for(var i=0;i<q_bbsCount;i++){
-					if($('#txtProduct_'+i).val().length>0){
-						n++;
-						obj.after('<tr class="c1_4"><td><a>　</a><a>'+(n==1?'(4)':'　 ')+'</a><a>'+$('#txtProduct_'+i).val()+'每噸加價</a><input type="text" style="width:60px;" id="c1_4_'+n+'" /><a>元。</a></td></tr>');
-						obj = obj.next();
-						if(!(q_cur==1 || q_cur==2))
-							$('#c1_4_'+n).attr('disabled', 'disabled');
-						for(var j=0;j<q_bbtCount;j++){
-							if($('#txtKeya__'+j).val()=='c1_4_'+n){
-								$('#c1_4_'+n).val($('#txtValue__'+j).val());
-								break;
-							}
-						}
-					}
-				}
 				
 				if($('#c1_1_a').val()=='含'){
 					$('#c5_1_a').show();
@@ -1250,14 +1213,14 @@
 					</td>
 				</tr>
 				<!-- 依BBS  動態產生-->
-		 		<tr class="b1_4"><td><a>　</a><a>（3）</a><a>鋼筋3#每噸加價</a><input type="text" style="width:60px;" id="c1_4_a" /><a>元。</a></td></tr>
-				<tr class="b1_4"><td><a>　</a><a>　</a><a>鋼筋9#每噸加價</a><input type="text" style="width:60px;" id="c1_4_b" /><a>元。</a></td></tr>
-				<tr class="b1_4"><td><a>　</a><a>　</a><a>鋼筋11#每噸加價</a><input type="text" style="width:60px;" id="c1_4_c" /><a>元。</a></td></tr>
+		 		<tr class="b1_4"><td><a>　</a><a>(3)</a><a>鋼筋3#每噸加價</a><input type="text" style="width:60px;" id="c1_4_a" /><a>元。</a></td></tr>
+				<tr class="b1_4"><td><a>　</a><a>　 </a><a>鋼筋9#每噸加價</a><input type="text" style="width:60px;" id="c1_4_b" /><a>元。</a></td></tr>
+				<tr class="b1_4"><td><a>　</a><a>　 </a><a>鋼筋11#每噸加價</a><input type="text" style="width:60px;" id="c1_4_c" /><a>元。</a></td></tr>
 				
 				<tr><td><a>　</a><a>(4)</a><a>本報價單不含至續接廠運輸費用。</a></td></tr>
-				<tr><td><a>　</a><a>(5)</a><a>加工成型部份為不分板料、彎料、直料。</a></td></tr>
-				<tr><td><a>　</a><a>(6)</a><a>加工成型部份尺寸公差為±5公分。此單價不含裁切長度70CM以下直料。</a></td></tr>
-				
+				<tr><td><a>　</a><a>(5)</a><a>加工成型部份總料計價，整案承接：不分板料、彎料、直料含入續接柱筋；尺寸公差為±5公分。</a></td></tr>
+				<tr><td><a>　</a><a>(6)</a><a>此單價不含裁切長度70CM以下直料。加工成型若分料包裝(台料)每噸加價600元。</a></td></tr>
+				<tr><td><a>　</a><a>(7)</a><a>鋼筋加工成品包裝所需鋼筋與線材重量，納入鋼筋加工重量與工資計算。</a></td></tr>
 				<tr>
 					<td>
 						<a style="float:left;">2.</a><a style="float:left;">交貨地點：</a>
@@ -1357,23 +1320,12 @@
 				<tr>
 					<td>
 						<a>　</a><a>(2)</a>
-						<a>鋼筋材料若為定尺料者，買方應於14日前通知賣方交貨數量規格。</a>
+						<a>鋼筋材料若為定尺料者，買方應於21日前通知賣方交貨數量規格。</a>
 					</td>
 				</tr>
 				<tr>
 					<td>
 						<a>　</a><a>(3)</a>
-						<a>買方工地向賣方訂貨後，如遇天災或人力不可抗力之因素時，由雙方再議定交貨時間，</a>
-					</td>
-				</tr>
-				<tr>
-					<td>
-						<a>　　 經賣方同意展期外，買方應按訂貨數量交貨。</a>
-					</td>
-				</tr>
-				<tr>
-					<td>
-						<a>　</a><a>(4)</a>
 						<a>買方應備妥足夠容納進貨之場地，及35噸拖車可安全到達之卸貨場地，否則因而產生的其他費用 </a>
 					</td>
 				</tr>
@@ -1384,7 +1336,7 @@
 				</tr>
 				<tr>
 					<td>
-						<a>　</a><a>(5)</a>
+						<a>　</a><a>(4)</a>
 						<a>板車料長度12M、14M。超長運費加價14.1M~15M，毎米毎噸加價 </a><input type="text" style="width:60px;" id="b5_1_5_a"/><a>元，</a>
 						<br>
 						<a>　　 超長運費加價15.1M~18M，毎米毎噸加價</a><input type="text" style="width:60px;" id="b5_1_5_b"/><a>元，不足一米以一米計。 </a>
@@ -1420,10 +1372,10 @@
 							</select>
 							<a>。</a>
 							<br>
-							<a id="b6_1_a_3a" class="b6_1_a_3">　　 例：7月帳，開立8月30日到期支票。</a>
-							<a id="b6_1_a_3b" class="b6_1_a_3">　　 例：7月帳，開立9月15日到期支票。</a>
-							<a id="b6_1_a_3c" class="b6_1_a_3">　　 例：7月帳，開立9月30日到期支票。</a>
-							<a id="b6_1_a_3d" class="b6_1_a_3">　　 例：7月帳，開立8月10日到期支票。</a>
+							<a id="b6_1_a_3a" class="b6_1_a_3">　　  例：7月帳，開立8月30日到期支票。</a>
+							<a id="b6_1_a_3b" class="b6_1_a_3">　　  例：7月帳，開立9月15日到期支票。</a>
+							<a id="b6_1_a_3c" class="b6_1_a_3">　　  例：7月帳，開立9月30日到期支票。</a>
+							<a id="b6_1_a_3d" class="b6_1_a_3">　　  例：7月帳，開立8月10日到期支票。</a>
 							<br>
 							<a>　　 交貨期限到需將未出鋼筋噸數的金額扣除訂金依當期貨款支付現金完案。</a>
 						</div>
@@ -1482,10 +1434,15 @@
 				</tr>
           		<tr>
 					<td>
-						<a>8.</a><a>特約事項：賣方所提供材料於買方各期貨款支付或票據兌現前賣方仍保有所有權。</a>
+						<a>8.</a><a>(1)本合約之各項材料單價，不論市面價款之漲落，買賣雙方均不得提出增減價格及數量之要求。</a>
+						<br>
+						<a>　</a><a>(2)賣方所提供材料於買方各期貨款支付或票據兌現前賣方仍保有所有權。</a>
+						<br>
+						<a>　</a><a>(3)賣方加工完成後通知買方出貨，買方需接受乙方於7天內出貨完成。若買方未能7天內出貨，</a>
+						<br>
+						<a>　</a><a> 　則補貼賣方成品放置面積廠租費及吊移費，以每平方公尺每日10元補貼賣方。</a>
 					</td>
 				</tr>
-				
 				<tr>
 					<td>
 						<a>9.</a><a>報價時效：本報價期限至</a><input type="text" style="width:200px;" id="b6_9_1"/><a>止為有效報價日。</a>
@@ -1551,8 +1508,8 @@
 			 	
 			 	<!-- 依BBS  動態產生-->
 		 		<tr class="c1_4"><td><a>　</a><a>(4)</a><a>鋼筋3#每噸加價</a><input type="text" style="width:60px;" id="c1_4_a" /><a>元。</a></td></tr>
-				<tr class="c1_4"><td><a>　</a><a>　</a><a>鋼筋9#每噸加價</a><input type="text" style="width:60px;" id="c1_4_b" /><a>元。</a></td></tr>
-				<tr class="c1_4"><td><a>　</a><a>　</a><a>鋼筋11#每噸加價</a><input type="text" style="width:60px;" id="c1_4_c" /><a>元。</a></td></tr>
+				<tr class="c1_4"><td><a>　</a><a>　 </a><a>鋼筋9#每噸加價</a><input type="text" style="width:60px;" id="c1_4_b" /><a>元。</a></td></tr>
+				<tr class="c1_4"><td><a>　</a><a>　 </a><a>鋼筋11#每噸加價</a><input type="text" style="width:60px;" id="c1_4_c" /><a>元。</a></td></tr>
 				
 				<tr><td><a>　</a><a>(5)</a><a>本報價單不含至續接廠運輸費用。</a></td></tr>
 				<tr>
@@ -1619,17 +1576,6 @@
 				<tr>
 					<td>
 						<a>　</a><a>(3)</a>
-						<a>買方工地向賣方訂貨後，如遇天災或人力不可抗力之因素時，由雙方再議定交貨時間，</a>
-					</td>
-				</tr>
-				<tr>
-					<td>
-						<a>　　 經賣方同意展期外，買方應按訂貨數量交貨。</a>
-					</td>
-				</tr>
-				<tr>
-					<td>
-						<a>　</a><a>(4)</a>
 						<a>買方應備妥足夠容納進貨之場地，及35噸拖車可安全到達之卸貨場地，否則因而產生的其他費用 </a>
 					</td>
 				</tr>
@@ -1640,7 +1586,7 @@
 				</tr>
 				<tr>
 					<td>
-						<a>　</a><a>(5)</a>
+						<a>　</a><a>(4)</a>
 						<a>板車料長度12M、14M。超長運費加價14.1M~15M，毎米毎噸加價 </a><input type="text" style="width:60px;" id="c5_1_5_a"/><a>元，</a>
 						<br>
 						<a>　　 超長運費加價15.1M~18M，毎米毎噸加價</a><input type="text" style="width:60px;" id="c5_1_5_b"/><a>元，不足一米以一米計。 </a>
@@ -1648,7 +1594,7 @@
 				</tr>
 				<tr>
 					<td>
-						<a>　</a><a>(6)</a>
+						<a>　</a><a>(5)</a>
 						<a>板車承裝加工成型料整台運費每噸另加50元。 </a>
 					</td>
 				</tr>
@@ -1682,7 +1628,7 @@
 							</select>
 							<a>。</a>
 							<br>
-							<a id="c6_1_a_3a" class="c6_1_a_3">　　 例：7月帳，開立8月30日到期支票。</a>
+							<a id="c6_1_a_3a" class="c6_1_a_3">　 　例：7月帳，開立8月30日到期支票。</a>
 							<a id="c6_1_a_3b" class="c6_1_a_3">　　 例：7月帳，開立9月15日到期支票。</a>
 							<a id="c6_1_a_3c" class="c6_1_a_3">　　 例：7月帳，開立9月30日到期支票。</a>
 							<a id="c6_1_a_3d" class="c6_1_a_3">　　 例：7月帳，開立8月10日到期支票。</a>
@@ -1744,10 +1690,15 @@
 				</tr>
           		<tr>
 					<td>
-						<a>8.</a><a>特約事項：賣方所提供材料於買方各期貨款支付或票據兌現前賣方仍保有所有權。</a>
+						<a>8.</a><a>(1)本合約之各項材料單價，不論市面價款之漲落，買賣雙方均不得提出增減價格及數量之要求。</a>
+						<br>
+						<a>　</a><a>(2)賣方所提供材料於買方各期貨款支付或票據兌現前賣方仍保有所有權。</a>
+						<br>
+						<a>　</a><a>(3)賣方加工完成後通知買方出貨，買方需接受乙方於7天內出貨完成。若買方未能7天內出貨，</a>
+						<br>
+						<a>　</a><a>　  則補貼賣方成品放置面積廠租費及吊移費，以每平方公尺每日10元補貼賣方。</a>
 					</td>
 				</tr>
-				
 				<tr>
 					<td>
 						<a>9.</a><a>報價時效：本報價期限至</a><input type="text" style="width:200px;" id="c6_9_1"/><a>止為有效報價日。</a>
