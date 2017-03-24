@@ -195,6 +195,19 @@
 				$('#b5_1').change(function(e){
 					refreshData();
 				});
+				$('#b6_1_a_3').change(function(e){
+					refreshData();
+				});
+				$('#b6_1_b_1').change(function(e){
+					refreshData();
+				});
+				$('#c6_1_a_3').change(function(e){
+					refreshData();
+				});
+				$('#c6_1_b_1').change(function(e){
+					refreshData();
+				});
+				
 			}
 
 			function q_boxClose(s2) {
@@ -299,7 +312,9 @@
 				}else{
 					var string = '';
 					for(var i=0;i<cobj.length;i++){
-						if(cobj.eq(i)[0].nodeName == 'BR'){
+						if(cobj.eq(i).hasClass('ignore')){
+							;
+						}else if(cobj.eq(i)[0].nodeName == 'BR'){
 							string += '\n';
 						}else if(!cobj.eq(i).is(":visible")){
 							;
@@ -548,7 +563,7 @@
 							break;
 					}
 				}
-				$('#b2_1_a').hide();
+				/*$('#b2_1_a').hide();
 				$('#b2_1_b').hide();
 				switch($('#b2_1').val()){
 					case '廠交(自運)':
@@ -559,7 +574,7 @@
 						break;
 					default:
 						break;
-				};
+				};*/
 				
 				$('#b6_1_a').hide();
 				$('#b6_1_b').hide();
@@ -581,6 +596,42 @@
 					default:
 						break;
 				};
+				
+				$('.b6_1_a_3').hide();
+				switch($('#b6_1_a_3').val()){
+					case '月結30天票期':
+						$('#b6_1_a_3a').show();
+						break;
+					case '月結45天票期':
+						$('#b6_1_a_3b').show();
+						break;
+					case '月結60天票期':
+						$('#b6_1_a_3c').show();
+						break;
+					case '月結現金':
+						$('#b6_1_a_3d').show();
+						break;
+					default:
+						break;
+				}
+				$('.b6_1_b_1').hide();
+				switch($('#b6_1_b_1').val()){
+					case '月結30天票期':
+						$('#b6_1_b_1a').show();
+						break;
+					case '月結45天票期':
+						$('#b6_1_b_1b').show();
+						break;
+					case '月結60天票期':
+						$('#b6_1_b_1c').show();
+						break;
+					case '月結現金':
+						$('#b6_1_b_1d').show();
+						break;
+					default:
+						break;
+				}
+				
 				$('#divBB').find('input[type="text"]').css('text-align','right');
 				$('#b3_1').css('text-align','center');
 				$('#b5_1_a_a').css('text-align','center');
@@ -619,7 +670,7 @@
 					$('#c5_1_a').hide();
 					$('#c5_1_b').show();
 				}
-				$('#c2_1_a').hide();
+				/*$('#c2_1_a').hide();
 				$('#c2_1_b').hide();
 				switch($('#c2_1').val()){
 					case '廠交(自運)':
@@ -630,7 +681,7 @@
 						break;
 					default:
 						break;
-				};
+				};*/
 				
 				$('#c6_1_a').hide();
 				$('#c6_1_b').hide();
@@ -652,6 +703,40 @@
 					default:
 						break;
 				};
+				$('.c6_1_a_3').hide();
+				switch($('#c6_1_a_3').val()){
+					case '月結30天票期':
+						$('#c6_1_a_3a').show();
+						break;
+					case '月結45天票期':
+						$('#c6_1_a_3b').show();
+						break;
+					case '月結60天票期':
+						$('#c6_1_a_3c').show();
+						break;
+					case '月結現金':
+						$('#c6_1_a_3d').show();
+						break;
+					default:
+						break;
+				}
+				$('.c6_1_b_1').hide();
+				switch($('#c6_1_b_1').val()){
+					case '月結30天票期':
+						$('#c6_1_b_1a').show();
+						break;
+					case '月結45天票期':
+						$('#c6_1_b_1b').show();
+						break;
+					case '月結60天票期':
+						$('#c6_1_b_1c').show();
+						break;
+					case '月結現金':
+						$('#c6_1_b_1d').show();
+						break;
+					default:
+						break;
+				}
 				$('#divCC').find('input[type="text"]').css('text-align','right');
 				$('#c3_1').css('text-align','center');
 				$('#c5_1_a_a').css('text-align','center');
@@ -662,11 +747,11 @@
 				if($('#cmbTypea').val()=='加工成型'){
 					$('#divCC').hide();
 					$('#divBB').show();
-					//refreshDivBB();
+					refreshDivBB();
 				}else{
 					$('#divBB').hide();
 					$('#divCC').show();
-					//refreshDivCC();
+					refreshDivCC();
 				}
 			}
 			function refresh(recno) {
@@ -1176,7 +1261,12 @@
 				<tr>
 					<td>
 						<a style="float:left;">2.</a><a style="float:left;">交貨地點：</a>
-						<select id="b2_1" style="float:left;">
+						<input style="float:left;" id="b2_1" list="b2_1a">
+						<datalist id="b2_1a" class="ignore">
+						  <option value='廠交(自運)'> </option>
+						</datalist>
+						
+						<!--<select id="b2_1" class="ignore" style="float:left;">
 							<option value='廠交(自運)'>廠交(自運)</option>
 							<option value='自訂'>自訂</option>
 						</select>
@@ -1185,8 +1275,8 @@
 						</div>
 						<div id="b2_1_b" style="float:left;">
 							<a>　</a><input type="text" style="width:120px;" id="b2_1_b_1"/>
-						</div>
-						<a style="float:left;">交貨期限：</a>
+						</div>-->
+						<a style="float:left;">，交貨期限：</a>
 						<input type="text" style="width:40px;float:left;" id="b2_1_c"/>
 						<a style="float:left;">年</a>
 						<input type="text" style="width:40px;float:left;" id="b2_1_d"/>
@@ -1309,7 +1399,7 @@
 				<tr>
 					<td>
 						<a style="float:left;">　(1)</a>
-						<select id="b6_1" style="float:left;">
+						<select id="b6_1" style="float:left;" class="ignore">
 							<option value='預付'>預付</option>
 							<option value='月結'>月結</option>
 							<option value='電匯'>電匯</option>
@@ -1321,14 +1411,34 @@
 								<option value='訂金抵尾款'>訂金抵尾款</option>
 								<option value='訂金依出貨比例扣除'>訂金依出貨比例扣除</option>
 							</select>
-							<a>。每月出貨貨款為當月月結</a><input type="text" style="width:40px;" id="b6_1_a_3"/><a>天票期。</a>
+							<a>每月出貨貨款為當月</a>
+							<select id="b6_1_a_3">
+								<option value='月結30天票期'>月結30天票期</option>
+								<option value='月結45天票期'>月結45天票期</option>
+								<option value='月結60天票期'>月結60天票期</option>
+								<option value='月結現金'>月結現金</option>
+							</select>
+							<a>。</a>
 							<br>
-							<a>　　 例：7月帳，開立9月10日到期支票。</a>
+							<a id="b6_1_a_3a" class="b6_1_a_3">　　 例：7月帳，開立8月30日到期支票。</a>
+							<a id="b6_1_a_3b" class="b6_1_a_3">　　 例：7月帳，開立9月15日到期支票。</a>
+							<a id="b6_1_a_3c" class="b6_1_a_3">　　 例：7月帳，開立9月30日到期支票。</a>
+							<a id="b6_1_a_3d" class="b6_1_a_3">　　 例：7月帳，開立8月10日到期支票。</a>
 							<br>
-							<a>　　 交貨期限到需將未出鋼筋噸數的金額扣除訂金依 當期貨款支付現金完案。</a>
+							<a>　　 交貨期限到需將未出鋼筋噸數的金額扣除訂金依當期貨款支付現金完案。</a>
 						</div>
 						<div id="b6_1_b" style="float:left;">
-							<a>每月出貨貨款為當月月結</a><input type="text" style="width:40px;" id="b6_1_b_1"/><a>天票期。例：7月帳，開立9月10日到期支票。</a>
+							<a>每月出貨貨款為當月</a>
+							<select id="b6_1_b_1">
+								<option value='月結30天票期'>月結30天票期</option>
+								<option value='月結45天票期'>月結45天票期</option>
+								<option value='月結60天票期'>月結60天票期</option>
+								<option value='月結現金'>月結現金</option>
+							</select>
+							<a id="b6_1_b_1a" class="b6_1_b_1">。例：7月帳，開立8月30日到期支票。</a>
+							<a id="b6_1_b_1b" class="b6_1_b_1">。例：7月帳，開立9月15日到期支票。</a>
+							<a id="b6_1_b_1c" class="b6_1_b_1">。例：7月帳，開立9月30日到期支票。</a>
+							<a id="b6_1_b_1d" class="b6_1_b_1">。例：7月帳，開立8月10日到期支票。</a>
 							<br>
 							<a>　　 交貨期限到需將未出鋼筋噸數的金額依當期貨款支付現金完案。</a>
 						</div>
@@ -1448,7 +1558,13 @@
 				<tr>
 					<td>
 						<a style="float:left;">2.</a><a style="float:left;">交貨地點：</a>
-						<select id="c2_1" style="float:left;">
+						<input style="float:left;" id="c2_1" list="c2_1a">
+						<datalist id="c2_1a" class="ignore">
+						  <option value='廠交(自運)'> </option>
+						</datalist>
+						
+					
+						<!--<select id="c2_1" style="float:left;">
 							<option value='廠交(自運)'>廠交(自運)</option>
 							<option value='自訂'>自訂</option>
 						</select>
@@ -1457,8 +1573,8 @@
 						</div>
 						<div id="c2_1_b" style="float:left;">
 							<a>　</a><input type="text" style="width:120px;" id="c2_1_b_1"/>
-						</div>
-						<a style="float:left;">交貨期限：</a>
+						</div>-->
+						<a style="float:left;">，交貨期限：</a>
 						<input type="text" style="width:40px;float:left;" id="c2_1_c"/>
 						<a style="float:left;">年</a>
 						<input type="text" style="width:40px;float:left;" id="c2_1_d"/>
@@ -1545,7 +1661,7 @@
 				<tr>
 					<td>
 						<a style="float:left;">　(1)</a>
-						<select id="c6_1" style="float:left;">
+						<select id="c6_1" style="float:left;" class="ignore">
 							<option value='預付'>預付</option>
 							<option value='月結'>月結</option>
 							<option value='電匯'>電匯</option>
@@ -1557,14 +1673,34 @@
 								<option value='訂金抵尾款'>訂金抵尾款</option>
 								<option value='訂金依出貨比例扣除'>訂金依出貨比例扣除</option>
 							</select>
-							<a>。每月出貨貨款為當月月結</a><input type="text" style="width:40px;" id="c6_1_a_3"/><a>天票期。</a>
+							<a>每月出貨貨款為當月</a>
+							<select id="c6_1_a_3">
+								<option value='月結30天票期'>月結30天票期</option>
+								<option value='月結45天票期'>月結45天票期</option>
+								<option value='月結60天票期'>月結60天票期</option>
+								<option value='月結現金'>月結現金</option>
+							</select>
+							<a>。</a>
 							<br>
-							<a>　　 例：7月帳，開立9月10日到期支票。</a>
+							<a id="c6_1_a_3a" class="c6_1_a_3">　　 例：7月帳，開立8月30日到期支票。</a>
+							<a id="c6_1_a_3b" class="c6_1_a_3">　　 例：7月帳，開立9月15日到期支票。</a>
+							<a id="c6_1_a_3c" class="c6_1_a_3">　　 例：7月帳，開立9月30日到期支票。</a>
+							<a id="c6_1_a_3d" class="c6_1_a_3">　　 例：7月帳，開立8月10日到期支票。</a>
 							<br>
-							<a>　　 交貨期限到需將未出鋼筋噸數的金額扣除訂金依 當期貨款支付現金完案。</a>
+							<a>　　 交貨期限到需將未出鋼筋噸數的金額扣除訂金依當期貨款支付現金完案。</a>
 						</div>
 						<div id="c6_1_b" style="float:left;">
-							<a>每月出貨貨款為當月月結</a><input type="text" style="width:40px;" id="c6_1_b_1"/><a>天票期。例：7月帳，開立9月10日到期支票。</a>
+							<a>每月出貨貨款為當月</a>
+							<select id="c6_1_b_1">
+								<option value='月結30天票期'>月結30天票期</option>
+								<option value='月結45天票期'>月結45天票期</option>
+								<option value='月結60天票期'>月結60天票期</option>
+								<option value='月結現金'>月結現金</option>
+							</select>
+							<a id="c6_1_b_1a" class="c6_1_b_1">。例：7月帳，開立8月30日到期支票。</a>
+							<a id="c6_1_b_1b" class="c6_1_b_1">。例：7月帳，開立9月15日到期支票。</a>
+							<a id="c6_1_b_1c" class="c6_1_b_1">。例：7月帳，開立9月30日到期支票。</a>
+							<a id="c6_1_b_1d" class="c6_1_b_1">。例：7月帳，開立8月10日到期支票。</a>
 							<br>
 							<a>　　 交貨期限到需將未出鋼筋噸數的金額依當期貨款支付現金完案。</a>
 						</div>
