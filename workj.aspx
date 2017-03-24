@@ -271,6 +271,20 @@
                 $('#btnCancel_d').click(function() {
                     $('#divImport').toggle();
                 });
+                $('#btnChecker').click(function() {
+                    $('#divChk').toggle();
+                });
+                $('#btnCancel_c').click(function() {
+                    $('#divChk').toggle();
+                    var t_noa = $('#txtNoa').val();
+                    var t_checker = $('#textChecker').val();
+                    q_func('qtxt.query.wkchecker', 'workj.txt,checker,' + encodeURI(t_noa)+ ';' +encodeURI(t_checker)); 
+                });
+                $('#textChecker').change(function() {
+                	$('#txtChecker').val($(this).val());
+               	});
+
+                
                 //-----------------------------------------------------------------------
                 $('#btnCont').click(function(e){
                 	var t_noa = $('#txtNoa').val();
@@ -443,7 +457,10 @@
                 		break;
                 	case 'barfe.gen2':
                 		Unlock(1);
-                		break;	
+                		break;
+                	case 'qtxt.query.wkchecker':
+                		alert('已修改!'); 
+                		break;
                 	case 'qtxt.query.cont':
                 		var as = _q_appendData("tmp0", "", true, true);
                         if (as[0] != undefined) {
@@ -785,7 +802,7 @@
                 $('.justPrint').prop('checked',true);	
                 $('.justPrint2').prop('checked',true);	
                 $('.checkAll').prop('checked',true);	
-                $('.checkAll2').prop('checked',true);	
+                $('.checkAll2').prop('checked',true);
             }
             function q_bbsLenShow( t_start, t_end){
             	for(var i=t_start;i<=t_end;i++)
@@ -1230,6 +1247,10 @@
                 width: 130%;
                 float: left;
             }
+            .txt.c3 {
+                width: 45%;
+                float: right;
+            }
             .txt.num {
                 text-align: right;
             }
@@ -1345,6 +1366,20 @@
 				</tr>
 			</table>
 		</div>
+		<div id="divChk" style="position:absolute; top:100px; left:400px; display:none; width:400px; height:80px; background-color: pink; border: 5px solid gray;">
+			<table style="width:100%;">
+				<tr style="height:1px;">
+					<td style="width:80px;"></td>
+					<td style="width:220px;"></td>
+					<td style="width:40px;"></td>
+				</tr>
+				<tr style="height:20px;">
+					<td><span> </span><a id="lblChecker" class="lbl">複檢人</a></td>
+					<td><input id="textChecker" type="text" class="txt c1"/></td>
+					<td><input id="btnCancel_c" type="button" value="關閉"/></td>
+				</tr>
+			</table>
+		</div>
 		<div id='dmain' style="overflow:visible;width: 1200px;">
 			<div class="dview" id="dview" >
 				<table class="tview" id="tview" >
@@ -1414,8 +1449,13 @@
 					</tr>
 					<tr>
 						<td></td>
-						<td></td>
-						<td><input type="button" id="btnBarcode" value="條碼列印" /></td>
+						<td style="text-align: center;">
+							<input type="button" id="btnBarcode" value="條碼列印" />
+						</td>
+						<td>
+							<input type="button" id="btnChecker" value="複檢人" />
+							<input id="txtChecker" type="text" class="txt c3"/>
+						</td>
 						<td><span> </span><a id="lblWeight" class="lbl"> </a></td>
 						<td><input id="txtWeight"  type="text"  class="num txt c1"/></td>
 					</tr>
@@ -1431,8 +1471,7 @@
 							<input id="txtOrdeaccy"  type="text"  style="display:none;"/>
 							<input type="button" id="btnOrde" value="轉訂單" style="display:none;"/>
 						</td>
-					</tr>
-					
+					</tr>				
 				</table>
 			</div>
 		</div>
