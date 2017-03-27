@@ -195,6 +195,19 @@
 				$('#b5_1').change(function(e){
 					refreshData();
 				});
+				$('#b6_1_a_3').change(function(e){
+					refreshData();
+				});
+				$('#b6_1_b_1').change(function(e){
+					refreshData();
+				});
+				$('#c6_1_a_3').change(function(e){
+					refreshData();
+				});
+				$('#c6_1_b_1').change(function(e){
+					refreshData();
+				});
+				
 			}
 
 			function q_boxClose(s2) {
@@ -299,7 +312,9 @@
 				}else{
 					var string = '';
 					for(var i=0;i<cobj.length;i++){
-						if(cobj.eq(i)[0].nodeName == 'BR'){
+						if(cobj.eq(i).hasClass('ignore')){
+							;
+						}else if(cobj.eq(i)[0].nodeName == 'BR'){
 							string += '\n';
 						}else if(!cobj.eq(i).is(":visible")){
 							;
@@ -503,25 +518,6 @@
 			}
 			function refreshDivBB(){
 				$('#divBB').show();
-				$('#divBB').find('.b1_4').remove();
-				var obj = $('.b1_3');
-				var n=0;
-				for(var i=0;i<q_bbsCount;i++){
-					if($('#txtProduct_'+i).val().length>0){
-						n++;
-						obj.after('<tr class="b1_4"><td><a>　</a><a>'+(n==1?'(3)':'　 ')+'</a><a>'+$('#txtProduct_'+i).val()+'每噸加價</a><input type="text" style="width:60px;" id="b1_4_'+n+'" /><a>元。</a></td></tr>');
-						obj = obj.next();
-						if(!(q_cur==1 || q_cur==2))
-							$('#b1_4_'+n).attr('disabled', 'disabled');
-						for(var j=0;j<q_bbtCount;j++){
-							if($('#txtKeya__'+j).val()=='b1_4_'+n){
-								$('#b1_4_'+n).val($('#txtValue__'+j).val());
-								break;
-							}
-						}
-					}
-				}
-				
 				$('.b5_1x').hide();
 				if($('#b1_1_a').val()=='含'){
 					switch($('#b5_1').val()){
@@ -548,7 +544,7 @@
 							break;
 					}
 				}
-				$('#b2_1_a').hide();
+				/*$('#b2_1_a').hide();
 				$('#b2_1_b').hide();
 				switch($('#b2_1').val()){
 					case '廠交(自運)':
@@ -559,7 +555,7 @@
 						break;
 					default:
 						break;
-				};
+				};*/
 				
 				$('#b6_1_a').hide();
 				$('#b6_1_b').hide();
@@ -581,6 +577,42 @@
 					default:
 						break;
 				};
+				
+				$('.b6_1_a_3').hide();
+				switch($('#b6_1_a_3').val()){
+					case '月結30天票期':
+						$('#b6_1_a_3a').show();
+						break;
+					case '月結45天票期':
+						$('#b6_1_a_3b').show();
+						break;
+					case '月結60天票期':
+						$('#b6_1_a_3c').show();
+						break;
+					case '月結現金':
+						$('#b6_1_a_3d').show();
+						break;
+					default:
+						break;
+				}
+				$('.b6_1_b_1').hide();
+				switch($('#b6_1_b_1').val()){
+					case '月結30天票期':
+						$('#b6_1_b_1a').show();
+						break;
+					case '月結45天票期':
+						$('#b6_1_b_1b').show();
+						break;
+					case '月結60天票期':
+						$('#b6_1_b_1c').show();
+						break;
+					case '月結現金':
+						$('#b6_1_b_1d').show();
+						break;
+					default:
+						break;
+				}
+				
 				$('#divBB').find('input[type="text"]').css('text-align','right');
 				$('#b3_1').css('text-align','center');
 				$('#b5_1_a_a').css('text-align','center');
@@ -593,24 +625,6 @@
 			}
 			function refreshDivCC(){
 				$('#divCC').show();
-				$('#divCC').find('.c1_4').remove();
-				var obj = $('.c1_3');
-				var n=0;
-				for(var i=0;i<q_bbsCount;i++){
-					if($('#txtProduct_'+i).val().length>0){
-						n++;
-						obj.after('<tr class="c1_4"><td><a>　</a><a>'+(n==1?'(4)':'　 ')+'</a><a>'+$('#txtProduct_'+i).val()+'每噸加價</a><input type="text" style="width:60px;" id="c1_4_'+n+'" /><a>元。</a></td></tr>');
-						obj = obj.next();
-						if(!(q_cur==1 || q_cur==2))
-							$('#c1_4_'+n).attr('disabled', 'disabled');
-						for(var j=0;j<q_bbtCount;j++){
-							if($('#txtKeya__'+j).val()=='c1_4_'+n){
-								$('#c1_4_'+n).val($('#txtValue__'+j).val());
-								break;
-							}
-						}
-					}
-				}
 				
 				if($('#c1_1_a').val()=='含'){
 					$('#c5_1_a').show();
@@ -619,7 +633,7 @@
 					$('#c5_1_a').hide();
 					$('#c5_1_b').show();
 				}
-				$('#c2_1_a').hide();
+				/*$('#c2_1_a').hide();
 				$('#c2_1_b').hide();
 				switch($('#c2_1').val()){
 					case '廠交(自運)':
@@ -630,7 +644,7 @@
 						break;
 					default:
 						break;
-				};
+				};*/
 				
 				$('#c6_1_a').hide();
 				$('#c6_1_b').hide();
@@ -652,6 +666,40 @@
 					default:
 						break;
 				};
+				$('.c6_1_a_3').hide();
+				switch($('#c6_1_a_3').val()){
+					case '月結30天票期':
+						$('#c6_1_a_3a').show();
+						break;
+					case '月結45天票期':
+						$('#c6_1_a_3b').show();
+						break;
+					case '月結60天票期':
+						$('#c6_1_a_3c').show();
+						break;
+					case '月結現金':
+						$('#c6_1_a_3d').show();
+						break;
+					default:
+						break;
+				}
+				$('.c6_1_b_1').hide();
+				switch($('#c6_1_b_1').val()){
+					case '月結30天票期':
+						$('#c6_1_b_1a').show();
+						break;
+					case '月結45天票期':
+						$('#c6_1_b_1b').show();
+						break;
+					case '月結60天票期':
+						$('#c6_1_b_1c').show();
+						break;
+					case '月結現金':
+						$('#c6_1_b_1d').show();
+						break;
+					default:
+						break;
+				}
 				$('#divCC').find('input[type="text"]').css('text-align','right');
 				$('#c3_1').css('text-align','center');
 				$('#c5_1_a_a').css('text-align','center');
@@ -662,11 +710,11 @@
 				if($('#cmbTypea').val()=='加工成型'){
 					$('#divCC').hide();
 					$('#divBB').show();
-					//refreshDivBB();
+					refreshDivBB();
 				}else{
 					$('#divBB').hide();
 					$('#divCC').show();
-					//refreshDivCC();
+					refreshDivCC();
 				}
 			}
 			function refresh(recno) {
@@ -1165,18 +1213,23 @@
 					</td>
 				</tr>
 				<!-- 依BBS  動態產生-->
-		 		<tr class="b1_4"><td><a>　</a><a>（3）</a><a>鋼筋3#每噸加價</a><input type="text" style="width:60px;" id="c1_4_a" /><a>元。</a></td></tr>
-				<tr class="b1_4"><td><a>　</a><a>　</a><a>鋼筋9#每噸加價</a><input type="text" style="width:60px;" id="c1_4_b" /><a>元。</a></td></tr>
-				<tr class="b1_4"><td><a>　</a><a>　</a><a>鋼筋11#每噸加價</a><input type="text" style="width:60px;" id="c1_4_c" /><a>元。</a></td></tr>
+		 		<tr class="b1_4"><td><a>　</a><a>(3)</a><a>鋼筋3#每噸加價</a><input type="text" style="width:60px;" id="c1_4_a" /><a>元。</a></td></tr>
+				<tr class="b1_4"><td><a>　</a><a>　 </a><a>鋼筋9#每噸加價</a><input type="text" style="width:60px;" id="c1_4_b" /><a>元。</a></td></tr>
+				<tr class="b1_4"><td><a>　</a><a>　 </a><a>鋼筋11#每噸加價</a><input type="text" style="width:60px;" id="c1_4_c" /><a>元。</a></td></tr>
 				
 				<tr><td><a>　</a><a>(4)</a><a>本報價單不含至續接廠運輸費用。</a></td></tr>
-				<tr><td><a>　</a><a>(5)</a><a>加工成型部份為不分板料、彎料、直料。</a></td></tr>
-				<tr><td><a>　</a><a>(6)</a><a>加工成型部份尺寸公差為±5公分。此單價不含裁切長度70CM以下直料。</a></td></tr>
-				
+				<tr><td><a>　</a><a>(5)</a><a>加工成型部份總料計價，整案承接：不分板料、彎料、直料含入續接柱筋；尺寸公差為±5公分。</a></td></tr>
+				<tr><td><a>　</a><a>(6)</a><a>此單價不含裁切長度70CM以下直料。加工成型若分料包裝(台料)每噸加價600元。</a></td></tr>
+				<tr><td><a>　</a><a>(7)</a><a>鋼筋加工成品包裝所需鋼筋與線材重量，納入鋼筋加工重量與工資計算。</a></td></tr>
 				<tr>
 					<td>
 						<a style="float:left;">2.</a><a style="float:left;">交貨地點：</a>
-						<select id="b2_1" style="float:left;">
+						<input style="float:left;" id="b2_1" list="b2_1a">
+						<datalist id="b2_1a" class="ignore">
+						  <option value='廠交(自運)'> </option>
+						</datalist>
+						
+						<!--<select id="b2_1" class="ignore" style="float:left;">
 							<option value='廠交(自運)'>廠交(自運)</option>
 							<option value='自訂'>自訂</option>
 						</select>
@@ -1185,8 +1238,8 @@
 						</div>
 						<div id="b2_1_b" style="float:left;">
 							<a>　</a><input type="text" style="width:120px;" id="b2_1_b_1"/>
-						</div>
-						<a style="float:left;">交貨期限：</a>
+						</div>-->
+						<a style="float:left;">，交貨期限：</a>
 						<input type="text" style="width:40px;float:left;" id="b2_1_c"/>
 						<a style="float:left;">年</a>
 						<input type="text" style="width:40px;float:left;" id="b2_1_d"/>
@@ -1224,7 +1277,7 @@
 						<a>吊車送達</a><input type="text" style="width:200px;" id="b5_1_b_a"/>
 						<a>，賣方負責卸貨。</a>
 						<br>
-						<a>　　 出貨需達10噸，未達10噸者須補貼運費至10噸，每噸</a><input type="text" style="width:60px;" id="b5_1_b_c"/><a>元。</a>
+						<a>　　 出貨需達15噸，未達15噸者須補貼運費至15噸，每噸</a><input type="text" style="width:60px;" id="b5_1_b_c"/><a>元。</a>
 					</td>
 				</tr>
 				<tr id="b5_1_c" class="b5_1x">
@@ -1267,23 +1320,12 @@
 				<tr>
 					<td>
 						<a>　</a><a>(2)</a>
-						<a>鋼筋材料若為定尺料者，買方應於14日前通知賣方交貨數量規格。</a>
+						<a>鋼筋材料若為定尺料者，買方應於21日前通知賣方交貨數量規格。</a>
 					</td>
 				</tr>
 				<tr>
 					<td>
 						<a>　</a><a>(3)</a>
-						<a>買方工地向賣方訂貨後，如遇天災或人力不可抗力之因素時，由雙方再議定交貨時間，</a>
-					</td>
-				</tr>
-				<tr>
-					<td>
-						<a>　　 經賣方同意展期外，買方應按訂貨數量交貨。</a>
-					</td>
-				</tr>
-				<tr>
-					<td>
-						<a>　</a><a>(4)</a>
 						<a>買方應備妥足夠容納進貨之場地，及35噸拖車可安全到達之卸貨場地，否則因而產生的其他費用 </a>
 					</td>
 				</tr>
@@ -1294,7 +1336,7 @@
 				</tr>
 				<tr>
 					<td>
-						<a>　</a><a>(5)</a>
+						<a>　</a><a>(4)</a>
 						<a>板車料長度12M、14M。超長運費加價14.1M~15M，毎米毎噸加價 </a><input type="text" style="width:60px;" id="b5_1_5_a"/><a>元，</a>
 						<br>
 						<a>　　 超長運費加價15.1M~18M，毎米毎噸加價</a><input type="text" style="width:60px;" id="b5_1_5_b"/><a>元，不足一米以一米計。 </a>
@@ -1309,7 +1351,7 @@
 				<tr>
 					<td>
 						<a style="float:left;">　(1)</a>
-						<select id="b6_1" style="float:left;">
+						<select id="b6_1" style="float:left;" class="ignore">
 							<option value='預付'>預付</option>
 							<option value='月結'>月結</option>
 							<option value='電匯'>電匯</option>
@@ -1321,14 +1363,34 @@
 								<option value='訂金抵尾款'>訂金抵尾款</option>
 								<option value='訂金依出貨比例扣除'>訂金依出貨比例扣除</option>
 							</select>
-							<a>。每月出貨貨款為當月月結</a><input type="text" style="width:40px;" id="b6_1_a_3"/><a>天票期。</a>
+							<a>每月出貨貨款為當月</a>
+							<select id="b6_1_a_3">
+								<option value='月結30天票期'>月結30天票期</option>
+								<option value='月結45天票期'>月結45天票期</option>
+								<option value='月結60天票期'>月結60天票期</option>
+								<option value='月結現金'>月結現金</option>
+							</select>
+							<a>。</a>
 							<br>
-							<a>　　 例：7月帳，開立9月10日到期支票。</a>
+							<a id="b6_1_a_3a" class="b6_1_a_3">　　  例：7月帳，開立8月30日到期支票。</a>
+							<a id="b6_1_a_3b" class="b6_1_a_3">　　  例：7月帳，開立9月15日到期支票。</a>
+							<a id="b6_1_a_3c" class="b6_1_a_3">　　  例：7月帳，開立9月30日到期支票。</a>
+							<a id="b6_1_a_3d" class="b6_1_a_3">　　  例：7月帳，開立8月10日前電匯現金。</a>
 							<br>
-							<a>　　 交貨期限到需將未出鋼筋噸數的金額扣除訂金依 當期貨款支付現金完案。</a>
+							<a>　　 交貨期限到需將未出鋼筋噸數的金額扣除訂金依當期貨款支付現金完案。</a>
 						</div>
 						<div id="b6_1_b" style="float:left;">
-							<a>每月出貨貨款為當月月結</a><input type="text" style="width:40px;" id="b6_1_b_1"/><a>天票期。例：7月帳，開立9月10日到期支票。</a>
+							<a>每月出貨貨款為當月</a>
+							<select id="b6_1_b_1">
+								<option value='月結30天票期'>月結30天票期</option>
+								<option value='月結45天票期'>月結45天票期</option>
+								<option value='月結60天票期'>月結60天票期</option>
+								<option value='月結現金'>月結現金</option>
+							</select>
+							<a id="b6_1_b_1a" class="b6_1_b_1">。例：7月帳，開立8月30日到期支票。</a>
+							<a id="b6_1_b_1b" class="b6_1_b_1">。例：7月帳，開立9月15日到期支票。</a>
+							<a id="b6_1_b_1c" class="b6_1_b_1">。例：7月帳，開立9月30日到期支票。</a>
+							<a id="b6_1_b_1d" class="b6_1_b_1">。例：7月帳，開立8月10日前電匯現金。</a>
 							<br>
 							<a>　　 交貨期限到需將未出鋼筋噸數的金額依當期貨款支付現金完案。</a>
 						</div>
@@ -1372,10 +1434,15 @@
 				</tr>
           		<tr>
 					<td>
-						<a>8.</a><a>特約事項：賣方所提供材料於買方各期貨款支付或票據兌現前賣方仍保有所有權。</a>
+						<a>8.</a><a>(1)本合約之各項材料單價，不論市面價款之漲落，買賣雙方均不得提出增減價格及數量之要求。</a>
+						<br>
+						<a>　</a><a>(2)賣方所提供材料於買方各期貨款支付或票據兌現前賣方仍保有所有權。</a>
+						<br>
+						<a>　</a><a>(3)賣方加工完成後通知買方出貨，買方需接受乙方於7天內出貨完成。若買方未能7天內出貨，</a>
+						<br>
+						<a>　</a><a> 　則補貼賣方成品放置面積廠租費及吊移費，以每平方公尺每日10元補貼賣方。</a>
 					</td>
 				</tr>
-				
 				<tr>
 					<td>
 						<a>9.</a><a>報價時效：本報價期限至</a><input type="text" style="width:200px;" id="b6_9_1"/><a>止為有效報價日。</a>
@@ -1441,14 +1508,20 @@
 			 	
 			 	<!-- 依BBS  動態產生-->
 		 		<tr class="c1_4"><td><a>　</a><a>(4)</a><a>鋼筋3#每噸加價</a><input type="text" style="width:60px;" id="c1_4_a" /><a>元。</a></td></tr>
-				<tr class="c1_4"><td><a>　</a><a>　</a><a>鋼筋9#每噸加價</a><input type="text" style="width:60px;" id="c1_4_b" /><a>元。</a></td></tr>
-				<tr class="c1_4"><td><a>　</a><a>　</a><a>鋼筋11#每噸加價</a><input type="text" style="width:60px;" id="c1_4_c" /><a>元。</a></td></tr>
+				<tr class="c1_4"><td><a>　</a><a>　 </a><a>鋼筋9#每噸加價</a><input type="text" style="width:60px;" id="c1_4_b" /><a>元。</a></td></tr>
+				<tr class="c1_4"><td><a>　</a><a>　 </a><a>鋼筋11#每噸加價</a><input type="text" style="width:60px;" id="c1_4_c" /><a>元。</a></td></tr>
 				
 				<tr><td><a>　</a><a>(5)</a><a>本報價單不含至續接廠運輸費用。</a></td></tr>
 				<tr>
 					<td>
 						<a style="float:left;">2.</a><a style="float:left;">交貨地點：</a>
-						<select id="c2_1" style="float:left;">
+						<input style="float:left;" id="c2_1" list="c2_1a">
+						<datalist id="c2_1a" class="ignore">
+						  <option value='廠交(自運)'> </option>
+						</datalist>
+						
+					
+						<!--<select id="c2_1" style="float:left;">
 							<option value='廠交(自運)'>廠交(自運)</option>
 							<option value='自訂'>自訂</option>
 						</select>
@@ -1457,8 +1530,8 @@
 						</div>
 						<div id="c2_1_b" style="float:left;">
 							<a>　</a><input type="text" style="width:120px;" id="c2_1_b_1"/>
-						</div>
-						<a style="float:left;">交貨期限：</a>
+						</div>-->
+						<a style="float:left;">，交貨期限：</a>
 						<input type="text" style="width:40px;float:left;" id="c2_1_c"/>
 						<a style="float:left;">年</a>
 						<input type="text" style="width:40px;float:left;" id="c2_1_d"/>
@@ -1503,17 +1576,6 @@
 				<tr>
 					<td>
 						<a>　</a><a>(3)</a>
-						<a>買方工地向賣方訂貨後，如遇天災或人力不可抗力之因素時，由雙方再議定交貨時間，</a>
-					</td>
-				</tr>
-				<tr>
-					<td>
-						<a>　　 經賣方同意展期外，買方應按訂貨數量交貨。</a>
-					</td>
-				</tr>
-				<tr>
-					<td>
-						<a>　</a><a>(4)</a>
 						<a>買方應備妥足夠容納進貨之場地，及35噸拖車可安全到達之卸貨場地，否則因而產生的其他費用 </a>
 					</td>
 				</tr>
@@ -1524,7 +1586,7 @@
 				</tr>
 				<tr>
 					<td>
-						<a>　</a><a>(5)</a>
+						<a>　</a><a>(4)</a>
 						<a>板車料長度12M、14M。超長運費加價14.1M~15M，毎米毎噸加價 </a><input type="text" style="width:60px;" id="c5_1_5_a"/><a>元，</a>
 						<br>
 						<a>　　 超長運費加價15.1M~18M，毎米毎噸加價</a><input type="text" style="width:60px;" id="c5_1_5_b"/><a>元，不足一米以一米計。 </a>
@@ -1532,7 +1594,7 @@
 				</tr>
 				<tr>
 					<td>
-						<a>　</a><a>(6)</a>
+						<a>　</a><a>(5)</a>
 						<a>板車承裝加工成型料整台運費每噸另加50元。 </a>
 					</td>
 				</tr>
@@ -1545,7 +1607,7 @@
 				<tr>
 					<td>
 						<a style="float:left;">　(1)</a>
-						<select id="c6_1" style="float:left;">
+						<select id="c6_1" style="float:left;" class="ignore">
 							<option value='預付'>預付</option>
 							<option value='月結'>月結</option>
 							<option value='電匯'>電匯</option>
@@ -1557,14 +1619,34 @@
 								<option value='訂金抵尾款'>訂金抵尾款</option>
 								<option value='訂金依出貨比例扣除'>訂金依出貨比例扣除</option>
 							</select>
-							<a>。每月出貨貨款為當月月結</a><input type="text" style="width:40px;" id="c6_1_a_3"/><a>天票期。</a>
+							<a>每月出貨貨款為當月</a>
+							<select id="c6_1_a_3">
+								<option value='月結30天票期'>月結30天票期</option>
+								<option value='月結45天票期'>月結45天票期</option>
+								<option value='月結60天票期'>月結60天票期</option>
+								<option value='月結現金'>月結現金</option>
+							</select>
+							<a>。</a>
 							<br>
-							<a>　　 例：7月帳，開立9月10日到期支票。</a>
+							<a id="c6_1_a_3a" class="c6_1_a_3">　 　例：7月帳，開立8月30日到期支票。</a>
+							<a id="c6_1_a_3b" class="c6_1_a_3">　　 例：7月帳，開立9月15日到期支票。</a>
+							<a id="c6_1_a_3c" class="c6_1_a_3">　　 例：7月帳，開立9月30日到期支票。</a>
+							<a id="c6_1_a_3d" class="c6_1_a_3">　　 例：7月帳，開立8月10日前電匯現金。</a>
 							<br>
-							<a>　　 交貨期限到需將未出鋼筋噸數的金額扣除訂金依 當期貨款支付現金完案。</a>
+							<a>　　 交貨期限到需將未出鋼筋噸數的金額扣除訂金依當期貨款支付現金完案。</a>
 						</div>
 						<div id="c6_1_b" style="float:left;">
-							<a>每月出貨貨款為當月月結</a><input type="text" style="width:40px;" id="c6_1_b_1"/><a>天票期。例：7月帳，開立9月10日到期支票。</a>
+							<a>每月出貨貨款為當月</a>
+							<select id="c6_1_b_1">
+								<option value='月結30天票期'>月結30天票期</option>
+								<option value='月結45天票期'>月結45天票期</option>
+								<option value='月結60天票期'>月結60天票期</option>
+								<option value='月結現金'>月結現金</option>
+							</select>
+							<a id="c6_1_b_1a" class="c6_1_b_1">。例：7月帳，開立8月30日到期支票。</a>
+							<a id="c6_1_b_1b" class="c6_1_b_1">。例：7月帳，開立9月15日到期支票。</a>
+							<a id="c6_1_b_1c" class="c6_1_b_1">。例：7月帳，開立9月30日到期支票。</a>
+							<a id="c6_1_b_1d" class="c6_1_b_1">。例：7月帳，開立8月10日前電匯現金。</a>
 							<br>
 							<a>　　 交貨期限到需將未出鋼筋噸數的金額依當期貨款支付現金完案。</a>
 						</div>
@@ -1608,10 +1690,15 @@
 				</tr>
           		<tr>
 					<td>
-						<a>8.</a><a>特約事項：賣方所提供材料於買方各期貨款支付或票據兌現前賣方仍保有所有權。</a>
+						<a>8.</a><a>(1)本合約之各項材料單價，不論市面價款之漲落，買賣雙方均不得提出增減價格及數量之要求。</a>
+						<br>
+						<a>　</a><a>(2)賣方所提供材料於買方各期貨款支付或票據兌現前賣方仍保有所有權。</a>
+						<br>
+						<a>　</a><a>(3)賣方加工完成後通知買方出貨，買方需接受乙方於7天內出貨完成。若買方未能7天內出貨，</a>
+						<br>
+						<a>　</a><a>　  則補貼賣方成品放置面積廠租費及吊移費，以每平方公尺每日10元補貼賣方。</a>
 					</td>
 				</tr>
-				
 				<tr>
 					<td>
 						<a>9.</a><a>報價時效：本報價期限至</a><input type="text" style="width:200px;" id="c6_9_1"/><a>止為有效報價日。</a>

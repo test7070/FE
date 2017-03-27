@@ -43,21 +43,22 @@ z_quatfep02:--	z_quatfep02
 	declare @price2 float = 0
 	declare @price3 float = 0
 	declare @memos nvarchar(max)
+	
 	if exists(select * from view_quat where noa=@t_noa and typea='加工成型')
 	begin
 		set @memos = '加工成型'
 		select @mount=value from view_quatt where noa=@t_noa and keya='b0_1_a'
 		select @price1=value from view_quatt where noa=@t_noa and keya='b0_2_a'
-		select @price2=value from view_quatt where noa=@t_noa and keya='b0_3_a'
-		select @price3=value from view_quatt where noa=@t_noa and keya='b0_4_a'
+		select @price2=value from view_quatt where noa=@t_noa and keya='b0_2_b'
+		select @price3=value from view_quatt where noa=@t_noa and keya='b0_2_c'
 	end
 	else
 	begin
 		set @memos = '板車料，以件數出貨'
 		select @mount=value from view_quatt where noa=@t_noa and keya='c0_1_a'
 		select @price1=value from view_quatt where noa=@t_noa and keya='c0_2_a'
-		select @price2=value from view_quatt where noa=@t_noa and keya='c0_3_a'
-		select @price3=value from view_quatt where noa=@t_noa and keya='c0_4_a'
+		select @price2=value from view_quatt where noa=@t_noa and keya='c0_2_b'
+		select @price3=value from view_quatt where noa=@t_noa and keya='c0_2_c'
 	end
 
 	insert into @tmp(gno,productno,product,size,unit,mount,price,memo)
