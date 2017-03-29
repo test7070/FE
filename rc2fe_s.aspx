@@ -46,12 +46,27 @@
                 t_edate = $('#txtEdate').val();
                 t_mon = $('#txtMon').val();
                 t_tggno = $('#txtTggno').val();
-                t_invono = $('#txtInvono').val();
-                t_accno = $('#txtAccno').val();
+                t_memo = $.trim($('#txtMemo').val());
+				//廠商名稱、電話、發票號碼、備註、傳票號碼
 
-
-                var t_where = " 1=1 " + q_sqlPara2("noa", t_noa) + q_sqlPara2("cno", t_cno) + q_sqlPara2("datea", t_bdate, t_edate) + q_sqlPara2("mon", t_mon) + q_sqlPara2("tggno", t_tggno) + q_sqlPara2("invono", t_invono) + q_sqlPara2("accno", t_accno);
-
+                var t_where = " 1=1 " 
+                	+ q_sqlPara2("noa", t_noa) 
+                	+ q_sqlPara2("cno", t_cno) 
+                	+ q_sqlPara2("datea", t_bdate, t_edate) 
+                	+ q_sqlPara2("mon", t_mon) 
+                	+ q_sqlPara2("tggno", t_tggno) ;
+				
+				if(t_memo.length>0){
+					t_where += " and(";
+					t_where += "charindex('"+t_memo+"',comp)>0";
+					t_where +=" or charindex('"+t_memo+"',nick)>0 ";
+					t_where +=" or charindex('"+t_memo+"',tel)>0 ";
+					t_where +=" or charindex('"+t_memo+"',invono)>0 ";
+					t_where +=" or charindex('"+t_memo+"',memo)>0 ";
+					t_where +=" or charindex('"+t_memo+"',accno)>0 ";
+					t_where +=")";
+				}
+				
                 t_where = ' where=^^' + t_where + '^^ ';
                 return t_where;
             }
@@ -86,35 +101,19 @@
 				</tr>
 				<tr class='seek_tr'>
 					<td><a id='lblMon'> </a></td>
-					<td>
-					<input id="txtMon" type="text" style="width:40%;"/>
-					</td>
+					<td><input id="txtMon" type="text" style="width:40%;"/></td>
 				</tr>
 				<tr class='seek_tr'>
-					<td class='seek'  style="width:20%;"><a id='lblTggno'></a></td>
-					<td>
-					<input class="txt" id="txtTggno" type="text" style="width:90px; font-size:medium;" />
-					&nbsp;
-					<input class="txt" id="txtTgg" type="text" style="width:115px;font-size:medium;" />
-					</td>
+					<td class='seek'  style="width:20%;"><a id='lblNoa'> </a></td>
+					<td><input class="txt" id="txtNoa" type="text" style="width:215px; font-size:medium;" /></td>
 				</tr>
 				<tr class='seek_tr'>
-					<td class='seek'  style="width:20%;"><a id='lblNoa'></a></td>
-					<td>
-					<input class="txt" id="txtNoa" type="text" style="width:215px; font-size:medium;" />
-					</td>
+					<td class='seek'  style="width:20%;"><a id='lblTggno'> </a></td>
+					<td><input class="txt" id="txtTggno" type="text" style="width:215px; font-size:medium;" /></td>
 				</tr>
 				<tr class='seek_tr'>
-					<td><a id='lblInvono'> </a></td>
-					<td>
-					<input id="txtInvono" type="text"/>
-					</td>
-				</tr>
-				<tr class='seek_tr'>
-					<td><a id='lblAccno'> </a></td>
-					<td>
-					<input id="txtAccno" type="text"/>
-					</td>
+					<td class='seek'  style="width:20%;"><a id='lblMemo'>備註</a></td>
+					<td><input class="txt" id="txtMemo" type="text" style="width:215px; font-size:medium;" title="廠商名稱、電話、發票號碼、備註、傳票號碼"/></td>
 				</tr>
 			</table>
 			<!--#include file="../inc/seek_ctrl.inc"-->
