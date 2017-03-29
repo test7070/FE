@@ -61,13 +61,13 @@
 
 			function sum() {
 				var t_c1=0;
-				/*for (var j = 0; j < q_bbtCount; j++) {
+				for (var j = 0; j < q_bbtCount; j++) {
 					var t_lengthc = dec($('#txtLengthc__' + j).val());
 					var t_gmount = dec($('#txtGmount__' + j).val());
-					//var t_hard= dec($('#txtHard__' + j).val());
 					t_c1=q_add(t_c1,q_mul(t_lengthc,t_gmount));
-				}*/
-				var t_samebbs=[];
+				}
+				
+				/*var t_samebbs=[];
 				var t_samebbt=[];
 				for (var i = 0; i < q_bbsCount; i++) {
 					if(!emp($('#txtProductno_'+i).val()) && !emp($('#txtProduct_'+i).val()) 
@@ -143,7 +143,7 @@
 				for (var j = 0; j < t_samebbt.length; j++) {
 					t_c1=q_add(dec(t_c1),dec(t_samebbt[j].alllen));
 				}
-				
+				*/
 				$('#txtC1').val(t_c1);
 			}
 
@@ -154,7 +154,7 @@
 				q_mask(bbmMask);
 				q_cmbParse("cmbMechno", "01@剪台,02@火切,12@D10盤圓,13@D13盤圓,20@續接裁剪");
 				
-				document.title='鋼筋裁剪單';
+				document.title='鋼筋裁剪單 1.0';
 				q_gt('add5', "where=^^1=1^^" , 0, 0, 0, "getadd5",r_accy,1); //號數
 				var as = _q_appendData("add5", "", true);
 				as.sort(function(a, b){if (dec(a.typea) > dec(b.typea)) {return 1;}if (dec(a.typea) < dec(b.typea)) {return -1;}});
@@ -248,7 +248,7 @@
 					var t_same=[]; //bbs可裁剪的內容(相同材質號數長度)
 					var t_cutsheet=$('#cmbStatus').val();//可裁剪的板料長度
 					var maxcutsheet=0;//最大板料長度
-					if(t_cutsheet.length==0){
+					if($('#cmbStatus').find("option:selected").text().length==0){
 						t_cutsheet='12';
 						t_cutsheet=t_cutsheet.split(',');
 					}
@@ -1121,21 +1121,26 @@
 						var tspec=tproduct.substr(tproduct.indexOf('S'),tproduct.indexOf(' ')-tproduct.indexOf('S'))
 						var tsize=tproduct.split(' ')[1].split('*')[0];
 						var tlength=dec(tproduct.split('*')[1])*100;
-						var t_memo2s='+'+$('#txtMemo2__'+j).val();
-						var t_memo2=$('#txtMemo2__'+j).val().split('+');
+						var t_memo2s=replaceAll('+'+$('#txtMemo2__'+j).val().substr(0,$('#txtMemo2__'+j).val().indexOf('=')),'(入庫)','');
+						var t_memo2=replaceAll($('#txtMemo2__'+j).val().substr(0,$('#txtMemo2__'+j).val().indexOf('=')),'(入庫)','').split('+');
 						var t_nor=$('#txtNor__'+j).val().split(',');
+						var lengthc=dec($('#txtLengthc__'+j).val());//損耗
 						var chklength=0;
 						for(var k=0;k<t_memo2.length;k++){
 							var clength=dec(t_memo2[k].split('*')[0]);
 							var cmount=dec(t_memo2[k].split('*')[1]);
 							chklength=q_add(chklength,q_mul(clength,cmount));
 						}
-						if(chklength!=tlength){
-							t_err=t_err+'領料 第'+(j+1)+'項 領料長度不等於裁剪總長度!! \n';
+						if(q_add(chklength,lengthc)!=tlength && q_add(chklength,lengthc)!=(tlength+5)){
+							if(tlength>chklength){
+								t_err=t_err+'領料 第'+(j+1)+'項 領料長度('+tlength.toString()+')大於裁剪總長度('+chklength.toString()+')+損耗('+lengthc+')!! \n';
+							}else{
+								t_err=t_err+'領料 第'+(j+1)+'項 領料長度('+tlength.toString()+')小於裁剪總長度('+chklength.toString()+')+損耗('+lengthc+')!! \n';
+							}
 						}
 						for(var k=0;k<t_nor.length;k++){
 							if(t_memo2s.indexOf('+'+dec($('#txtLengthb_'+(dec(t_nor[k])-1)).val())+'*')==-1){
-								t_err=t_err+'領料 第'+(j+1)+'項 裁剪內容 裁剪長度不等於配料長度('+$('#txtLengthb_'+(dec(t_nor[k])-1)).val()+')!! \n';
+								t_err=t_err+'領料 第'+(j+1)+'項 裁剪內容('+t_memo2s.substr(1)+')不存在配料項次【'+t_nor[k]+'】長度('+$('#txtLengthb_'+(dec(t_nor[k])-1)).val()+')!! \n';
 								break;
 							}
 						}
@@ -1143,7 +1148,7 @@
 				}
 				if(t_err.length>0){
 					alert(t_err);
-					return;
+					//return;
 				}
 				t_err='';
 				var t_same=[];
@@ -1196,14 +1201,14 @@
 				}
 				//判斷領料裁剪出的數量是否符合裁剪單的資料
 				for (var j = 0; j < q_bbtCount; j++) {
-					if(!emp($('#txtProductno_'+j).val()) && !emp($('#txtProduct__'+j).val()) &&!emp($('#txtMemo2__'+j).val()) &&!emp($('#txtNor__'+j).val())){
+					if(!emp($('#txtProductno__'+j).val()) && !emp($('#txtProduct__'+j).val()) &&!emp($('#txtMemo2__'+j).val()) &&!emp($('#txtNor__'+j).val())){
 						var tproduct=$('#txtProduct__'+j).val();
 						var tmount=dec($('#txtGmount__'+j).val());//領料數量
 						//材質號數長度
 						var tspec=tproduct.substr(tproduct.indexOf('S'),tproduct.indexOf(' ')-tproduct.indexOf('S'));
 						var tsize=tproduct.split(' ')[1].split('*')[0];
 						var tlength=dec(tproduct.split('*')[1])*100;
-						var t_memo2=$('#txtMemo2__'+j).val().split('+');
+						var t_memo2=replaceAll($('#txtMemo2__'+j).val().substr(0,$('#txtMemo2__'+j).val().indexOf('=')),'(入庫)','').split('+');
 						var t_nor=','+$('#txtNor__'+j).val()+',';
 						var t_lengthc=$('#txtLengthc__'+j).val();
 						var t_werr=false;
@@ -1217,7 +1222,7 @@
 										if(t_nor.indexOf(','+t_same[i].data[n].nor.toString()+',')>-1 && cmount>0){
 											if(((t_lengthc>tw03 && tw03>0) 
 											|| (t_lengthc>tw04*tlength && tw04>0)) && !t_werr){
-												t_err=t_err+'領料 第'+(j+1)+'項 裁剪組料損耗 超出訂單可損耗長度!! \n';
+												t_err=t_err+'領料 第'+(j+1)+'項 裁剪組料損耗('+t_lengthc+') 超出訂單可損耗長度!! \n';
 												t_werr=true;
 											}
 											
@@ -1251,7 +1256,7 @@
 				
 				if(t_err.length>0){
 					alert(t_err);
-					return;
+					//return;
 				}
 				
 				sum();
