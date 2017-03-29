@@ -117,6 +117,9 @@
 				$('#b5_1').change(function(e){
 					refreshData();
 				});
+				$('#c5_1').change(function(e){
+					refreshData();
+				});
 				$('#b6_1_a_3').change(function(e){
 					refreshData();
 				});
@@ -365,6 +368,9 @@
 						case 'C':
 							$('#b5_1_c').show();
 							break;
+						case 'D':
+							$('#b5_1_g').show();
+							break;
 					}
 				}else{
 					switch($('#b5_1').val()){
@@ -376,6 +382,9 @@
 							break;
 						case 'C':
 							$('#b5_1_f').show();
+							break;
+						case 'D':
+							$('#b5_1_g').show();
 							break;
 					}
 				}
@@ -454,17 +463,19 @@
 				$('#b5_1_d_a').css('text-align','center');
 				$('#b5_1_e_a').css('text-align','center');
 				$('#b5_1_f_a').css('text-align','center');
+				$('#b5_1_g_a').css('text-align','center');
 				$('#b6_9_1').css('text-align','center');
 			}
 			function refreshDivCC(){
 				$('#divCC').show();
 				
-				if($('#c1_1_a').val()=='含'){
+				$('.c5_1x').hide();
+				if($('#c5_1').val()=='A' && $('#c1_1_a').val()=='含'){
 					$('#c5_1_a').show();
-					$('#c5_1_b').hide();
-				}else{
-					$('#c5_1_a').hide();
+				}else if($('#c5_1').val()=='A' && $('#c1_1_a').val()!='含'){
 					$('#c5_1_b').show();
+				}else {
+					$('#c5_1_g').show();
 				}
 				/*$('#c2_1_a').hide();
 				$('#c2_1_b').hide();
@@ -537,6 +548,7 @@
 				$('#c3_1').css('text-align','center');
 				$('#c5_1_a_a').css('text-align','center');
 				$('#c5_1_b_a').css('text-align','center');
+				$('#c5_1_g_a').css('text-align','left');
 				$('#c6_9_1').css('text-align','center');
 			}
 			function refreshData(){
@@ -1118,6 +1130,7 @@
 							<option value='A'>A</option>
 							<option value='B'>B</option>
 							<option value='C'>C</option>
+							<option value='D'>D</option>
 						</select>
 					</td>
 				</tr>
@@ -1126,7 +1139,7 @@
 					<td>
 						<a>　</a><a>(1)</a>
 						<a>板車送達</a><input type="text" style="width:200px;" id="b5_1_a_a"/>
-						<a>，買方負責卸貨。</a>
+						<a>，甲方負責卸貨。</a>
 						<br>
 						<a>　　 出貨須達25噸，未達25噸者須補貼運費至25噸，每噸</a><input type="text" style="width:60px;" id="b5_1_a_c"/><a>元。</a>
 					</td>
@@ -1135,7 +1148,7 @@
 					<td>
 						<a>　</a><a>(1)</a>
 						<a>吊車送達</a><input type="text" style="width:200px;" id="b5_1_b_a"/>
-						<a>，賣方負責卸貨。</a>
+						<a>，乙方負責卸貨。</a>
 						<br>
 						<a>　　 出貨需達15噸，未達15噸者須補貼運費至15噸，每噸</a><input type="text" style="width:60px;" id="b5_1_b_c"/><a>元。</a>
 					</td>
@@ -1145,7 +1158,7 @@
 						<a>　(1)</a>
 						<a>吊車送達</a><input type="text" style="width:200px;" id="b5_1_c_a"/>
 						<a>限</a><input type="text" style="width:60px;" id="b5_1_c_b"/>
-						<a>運輸以內，賣方負責卸貨。</a>
+						<a>運輸以內，乙方負責卸貨。</a>
 					</td>
 				</tr>
 				<!-- 不含運  -->
@@ -1175,6 +1188,11 @@
 						<a>吊車送達</a><input type="text" style="width:200px;" id="b5_1_f_a"/>
 						<a>，每趟</a><input type="text" style="width:60px;" id="b5_1_f_b"/>
 						<a>)元。</a>
+					</td>
+				</tr>
+				<tr id="b5_1_g" class="b5_1x">
+					<td>
+						<a>　(1)</a><input type="text" style="width:500px;" id="b5_1_g_a" placeholder="自訂"/>
 					</td>
 				</tr>
 				<tr>
@@ -1294,11 +1312,11 @@
 					<td>
 						<a>8.</a><a>(1)本合約之各項材料單價，不論市面價款之漲落，買賣雙方均不得提出增減價格及數量之要求。</a>
 						<br>
-						<a>　</a><a>(2)賣方所提供材料於買方各期貨款支付或票據兌現前賣方仍保有所有權。</a>
+						<a>　</a><a>(2)乙方所提供材料於甲方各期貨款支付或票據兌現前乙方仍保有所有權。</a>
 						<br>
-						<a>　</a><a>(3)賣方加工完成後通知買方出貨，買方需接受乙方於7天內出貨完成。若買方未能7天內出貨，</a>
+						<a>　</a><a>(3)乙方加工完成後通知甲方出貨，甲方需接受乙方於7天內出貨完成。若甲方未能7天內出貨，</a>
 						<br>
-						<a>　</a><a>　  則補貼賣方成品放置面積廠租費及吊移費，以每平方公尺每日10元補貼賣方。</a>
+						<a>　</a><a>　  則補貼乙方成品放置面積廠租費及吊移費，以每平方公尺每日10元補貼乙方。</a>
 					</td>
 				</tr>
 				<tr>
@@ -1403,36 +1421,45 @@
 					</td>
 				</tr>
 				<tr><td><a>3.</a><a>工程名稱：</a><input type="text" style="width:200px;" id="c3_1"/></td></tr>
-				<tr><td><a>4.</a><a>鋼筋計價重量：以乙方實際過磅為準，若磅差超出千分之三時買方得要求公證地磅會磅，</a></td></tr>
+				<tr><td><a>4.</a><a>鋼筋計價重量：以乙方實際過磅為準，若磅差超出千分之三時甲方得要求公證地磅會磅，</a></td></tr>
 				<tr><td><a>　千分之三內甲方不得扣失重，若超出千分之三以上，雙方各半。</a></td></tr>
 				<tr>
 					<td>
-						<a>5.</a><a>交貨辦法：</a>
+						<a style="float:left;">5.交貨辦法：</a>
+						<select id="c5_1" style="float:left;" class='ignore'>
+							<option value='A'>預設</option>
+							<option value='D'>自訂</option>
+						</select>
 					</td>
 				</tr>
-				<tr id="c5_1_a">
+				<tr id="c5_1_a" class="c5_1x">
 					<td>
 						<a>　(1)</a>
 						<a>板車送達</a><input type="text" style="width:200px;" id="c5_1_a_a"/><a>，</a>
-						<select id="c5_1_a_b"><option value='買方'>甲方</option><option value='賣方'>乙方</option></select>
+						<select id="c5_1_a_b"><option value='甲方'>甲方</option><option value='乙方'>乙方</option></select>
 						<a>負責卸貨。</a>
 						<br>
 						<a>　　 出貨須達25噸，未達25噸者須補貼運費至25噸，每噸</a><input type="text" style="width:60px;" id="c5_1_a_c"/><a>元。</a>
 					</td>
 				</tr>
-				<tr id="c5_1_b">
+				<tr id="c5_1_b" class="c5_1x">
 					<td>
 						<a>　(1)</a>
 						<a>板車送達</a><input type="text" style="width:200px;" id="c5_1_b_a"/><a>，每噸</a><input type="text" style="width:60px;" id="c5_1_b_b"/><a>元。</a>
-						<a>買方負責卸貨。</a>
+						<a>甲方負責卸貨。</a>
 						<br>
 						<a>　　 出貨須達25噸，未達25噸者須補貼運費至25噸，每噸</a><input type="text" style="width:60px;" id="c5_1_b_c"/><a>元。</a>
+					</td>
+				</tr>
+				<tr id="c5_1_g" class="c5_1x">
+					<td>
+						<a>　(1)</a><input type="text" style="width:500px;" id="c5_1_g_a" placeholder="自訂"/>
 					</td>
 				</tr>
 				<tr>
 					<td>
 						<a>　</a><a>(2)</a>
-						<a>鋼筋材料若為定尺料者，買方應於14日前通知賣方交貨數量規格。</a>
+						<a>鋼筋材料若為定尺料者，甲方應於14日前通知乙方交貨數量規格。</a>
 					</td>
 				</tr>
 				<tr>
@@ -1554,11 +1581,11 @@
 					<td>
 						<a>8.</a><a>(1)本合約之各項材料單價，不論市面價款之漲落，買賣雙方均不得提出增減價格及數量之要求。</a>
 						<br>
-						<a>　</a><a>(2)賣方所提供材料於買方各期貨款支付或票據兌現前賣方仍保有所有權。</a>
+						<a>　</a><a>(2)乙方所提供材料於甲方各期貨款支付或票據兌現前乙方仍保有所有權。</a>
 						<br>
-						<a>　</a><a>(3)賣方加工完成後通知買方出貨，買方需接受乙方於7天內出貨完成。若買方未能7天內出貨，</a>
+						<a>　</a><a>(3)乙方加工完成後通知甲方出貨，甲方需接受乙方於7天內出貨完成。若甲方未能7天內出貨，</a>
 						<br>
-						<a>　</a><a>　  則補貼賣方成品放置面積廠租費及吊移費，以每平方公尺每日10元補貼賣方。</a>
+						<a>　</a><a>　  則補貼乙方成品放置面積廠租費及吊移費，以每平方公尺每日10元補貼乙方。</a>
 					</td>
 				</tr>
 				
