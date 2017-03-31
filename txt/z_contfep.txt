@@ -32,8 +32,8 @@ z_contfep01:--z_contfep01
 	insert into @tmp(gno)values('3')
 	insert into @tmp(gno)values('4')
 	insert into @tmp(gno)values('5')
-	insert into @tmp(gno)values('6')
-	insert into @tmp(gno)values('13') --空白行
+	--insert into @tmp(gno)values('6')  5,6合併成一行
+	--insert into @tmp(gno)values('13') --空白行
 	select @memo=ISNULL(b.comp,'')+'(甲方)今向'+ISNULL(c.acomp,'')+'(乙方)訂購下列貨品，經雙方議定條件如下：'
 	from cont a
 	left join cust b on a.tggno=b.noa
@@ -80,7 +80,7 @@ z_contfep01:--z_contfep01
 	outer apply(select top 1 * from @tmp where gno='10' order by sel desc) b
 	where a.sel=b.sel
 	
-	insert into @tmp(gno)values('13') --空白行
+	--insert into @tmp(gno)values('13') --空白行
 	----------------------------------------------------------------------------
 	declare @memo2 nvarchar(max) = ''
 	select @memo2=memo2 from cont where noa=@t_noa
@@ -96,7 +96,7 @@ z_contfep01:--z_contfep01
 		insert into @tmp(gno,memo)values('12',@memo2)
 	end
 	-------------------------------------------------------------------------------------
-	insert into @tmp(gno)values('13')
+	--insert into @tmp(gno)values('13')
 	insert into @tmp(gno,memo)values('14',N'本合約一式二份，買賣雙方各執壹份為憑')--換頁
 	
 	insert into @tmp(gno)values('13')
