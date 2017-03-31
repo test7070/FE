@@ -32,8 +32,8 @@ z_quatfep02:--	z_quatfep02
 	insert into @tmp(gno)values('3')
 	insert into @tmp(gno)values('4')
 	insert into @tmp(gno)values('5')
-	insert into @tmp(gno)values('6')
-	insert into @tmp(gno)values('13') --空白行
+	--insert into @tmp(gno)values('6')  5,6合併成一行
+	--insert into @tmp(gno)values('13') --空白行
 	insert into @tmp(gno)values('7')
 	insert into @tmp(gno)values('8')
 	insert into @tmp(gno)values('9')
@@ -77,7 +77,7 @@ z_quatfep02:--	z_quatfep02
 	outer apply(select top 1 * from @tmp where gno='10' order by sel desc) b
 	where a.sel=b.sel
 	
-	insert into @tmp(gno)values('13') --空白行
+	--insert into @tmp(gno)values('13') --空白行
 	----------------------------------------------------------------------------
 	declare @memo2 nvarchar(max) = ''
 	select @memo2=memo2 from view_quat where noa=@t_noa
