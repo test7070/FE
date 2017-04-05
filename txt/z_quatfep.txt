@@ -8,6 +8,7 @@ z_quatfep02:--	z_quatfep02
 	declare @tmp table(
 		sel int identity(1,1)
 		,gno nvarchar(10)
+		,pno int
 		,typea nvarchar(20)
 		,worker nvarchar(20)
 		,datea nvarchar(20)
@@ -60,17 +61,42 @@ z_quatfep02:--	z_quatfep02
 		select @price2=value from view_quatt where noa=@t_noa and keya='c0_2_b'
 		select @price3=value from view_quatt where noa=@t_noa and keya='c0_2_c'
 	end
-
-	insert into @tmp(gno,productno,product,size,unit,mount,price,memo)
-	select '10','','熱軋鋼筋SD280','4#、5#','噸',null,@price1,@memos
-	insert into @tmp(gno,productno,product,size,unit,mount,price,memo)
-	select '10','','熱軋鋼筋SD280W','4#、5#','噸',@mount,@price2,@memos
-	insert into @tmp(gno,productno,product,size,unit,mount,price,memo)
-	select '10','','熱軋鋼筋SD420W','6#、7#、8#、10#','噸',null,@price3,@memos
-	--insert into @tmp(gno,productno,product,size,unit,mount,price,memo)
-	--select '10',b.productno,b.product,b.size,b.unit,b.mount,b.price,b.memo
-	--from view_quats b 
-	--where b.noa=@t_noa
+	if isnull(@price1,0)!=0
+	begin
+		insert into @tmp(gno,pno,productno,product,size,unit,mount,price,memo)
+		select '10',1,'','熱軋鋼筋SD280','4#、5#','噸',null,@price1,@memos
+	end
+	if isnull(@price2,0)!=0
+	begin
+		
+		insert into @tmp(gno,pno,productno,product,size,unit,mount,price,memo)
+		select '10',2,'','熱軋鋼筋SD280W','4#、5#','噸',null,@price2,@memos
+		
+	end
+	if isnull(@price3,0)!=0
+	begin
+		insert into @tmp(gno,pno,productno,product,size,unit,mount,price,memo)
+		select '10',3,'','熱軋鋼筋SD420W','4#、5#、6#、7#、8#、10#','噸',null,@price3,@memos
+	end
+	
+	declare @n int = case when isnull(@price1,0)!=0 then 1 else 0 end 
+		+case when isnull(@price2,0)!=0 then 1 else 0 end 
+		+case when isnull(@price3,0)!=0 then 1 else 0 end 
+	
+	if @n=3
+	begin
+		update @tmp set mount=@mount
+		from @tmp a
+		left join (select sel,ROW_NUMBER()over(order by pno,sel) rr from @tmp where gno='10') b on a.sel=b.sel
+		where b.rr=2
+	end
+	else
+	begin
+		update @tmp set mount=@mount
+		from @tmp a
+		left join (select sel,ROW_NUMBER()over(order by pno,sel) rr from @tmp where gno='10') b on a.sel=b.sel
+		where b.rr=1
+	end
 	
 	update @tmp set gno='11'
 	from @tmp a

@@ -1202,7 +1202,7 @@
 				</tr>
 				<tr class="ignore">
 					<td>熱軋鋼筋SD420W</td>
-					<td>6#、7#、8#、10#</td>
+					<td>4#、5#、6#、7#、8#、10#</td>
 					<td>噸</td>
 					<td><input type="text" style="width:60px;" id="b0_2_c" /></td>
 					<td>加工成型</td>
@@ -1492,7 +1492,7 @@
 				</tr>
 				<tr class="ignore">
 					<td>熱軋鋼筋SD420W</td>
-					<td>6#、7#、8#、10#</td>
+					<td>4#、5#、6#、7#、8#、10#</td>
 					<td>噸</td>
 					<td><input type="text" style="width:60px;" id="c0_2_c" /></td>
 					<td>板車料，以件數出貨</td>
