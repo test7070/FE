@@ -4,7 +4,7 @@
 		{
 		    jwcf wcf = new jwcf();
 		
-		    wcf.q_content("cust", " left( $r_userno,1)!='B' or ( salesno=$r_userno or $r_rank >= 8 )");
+		    wcf.q_content("cust", " left( $r_userno,1)!='B' or ( salesno=$r_userno or salesno='B00' or salesno='B000' or salesno='B020' or $r_rank >= 8 )");
 		    
 		}
 	</script>
@@ -250,14 +250,8 @@
 				switch (t_name) {
 					case 'acomp':
 						var as = _q_appendData("acomp", "", true);
-						if (q_getPara('sys.project').toUpperCase()=='FE' && (r_userno.substr(0,1).toUpperCase())=='B'){
-							q_content = "where=^^salesno='" + r_userno + "'^^";
-							q_gt(q_name, q_content, q_sqlCount, 1, 0, '', r_accy);
-		
-						}else{
-							q_content = "";
-							q_gt(q_name, q_content, q_sqlCount, 1);
-						}
+						q_content = "";
+						q_gt(q_name, q_content, q_sqlCount, 1);
 						break;
 					case 'custtype':
 						var as = _q_appendData("custtype", "", true);

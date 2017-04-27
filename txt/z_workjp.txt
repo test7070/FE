@@ -328,6 +328,7 @@ z_workjp01:--z_workjp01 因為要印頁小計，改為一次只能印一張
 	left join (select ppx,SUM(isnull(mount,0)) mount,SUM(isnull(weight,0)) weight from @tmp group by ppx) b on a.ppx=b.ppx
     
 	select recno rr
+		,noa a00
 		,custno a01
 		,cust a02
 		,[site] a03
