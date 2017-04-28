@@ -313,6 +313,31 @@
 							
 							maxcutlengthb=cutlengthb[cutlengthb.length-1];
 							maxcutlengthbs=[];
+							//106/04/28 已裁剪數量大的先下去配料--取消恢復用最長長度-------------------
+							/*cutlengthb=[];
+							cutlengthballs=[];
+							maxcutlengthb='0';
+							maxcutlengthbs=[];
+							
+							var t_cutlengthb=[];
+							for (var j=0;j<t_same.length;j++){
+								var tspec2=t_same[j].spec;
+								var tsize2=t_same[j].size;
+								var tmount2=t_same[j].mount;
+								var lengthb2=dec(t_same[j].lengthb);
+								if(tspec1==tspec2 && tsize1==tsize2 && dec(tmount2)>0){
+									t_cutlengthb.push({
+										'lengthb':lengthb2,
+										'mount':tmount2
+									});
+								}
+							}
+							t_cutlengthb.sort(function(a, b) {if(a.mount>b.mount) {return -1;} if (a.mount < b.mount) {return 1;} if(a.lengthb>b.lengthb) {return 1;} if (a.lengthb < b.lengthb) {return -1;} return 0;});
+							for (var j=0;j<t_cutlengthb.length;j++){
+								cutlengthb.push(t_cutlengthb[j].lengthb);
+							}
+							maxcutlengthb=cutlengthb[0];*/
+							//----------------------------------------------------------------------
 							
 							for (var j=0;j<t_same.length;j++){
 								var tspec2=t_same[j].spec;
@@ -540,6 +565,10 @@
 										}
 									}
 									var t_wlength=dec(cupolength);
+									/*if(t_wlength.toString().slice(-1)=='5'){
+										t_wlength=dec(t_wlength.toString().substr(0,t_wlength.toString().length-1)+'0');
+									}*/
+									
 									var t_cutlength='';
 									for (var m=0;m<cuttmp.length;m++){
 										for (var n=0;n<tt_same.length;n++){
@@ -565,6 +594,8 @@
 											}
 										}
 									}
+									if(t_wlength<0)
+										t_wlength=0;
 									t_cups[k].wlenhth=t_wlength;
 									t_cups[k].wrate=t_wlength/dec(cupolength);
 									t_cups[k].cutlength=t_cutlength+'#'+t_wlength;
@@ -575,12 +606,12 @@
 								t_cups.sort(function(a, b) { 
 									if(a.wrate > b.wrate) {return 1;} 
 									if(a.wrate < b.wrate) {return -1;}
+									/*if(lengthmount(a.cutlength,t_same,maxcutlengthbs)>lengthmount(b.cutlength,t_same,maxcutlengthbs)){return -1;}
+									if(lengthmount(a.cutlength,t_same,maxcutlengthbs)<lengthmount(b.cutlength,t_same,maxcutlengthbs)){return 1;}*/
 									if(dec(a.olength.toString().substr(0,a.olength.toString().length-1)+'0') > dec(b.olength.toString().substr(0,b.olength.toString().length-1)+'0')) {return -1;}
 									if(dec(a.olength.toString().substr(0,a.olength.toString().length-1)+'0') < dec(b.olength.toString().substr(0,b.olength.toString().length-1)+'0')) {return 1;}
 									if(a.olength > b.olength) {return 1;} 
 									if(a.olength < b.olength) {return -1;}
-									//if(lengthmount(a.cutlength,t_same,maxcutlengthbs)>lengthmount(b.cutlength,t_same,maxcutlengthbs)){return -1;}
-									//if(lengthmount(a.cutlength,t_same,maxcutlengthbs)<lengthmount(b.cutlength,t_same,maxcutlengthbs)){return 1;}
 									if(lengthgroup(a.cutlength)>lengthgroup(b.cutlength)){return 1;}
 									if(lengthgroup(a.cutlength)<lengthgroup(b.cutlength)){return -1;} 
 									if(a.cutlength.split(',').length>b.cutlength.split(',').length) {return 1;}
@@ -752,6 +783,32 @@
 								
 								maxcutlengthb=cutlengthb[cutlengthb.length-1];
 								maxcutlengthbs=[];
+								
+								//106/04/28 已裁剪數量大的先下去配料--取消恢復用最長長度-------------------
+								/*cutlengthb=[];
+								cutlengthballs=[];
+								maxcutlengthb='0';
+								maxcutlengthbs=[];
+								
+								var t_cutlengthb=[];
+								for (var j=0;j<t_same.length;j++){
+									var tspec2=t_same[j].spec;
+									var tsize2=t_same[j].size;
+									var tmount2=t_same[j].mount;
+									var lengthb2=dec(t_same[j].lengthb);
+									if(tspec1==tspec2 && tsize1==tsize2 && dec(tmount2)>0){
+										t_cutlengthb.push({
+											'lengthb':lengthb2,
+											'mount':tmount2
+										});
+									}
+								}
+								t_cutlengthb.sort(function(a, b) {if(a.mount>b.mount) {return -1;} if (a.mount < b.mount) {return 1;} if(a.lengthb>b.lengthb) {return 1;} if (a.lengthb < b.lengthb) {return -1;} return 0;});
+								for (var j=0;j<t_cutlengthb.length;j++){
+									cutlengthb.push(t_cutlengthb[j].lengthb);
+								}
+								maxcutlengthb=cutlengthb[0];*/
+								//----------------------------------------------------------------------
 								
 								for (var j=0;j<t_same.length;j++){
 									var tspec2=t_same[j].spec;
@@ -1077,7 +1134,7 @@
 				for(var i=0;i<lenarry.length;i++){
 					var t_n=-1;
 					for(var j=0;j<t_group.length;j++){
-						if(lenarry[i]==t_group[j]){
+						if(lenarry[i]==t_group[j].lengthb){
 							t_n=j;
 							t_group[j].mount=t_group[j].mount+1;
 						}
