@@ -246,7 +246,7 @@ z_ummfe06:--z_ummfe06
 		insert into @result(gno)
 		select '5'
 		
-		select '帳款月份'+@t_mon mon,gno,rec2,custno,nick,salesno,sales,
+		select '帳款月份'+@t_mon mon,gno,rec2,custno,nick,salesno a01,sales a02,
 			   dbo.getComma(unpay1,0)unpay1,dbo.getComma(unpay2,0)unpay2,dbo.getComma(acccmoney1,0)acccmoney1,dbo.getComma(acccmoney2,0)acccmoney2,dbo.getComma(diff1,0)diff1,
 			   dbo.getComma(opay,0)opay,dbo.getComma(acccopay,0)acccopay,dbo.getComma(diff2,0)diff2,dbo.getComma(diff3,0)diff3
 		from @result order by rec2,gno,salesno
