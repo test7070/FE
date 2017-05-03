@@ -346,6 +346,7 @@
 								if(tspec1==tspec2 && tsize1==tsize2 && lengthb2==maxcutlengthb){
 									maxcutlengthbs.push(lengthb2);
 									ttarray=[];
+									tchglenc=0;
 									cutlengthballs.push({
 										maxlength:lengthb2,
 										chgmaxlength:lengthb2,
@@ -368,6 +369,7 @@
 											if(!existscutlens){
 												maxcutlengthbs.push(lengthb2);
 												ttarray=[];
+												tchglenc=0;
 												cutlengthballs.push({
 													maxlength:dec(t_same[j].lengthb),
 													chgmaxlength:lengthb2,
@@ -817,6 +819,7 @@
 									if(tspec1==tspec2 && tsize1==tsize2 && lengthb2==maxcutlengthb){
 										maxcutlengthbs.push(lengthb2);
 										ttarray=[];
+										tchglenc=0;
 										cutlengthballs.push({
 											maxlength:lengthb2,
 											chgmaxlength:lengthb2,
@@ -839,6 +842,7 @@
 												if(!existscutlens){
 													maxcutlengthbs.push(lengthb2);
 													ttarray=[];
+													tchglenc=0;
 													cutlengthballs.push({
 														maxlength:dec(t_same[j].lengthb),
 														chgmaxlength:lengthb2,
@@ -1010,7 +1014,7 @@
 						//	rep=rep+repall.toString()+'#';
 							cutarry.push({'olength':olength,'cutlength':cutall,'wlenhth':lengthb,'wrate':round(lengthb/olength,4)});
 						//}
-						if(cutlength.length>10 || cutarry.length>2000) //仍要抓避免 無法 調整最後剩餘數量的最低損耗率
+						if(cutlength.length>5 || cutarry.length>2000) //仍要抓避免 無法 調整最後剩餘數量的最低損耗率
 							rep='@@';
 						return cutarry;
 					}else//在損耗範圍內組合 
@@ -1066,7 +1070,7 @@
 			}
 			
 			//可誤差長度組合
-			var ttarray=[];
+			var ttarray=[],tchglenc=0;
 			function samew03length(tcutarray,tspec,tsize,maxlength,maxlength2,tarray){
 				if(tarray.length>0){
 					var tleng=tarray[0];
@@ -1081,12 +1085,16 @@
 								for (var j=0 ;j<tdata.length;j++){
 									var t_mount=dec(tdata[j].mount);
 									var t_tw03=dec(tdata[j].tw03);
+									if(t_tw03>0)
+										tchglenc=(tchglenc==0?1:tchglenc)*t_tw03;
+										
 									if(t_mount>0){
 										if(ttarray.length==0){
 											if(t_tw03==0){
 												ttarray.push([tleng]);
 											}else{
-												while(t_tw03>=0){
+												ttarray.push([tleng]);
+												while(t_tw03>0 && tchglenc<50){
 													tleng=tleng-1;
 													ttarray.push([tleng]);
 													t_tw03--;
@@ -1099,7 +1107,7 @@
 												ttarray[k]=ttarray[k].concat([tleng]);
 											}
 											
-											while(t_tw03>0){
+											while(t_tw03>0 && tchglenc<50){
 												tleng=tleng-1;
 												for(var k=0;k<cttarray.length;k++){
 													ttarray.push(cttarray[k].concat([tleng]));
