@@ -17,7 +17,7 @@
 			this.errorHandler = null;
 			q_tables = 't';
 			var q_name = "cub";
-			var q_readonly = ['txtNoa','txtC1'];
+			var q_readonly = ['txtNoa','txtC1','txtWorker','txtWorker2'];
 			var q_readonlys = ['txtDate2', 'txtOrdeno', 'txtNo2','txtProduct','txtScolor','txtProcess'];
 			var q_readonlyt = [];
 			var bbmNum = [['txtM2',10,0,1],['txtM3',10,0,1],['txtM4',10,0,1],['txtM5',10,0,1],['txtM6',10,0,1],['txtM7',10,0,1],['txtM8',10,0,1]
@@ -1517,7 +1517,10 @@
 				
 				$('#txtStatus').val($('#combStatus').val().toString());
 				sum();
-				$('#txtWorker').val(r_name);
+				if(q_cur==1)
+					$('#txtWorker').val(r_name);
+				else
+					$('#txtWorker2').val(r_name);
 
 				var t_noa = trim($('#txtNoa').val());
 				var t_date = trim($('#txtDatea').val());
@@ -2229,6 +2232,12 @@
 						<td class="cut"><a style="margin-left: 50px;">8~16M</a></td>
 						<td class="cut"><input id="txtOdime" type="text" class="txt num c1" style="width: 70%;"/>秒</td>
 						<td class="cut"> </td>
+					</tr>
+					<tr>
+						<td><span> </span><a id="lblWorker" class="lbl" > </a></td>
+						<td><input id="txtWorker" type="text" class="txt c1"/></td>
+						<td><span> </span><a id="lblWorker2" class="lbl" > </a></td>
+						<td><input id="txtWorker2" type="text" class="txt c1"/></td>
 					</tr>
 				</table>
 			</div>
