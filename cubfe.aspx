@@ -1515,6 +1515,7 @@
 					//return;
 				}
 				
+				$('#txtStatus').val($('#combStatus').val().toString());
 				sum();
 				$('#txtWorker').val(r_name);
 
