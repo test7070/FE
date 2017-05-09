@@ -39,7 +39,7 @@ select a.noa,b.noq,b.productno,b.product
 ,SUBSTRING(b.product,CHARINDEX('SD',b.product),CHARINDEX(' ',b.product)-CHARINDEX('SD',b.product)) spec
 ,SUBSTRING(b.product,CHARINDEX(' ',b.product)+1,CHARINDEX('#',b.product)-CHARINDEX(' ',b.product))size
 ,cast(SUBSTRING(b.product,CHARINDEX('*',b.product)+1,CHARINDEX('M',b.product)-CHARINDEX('*',b.product)-1) as float)lengthb
-,b.mount,0,0,0,0,0,0,0,b.memo2
+,b.gmount,0,0,0,0,0,0,0,replace(substring(b.memo2,0,CHARINDEX('=',b.memo2)),'(入庫)','')
 from view_cub a left join view_cubt b on a.noa=b.noa
 
 declare @noa nvarchar(50)
@@ -497,10 +497,10 @@ end
 close cursor_table 
 deallocate cursor_table
 
-insert @tmp(gno,noa,spec,m1,mech,productno,product,worker)
-select '1',noa,spec,m1,mech,productno,product,worker
+insert @tmp(gno,noa,spec,m1,mech,productno,product,worker,comp)
+select '1',noa,spec,m1,mech,productno,product,worker,comp
 from @tmp
-group by noa,spec,m1,mech,productno,product,worker
+group by noa,spec,m1,mech,productno,product,worker,comp
 
 select 
 SUBSTRING(comp,6,len(comp))comp,

@@ -1515,7 +1515,9 @@
 					//return;
 				}
 				
-				$('#txtStatus').val($('#combStatus').val().toString());
+				if($('#combStatus').val()!=null){
+					$('#txtStatus').val($('#combStatus').val().toString());
+				}
 				sum();
 				if(q_cur==1)
 					$('#txtWorker').val(r_name);
