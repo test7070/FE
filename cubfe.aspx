@@ -787,6 +787,7 @@
 								maxcutlengthbs=[];
 								
 								//106/04/28 已裁剪數量大的先下去配料--取消恢復用最長長度-------------------
+								//106/05/09 第二次開使抓取數量最多的先配料
 								/*cutlengthb=[];
 								cutlengthballs=[];
 								maxcutlengthb='0';
@@ -1010,7 +1011,7 @@
 					
 					//損耗0的組合
 					if(lengthb==0){
-						//if(rep.indexOf(repall.toString()+'#')==-1){
+						//if(rep.indexOf('#'+repall.toString()+'#')==-1){
 						//	rep=rep+repall.toString()+'#';
 							cutarry.push({'olength':olength,'cutlength':cutall,'wlenhth':lengthb,'wrate':round(lengthb/olength,4)});
 						//}
@@ -1020,7 +1021,7 @@
 					}else//在損耗範圍內組合 
 					if (((round(lengthb/olength,4)<=twrate || lengthb<twlength) && cutarry.length>5000) || cutarry.length>20000){
 						cutall=cutall+'#'+lengthb;
-						if(rep.indexOf(repall.toString()+'#')==-1){
+						if(rep.indexOf('#'+repall.toString()+'#')==-1){
 							rep=rep+repall.toString()+'#';
 							cutarry.push({'olength':olength,'cutlength':cutall,'wlenhth':lengthb,'wrate':round(lengthb/olength,4)});
 						}
@@ -1030,15 +1031,15 @@
 						var nn=0;
 						for(var i=0;i<cutlength.length;i++){
 							if(lengthb-cutlength[i]>=0){
-								repall=repall+Math.pow(2,i);
-								if(rep.indexOf(repall.toString()+'#')==-1)
-									getmlength(olength,lengthb,cutlength[i],cutlength,cutall,cutarry,repall);
+								var t_repall=repall+Math.pow(2,i);
+								if(rep.indexOf('#'+t_repall.toString()+'#')==-1)
+									getmlength(olength,lengthb,cutlength[i],cutlength,cutall,cutarry,t_repall);
 								nn++;
 							}
 						}
 						if(nn==0){//無法再裁剪>損耗
 							cutall=cutall+'#'+lengthb;
-							if(rep.indexOf(repall.toString()+'#')==-1){
+							if(rep.indexOf('#'+repall.toString()+'#')==-1){
 								rep=rep+repall.toString()+'#';
 								cutarry.push({'olength':olength,'cutlength':cutall,'wlenhth':lengthb,'wrate':round(lengthb/olength,4)});
 							}
@@ -1047,7 +1048,7 @@
 					}
 				}else{//無法再裁剪>損耗
 					cutall=cutall+'#'+lengthb;
-					if(rep.indexOf(repall.toString()+'#')==-1){
+					if(rep.indexOf('#'+repall.toString()+'#')==-1){
 						rep=rep+repall.toString()+'#';
 						cutarry.push({'olength':olength,'cutlength':cutall,'wlenhth':lengthb,'wrate':round(lengthb/olength,4)});
 					}
