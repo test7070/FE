@@ -520,6 +520,7 @@ z_ummfe03:--z_ummfe03
 	declare @t_userno nvarchar(100)='[22]'
 	declare @t_rank nvarchar(100)='[23]'
 	---------------------------------------------------------------------------------
+	---------------------------------------------------------------------------------
 	declare @tmp table(
 		sel int identity(1,1)
 		,recno int
@@ -815,7 +816,7 @@ z_ummfe03:--z_ummfe03
 	left join acomp b on a.cno=b.noa
 	left join cust c on a.custno=c.noa
 	left join (select cno,custno,count(1) page from @tmp where recno=1 and (typea='出' or typea='退') group by cno,custno) d on a.cno=d.cno and a.custno=d.custno
-	left join (select cno,custno,SUM(ISNULL([weight],0)) [weight] from @tmp where (typea='出' or typea='退') group by cno,custno) e on a.cno=e.cno and a.custno=e.custno
+	left join (select cno,custno,SUM(case typea when '出' then 1 else -1 end * ISNULL([weight],0)) [weight] from @tmp where (typea='出' or typea='退') group by cno,custno) e on a.cno=e.cno and a.custno=e.custno
 
 	select gno
 		,paytype
