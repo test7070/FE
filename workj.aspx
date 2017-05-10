@@ -146,7 +146,7 @@
             q_tables = 't';
             var q_name = "workj";
             var q_readonly = ['txtNoa','txtOrdeno','txtMount','txtWeight','txtWorker','txtWorker2'];
-            var q_readonlys = ['txtContno','txtContnoq','txtStore','txtMech','txtWeight'];
+            var q_readonlys = ['txtContno','txtContnoq','txtStore','txtMech','txtWeight','txtProduct'];
             var q_readonlyt = ['txtBno'];
             var bbmNum = [['txtMount',10,0,1],['txtWeight',10,2,1]];
             var bbsNum = [['txtMount',10,0,1],['txtWeight',10,2,1],['txtLengthb',10,0,1]];
