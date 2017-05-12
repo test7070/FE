@@ -1145,7 +1145,9 @@
 					<td>
 						<a>　</a><a>(1)</a>
 						<a>吊車送達</a><input type="text" style="width:200px;" id="b5_1_b_a"/>
-						<a>，乙方負責卸貨。出貨需達15噸，未達15噸者須補貼運費至15噸，每噸</a><input type="text" style="width:60px;" id="b5_1_b_c"/><a>元。</a>
+						<a>，乙方負責卸貨以1F地坪為限。出貨需達15噸，</a>
+						<br>
+						<a>　　 未達15噸者須補貼運費至15噸，每噸</a><input type="text" style="width:60px;" id="b5_1_b_c"/><a>元。</a> 
 					</td>
 				</tr>
 				<tr id="b5_1_c" class="b5_1x">
@@ -1153,7 +1155,7 @@
 						<a>　(1)</a>
 						<a>吊車送達</a><input type="text" style="width:200px;" id="b5_1_c_a"/>
 						<a>限</a><input type="text" style="width:60px;" id="b5_1_c_b"/>
-						<a>運輸以內，乙方負責卸貨。</a>
+						<a>運輸以內，乙方負責卸貨以1F地坪為限。</a>
 					</td>
 				</tr>
 				<!-- 不含運  -->
@@ -1170,7 +1172,9 @@
 						<a>　(1)</a>
 						<a>吊車送達</a><input type="text" style="width:200px;" id="b5_1_e_a"/>
 						<a>，每噸</a><input type="text" style="width:60px;" id="b5_1_e_b"/>
-						<a>元，乙方負責卸貨。出貨須達25噸，未達25噸者須補貼運費至25噸，每噸</a><input type="text" style="width:60px;" id="b5_1_e_c"/><a>元。</a>
+						<a>元，乙方負責卸貨以1F地坪為限。出貨須達25噸，</a>
+						<br>
+						<a>　　 未達25噸者須補貼運費至25噸，每噸</a><input type="text" style="width:60px;" id="b5_1_e_c"/><a>元。</a>
 					</td>
 				</tr>
 				<tr id="b5_1_f" class="b5_1x">

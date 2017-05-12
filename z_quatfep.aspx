@@ -34,6 +34,9 @@
 					},{
 						type : '6', //[3]
 						name : 'xnoa'
+					},{
+						type : '6', //[4]
+						name : 'xconn'
 					}]
 				});
                 var t_para = new Array();
