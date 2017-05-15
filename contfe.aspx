@@ -79,7 +79,16 @@
 				q_cmbParse("cmbTypea", '加工成型,板料');
 				q_cmbParse("cmbEnsuretype", ('').concat(new Array('', '定存單質押', '不可撤銷保證', '銀行本票質押', '商業本票質押', '現金質押')));
 				q_cmbParse("cmbEtype", ('').concat(new Array('','存入', '存出')));
-				q_gt('acomp', '', 0, 0, 0, "");
+				
+				$('#btnQuat').click(function(e){
+					if($.trim($('#txtBcontract').val()).length==0){
+						alert('請輸入報價單號。');
+						return;
+					}
+					var t_where = "where=^^ noa='" + $('#txtBcontract').val() + "' ^^";
+					q_gt('quat', t_where, 0, 0, 0,'', r_accy);
+				});
+				
 				$('#btnConn_cust').click(function() {
 					t_where = "noa='" + $('#txtTggno').val() + "'";
 					q_box("conn_b.aspx?" + r_userno + ";" + r_name + ";" + q_time + ";" + t_where, 'Conn_cust', "95%", "650px", q_getMsg('lblConn'));
@@ -150,22 +159,53 @@
 			var t_uccArray = new Array;
 			function q_gtPost(t_name) {
 				switch (t_name) {
-					case 'acomp':
-						var as = _q_appendData("acomp", "", true);
-						var t_item = " @ ";
-						var t_item2 = " @ ";
-						 for ( i = 0; i < as.length; i++) {
-						 	t_item2 = t_item2 + (t_item.length > 0 ? ',' : '') + as[i].noa + '@' + as[i].nick;
-						 	t_item = t_item + (t_item.length > 0 ? ',' : '') + as[i].noa + '@' + as[i].acomp;
-						 }
-						 //q_cmbParse("cmbCno", t_item);
-						 q_cmbParse("cmbCnonick", t_item2);
-						 q_cmbParse("cmbGuarantorno", t_item);
-						 if(abbm[q_recno]){
-						 	//$("#cmbCno").val(abbm[q_recno].cno);
-						 	$("#cmbCnonick").val(abbm[q_recno].cno);
-						 	$("#cmbGuarantorno").val(abbm[q_recno].guarantorno);
-						 }
+					case 'quat':
+						var a = _q_appendData("quat", "", true);
+						var as = _q_appendData("quats", "", true);
+						var at = _q_appendData("quatt", "", true);
+						
+						console.log(as);
+						
+						if(a[0]!=undefined){
+							$('#txtCno').val(a[0].cno);
+							$('#txtAcomp').val(a[0].acomp);
+							$('#cmbTypea').val(a[0].typea);							
+						}
+						if(as[0]!=undefined){
+							for(var i=0;i<q_bbsCount;i++){
+								$('#btnMinus__'+i).click();
+							}
+							while(as.length>q_bbsCount){
+								$('#btnPlus').click();
+							}
+							for(var i=0;i<as.length;i++){
+								$('#txtProductno_'+i).val(as[i].productno);
+								$('#txtProduct_'+i).val(as[i].product);
+								$('#txtSize_'+i).val(as[i].size);
+								$('#txtUnit_'+i).val(as[i].unit);
+								$('#txtLengthb_'+i).val(as[i].lengthb);
+								$('#txtMount_'+i).val(as[i].mount);
+								$('#txtWeight_'+i).val(as[i].weight);
+								$('#txtPrice_'+i).val(as[i].price);
+								$('#txtTotal_'+i).val(as[i].total);
+								$('#txtMemo_'+i).val(as[i].memo);
+							}	
+						}
+						if(at[0]!=undefined){
+							for(var i=0;i<q_bbtCount;i++){
+								$('#btnMinut__'+i).click();
+							}
+							while(at.length>q_bbtCount){
+								$('#btnPlut').click();
+							}
+							for(var i=0;i<at.length;i++){
+								$('#txtKeya__'+i).val(at[i].keya);
+								$('#txtValue__'+i).val(at[i].value);
+								$('#txtMemo__'+i).val(at[i].memo);
+							}	
+						}
+						loadData();
+					
 						break;
 					case 'sss':
 						var as = _q_appendData("sss", "", true);
@@ -841,6 +881,7 @@
 							<input id="txtCno"  type="text" class="txt" style="width:30%; float: left;"/>
 							<input id="txtAcomp"  type="text" class="txt" style="width:70%; float: left;"/>
 						</td>
+						<td> </td>
 						<td><span> </span><a id="lblStype" class="lbl">類型</a></td>
 						<td><select id="cmbTypea" class="txt c1"> </select></td>
 					</tr>
@@ -876,21 +917,17 @@
 						<td class="td2" colspan="7"><input id="txtContitem" type="text"  class="txt c1"/></td>
 					</tr>
 					<tr>
-						<td><span> </span><a id="lblAcomp" class="lbl"> </a></td>
-						<td colspan="3">
-							<!--<select id="cmbCno" class="txt c1"> </select>-->
-							<select id="cmbCnonick" class="txt c1" style="display:none;"> </select>
-							<input id="txtAcomp"  type="hidden" class="txt" style="width:80%; float: left;"/>
-							<input id="txtAcompnick"  type="hidden" style="display: none;"/>
-						</td>
 						<td ><span> </span><a id="lblGuarantor" class="lbl"> </a></td>
 						<td  colspan="3">
 							<select id="cmbGuarantorno" class="txt c1"> </select>
 							<input id="txtGuarantor"  type="hidden"/>
 						</td>
+						<td><span> </span><a class="lbl">報價單號</a></td>
+						<td colspan="2"><input type="text" id="txtBcontract" class="txt c1"/></td>
+						<td><input type="button" id="btnQuat" value="報價匯入"/></td>
 					</tr>
 					<tr>
-						<td><span> </span><a id="lblSales" class="lbl btn"></a></td>
+						<td><span> </span><a id="lblSales" class="lbl btn"> </a></td>
 						<td>
 							<input id="txtSalesno" type="text" class="txt" style="display: none;"/>
 							<input id="txtSales" type="text" class="txt c1">
