@@ -723,6 +723,7 @@
 					<input class="btn"  id="btnPlus" type="button" value='+' style="font-weight: bold; width:90%;"  />
 					</td>
 					<td align="center" style="width:20px;"> </td>
+					<td align="center" style="width:80px;"><a id='lblTypea'>類型 </a></td>
 					<td align="center" style="width:180px;"><a id='lblTimesa'> 拜訪時間 </a></td>
 					<td align="center" style="width:120px;"><a id='lblCnos'> </a></td>
 					<td align="center" style="width:200px;"><a id='lblAcomps'> </a></td>
@@ -743,6 +744,7 @@
 					<input id="txtNoq.*" type="text" style="display: none;" />
 					</td>
 					<td><a id="lblNo.*" style="font-weight: bold;text-align: center;display: block;"> </a></td>
+					<td><input type="text" id="txtTypea.*" list="listTypea" style="width:95%;"/></td>
 					<td >
 						<input id="txtBtime.*" type="text" style="float:left; width:60px;" />
 						<a style="display:block;float:left; width:20px;">&sim;</a>
@@ -771,6 +773,13 @@
 				</tr>
 			</table>
 		</div>
+		<datalist id="listTypea"> 
+			<option value="拜訪"> </option>
+			<option value="報價"> </option>
+			<option value="售後服務"> </option>
+			<option value="其他"> </option>	
+		</datalist>
+		
 		<iframe id="xdownload" style="display:none;"> </iframe>
 		<input id="q_sys" type="hidden" />
 	</body>
