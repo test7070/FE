@@ -996,6 +996,9 @@
 											if(t_same[k].data[x].mount<0 && t_same[k].maxmount>0){
 												t_same[k].maxmount=t_same[k].maxmount+t_same[k].data[x].mount;
 											}
+											if(t_same[k].maxmount<0){
+												t_same[k].maxmount=0;
+											}
 												
 											var tcusttmpmount=cuttmp[m].mount;
 											
@@ -1847,6 +1850,9 @@
 											
 											if(t_same[k].data[x].mount<0 && t_same[k].maxmount>0){
 												t_same[k].maxmount=t_same[k].maxmount+t_same[k].data[x].mount;
+											}
+											if(t_same[k].maxmount<0){
+												t_same[k].maxmount=0;
 											}
 												
 											var tcusttmpmount=cuttmp[m].mount;
