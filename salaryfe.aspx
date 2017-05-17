@@ -157,6 +157,13 @@
                 bbmMask = [['txtMon', r_picm]];
                 q_mask(bbmMask);
                 
+                $('#btnImport').click(function(e){
+                	if($('#txtMon').val().length==0){
+                		alert('請輸入月份！');
+                		return;
+                	}
+                	
+                });
                 
             }
 
@@ -296,6 +303,11 @@
 
             function readonly(t_para, empty) {
                 _readonly(t_para, empty);
+                if (t_para) {
+                	$('#btnImport').attr('disabled','disabled');
+                } else {	
+                	$('#btnImport').removeAttr('disabled');
+            	}
                 /*if (t_para) {
                     $('#txtDatea').datepicker('destroy');
                 } else {	
@@ -601,6 +613,8 @@
 						<td><input id="txtWorker"  type="text" class="txt c1"/></td>
 						<td><span> </span><a id='lblWorker2' class="lbl">修改人</a></td>
 						<td><input id="txtWorker2"  type="text" class="txt c1"/></td>
+						<td> </td>
+						<td><input type="button" id="btnImport" value="匯入"/></td>
 					</tr>
                 </table>
             </div>
@@ -634,6 +648,12 @@
            			<td align="center" style="width:120px;"><a>薪轉</a></td>
            			<td align="center" style="width:120px;"><a>領現</a></td>
            			<td align="center" style="width:120px;"><a>實領</a></td>
+           			
+           			<td align="center" style="width:120px;"><a>營業額</a></td>
+           			<td align="center" style="width:80px;"><a>毛利額</a></td>
+           			<td align="center" style="width:80px;"><a>成交<br>件數</a></td>
+           			<td align="center" style="width:80px;"><a>增加<br>件數</a></td>
+           			<td align="center" style="width:80px;"><a>下月<br>件數</a></td>
                 </tr>
                 <tr style='background:#cad3ff;'>
                     <td>
@@ -674,6 +694,12 @@
                     <td> <input id="txtTransfer.*" type="text" class="txt num" style="width:95%;"/></td>
                     <td> <input id="txtCash.*" type="text" class="txt num" style="width:95%;"/></td>
                     <td> <input id="txtTotal.*" type="text" class="txt num" style="width:95%;"/></td>
+                    
+                    <td> <input id="txtC01.*" type="text" class="txt num" style="width:95%;"/></td>
+                    <td> <input id="txtC02.*" type="text" class="txt num" style="width:95%;"/></td>
+                    <td> <input id="txtC03.*" type="text" class="txt num" style="width:95%;"/></td>
+                    <td> <input id="txtC04.*" type="text" class="txt num" style="width:95%;"/></td>
+                    <td> <input id="txtC05.*" type="text" class="txt num" style="width:95%;"/></td>
                 </tr>
             </table>
         </div>

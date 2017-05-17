@@ -1106,10 +1106,18 @@
 							<span> </span><a id='lblMemo' class="lbl"> </a>
 						</td>
 						<td colspan='6' >
-							<textarea id="txtMemo" class="txt c1" rows="7"> </textarea>
+							<textarea id="txtMemo" class="txt c1" rows="4"> </textarea>
 						</td>
 						<td>
 							<input type="button" id="btnMemo" value="鋼筋報價" style="display:none;" />
+						</td>
+					</tr>
+					<tr>
+						<td align="right">
+							<span> </span><a id='lblMemo3' class="lbl">未成交原因</a>
+						</td>
+						<td colspan='6' >
+							<textarea id="txtMemo3" class="txt c1" rows="4"> </textarea>
 						</td>
 					</tr>
 					<tr style="display:none;">
