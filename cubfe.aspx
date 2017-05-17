@@ -853,7 +853,7 @@
 									for (var n=0;n<tt_same.length;n++){
 										if(dec(cuttmp[m].mount)>0 && dec(cuttmp[m].lengthb)<=dec(tt_same[n].lengthb) && dec(cuttmp[m].lengthb)>=(dec(tt_same[n].lengthb)-dec(tt_same[n].tw03))){
 											if(dec(cuttmp[m].mount)>dec(tt_same[n].mount)+dec(tt_same[n].maxmount)){
-												t_wlength=q_sub(t_wlength,q_mul(dec(cuttmp[m].lengthb),tt_same[n].mount));
+												t_wlength=q_sub(t_wlength,q_mul(dec(cuttmp[m].lengthb),dec(tt_same[n].mount)+dec(tt_same[n].maxmount)));
 												var ttt_mount=dec(tt_same[n].mount)+dec(tt_same[n].maxmount);
 												while(ttt_mount>0){
 													t_cutlength=t_cutlength+(t_cutlength.length>0?',':'')+cuttmp[m].lengthb;
@@ -1705,7 +1705,7 @@
 									for (var n=0;n<tt_same.length;n++){
 										if(dec(cuttmp[m].mount)>0 && dec(cuttmp[m].lengthb)<=dec(tt_same[n].lengthb) && dec(cuttmp[m].lengthb)>=(dec(tt_same[n].lengthb)-dec(tt_same[n].tw03))){
 											if(dec(cuttmp[m].mount)>dec(tt_same[n].mount)+dec(tt_same[n].maxmount)){
-												t_wlength=q_sub(t_wlength,q_mul(dec(cuttmp[m].lengthb),tt_same[n].mount));
+												t_wlength=q_sub(t_wlength,q_mul(dec(cuttmp[m].lengthb),dec(tt_same[n].mount)+dec(tt_same[n].maxmount)));
 												var ttt_mount=dec(tt_same[n].mount)+dec(tt_same[n].maxmount);
 												while(ttt_mount>0){
 													t_cutlength=t_cutlength+(t_cutlength.length>0?',':'')+cuttmp[m].lengthb;
