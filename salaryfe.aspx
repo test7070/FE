@@ -651,9 +651,14 @@
            			
            			<td align="center" style="width:120px;"><a>營業額</a></td>
            			<td align="center" style="width:80px;"><a>毛利額</a></td>
+           			<td align="center" style="width:80px;"><a>毛利目標</a></td>
+           			<td align="center" style="width:80px;"><a>未達標扣項</a></td>
+           			
            			<td align="center" style="width:80px;"><a>成交<br>件數</a></td>
            			<td align="center" style="width:80px;"><a>增加<br>件數</a></td>
            			<td align="center" style="width:80px;"><a>下月<br>件數</a></td>
+           			
+           			
                 </tr>
                 <tr style='background:#cad3ff;'>
                     <td>
@@ -697,9 +702,10 @@
                     
                     <td> <input id="txtC01.*" type="text" class="txt num" style="width:95%;"/></td>
                     <td> <input id="txtC02.*" type="text" class="txt num" style="width:95%;"/></td>
-                    <td> <input id="txtC03.*" type="text" class="txt num" style="width:95%;"/></td>
-                    <td> <input id="txtC04.*" type="text" class="txt num" style="width:95%;"/></td>
-                    <td> <input id="txtC05.*" type="text" class="txt num" style="width:95%;"/></td>
+                    
+                    <td> <input id="txtD01.*" type="text" class="txt num" style="width:95%;"/></td>
+                    <td> <input id="txtD02.*" type="text" class="txt num" style="width:95%;"/></td>
+                    <td> <input id="txtD03.*" type="text" class="txt num" style="width:95%;"/></td>
                 </tr>
             </table>
         </div>
