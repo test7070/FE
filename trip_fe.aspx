@@ -352,7 +352,9 @@
 							ext = file.name.substring(extindex,file.name.length);
 						}
 						$('#'+txtOrgName[0]+'name_'+txtOrgName[1]).val(file.name);
-						$('#'+txtName).val(guid()+Date.now()+ext);
+						//$('#'+txtName).val(guid()+Date.now()+ext);
+						//106/05/22 不再使用亂數編碼
+						$('#'+txtName).val(file.name);
 						
 						fr = new FileReader();
 						fr.fileName = $('#'+txtName).val();
