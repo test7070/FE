@@ -2438,7 +2438,7 @@
 				$('#txtBdime').val(5);
 				$('#txtEdime').val(8);
 				$('#txtOdime').val(12);
-				$('#txtMo').val(3);
+				$('#txtMo').val(1);
 				$('#txtM9').val(0.3);//106/04/20 千分之3
 			}
 
