@@ -1,17 +1,7 @@
-<%@ Page Language="C#" Debug="true"%>
-    <script language="c#" runat="server">  
-		protected void Page_Load(object sender, EventArgs e)
-		{
-		    jwcf wcf = new jwcf();
-			wcf.q_content("salaryfe", " typea='業務'");
-		    wcf.q_content("salaryfes", " left( $r_userno,1)!='B' or ( sno=$r_userno or $r_rank >= 8 )");
-		    
-		}
-	</script>
 <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
 <html xmlns="http://www.w3.org/1999/xhtml" dir="ltr">
 	<head>
-		<title></title>
+		<title>考核主檔</title>
 		<script src="../script/jquery.min.js" type="text/javascript"></script>
 		<script src='../script/qj2.js' type="text/javascript"></script>
 		<script src='qset.js' type="text/javascript"></script>
@@ -28,7 +18,7 @@
             var q_name = "salexambase";
             var decbbs = [];
             var decbbm = [];
-            var q_readonly = ['txtNoa','txtWorker','txtWorker2'];
+            var q_readonly = ['txtWorker','txtWorker2'];
             var q_readonlys = ['txtNoq'];
             var bbmNum = [];
             var bbsNum = [['txtWeight',10,0,1]];
@@ -39,13 +29,12 @@
             brwList = [];
             brwNowPage = 0;
             brwKey = 'noa';
-            aPop = new Array(['txtSssno_', 'btnSss_', 'sss', 'noa,namea', 'txtSssno_,txtSss_', 'sss_b.aspx']);
+            aPop = new Array();
             $(document).ready(function() {
                 bbmKey = ['noa'];
                 bbsKey = ['noa', 'noq'];
                 q_brwCount();
 				q_gt(q_name, q_content, q_sqlCount, 1, 0, '');
-
             });
 
             function main() {
@@ -60,16 +49,19 @@
             	if(!(q_cur=='1' || q_cur=='2')){
             		return;
             	}
-            	
             }
 
             function mainPost() {
                 q_getFormat();
-                bbmMask = [['txtMon', r_picm]];
                 q_mask(bbmMask);
                 
-              
-                
+                $('#txtNoa').change(function(e) {
+                	var t_noa = $.trim($(this).val());
+                	if(t_noa.length>0){
+                		t_where = "where=^^ noa='" + t_noa + "'^^";
+						q_gt('salexambase', t_where, 0, 0, 0, "noa_change", r_accy);	
+                	}
+				});
             }
 
             function q_boxClose(s2) {
@@ -83,9 +75,23 @@
             }
             function q_gtPost(t_name) {
                 switch (t_name) {
-
+                	case 'noa_change':
+						var as = _q_appendData("salexambase", "", true);
+						if (as[0] != undefined) {
+							alert('已存在 ' + as[0].noa + ' ' + as[0].description);
+						}
+						break;
+					case 'noa_btnOk':
+						var as = _q_appendData("salexambase", "", true);
+						if (as[0] != undefined) {
+							alert('已存在 ' + as[0].noa + ' ' + as[0].description);
+							Unlock(1);
+							return;
+						} else {
+							wrServer($('#txtNoa').val());
+						}
+						break;
                     case q_name:
-                    	document.title= '員工薪資';
                         if (q_cur == 4)
                             q_Seek_gtPost();
                         break;
@@ -100,18 +106,23 @@
             }
             
             function btnOk() {
-				$('#txtTypea').val('業務');
                 sum();
+                var t_noa = $.trim($('#txtNoa').val());
+	        	if(t_noa.length==0){
+	        		alert('請輸入編號。');
+	        		return;
+	        	}
                 if (q_cur == 1)
                     $('#txtWorker').val(r_name);
                 if (q_cur == 2)
                     $('#txtWorker2').val(r_name);
                 
-				var s1 = $('#txtNoa').val();
-                if (s1.length == 0 || s1 == "AUTO")
-                    q_gtnoa(q_name, replaceAll($('#txtMon').val(), '/', ''));
-                else
-                    wrServer(s1);
+                if(q_cur==1){
+                	t_where = "where=^^ noa='" + t_noa + "'^^";
+					q_gt('salexambase', t_where, 0, 0, 0, "noa_change", r_accy);	
+                }else{
+                	wrServer(t_noa);
+                }
             }
             function q_funcPost(t_func, result) {
                 switch(t_func) {
@@ -152,9 +163,8 @@
             function btnModi() {
                 if (emp($('#txtNoa').val()))
                     return;
-                if (q_chkClose())
-					return;
                 _btnModi();
+            	$('#txtNoa').attr('readonly','readonly').css('color','green');
             }
 
             function btnPrint() {
