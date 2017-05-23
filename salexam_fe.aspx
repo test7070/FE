@@ -438,14 +438,19 @@
 							<textarea id="txtMemo" class="txt c1" style="height:75px;"> </textarea>
 						</td>
 					</tr>
-
+					<tr>
+						<td><span> </span><a class="lbl">分數</a></td>
+						<td><input id="txtTotal" type="text" class="txt c1 num"/></td>
+						<td><span> </span><a class="lbl">主管加減</a></td>
+						<td><input id="txtTotal2" type="text" class="txt c1 num"/></td>
+						<td><span> </span><a class="lbl">總分</a></td>
+						<td><input id="txtTotal3" type="text" class="txt c1 num"/></td>
+					</tr>
 					<tr>
 						<td><span> </span><a id="lblWorker" class="lbl"> </a></td>
 						<td><input id="txtWorker" type="text"  class="txt c1"/></td>
 						<td><span> </span><a id="lblWorker2" class="lbl"> </a></td>
 						<td><input id="txtWorker2" type="text"  class="txt c1"/></td>
-						<td><span> </span><a class="lbl">總分</a></td>
-						<td><input id="txtTotal" type="text" class="txt c1 num"/></td>
 					</tr>
 				</table>
 			</div>
@@ -460,6 +465,7 @@
 					<td align="center" style="width:80px"><a>評分(0-5)</a></td>
 					<td align="center" style="width:80px"><a>權重</a></td>
 					<td align="center" style="width:80px"><a>分數</a></td>
+					<td align="center" style="width:80px"><a>主管加減</a></td>
 					<td align="center" style="width:200px"><a>備註</a></td>
 				</tr>
 				<tr class="data" style='background:#cad3ff;'>
@@ -477,6 +483,7 @@
 					<td><input type="text" id="txtEfficiency.*" class="num" style="width:95%;" /> </td>
 					<td><input type="text" id="txtWorkdegree.*" class="num" style="width:95%;" /> </td>
 					<td><input type="text" id="txtTotal.*" class="num" style="width:95%;" /></td>
+					<td><input type="text" id="txtDuty.*" class="num" style="width:95%;" /></td>
 					<td><input type="text" id="txtMemo.*" style="width:95%;" /></td>
 				</tr>
 			</table>
