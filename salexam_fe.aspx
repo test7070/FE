@@ -16,7 +16,7 @@
 		<script type="text/javascript">
             q_tables = 's';
             var q_name = "salexam";
-            var q_readonly = ['txtNoa','txtWorker', 'txtWorker2', 'txtTotal'];
+            var q_readonly = ['txtNoa','txtWorker', 'txtWorker2', 'txtTotal', 'txtTotal2', 'txtTotal3'];
             var q_readonlys = ['txtTotal'];
             var bbmNum = [];
             var bbsNum = [];
@@ -32,10 +32,17 @@
             q_desc = 1;
 
             function sum() {
+                var t_total = 0,t_total2=0,t_total3=0;
                 
                 for (var i = 0; i < q_bbsCount; i++) {
 					$('#txtTotal_'+i).val(q_float('txtEfficiency_'+i)*q_float('txtWorkdegree_'+i));
+                	
+                	t_total += q_float('txtTotal_'+i);
+                	t_total2 += q_float('txtDuty_'+i);
                 }
+            	$('#txtTotal').val(t_total);
+            	$('#txtTotal2').val(t_total2);
+            	$('#txtTotal3').val(t_total+t_total2);
             }
 
             $(document).ready(function() {
@@ -147,6 +154,12 @@
                     $('#txtEfficiency_' + i).change(function() {
                         sum();
                     });
+                    $('#txtWorkdegree_' + i).change(function() {
+                        sum();
+                    });
+                    $('#txtDuty_' + i).change(function() {
+                        sum();
+                    });
                 }
                 _bbsAssign();
             }
@@ -163,6 +176,7 @@
                     return;
                 _btnModi();
                 $('#txtMemo').focus();
+                sum();
             }
 
             function btnPrint() {
