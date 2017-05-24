@@ -628,7 +628,9 @@
 				var ctx = c.getContext("2d");		
 				c.width = imgwidth;
 				c.height = imgheight;
-				image.onload = function() {
+				image.onload = function(e) {
+					var imgwidth = 300;
+               	 	var imgheight = 100;
 					ctx.drawImage($('#imgPic_'+n)[0],0,0,imgwidth,imgheight);
 					var t_length = 0;
 					for(var i=0;i<t_para.length;i++){
@@ -646,7 +648,7 @@
 					}
 					sum();
 					createImg2(n);
-				}
+				};
 			};
 			
 			function createImg2(n){
@@ -665,7 +667,9 @@
                 var imgwidth = 300;
                 var imgheight = 100;
                 $('#imgPic_'+n).attr('src',c.toDataURL());
-                image.onload = function() {
+                image.onload = function(e) {
+                	var imgwidth = 300;
+                	var imgheight = 100;
                 	//------------------------------
 					//條碼用圖形
 					xx_width = 355;
@@ -683,7 +687,7 @@
 					$('#canvas_'+n)[0].getContext("2d").drawImage($('#imgPic_'+n)[0],0,0,imgwidth,imgheight,0,0,150,50);
 					$('#txtImgdata_'+n).val(c.toDataURL());	
 					//------------------------------
-				}
+				};
 			};
 			
             function q_stPost() {
@@ -755,7 +759,7 @@
                     Unlock(1);
                     return;
                 }
-                if($.trim($('#txtCustno').val())==0){
+                if($.trim($('#txtCustno').val()).length==0){
                 	alert(q_getMsg('lblCust') + '空白。');
                     Unlock(1);
                     return;
@@ -832,7 +836,8 @@
                 $('.checkAll').prop('checked',true);	
                 $('.checkAll2').prop('checked',true);
             }
-            function q_bbsLenShow( t_start, t_end){
+          /*  function q_bbsLenShow( t_start, t_end){
+            	
             	for(var i=t_start;i<=t_end;i++)
             	if($('#canvas_'+i).length>0){
 					$('#imgPic_'+i).attr('src', $('#txtImgdata_'+i).val());
@@ -840,7 +845,7 @@
                     var imgheight = $('#imgPic_'+i).height();
 					$("#canvas_"+i)[0].getContext("2d").drawImage($('#imgPic_'+i)[0],0,0,imgwidth,imgheight,0,0,150,50);
             	}
-            }
+            }*/
 
             function readonly(t_para, empty) {
                 _readonly(t_para, empty);
@@ -1211,7 +1216,7 @@
 	                var imgheight = $('#imgPic_'+n).height();
 	                if($("#canvas_"+n)[0]!=undefined)
 						$("#canvas_"+n)[0].getContext("2d").drawImage($('#imgPic_'+n)[0],0,0,imgwidth,imgheight,0,0,150,50);
-				}
+				};
             }
 		</script>
 		<style type="text/css">

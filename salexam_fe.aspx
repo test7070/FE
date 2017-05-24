@@ -28,7 +28,7 @@
             brwNowPage = 0;
             brwKey = 'Datea';
 
-            aPop = new Array(['txtSssno', 'lblSss', 'sss', 'noa,namea', 'txtSssno,txtNamea', 'sss_b.aspx']);
+            aPop = new Array(['txtSssno', 'lblSss', 'sss', 'noa,namea', 'txtSssno,txtSss', 'sss_b.aspx']);
             q_desc = 1;
 
             function sum() {
@@ -127,16 +127,17 @@
                 }
                 sum();
 
-                if (q_cur == 1) {
+                if (q_cur == 1)
                     $('#txtWorker').val(r_name);
-                } else
-                    $('#txtWorker2').val(r_name);
-
-                var t_noa = $.trim($('txtNoa').val());
-                if (t_noa.length == 0 || t_noa == "AUTO")
-                    q_gtnoa(q_name, replaceAll(q_getPara('sys.key_salexam') + $('#txtDatea').val(), '/', ''));
                 else
-                    wrServer(t_noa);
+                    $('#txtWorker2').val(r_name);
+				
+				var t_noa = trim($('#txtNoa').val());
+				var t_date = trim($('#txtDatea').val());
+				if (t_noa.length == 0 || t_noa == "AUTO")
+					q_gtnoa(q_name, replaceAll(q_getPara('sys.key_salexam') + (t_date.length == 0 ? q_date() : t_date), '/', ''));
+				else
+					wrServer(t_noa);
             }
 
             function _btnSeek() {
@@ -185,8 +186,7 @@
 
             function wrServer(key_value) {
                 var i;
-
-                $('#txt' + bbmKey[0].substr(0, 1).toUpperCase() + bbmKey[0].substr(1)).val(key_value);
+                $('#txtNoa').val(key_value);
                 _btnOk(key_value, bbmKey[0], bbsKey[1], '', 2);
             }
 

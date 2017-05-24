@@ -34,23 +34,23 @@
                     options : [{
 						type : '0', //[1]
 						name : 'path',
-						value : location.protocol + '//' +location.hostname + location.pathname.toLowerCase().replace('z_quat_rkp.aspx','')
+						value : location.protocol + '//' +location.hostname + location.pathname.toLowerCase().replace('z_salaryfe.aspx','')
 					},{
 						type : '0', //[2]
 						name : 'db',
 						value : q_db
 					},{
-						type : '6', //[3]  1
-						name : 'xmon'
-					}/*, {
-						type : '5', //[4]  2
-						name : 'xtypea',
-						value : ('員工,業務').split(',')
-					}*/]
+						type : '0', //[3]
+						name : 'name',
+						value : r_name
+					},{
+						type : '6', //[4]  1
+						name : 'xtype'
+					}]
                 });
                 q_popAssign();
                 q_langShow();
-                $('#txtXmon').val(q_date().substring(0,r_lenm));
+                $('#txtXtype').attr('list','listType');
             }
 
             function q_boxClose(s2) {
@@ -70,5 +70,9 @@
 				<!--#include file="../inc/print_ctrl.inc"-->
 			</div>
 		</div>
+		<datalist id="listType">
+        	<option value="內勤"> </option>
+        	<option value="廠務"> </option>
+        </datalist>
 	</body>
 </html>
