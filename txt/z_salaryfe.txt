@@ -1,9 +1,14 @@
-declare @t_type nvarchar(max) = ''
-	declare @t_sssno nvarchar(max) = ''
-	declare @t_bdate nvarchar(20) = ''
-	declare @t_edate nvarchar(20) = char(255)
-	-------------------------------------------------------------------
-	
+z_salaryfe02:--FE/z_salaryfe.txt   z_salaryfe02
+	SET QUOTED_IDENTIFIER OFF
+	declare @t_path nvarchar(max) = '[1]'
+	declare @t_db nvarchar(max) = '[2]'
+	declare @t_name nvarchar(max) = '[3]'
+	declare @t_bdate nvarchar(20) = case when '#non' = [4] then '' else [4] end
+	declare @t_edate nvarchar(20) = case when '#non' = [5] then char(255) else [5] end
+	declare @t_type nvarchar(max) = case when '#non' = [6] then '' else [6] end
+	declare @t_bsssno nvarchar(max) = case when '#non' = [7] then '' else [7] end
+	declare @t_esssno nvarchar(max) = case when '#non' = [8] then char(255) else [8] end
+	---------------------------------------------------------------------------------------
 	declare @tmpa table(
 		sel int identity(1,1)
 		,gno nvarchar(20)
@@ -32,7 +37,7 @@ declare @t_type nvarchar(max) = ''
 	from salexams a
 	left join salexam b on a.noa=b.noa
 	where (len(@t_type)=0 or CHARINDEX(','+b.typea+',',','+@t_type+',')>0)
-	and (len(@t_sssno)=0 or CHARINDEX(','+b.sssno+',',','+@t_sssno+',')>0)
+	and b.sssno between @t_bsssno and @t_esssno
 	and b.datea between @t_bdate and @t_edate
 	order by b.sssno,b.sss,b.typea,a.jobno,a.job
 	
@@ -102,7 +107,11 @@ z_salaryfe01:--FE/z_salaryfe.txt   z_salaryfe01
 	declare @t_path nvarchar(max) = '[1]'
 	declare @t_db nvarchar(max) = '[2]'
 	declare @t_name nvarchar(max) = '[3]'
-	declare @t_type nvarchar(max) = case when '#non' = [4] then '' else [4] end
+	declare @t_bdate nvarchar(20) = case when '#non' = [4] then '' else [4] end
+	declare @t_edate nvarchar(20) = case when '#non' = [5] then char(255) else [5] end
+	declare @t_type nvarchar(max) = case when '#non' = [6] then '' else [6] end
+	declare @t_bsssno nvarchar(max) = case when '#non' = [7] then '' else [7] end
+	declare @t_esssno nvarchar(max) = case when '#non' = [8] then char(255) else [8] end
 	----------------------------------------------------------------
 	declare @tmp table(
 		sel int identity(1,1)

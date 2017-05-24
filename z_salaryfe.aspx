@@ -44,13 +44,27 @@
 						name : 'name',
 						value : r_name
 					},{
-						type : '6', //[4]  1
+						type : '1', //[4][5]   1
+						name : 'xdate'
+					},{
+						type : '6', //[6]      2
 						name : 'xtype'
+					},{
+						type : '2', //[7][8]   3
+						name : 'xsss',
+						dbf : 'sss',
+						index : 'noa,namea',
+						src : 'sss_b.aspx'
 					}]
                 });
                 q_popAssign();
                 q_langShow();
                 $('#txtXtype').attr('list','listType');
+                
+                $('#txtXdate1').datepicker();
+                $('#txtXdate2').datepicker();
+            	$('#txtXdate1').mask(r_picd);
+            	$('#txtXdate2').mask(r_picd);
             }
 
             function q_boxClose(s2) {
