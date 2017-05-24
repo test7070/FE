@@ -621,16 +621,16 @@
 				//$('#imgPic_'+n).attr('src',t_imgorg);
 				var image = document.getElementById('imgPic_'+n);
 				image.src=t_imgorg;
-                var imgwidth = 300;
-                var imgheight = 100;
-                $('#canvas_'+n).width(imgwidth).height(imgheight);
-                var c = document.getElementById("canvas_"+n);
-				var ctx = c.getContext("2d");		
-				c.width = imgwidth;
-				c.height = imgheight;
+                
 				image.onload = function(e) {
 					var imgwidth = 300;
-               	 	var imgheight = 100;
+	                var imgheight = 100;
+	                $('#canvas_'+n).width(imgwidth).height(imgheight);
+	                var c = document.getElementById("canvas_"+n);
+					var ctx = c.getContext("2d");		
+					c.width = imgwidth;
+					c.height = imgheight;
+				
 					ctx.drawImage($('#imgPic_'+n)[0],0,0,imgwidth,imgheight);
 					var t_length = 0;
 					for(var i=0;i<t_para.length;i++){
@@ -647,6 +647,7 @@
 						$('#txtLengthb_'+n).val(t_length);
 					}
 					sum();
+					this.onload = function(){};
 					createImg2(n);
 				};
 			};
@@ -664,12 +665,11 @@
 					return;
 				var image = document.getElementById('imgPic_'+n);
 				var c = document.getElementById("canvas_"+n);
-                var imgwidth = 300;
-                var imgheight = 100;
+                
                 $('#imgPic_'+n).attr('src',c.toDataURL());
                 image.onload = function(e) {
                 	var imgwidth = 300;
-                	var imgheight = 100;
+               		var imgheight = 100;
                 	//------------------------------
 					//條碼用圖形
 					xx_width = 355;
@@ -687,6 +687,7 @@
 					$('#canvas_'+n)[0].getContext("2d").drawImage($('#imgPic_'+n)[0],0,0,imgwidth,imgheight,0,0,150,50);
 					$('#txtImgdata_'+n).val(c.toDataURL());	
 					//------------------------------
+					this.onload = function(){};
 				};
 			};
 			
@@ -754,6 +755,7 @@
                 Lock(1, {
                     opacity : 0
                 });
+                $('#bbsXpand').click();
                 if ($('#txtDatea').val().length == 0 || !q_cd($('#txtDatea').val())) {
                     alert(q_getMsg('lblDatea') + '錯誤。');
                     Unlock(1);
@@ -885,10 +887,10 @@
             function btnMinus(id) {
                 _btnMinus(id);
             }
-            /*function btnPlus(org_htm, dest_tag, afield) {
+            function btnPlus(org_htm, dest_tag, afield) {
                 _btnPlus(org_htm, dest_tag, afield);
             }
-            function btnPlut(org_htm, dest_tag, afield) {
+            /*function btnPlut(org_htm, dest_tag, afield) {
                 _btnPlut(org_htm, dest_tag, afield);
             }*/
 			
@@ -1033,7 +1035,7 @@
                 for (var j = 0; j < q_bbsCount; j++) {
                 	if($('#canvas_'+j).length>0){
 						$('#imgPic_'+j).attr('src', $('#txtImgdata_'+j).val());
-						showimg(j)
+						showimg(j);
                 	}
                 }
             }
@@ -1212,10 +1214,11 @@
             function showimg(n){
             	var image = document.getElementById('imgPic_'+n);
             	image.onload = function() {
-					var imgwidth = $('#imgPic_'+n).width();
-	                var imgheight = $('#imgPic_'+n).height();
+					var imgwidth = 150;// $('#imgPic_'+n).width();
+	                var imgheight = 50; //$('#imgPic_'+n).height();
 	                if($("#canvas_"+n)[0]!=undefined)
 						$("#canvas_"+n)[0].getContext("2d").drawImage($('#imgPic_'+n)[0],0,0,imgwidth,imgheight,0,0,150,50);
+					this.onload = function(){};
 				};
             }
 		</script>
