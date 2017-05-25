@@ -625,6 +625,7 @@
                     <td align="center" style="width:1%;">
                         <input class="btn" id="btnPlus" type="button" value='＋' style="font-weight: bold;" />
                     </td>
+                    
                     <td align="center" style="width:20px;"> </td>
                     <td align="center" style="width:200px;"><a>業務</a></td>
                     <td align="center" style="width:120px;"><a>本薪</a></td>

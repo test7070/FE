@@ -621,14 +621,19 @@
 				//$('#imgPic_'+n).attr('src',t_imgorg);
 				var image = document.getElementById('imgPic_'+n);
 				image.src=t_imgorg;
-                var imgwidth = 300;
-                var imgheight = 100;
-                $('#canvas_'+n).width(imgwidth).height(imgheight);
-                var c = document.getElementById("canvas_"+n);
-				var ctx = c.getContext("2d");		
-				c.width = imgwidth;
-				c.height = imgheight;
-				image.onload = function() {
+                
+				image.onload = function(e) {
+					var imgwidth = 300;
+	                var imgheight = 100;
+	                //2017/05/25
+	                //因為會產生條碼用圖形,會有放大的情況,導致畫面有跳動的情形
+	                //因此就另外在canvas2做處理,顯示都由canvas,這樣可避免畫面跳動
+	                $('#canvas2_'+n).width(imgwidth).height(imgheight);
+	                var c = document.getElementById("canvas2_"+n);
+					var ctx = c.getContext("2d");		
+					c.width = imgwidth;
+					c.height = imgheight;
+				
 					ctx.drawImage($('#imgPic_'+n)[0],0,0,imgwidth,imgheight);
 					var t_length = 0;
 					for(var i=0;i<t_para.length;i++){
@@ -645,8 +650,9 @@
 						$('#txtLengthb_'+n).val(t_length);
 					}
 					sum();
+					this.onload = function(){};
 					createImg2(n);
-				}
+				};
 			};
 			
 			function createImg2(n){
@@ -661,29 +667,32 @@
 				if(t_imgorg.length==0)
 					return;
 				var image = document.getElementById('imgPic_'+n);
-				var c = document.getElementById("canvas_"+n);
-                var imgwidth = 300;
-                var imgheight = 100;
+				var c = document.getElementById("canvas2_"+n);
+                
                 $('#imgPic_'+n).attr('src',c.toDataURL());
-                image.onload = function() {
+                image.onload = function(e) {
+                	var imgwidth = 300;
+               		var imgheight = 100;
                 	//------------------------------
 					//條碼用圖形
 					xx_width = 355;
 					xx_height = 119;						
-					$('#canvas_'+n).width(xx_width).height(xx_height);
+					$('#canvas2_'+n).width(xx_width).height(xx_height);
 					c.width = xx_width;
 					c.height = xx_height;
                 
-					$('#canvas_'+n)[0].getContext("2d").drawImage($('#imgPic_'+n)[0],0,0,imgwidth,imgheight,0,0,xx_width,xx_height);
+					$('#canvas2_'+n)[0].getContext("2d").drawImage($('#imgPic_'+n)[0],0,0,imgwidth,imgheight,0,0,xx_width,xx_height);
 					$('#txtImgbarcode_'+n).val(c.toDataURL());
 					//報表用圖形 縮放為150*50
 					$('#canvas_'+n).width(150).height(50);
 					c.width = 150;
 					c.height = 50;
-					$('#canvas_'+n)[0].getContext("2d").drawImage($('#imgPic_'+n)[0],0,0,imgwidth,imgheight,0,0,150,50);
+					$('#canvas2_'+n)[0].getContext("2d").drawImage($('#imgPic_'+n)[0],0,0,imgwidth,imgheight,0,0,150,50);
 					$('#txtImgdata_'+n).val(c.toDataURL());	
+					$('#canvas_'+n)[0].getContext("2d").drawImage($('#imgPic_'+n)[0],0,0,imgwidth,imgheight,0,0,150,50);
 					//------------------------------
-				}
+					this.onload = function(){};
+				};
 			};
 			
             function q_stPost() {
@@ -750,12 +759,13 @@
                 Lock(1, {
                     opacity : 0
                 });
+                $('#bbsXpand').click();
                 if ($('#txtDatea').val().length == 0 || !q_cd($('#txtDatea').val())) {
                     alert(q_getMsg('lblDatea') + '錯誤。');
                     Unlock(1);
                     return;
                 }
-                if($.trim($('#txtCustno').val())==0){
+                if($.trim($('#txtCustno').val()).length==0){
                 	alert(q_getMsg('lblCust') + '空白。');
                     Unlock(1);
                     return;
@@ -832,7 +842,8 @@
                 $('.checkAll').prop('checked',true);	
                 $('.checkAll2').prop('checked',true);
             }
-            function q_bbsLenShow( t_start, t_end){
+          /*  function q_bbsLenShow( t_start, t_end){
+            	
             	for(var i=t_start;i<=t_end;i++)
             	if($('#canvas_'+i).length>0){
 					$('#imgPic_'+i).attr('src', $('#txtImgdata_'+i).val());
@@ -840,7 +851,7 @@
                     var imgheight = $('#imgPic_'+i).height();
 					$("#canvas_"+i)[0].getContext("2d").drawImage($('#imgPic_'+i)[0],0,0,imgwidth,imgheight,0,0,150,50);
             	}
-            }
+            }*/
 
             function readonly(t_para, empty) {
                 _readonly(t_para, empty);
@@ -880,10 +891,10 @@
             function btnMinus(id) {
                 _btnMinus(id);
             }
-            /*function btnPlus(org_htm, dest_tag, afield) {
+            function btnPlus(org_htm, dest_tag, afield) {
                 _btnPlus(org_htm, dest_tag, afield);
             }
-            function btnPlut(org_htm, dest_tag, afield) {
+            /*function btnPlut(org_htm, dest_tag, afield) {
                 _btnPlut(org_htm, dest_tag, afield);
             }*/
 			
@@ -1028,7 +1039,7 @@
                 for (var j = 0; j < q_bbsCount; j++) {
                 	if($('#canvas_'+j).length>0){
 						$('#imgPic_'+j).attr('src', $('#txtImgdata_'+j).val());
-						showimg(j)
+						showimg(j);
                 	}
                 }
             }
@@ -1207,11 +1218,12 @@
             function showimg(n){
             	var image = document.getElementById('imgPic_'+n);
             	image.onload = function() {
-					var imgwidth = $('#imgPic_'+n).width();
-	                var imgheight = $('#imgPic_'+n).height();
+					var imgwidth = 150;// $('#imgPic_'+n).width();
+	                var imgheight = 50; //$('#imgPic_'+n).height();
 	                if($("#canvas_"+n)[0]!=undefined)
 						$("#canvas_"+n)[0].getContext("2d").drawImage($('#imgPic_'+n)[0],0,0,imgwidth,imgheight,0,0,150,50);
-				}
+					this.onload = function(){};
+				};
             }
 		</script>
 		<style type="text/css">
@@ -1564,6 +1576,7 @@
 					</td>
 					<td>
 						<canvas id="canvas.*" width="150" height="50"> </canvas>
+						<canvas id="canvas2.*" width="300" height="100" style="display:none;"> </canvas>
 						<img id="imgPic.*" src="" style="display:none;"/>
 						<textarea id="txtImgorg.*" style="display:none;"> </textarea>
 						<textarea id="txtImgdata.*" style="display:none;"> </textarea>
