@@ -625,8 +625,11 @@
 				image.onload = function(e) {
 					var imgwidth = 300;
 	                var imgheight = 100;
-	                $('#canvas_'+n).width(imgwidth).height(imgheight);
-	                var c = document.getElementById("canvas_"+n);
+	                //2017/05/25
+	                //因為會產生條碼用圖形,會有放大的情況,導致畫面有跳動的情形
+	                //因此就另外在canvas2做處理,顯示都由canvas,這樣可避免畫面跳動
+	                $('#canvas2_'+n).width(imgwidth).height(imgheight);
+	                var c = document.getElementById("canvas2_"+n);
 					var ctx = c.getContext("2d");		
 					c.width = imgwidth;
 					c.height = imgheight;
@@ -664,7 +667,7 @@
 				if(t_imgorg.length==0)
 					return;
 				var image = document.getElementById('imgPic_'+n);
-				var c = document.getElementById("canvas_"+n);
+				var c = document.getElementById("canvas2_"+n);
                 
                 $('#imgPic_'+n).attr('src',c.toDataURL());
                 image.onload = function(e) {
@@ -674,18 +677,19 @@
 					//條碼用圖形
 					xx_width = 355;
 					xx_height = 119;						
-					$('#canvas_'+n).width(xx_width).height(xx_height);
+					$('#canvas2_'+n).width(xx_width).height(xx_height);
 					c.width = xx_width;
 					c.height = xx_height;
                 
-					$('#canvas_'+n)[0].getContext("2d").drawImage($('#imgPic_'+n)[0],0,0,imgwidth,imgheight,0,0,xx_width,xx_height);
+					$('#canvas2_'+n)[0].getContext("2d").drawImage($('#imgPic_'+n)[0],0,0,imgwidth,imgheight,0,0,xx_width,xx_height);
 					$('#txtImgbarcode_'+n).val(c.toDataURL());
 					//報表用圖形 縮放為150*50
 					$('#canvas_'+n).width(150).height(50);
 					c.width = 150;
 					c.height = 50;
-					$('#canvas_'+n)[0].getContext("2d").drawImage($('#imgPic_'+n)[0],0,0,imgwidth,imgheight,0,0,150,50);
+					$('#canvas2_'+n)[0].getContext("2d").drawImage($('#imgPic_'+n)[0],0,0,imgwidth,imgheight,0,0,150,50);
 					$('#txtImgdata_'+n).val(c.toDataURL());	
+					$('#canvas_'+n)[0].getContext("2d").drawImage($('#imgPic_'+n)[0],0,0,imgwidth,imgheight,0,0,150,50);
 					//------------------------------
 					this.onload = function(){};
 				};
@@ -1572,6 +1576,7 @@
 					</td>
 					<td>
 						<canvas id="canvas.*" width="150" height="50"> </canvas>
+						<canvas id="canvas2.*" width="300" height="100" style="display:none;"> </canvas>
 						<img id="imgPic.*" src="" style="display:none;"/>
 						<textarea id="txtImgorg.*" style="display:none;"> </textarea>
 						<textarea id="txtImgdata.*" style="display:none;"> </textarea>
