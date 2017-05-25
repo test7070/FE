@@ -46,11 +46,12 @@
 				['txtAddr_home', '', 'view_road', 'memo', '0txtAddr_home', 'road_b.aspx'],
 				['txtAddr_conn', '', 'view_road', 'memo', '0txtAddr_conn', 'road_b.aspx']
 			);
-
+			var t_acomp='',t_part='',t_salm='';
+			
 			$(document).ready(function() {
 				bbmKey = ['noa'];
 				q_brwCount();
-				q_gt(q_name, '', q_sqlCount, 1);		
+				q_gt('acomp', '', 0, 0, 0, "");
 			});
 
 			function main() {
@@ -76,9 +77,9 @@
 				q_cmbParse("cmbPerson", q_getPara('person.typea'));
 				q_cmbParse("cmbBlood", ('').concat(new Array('', 'A', 'B', 'AB', 'O')));
 				
-				q_gt('acomp', '', 0, 0, 0, "");
-				q_gt('part', '', 0, 0, 0, "");
-				q_gt('salm', '', 0, 0, 0, "");
+				q_cmbParse("cmbCno", t_acomp);
+				q_cmbParse("cmbPartno", t_part);
+				q_cmbParse("cmbJobno", t_salm);
 
 				if (q_getPara('sys.comp').indexOf('祥興') > -1) {
 					$('#btnSsspart').show();
@@ -365,15 +366,34 @@
 					case 'acomp':
 		                var as = _q_appendData("acomp", "", true);
 		                if (as[0] != undefined) {
-		                    var t_item = "";
+		                    t_acomp = "@";
 		                    for (i = 0; i < as.length; i++) {
-		                        t_item = t_item + (t_item.length > 0 ? ',' : '') + as[i].noa + '@' + as[i].nick;
+		                        t_acomp = t_acomp + (t_acomp.length > 0 ? ',' : '') + as[i].noa + '@' + as[i].nick;
 		                    }
-		                    q_cmbParse("cmbCno", t_item);
-		                    if(abbm[q_recno])
-		                    	$("#cmbCno").val(abbm[q_recno].cno);
 		                }
+		                q_gt('part', '', 0, 0, 0, "");
+				
 		                break;
+	                case 'part':
+						var as = _q_appendData("part", "", true);
+						if (as[0] != undefined) {
+							t_part = "@";
+							for ( i = 0; i < as.length; i++) {
+								t_part = t_part + (t_part.length > 0 ? ',' : '') + as[i].noa + '@' + as[i].part;
+							}
+						}
+						q_gt('salm', '', 0, 0, 0, "");
+						break;
+					case 'salm':
+						var as = _q_appendData("salm", "", true);
+						if (as[0] != undefined) {
+							t_salm = "@";
+							for ( i = 0; i < as.length; i++) {
+								t_salm = t_salm + (t_salm.length > 0 ? ',' : '') + as[i].noa + '@' + as[i].job;
+							}
+						}
+						q_gt(q_name, '', q_sqlCount, 1);
+						break;
 					case 'payform':
 						var as = _q_appendData("payform", "", true);
 		                var t_item = " @ ";
@@ -404,30 +424,7 @@
 							wrServer($('#txtNoa').val());
 						}
 						break;
-					case 'part':
-						var as = _q_appendData("part", "", true);
-						if (as[0] != undefined) {
-							var t_item = "";
-							for ( i = 0; i < as.length; i++) {
-								t_item = t_item + (t_item.length > 0 ? ',' : '') + as[i].noa + '@' + as[i].part;
-							}
-							q_cmbParse("cmbPartno", t_item);
-							if (abbm[q_recno] != undefined)
-								$("#cmbPartno").val(abbm[q_recno].partno);
-						}
-						break;
-					case 'salm':
-						var as = _q_appendData("salm", "", true);
-						if (as[0] != undefined) {
-							var t_item = "";
-							for ( i = 0; i < as.length; i++) {
-								t_item = t_item + (t_item.length > 0 ? ',' : '') + as[i].noa + '@' + as[i].job;
-							}
-							q_cmbParse("cmbJobno", t_item);
-							if (abbm[q_recno] != undefined)
-								$("#cmbJobno").val(abbm[q_recno].jobno);
-						}
-						break;
+					
 					case q_name:
 						if (q_cur == 4)
 							q_Seek_gtPost();
