@@ -71,7 +71,7 @@
 				/*if (q_getPara('sys.comp').indexOf('英特瑞') > -1 || q_getPara('sys.comp').indexOf('安美得') > -1)
 					q_cmbParse("cmbTypea", q_getPara('sss.typea_it'));
 				else*/
-					q_cmbParse("cmbTypea", q_getPara('sss.typea'));
+				q_cmbParse("cmbTypea", q_getPara('sss.typea'));
 
 				q_cmbParse("cmbSex", q_getPara('sss.sex'));
 				q_cmbParse("cmbPerson", q_getPara('person.typea'));
@@ -158,6 +158,7 @@
 				}).blur(function() {
 					$(this).attr('size', '1');
 				});
+				
 				$("#cmbJobno").focus(function() {
 					var len = $(this).children().length > 0 ? $(this).children().length : 1;
 					$(this).attr('size', len + "");
@@ -322,8 +323,8 @@
                 });
                 
                 $('#btnImport_omoney').click(function(e) {
-                    var bmon=dec($('#textBmon').val())
-	               	var emon=dec($('#textEmon').val())
+                    var bmon=dec($('#textBmon').val());
+	               	var emon=dec($('#textEmon').val());
                     for (var i=bmon;i<=emon;i++){
                     	q_tr('textOmoney_'+i,$('#textOmoney').val());
                     }
