@@ -129,10 +129,11 @@ z_vccap_fe01:--z_vccap_fe01
 	--有買受人優先顯示
 	update @tmp set comp=case when len(buyer)>0 then buyer else comp end
 	
-	--2017/03/01  改為小數2位
+	--2017/03/01  改為小數2位     2017/02/06  麗芳說的
+	--2017/05/31  改為小數3位    因為ASPX已經改為3位了     BY 陳雅齡
 	select noa vccano
-		,dbo.getComma(mount_s,2) mount  --和VCCA.ASPX一致  2017/02/06  麗芳說的
-		,dbo.getComma(price_s,2) price  --和VCCA.ASPX一致
+		,dbo.getComma(mount_s,2) mount   --數量還是維持2位
+		,dbo.getComma(price_s,3) price
 		,dbo.getComma(money_s,-1) e1
 		,dbo.getComma([money],0) e2
 		,dbo.getComma(tax,0) e3

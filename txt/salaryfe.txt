@@ -43,7 +43,7 @@ import2:--salaryfe.txt import2          salaryfe2.aspx
 	from sss a
 	outer apply(select top 1 * from saladjust where noa=a.noa and datea<=@t_mon order by datea desc) b
 	where isnull(a.outdate,'')<=@t_mon+'/31'
-
+	order by a.noa
 	---------------------------------
 	----  毛利
 	declare @tmpb table(
