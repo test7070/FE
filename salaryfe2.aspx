@@ -11,7 +11,7 @@
 <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
 <html xmlns="http://www.w3.org/1999/xhtml" dir="ltr">
 	<head>
-		<title></title>
+		<title> </title>
 		<script src="../script/jquery.min.js" type="text/javascript"></script>
 		<script src='../script/qj2.js' type="text/javascript"></script>
 		<script src='qset.js' type="text/javascript"></script>
@@ -28,13 +28,13 @@
             var q_name = "salaryfe";
             var decbbs = [];
             var decbbm = [];
-            var q_readonly = ['txtNoa','txtWorker','txtWorker2','txtBase'
-            	,'p01','p02','p03','p04','p05','p06','p07','p08','p09','p10'];
-            var q_readonlys = ['txtNoq'];
-            var bbmNum = [['txtBase',10,0,1]
+            var q_readonly = ['txtNoa','txtWorker','txtWorker2','txtTotal','txtBase'
+            	,'txtP01','txtP02','txtP03','txtP04','txtP05','txtP06','txtP07','txtP08','txtP09','txtP10'];
+            var q_readonlys = ['txtNoq','txtTotal'];
+            var bbmNum = [['txtTotal',10,0,1],['txtBase',10,0,1]
             	,['txtP01',10,0,1],['txtP02',10,0,1],['txtP03',10,0,1],['txtP04',10,0,1],['txtP05',10,0,1]
             	,['txtP06',10,0,1],['txtP07',10,0,1],['txtP08',10,0,1],['txtP09',10,0,1],['txtP10',10,0,1]];
-            var bbsNum = [['txtBase',10,0,1]
+            var bbsNum = [['txtTotal',10,0,1],['txtBase',10,0,1]
             	,['txtP01',10,0,1],['txtP02',10,0,1],['txtP03',10,0,1],['txtP04',10,0,1],['txtP05',10,0,1]
             	,['txtP06',10,0,1],['txtP07',10,0,1],['txtP08',10,0,1],['txtP09',10,0,1],['txtP10',10,0,1]];
             var bbmMask = [];
@@ -66,8 +66,9 @@
             	if(!(q_cur=='1' || q_cur=='2')){
             		return;
             	}
-            	var base=0,p01=0,p02=0,p03=0,p04=0,p05=0,p06=0,p07=0,p08=0,p09=0,p10=0;
+            	var total=0,base=0,p01=0,p02=0,p03=0,p04=0,p05=0,p06=0,p07=0,p08=0,p09=0,p10=0;
             	for(var i=0;i<q_bbsCount;i++){
+            		total += q_float('txtTotal_'+i);
             		base += q_float('txtBase_'+i);
             		p01 += q_float('txtP01_'+i);
             		p02 += q_float('txtP02_'+i);
@@ -80,6 +81,7 @@
             		p09 += q_float('txtP09_'+i);
             		p10 += q_float('txtP10_'+i);
             	}	
+            	$('#txtTotal').val(FormatNumber(total));
             	$('#txtBase').val(FormatNumber(base));
             	$('#txtP01').val(FormatNumber(p01));
             	$('#txtP02').val(FormatNumber(p02));
@@ -152,8 +154,8 @@
                         	for(var i=0;i<q_bbsCount;i++){
                         		$('#btnMinus_'+i).click();
                         	}
-                        	q_gridAddRow(bbsHtm, 'tbbs', 'txtSssno,txtSss,txtBase,txtP01,txtP02,txtP03,txtP04,txtP05,txtP06,txtP07,txtP08,txtP09,txtP10'
-                        	, as.length, as, 'sssno,sss,m01,m02,m03,m04,m05,m06,m07,m08,m09,m10,m11', '','');
+                        	q_gridAddRow(bbsHtm, 'tbbs', 'txtSssno,txtSss,txtBase,txtP01,txtP02,txtP03,txtP04,txtP05,txtP06,txtP07,txtP08,txtP09,txtP10,txtTotal'
+                        	, as.length, as, 'sssno,sss,m01,m02,m03,m04,m05,m06,m07,m08,m09,m10,m11,total', '','');
                         	sum();
                         }else{
                     		alert('無資料。');
@@ -414,7 +416,7 @@
 				margin: -1px;
 			}
 			.dbbs {
-                width: 3000px;
+                width: 1200px;
             }
             .tbbs a {
                 font-size: medium;
@@ -500,6 +502,10 @@
                     <tr>
                     	<td><span> </span><a id='lblP10' class="lbl">加班</a></td>
                         <td><input id="txtP10" type="text" class="txt num c1"/></td>
+                        <td> </td>
+                        <td> </td>
+                        <td><span> </span><a id='lblTotal' class="lbl">小計</a></td>
+                        <td><input id="txtTotal" type="text" class="txt num c1"/></td>
                     </tr> 
                     <tr>
 						<td><span> </span><a id='lblMemo' class="lbl">備註</a></td>
@@ -524,7 +530,6 @@
                     </td>
                     <td align="center" style="width:20px;"> </td>
                     <td align="center" style="width:200px;"><a>員工</a></td>
-                    
                     <td align="center" style="width:120px;"><a>底薪</a></td>
                     <td align="center" style="width:120px;"><a>全勤</a></td>
                     <td align="center" style="width:120px;"><a>無遲到</a></td>
@@ -536,6 +541,7 @@
                     <td align="center" style="width:120px;"><a>簽約獎金</a></td>
                     <td align="center" style="width:120px;"><a>試用加給</a></td>
                     <td align="center" style="width:120px;"><a>加班</a></td>
+                    <td align="center" style="width:120px;"><a>小計</a></td>
                 </tr>
                 <tr style='background:#cad3ff;'>
                     <td>
@@ -552,17 +558,14 @@
                     <td> <input id="txtP01.*" type="text" class="txt num" style="width:95%;"/></td>
                     <td> <input id="txtP02.*" type="text" class="txt num" style="width:95%;"/></td>
                     <td> <input id="txtP03.*" type="text" class="txt num" style="width:95%;"/></td>
-                    <td> <input id="txtC01.*" type="text" class="txt num" style="width:95%;"/></td>
-                   	<td> <input id="txtC02.*" type="text" class="txt num" style="width:95%;"/></td>
                     <td> <input id="txtP04.*" type="text" class="txt num" style="width:95%;"/></td>
-                   	<td> <input id="txtC03.*" type="text" class="txt num" style="width:95%;"/></td>
                     <td> <input id="txtP05.*" type="text" class="txt num" style="width:95%;"/></td>
-                    <td> <input id="txtC04.*" type="text" class="txt num" style="width:95%;"/></td>
                     <td> <input id="txtP06.*" type="text" class="txt num" style="width:95%;"/></td>
                     <td> <input id="txtP07.*" type="text" class="txt num" style="width:95%;"/></td>
                     <td> <input id="txtP08.*" type="text" class="txt num" style="width:95%;"/></td>
                     <td> <input id="txtP09.*" type="text" class="txt num" style="width:95%;"/></td>
                     <td> <input id="txtP10.*" type="text" class="txt num" style="width:95%;"/></td>
+                    <td> <input id="txtTotal.*" type="text" class="txt num" style="width:95%;"/></td>
                 </tr>
             </table>
         </div>

@@ -71,7 +71,7 @@
 				/*if (q_getPara('sys.comp').indexOf('英特瑞') > -1 || q_getPara('sys.comp').indexOf('安美得') > -1)
 					q_cmbParse("cmbTypea", q_getPara('sss.typea_it'));
 				else*/
-				q_cmbParse("cmbTypea", q_getPara('sss.typea'));
+				q_cmbParse("cmbTypea", ","+q_getPara('sss.typea'));
 
 				q_cmbParse("cmbSex", q_getPara('sss.sex'));
 				q_cmbParse("cmbPerson", q_getPara('person.typea'));

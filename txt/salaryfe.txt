@@ -32,6 +32,8 @@ import2:--salaryfe.txt import2          salaryfe2.aspx
 		,m09 float --簽約獎金
 		,m10 float --試用加給
 		,m11 float --加班
+		
+		,total float
 	)
 	insert into @tmpa(sssno,sss,jobno,job,m01,m02,m05)
 	select a.noa,a.namea,b.jobno,b.job
@@ -185,6 +187,13 @@ import2:--salaryfe.txt import2          salaryfe2.aspx
 		update @tmpa set m06b = round(@profit * 0.018 * hr/@hr,0)
 	
 	update @tmpa set m06 = ISNULL(m06a,0)+ISNULL(m06b,0)
+	--------------------------------------------------------------------------------------------------------
+	update @tmpa set total = isnull(m01,0)+isnull(m02,0)+isnull(m03,0)+isnull(m04,0)+isnull(m05,0)
+		+isnull(m06,0)+isnull(m07,0)+isnull(m08,0)+isnull(m09,0)+isnull(m10,0)+isnull(m11,0)
+	
+	delete @tmpa where ISNULL(hr,0)=0 and isnull(m01,0)=0 and isnull(m02,0)=0 and isnull(m03,0)=0
+		and isnull(m04,0)=0 and isnull(m05,0)=0 and isnull(m06,0)=0 and isnull(m07,0)=0
+		 and isnull(m08,0)=0 and isnull(m09,0)=0 and isnull(m10,0)=0 and isnull(m11,0)=0	
 	select * from @tmpa order by sssno;
 
 
