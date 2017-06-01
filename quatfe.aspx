@@ -43,6 +43,8 @@
 				['txtSalesno', 'lblSales', 'sss', 'noa,namea', 'txtSalesno,txtSales', 'sss_b.aspx']
 				, ['txtCno', 'lblAcomp', 'acomp', 'noa,acomp', 'txtCno,txtAcomp', 'acomp_b.aspx']
 			);
+			q_copy = 1;
+			
 			$(document).ready(function() {
 				bbmKey = ['noa'];
 				bbsKey = ['noa', 'no3'];

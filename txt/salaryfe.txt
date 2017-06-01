@@ -1,3 +1,202 @@
+import2:--salaryfe.txt import2          salaryfe2.aspx	
+	declare @t_mon nvarchar(20) = [1]
+	
+	--主管及內勤營業人員
+	declare @tmpa table(
+		sel int identity(1,1)
+		,sssno nvarchar(20)
+		,sss nvarchar(50)
+		,jobno nvarchar(20)
+		,job nvarchar(50)
+		,level1 nvarchar(20) --職等
+		,level2 nvarchar(20) --職級
+		
+		,hr1 float -- 一般工時 (有包含請假時數)
+		,hr2 float -- 加班工時 1~2 hr
+		,hr3 float -- 加班工時 3~ hr
+		,hr4 float -- 假日加班
+		,hr5 float -- 請假時數
+		,hr float -- 上班基數
+		-- 會議出席
+		
+		,m01 float --底薪
+		,m02 float --全勤
+		,m03 float --無遲到
+		,m04 float --職等級
+		,m05 float --主管津貼
+		,m06 float --團體獎金
+		,m06a float -- 60%依照職等級分配
+		,m06b float -- 40%依照上班基數分配
+		,m07 float --個人獎金
+		,m08 float --業務會議出席獎金
+		,m09 float --簽約獎金
+		,m10 float --試用加給
+		,m11 float --加班
+		
+		,total float
+	)
+	insert into @tmpa(sssno,sss,jobno,job,m01,m02,m05)
+	select a.noa,a.namea,b.jobno,b.job
+		,b.[money] --底薪
+		,b.bo_full --全勤
+		,b.bo_admin --主管津貼
+	from sss a
+	outer apply(select top 1 * from saladjust where noa=a.noa and datea<=@t_mon order by datea desc) b
+	where isnull(a.outdate,'')<=@t_mon+'/31'
+	order by a.noa
+	---------------------------------
+	----  毛利
+	declare @tmpb table(
+		salesno nvarchar(20)
+		,sales nvarchar(20)
+		,accy nvarchar(20)
+		,vccno nvarchar(20)
+		,vccnoq nvarchar(10)
+		,typea nvarchar(10)
+		,datea nvarchar(20)
+		,custno nvarchar(20)
+		,cust nvarchar(50)
+		
+		,total float
+		,tranmoney1 float
+		,tranmoney2 float
+		,tranmoney3 float
+		
+		,spricemoney float
+		,wcost float
+		,inte float
+		,profit float
+		,productno nvarchar(30)
+		,product nvarchar(100)
+		,unit nvarchar(20)
+		,mount float
+		,[weight] float
+		,price float
+		,sprice float
+		,sprice2 float
+		
+		,paytype nvarchar(20)
+	)
+	insert into @tmpb(salesno,sales,accy,vccno,vccnoq,typea,datea,total,tranmoney1,tranmoney2,tranmoney3,spricemoney,wcost
+		,custno,cust
+		,productno,product,unit,mount,[weight],price,sprice,sprice2)
+		
+	select a.salesno,c.namea,a.accy,a.noa,b.noq,isnull(a.typea,''),a.datea
+		,b.total --* case when isnull(a.typea,'')='1' then 1 else -1 end
+		,b.tranmoney --* case when isnull(a.typea,'')='1' then 1 else -1 end
+		,b.tranmoney2 --* case when isnull(a.typea,'')='1' then 1 else -1 end
+		,b.tranmoney3 --* case when isnull(a.typea,'')='1' then 1 else -1 end
+		,round(case when ISNULL(b.sprice2,0)>0 then b.sprice2 else b.sprice end*case when UPPER(b.unit)='KG' or len(ISNULL(b.unit,''))=0 then b.[weight] else b.mount end,0) spricemoney--* case when isnull(a.typea,'')='1' then 1 else -1 end
+		,round(ISNULL(b.wcost,0)*case when UPPER(b.unit)='KG' or len(ISNULL(b.unit,''))=0 then b.[weight] else b.mount end,0) wcost--* case when isnull(a.typea,'')='1' then 1 else -1 end
+		,a.custno,d.nick
+		,b.productno,b.product,b.unit,b.mount,b.[weight],b.price,b.sprice,b.sprice2
+	from view_vcc a
+	left join view_vccs b on a.accy=b.accy and a.noa=b.noa
+	left join sss c on a.salesno=c.noa
+	left join cust d on a.custno=d.noa
+	left join ucc e on b.productno=e.noa
+	where left(a.datea,6) = @t_mon
+	and b.noa is not null
+	update @tmpb set paytype = rtrim(ltrim(ISNULL(b.paytype,'')))
+	from @tmpb a
+	left join view_vcc b on a.accy=b.accy and a.vccno=b.noa
+	
+	update @tmpb set inte = isnull(round(total
+		*case when patindex('%[0-9]%',ISNULL(paytype,''))>0 then CAST(substring(ISNULL(paytype,''),patindex('%[0-9]%',ISNULL(paytype,'')),len(ISNULL(paytype,''))+2-patindex('%[0-9]%',ISNULL(paytype,''))- patindex('%[0-9]%',reverse(ISNULL(paytype,'')))) as int) else 0 end
+		*0.0004*(case when typea='2' then -1 else 1 end),0),0)
+	update @tmpb set profit = total-tranmoney1-tranmoney2-tranmoney3-spricemoney-wcost-inte
+	------------------------------------------------------------------------------
+	-- 公司毛利
+	declare @profit float = 0
+	select @profit = sum(ISNULL(profit,0)) from @tmpb
+	set @profit = case when @profit>0 then @profit else 0 end
+	------------------------------------------------------------------------------
+	update @tmpa set hr1=b.hr1,hr2=b.hr2,hr3=b.hr3,hr4=b.hr4
+	from @tmpa a
+	left join( select a.sssno
+			,sum(case when isnull(a.w100,0)=0 then 8 else 0 end) hr1 -- 一般工時 (有包含請假時數)
+			,sum(isnull(a.w133,0)) hr2 -- 加班工時 1~2 hr
+			,sum(isnull(a.w166,0)) hr3 -- 加班工時 3~ hr
+			,sum(isnull(a.w100,0)) hr4 -- 假日加班
+		from salpresents a
+		left join salpresent b on a.noa=b.noa
+		where left(a.noa,6)=@t_mon
+		and len(a.clockin)>0
+		group by a.sssno) b on a.sssno=b.sssno
+	-------------------------------------------------------------
+	declare @sssno nvarchar(20)
+	declare @bdate nvarchar(20)
+	declare @edate nvarchar(20)
+	declare @hr float
+
+	declare @tmpc table(
+		sel int identity(1,1)
+		,sssno nvarchar(20)
+		,datea nvarchar(20)
+		,hr float
+	)	
+	--只請一天的
+	insert into @tmpc(sssno,datea,hr)
+	select sssno,bdate,hr_used from salvacause where LEFT(bdate,6)=@t_mon and bdate=edate
+	
+	--連續請的
+	declare @t_bdate date 
+	declare @t_edate date	
+	declare @t_date date
+	declare @n float
+
+	declare cursor_table cursor for
+	select sssno,bdate,edate,hr_used from salvacause where (LEFT(bdate,6)=@t_mon or LEFT(edate,6)=@t_mon) and bdate!=edate
+	open cursor_table
+	fetch next from cursor_table
+	into @sssno,@bdate,@edate,@hr
+	while(@@FETCH_STATUS <> -1)
+	begin	
+		set @t_bdate = dbo.ChineseEraName2AD(@bdate)
+		set @t_edate = dbo.ChineseEraName2AD(@edate)				
+		set @n = @hr/(DATEDIFF(DD,@t_bdate,@t_edate)+1)		
+		set @t_date = @t_bdate
+		while @t_date<=@t_edate
+		begin
+			if LEFT(@t_date,6)=@t_mon
+			begin
+				insert into @tmpc(sssno,datea,hr)values(@sssno,@t_date,@n)
+			end
+			set @t_date = DATEADD(DD,1,@t_date)
+		end
+		fetch next from cursor_table
+		into @sssno,@bdate,@edate,@hr
+	end
+	close cursor_table
+	deallocate cursor_table
+	
+	update @tmpa set hr5=isnull(b.hr,0)
+	from @tmpa a
+	left join (select sssno,SUM(ISNULL(hr,0)) hr from @tmpc group by sssno) b on a.sssno=b.sssno
+	
+	--全公司毛利總和 1.8%	 	
+	--    A，60%依照職等級分配。
+	--    B，40%依照上班基數分配。上班基數：
+	--       a，正常上班*0.3
+	--       b，平常加班*3
+	--       c，週六*6（湶祥）
+	update @tmpa set hr= (ISNULL(hr1,0)-ISNULL(hr5,0))*0.3 + (ISNULL(hr2,0)+ISNULL(hr3,0))*3 + ISNULL(hr4,0)*6
+	set @hr = 0
+	select @hr=SUM(ISNULL(hr,0)) from @tmpa 
+	if @hr != 0
+		update @tmpa set m06b = round(@profit * 0.018 * hr/@hr,0)
+	
+	update @tmpa set m06 = ISNULL(m06a,0)+ISNULL(m06b,0)
+	--------------------------------------------------------------------------------------------------------
+	update @tmpa set total = isnull(m01,0)+isnull(m02,0)+isnull(m03,0)+isnull(m04,0)+isnull(m05,0)
+		+isnull(m06,0)+isnull(m07,0)+isnull(m08,0)+isnull(m09,0)+isnull(m10,0)+isnull(m11,0)
+	
+	delete @tmpa where ISNULL(hr,0)=0 and isnull(m01,0)=0 and isnull(m02,0)=0 and isnull(m03,0)=0
+		and isnull(m04,0)=0 and isnull(m05,0)=0 and isnull(m06,0)=0 and isnull(m07,0)=0
+		 and isnull(m08,0)=0 and isnull(m09,0)=0 and isnull(m10,0)=0 and isnull(m11,0)=0	
+	select * from @tmpa order by sssno;
+
+
 overtime:--salaryfe  overtime 
 	declare @t_mon nvarchar(20) = [1]
 
