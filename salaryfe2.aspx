@@ -103,6 +103,10 @@
                 
                 $('#btnImport').click(function(e){
                 	var t_mon = $.trim($('#txtMon').val());
+                	if(t_mon.length==0){
+                		alert('請輸入月份！');
+                		return;
+                	}
                 	q_func('qtxt.query.import2', 'salaryfe.txt,import2,'+t_mon);
                 });
             }
