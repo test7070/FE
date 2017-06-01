@@ -79,6 +79,19 @@
             		,p10=0,p11=0,p12=0,p13=0,p14=0,p15=0,p16=0,p17=0,p18=0
             		,m01=0,m02=0,m03=0,m04=0;
             	for(var i=0;i<q_bbsCount;i++){
+            		base += q_float('txtBase_'+i);
+            		p01 += q_float('txtP01_'+i);
+            		p02 += q_float('txtP02_'+i);
+            		p03 += q_float('txtP03_'+i);
+            		p04 += q_float('txtP04_'+i);
+            		p05 += q_float('txtP05_'+i);
+            		p06 += q_float('txtP06_'+i);
+            		p07 += q_float('txtP07_'+i);
+            		p08 += q_float('txtP08_'+i);
+            		p09 += q_float('txtP09_'+i);
+            		p10 += q_float('txtP10_'+i);
+            		p11 += q_float('txtP11_'+i);
+            		
             		//plus  可領   base + p01~p18
             		//minus 應扣  m01~m04
             		//transfer 薪轉   total - cash	
@@ -158,11 +171,12 @@
                 q_mask(bbmMask);
                 
                 $('#btnImport').click(function(e){
-                	if($('#txtMon').val().length==0){
+                	var t_mon = $.trim($('#txtMon').val());
+                	if(t_mon.length==0){
                 		alert('請輸入月份！');
                 		return;
                 	}
-                	
+                	q_func('qtxt.query.import', 'salaryfe.txt,import,'+t_mon);
                 });
                 
             }
@@ -210,6 +224,20 @@
             }
             function q_funcPost(t_func, result) {
                 switch(t_func) {
+                	case 'qtxt.query.import':
+						var as = _q_appendData("tmp0", "", true);
+                        if (as[0] != undefined) {
+                        	for(var i=0;i<q_bbsCount;i++){
+                        		$('#btnMinus_'+i).click();
+                        	}
+                        	q_gridAddRow(bbsHtm, 'tbbs', 'txtSssno,txtSss,txtBase,txtP01,txtP02,txtP03,txtP04,txtP05,txtP06,txtP07,txtP08,txtP09,txtP10,txtP11,txtTotal,txtC01,txtC02,txtC03,txtC04,txtD01,txtD02,txtD03'
+                        	, as.length, as, 'sssno,sss,m01,m02,m03,m04,m05,m06,m07,m08,m09,m10,m11,m12,total,n01,n02,c01,c02,b01,b02,b03', '','');
+                        	sum();
+                        }else{
+                    		alert('無資料。');
+                        	return;
+                        }
+						break;
                     default:
                        break;
                 }
@@ -244,18 +272,7 @@
                     $('#txtP09_'+i).change(function(e){sum();});
                     $('#txtP10_'+i).change(function(e){sum();});
                     $('#txtP11_'+i).change(function(e){sum();});
-                    $('#txtP12_'+i).change(function(e){sum();});
-                    $('#txtP13_'+i).change(function(e){sum();});
-                    $('#txtP14_'+i).change(function(e){sum();});
-                    $('#txtP15_'+i).change(function(e){sum();});
-                    $('#txtP16_'+i).change(function(e){sum();});
-                    $('#txtP17_'+i).change(function(e){sum();});
-                    $('#txtP18_'+i).change(function(e){sum();});
-                    $('#txtM01_'+i).change(function(e){sum();});
-                    $('#txtM02_'+i).change(function(e){sum();});
-                    $('#txtM03_'+i).change(function(e){sum();});
-                    $('#txtM04_'+i).change(function(e){sum();});
-                	$('#txtCash_'+i).change(function(e){sum();});
+                	$('#txtTotal_'+i).change(function(e){sum();});
                 }
                 _bbsAssign();
             }
@@ -568,39 +585,6 @@
                         <td><input id="txtP10" type="text" class="txt num c1"/></td>
                         <td><span> </span><a id='lblP11' class="lbl">親恰拜訪獎金</a></td>
                         <td><input id="txtP11" type="text" class="txt num c1"/></td>
-                        <td><span> </span><a id='lblPlus' class="lbl">可領</a></td>
-                        <td>
-                        	<input id="txtP12" type="text" style="display:none;"/>
-                        	<input id="txtP13" type="text" style="display:none;"/>
-                        	<input id="txtP14" type="text" style="display:none;"/>
-                        	<input id="txtP15" type="text" style="display:none;"/>
-                        	<input id="txtP16" type="text" style="display:none;"/>
-                        	<input id="txtP17" type="text" style="display:none;"/>
-                        	<input id="txtP18" type="text" style="display:none;"/>
-                        	<input id="txtPlus" type="text" class="txt num c1"/>
-                    	</td>
-                    </tr>
-                    <tr>
-                    	<td><span> </span><a id='lblM01' class="lbl">借支</a></td>
-                        <td><input id="txtM01" type="text" class="txt num c1"/></td>
-                        <td><span> </span><a id='lblM02' class="lbl">勞保</a></td>
-                        <td><input id="txtM02" type="text" class="txt num c1"/></td>
-                        <td><span> </span><a id='lblP03' class="lbl">健保</a></td>
-                        <td><input id="txtM03" type="text" class="txt num c1"/></td>
-                    </tr>
-                    <tr>
-                    	<td><span> </span><a id='lblM04' class="lbl">團康基金</a></td>
-                        <td><input id="txtM04" type="text" class="txt num c1"/></td>
-                        <td> </td>
-                        <td> </td>
-                        <td><span> </span><a id='lblMinus' class="lbl">應扣</a></td>
-                        <td><input id="txtMinus" type="text" class="txt num c1"/></td>
-                    </tr>
-                    <tr>
-                    	<td><span> </span><a id='lblTransfer' class="lbl">薪轉</a></td>
-                        <td><input id="txtTransfer" type="text" class="txt num c1"/></td>
-                    	<td><span> </span><a id='lblCash' class="lbl">領現</a></td>
-                        <td><input id="txtCash" type="text" class="txt num c1"/></td>
                         <td><span> </span><a id='lblTotal' class="lbl">總計</a></td>
                         <td><input id="txtTotal" type="text" class="txt num c1"/></td>
                     </tr>
@@ -625,7 +609,7 @@
                     <td align="center" style="width:1%;">
                         <input class="btn" id="btnPlus" type="button" value='＋' style="font-weight: bold;" />
                     </td>
-                    
+		
                     <td align="center" style="width:20px;"> </td>
                     <td align="center" style="width:200px;"><a>業務</a></td>
                     <td align="center" style="width:120px;"><a>本薪</a></td>
@@ -640,14 +624,6 @@
                     <td align="center" style="width:120px;"><a>職等級</a></td>
                     <td align="center" style="width:120px;"><a>報價獎金</a></td>
                     <td align="center" style="width:120px;"><a>親恰拜訪<br>獎金</a></td>
-                    <td align="center" style="width:120px;"><a>可領</a></td>
-                    <td align="center" style="width:120px;"><a>借支</a></td>
-                    <td align="center" style="width:120px;"><a>勞保</a></td>
-                    <td align="center" style="width:120px;"><a>健保</a></td>
-           			<td align="center" style="width:120px;"><a>團康基金</a></td>
-           			<td align="center" style="width:120px;"><a>應扣</a></td>
-           			<td align="center" style="width:120px;"><a>薪轉</a></td>
-           			<td align="center" style="width:120px;"><a>領現</a></td>
            			<td align="center" style="width:120px;"><a>實領</a></td>
            			
            			<td align="center" style="width:120px;"><a>營業額</a></td>
@@ -658,8 +634,6 @@
            			<td align="center" style="width:80px;"><a>成交<br>件數</a></td>
            			<td align="center" style="width:80px;"><a>增加<br>件數</a></td>
            			<td align="center" style="width:80px;"><a>下月<br>件數</a></td>
-           			
-           			
                 </tr>
                 <tr style='background:#cad3ff;'>
                     <td>
@@ -684,25 +658,12 @@
                     <td> <input id="txtP09.*" type="text" class="txt num" style="width:95%;"/></td>
                     <td> <input id="txtP10.*" type="text" class="txt num" style="width:95%;"/></td>
                     <td> <input id="txtP11.*" type="text" class="txt num" style="width:95%;"/></td>
-                    <td style="display:none;"> <input id="txtP12.*" type="text" class="txt num" style="width:95%;"/></td>
-                    <td style="display:none;"> <input id="txtP13.*" type="text" class="txt num" style="width:95%;"/></td>
-                    <td style="display:none;"> <input id="txtP14.*" type="text" class="txt num" style="width:95%;"/></td>
-                    <td style="display:none;"> <input id="txtP15.*" type="text" class="txt num" style="width:95%;"/></td>
-                    <td style="display:none;"> <input id="txtP16.*" type="text" class="txt num" style="width:95%;"/></td>
-                    <td style="display:none;"> <input id="txtP17.*" type="text" class="txt num" style="width:95%;"/></td>
-                    <td style="display:none;"> <input id="txtP18.*" type="text" class="txt num" style="width:95%;"/></td>
-                    <td> <input id="txtPlus.*" type="text" class="txt num" style="width:95%;"/></td>
-                    <td> <input id="txtM01.*" type="text" class="txt num" style="width:95%;"/></td>
-                    <td> <input id="txtM02.*" type="text" class="txt num" style="width:95%;"/></td>
-                    <td> <input id="txtM03.*" type="text" class="txt num" style="width:95%;"/></td>
-                    <td> <input id="txtM04.*" type="text" class="txt num" style="width:95%;"/></td>
-                    <td> <input id="txtMinus.*" type="text" class="txt num" style="width:95%;"/></td>
-                    <td> <input id="txtTransfer.*" type="text" class="txt num" style="width:95%;"/></td>
-                    <td> <input id="txtCash.*" type="text" class="txt num" style="width:95%;"/></td>
                     <td> <input id="txtTotal.*" type="text" class="txt num" style="width:95%;"/></td>
                     
                     <td> <input id="txtC01.*" type="text" class="txt num" style="width:95%;"/></td>
                     <td> <input id="txtC02.*" type="text" class="txt num" style="width:95%;"/></td>
+                    <td> <input id="txtC03.*" type="text" class="txt num" style="width:95%;"/></td>
+                    <td> <input id="txtC04.*" type="text" class="txt num" style="width:95%;"/></td>
                     
                     <td> <input id="txtD01.*" type="text" class="txt num" style="width:95%;"/></td>
                     <td> <input id="txtD02.*" type="text" class="txt num" style="width:95%;"/></td>

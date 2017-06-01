@@ -1,3 +1,478 @@
+import:--salaryfe.txt import          salaryfe.aspx	業務
+	declare @t_mon nvarchar(20) = [1]
+	
+	declare @t_bmon nvarchar(20) = left(dbo.AD2ChineseEraName(dateadd(MM,-1, dbo.ChineseEraName2AD(@t_mon+'/01'))),6)
+	declare @t_lastdate date = dateadd(DD,-1, dateadd(MM,1,dbo.ChineseEraName2AD(@t_mon+'/01')))
+	------------------------------------------------------------------------------
+	/*
+		1，本薪             16000   ---- SSS 薪資調整記錄  salAdjust.aspx
+		2，全勤             3000    ----打卡資料
+		(依照公司全勤制度)
+		【30分鐘內扣100，累計扣】
+		3，無遲到           1000    ----??? 會議如何判斷
+		(含上班+會議)
+		【30分鍾內扣100/次】
+		(依照公司遲到制度)
+		4，個人獎金    估9000       ----依銷售分析表 z_uccafe
+		(個人毛利額×4.5%)
+		5，會議出勤    估1800       ----??? 會議如何判斷
+		(每次會議200×9次)
+		6，成交獎金    估2500       ----??? 成交如何判斷
+		(當月每家×100)
+		7，收現獎金    估1500       ----依收款作業  (現金、匯款、支票兌現日 判斷)
+		(客戶不重複)
+		(當月15號前收現×150/家)
+		(當月30號前收現×100/家)
+		(支票以兌現入帳日為計算基準)
+		8，早收獎金      估500      ----??? 和收現獎金  15號前的是一樣的嗎?
+		(客戶不重複)
+		(當月15號前收款×50/家)
+		9，簽約獎金    估2000       ----??? 簽約如何判斷
+		(每噸×5元)
+		10，職等級        估3000    
+		(表現不良者可評負分數)
+		(專業.自主報價.工作.業務.鋼鐵年資，態度.互動.儀表.自發性.配合度......等等)
+		11，報價獎金    估2000      ----??? 有報價單就算嗎
+		(每單×25)
+		12，親恰拜訪獎金    估1000  ----  外勤作業(拜訪)
+		(達標者)(必須親自接洽到關係人)
+
+	
+	*/
+	-----------------------------------------------------------------
+	declare @tmpa table(
+		salesno nvarchar(20)
+		,sales nvarchar(20)
+		,accy nvarchar(20)
+		,vccno nvarchar(20)
+		,vccnoq nvarchar(10)
+		,typea nvarchar(10)
+		,datea nvarchar(20)
+		,custno nvarchar(20)
+		,cust nvarchar(50)
+		
+		,total float
+		,tranmoney1 float
+		,tranmoney2 float
+		,tranmoney3 float
+		
+		,spricemoney float
+		,wcost float
+		,inte float
+		,profit float
+		,productno nvarchar(30)
+		,product nvarchar(100)
+		,unit nvarchar(20)
+		,mount float
+		,[weight] float
+		,price float
+		,sprice float
+		,sprice2 float
+		
+		,paytype nvarchar(20)
+	)
+	insert into @tmpa(salesno,sales,accy,vccno,vccnoq,typea,datea,total,tranmoney1,tranmoney2,tranmoney3,spricemoney,wcost
+		,custno,cust
+		,productno,product,unit,mount,[weight],price,sprice,sprice2)
+	select a.salesno,c.namea,a.accy,a.noa,b.noq,isnull(a.typea,''),a.datea
+		,b.total --* case when isnull(a.typea,'')='1' then 1 else -1 end
+		,b.tranmoney --* case when isnull(a.typea,'')='1' then 1 else -1 end
+		,b.tranmoney2 --* case when isnull(a.typea,'')='1' then 1 else -1 end
+		,b.tranmoney3 --* case when isnull(a.typea,'')='1' then 1 else -1 end
+		,round(case when ISNULL(b.sprice2,0)>0 then b.sprice2 else b.sprice end*case when UPPER(b.unit)='KG' or len(ISNULL(b.unit,''))=0 then b.[weight] else b.mount end,0)--* case when isnull(a.typea,'')='1' then 1 else -1 end
+		,round(ISNULL(b.wcost,0)*case when UPPER(b.unit)='KG' or len(ISNULL(b.unit,''))=0 then b.[weight] else b.mount end,0)--* case when isnull(a.typea,'')='1' then 1 else -1 end
+		,a.custno,d.nick
+		,b.productno,b.product,b.unit,b.mount,b.[weight],b.price,b.sprice,b.sprice2
+	from view_vcc a
+	left join view_vccs b on a.accy=b.accy and a.noa=b.noa
+	left join sss c on a.salesno=c.noa
+	left join cust d on a.custno=d.noa
+	left join ucc e on b.productno=e.noa
+	where left(a.datea,6)=@t_mon
+	and b.noa is not null
+	and isnull(a.salesno,'') like 'B%'
+	and len(ISNULL(c.outdate,''))=0
+	
+	update @tmpa set paytype = rtrim(ltrim(ISNULL(b.paytype,'')))
+	from @tmpa a
+	left join view_vcc b on a.accy=b.accy and a.vccno=b.noa
+	
+	update @tmpa set inte = isnull(round(total
+		*case when patindex('%[0-9]%',ISNULL(paytype,''))>0 then CAST(substring(ISNULL(paytype,''),patindex('%[0-9]%',ISNULL(paytype,'')),len(ISNULL(paytype,''))+2-patindex('%[0-9]%',ISNULL(paytype,''))- patindex('%[0-9]%',reverse(ISNULL(paytype,'')))) as int) else 0 end
+		*0.0004*(case when typea='2' then -1 else 1 end),0),0)
+	
+	update @tmpa set profit = total-tranmoney1-tranmoney2-tranmoney3-spricemoney-wcost-inte
+	
+	declare @tmpb table(
+		sel int identity(1,1)
+		,rr int
+		,gno nvarchar(10)
+		,salesno nvarchar(20)
+		,sales nvarchar(20)
+		,total float
+		,tranmoney1 float
+		,tranmoney2 float
+		,tranmoney3 float
+		,spricemoney float
+		,wcost float
+		,inte float
+		,profit float
+		
+		,rtotal float
+		,rprofit float
+	)
+	insert into @tmpb(gno,salesno,sales,total,tranmoney1,tranmoney2,tranmoney3,spricemoney,wcost,inte,profit)
+	select '1',salesno,sales
+		,SUM(case when typea='1' then 1 else -1 end*isnull(total,0)) total
+		,SUM(case when typea='1' then 1 else -1 end*isnull(tranmoney1,0)) tranmoney1
+		,SUM(case when typea='1' then 1 else -1 end*isnull(tranmoney2,0)) tranmoney2
+		,SUM(case when typea='1' then 1 else -1 end*isnull(tranmoney3,0)) tranmoney3
+		,SUM(case when typea='1' then 1 else -1 end*isnull(spricemoney,0)) spricemoney
+		,SUM(case when typea='1' then 1 else -1 end*isnull(wcost,0)) wcost
+		,SUM(case when typea='1' then 1 else -1 end*isnull(inte,0)) inte
+		,SUM(case when typea='1' then 1 else -1 end*isnull(profit,0)) profit
+	from @tmpa
+	group by salesno,sales
+	-------------------------------------------------------------------------------------------
+	/*
+	7，收現獎金    估1500       ----依收款作業  (現金、匯款、支票兌現日 判斷)
+	(客戶不重複)
+	(當月15號前收現×150/家)
+	(當月30號前收現×100/家)
+	*/	
+	declare @tmpc table(
+		sel int identity(1,1)
+		,noa nvarchar(20)
+		,noq nvarchar(20)
+		,custno nvarchar(20)
+		,datea nvarchar(20)
+	)
+	-- 沖帳
+	insert into @tmpc(noa,noq,custno)
+	select a.noa,noq,left(a.vccno,charindex('-',a.vccno)-1)
+	from umms a
+	where a.vccno like '%-'+@t_mon
+	and ISNULL(a.paysale,0)>0
+	
+	declare @tmpd table(
+		sel int identity(1,1)
+		,noa nvarchar(20)
+		,noq nvarchar(10)
+		,datea nvarchar(20)
+		,checkno nvarchar(20)
+		,[money] float
+	)
+	-- 收款
+	-- 沒支票號碼的都算現金
+	insert into @tmpd(noa,noq,datea,checkno,[money])
+	select a.noa,a.noq
+		,case when len(isnull(a.checkno,''))=0 then b.datea 
+			when d.datea is not null then d.datea
+			when e.datea is not null then e.datea
+			else '' end
+		,a.checkno 
+		,isnull(a.[money],0)
+	from umms a
+	left join umm b on a.noa=b.noa
+	outer apply(select top 1 * from @tmpc where a.noa=noa) c
+	outer apply(select top 1 y.datea from ufs x left join uf y on x.noa=y.noa where x.checkno=a.checkno) d
+	outer apply(select top 1 y.datea from chk3s x left join chk3 y on x.noa=y.noa where x.checkno=a.checkno) e
+	where isnull(a.[money],0)>0
+	and c.noa is not null
+	---------------------------------------------------
+	-- 判斷什麼時候收到貨款,取最大日期
+	declare @tmpe table(
+		sel int identity(1,1)
+		,custno nvarchar(20)
+		,datea nvarchar(20)
+		,sssno nvarchar(20)
+	)
+	insert into @tmpe(custno,datea)
+	select a.custno,max(a.datea)
+	from(
+	select a.custno,b.datea
+	from @tmpc a
+	left join @tmpd b on a.noa=b.noa
+	where b.noa is not null) a 
+	group by a.custno
+	order by a.custno
+	
+	update @tmpe set sssno=ISNULL(b.salesno,'')
+	from @tmpe a
+	left join cust b on a.custno=b.noa
+	
+	declare @tmpf table(
+		sel int identity(1,1)
+		,typea nvarchar(20)
+		,sssno nvarchar(20)
+		,n int
+	)
+	insert into @tmpf(typea,sssno,n)
+	select '15',sssno,count(1)
+	from @tmpe 
+	where datea between @t_mon+'/01' and @t_mon+'/15'
+	group by sssno
+	
+	insert into @tmpf(typea,sssno,n)
+	select '30',sssno,count(1)
+	from @tmpe 
+	where datea between @t_mon+'/16' and @t_mon+'/31'
+	group by sssno
+	------------------------------------------------------------------------------------------
+	--拜訪
+	declare @tmpg table(
+		sel int identity(1,1)
+		,sssno nvarchar(20)
+		,n int
+	)
+	insert into @tmpg(sssno,n)
+	select sssno,count(1)
+	from(
+	select b.sssno,ISNULL(a.acomp,'') cust
+	from trips a
+	left join trip b on a.noa=b.noa
+	where left(b.datea,6) = @t_mon 
+	and a.typea='拜訪'
+	group by b.sssno,ISNULL(a.acomp,'')) a
+	group by sssno
+	-------------------------------------------------------------------------------------------
+	
+	-- 報價件數
+	declare @tmph table(
+		sel int identity(1,1)
+		,sssno nvarchar(20)
+		,n int
+	)
+	insert into @tmph(sssno,n)
+	select sssno,count(1)
+	from (
+	select isnull(b.salesno,'') sssno,a.noa
+	from view_quat a
+	left join cust b on a.custno=b.noa
+	where left(a.datea,6) = @t_mon) a
+	group by sssno
+
+	--成交 (即有訂單的)
+	declare @tmpi table(
+		sel int identity(1,1)
+		,sssno nvarchar(20)
+		,n int
+	)
+	insert into @tmpi(sssno,n)
+	select sssno,count(1)
+	from (
+	select isnull(b.salesno,'') sssno,a.noa
+	from view_quat a
+	left join cust b on a.custno=b.noa
+	where left(a.datea,6) = @t_mon
+	and exists(select top 1 noa from view_ordes where quatno=a.noa)) a
+	group by sssno
+	
+	--未成交報價未填妥資料
+	declare @tmpj table(
+		sel int identity(1,1)
+		,sssno nvarchar(20)
+		,n int
+	)
+	--insert into @tmpj(sssno,mon,n)
+	--select sssno,mon,count(1)
+	--from (
+	--select isnull(b.salesno,'') sssno,left(a.datea,6) mon,a.noa
+	--from view_quat a
+	--left join cust b on a.custno=b.noa
+	--where left(a.datea,6) between @t_bmon and @t_mon
+	--and len(ISNULL(a.memo3,''))=0
+	--and not exists(select top 1 noa from view_ordes where quatno=a.noa)) a
+	--group by sssno,mon
+	
+	-------------------------------------------------------------------------------------------
+	declare @tmp table(
+		sel int identity(1,1)
+		,noa nvarchar(20)
+		,name nvarchar(20)
+		,indate nvarchar(20) -- 到職日
+		
+		,n01 int --業績
+		,n02 int --毛利
+		,n03 int   --當月15號前收現×150/家
+		,n04 int   --當月30號前收現×100/家	
+		,n05 int   --需拜訪客戶
+		,n06 int   --已拜訪客戶
+		
+		,a01 int   --本月報價件數 		
+		,a02 int   --本月未成交報價未填妥資料 
+		
+		,b01 int   --本月成交件數  		
+		,b02 int   --本月應增加件數 
+		,b03 int   --下月應成交件數
+		
+		,c01 int -- 毛利目標
+		,c02 int --  未能達標者扣500/每萬【第七個月起開始扣】
+		
+		,m01 int --本薪
+		,m02 int --全勤
+		,m03 int --無遲到
+		,m04 int --個人獎金 (個人毛利額×4.5%)
+		,m05 int --會議出勤
+		,m06 int --成交獎金
+		,m07 int --收現獎金
+		,m08 int --早收獎金
+		,m09 int --簽約獎金
+		,m10 int --職等級
+		,m11 int --報價獎金     未填妥資料  扣到0?      
+		,m12 int --親恰拜訪獎金  預設1000  扣到0?
+		,total int 
+	)
+	insert into @tmp(noa,name,indate)
+	select noa,namea,indate from sss where noa like 'B%' and len(ISNULL(outdate,''))=0
+
+	-- 本薪、全勤
+	update @tmp set m01=ISNULL(b.[money],0),m02=ISNULL(b.[bo_full],0)
+	from @tmp a
+	outer apply(SELECT top 1 noa,[money],bo_full FROM saladjust where noa=a.noa and LEFT(datea,6) <= @t_mon) b 
+	-- 業績、毛利
+	update @tmp set n01=ISNULL(b.total,0),n02=ISNULL(b.profit,0)
+	from @tmp a
+	left join @tmpb b on a.noa=b.salesno
+	--個人獎金  (個人毛利額×4.5%)
+	update @tmp set m04 = round(n02 * 4.5 /100,0) where n02>0
+	--收現獎金
+	update @tmp set n03=ISNULL(b.n,0)
+	from @tmp a
+	left join @tmpf b on a.noa=b.sssno and b.typea='15'
+	update @tmp set n04=ISNULL(b.n,0)
+	from @tmp a
+	left join @tmpf b on a.noa=b.sssno and b.typea='30'
+	update @tmp set m07 = n03*150 + n04*100
+	--拜訪客戶
+	/*
+	0~5萬          120家/月
+	5~10萬        100家/每月
+	10~15萬        80家/每月
+	15~20萬        60家/每月
+	20~25萬        40家/每月
+	25~30萬        20家/每月
+	30~35萬        10家/每月
+	35~50萬        免計無遲到
+	50~100萬      免計全勤
+	100萬以上     免打卡
+	*/
+	update @tmp set n05=case when n01<=50000 then 120
+		when n01<=100000 then 100
+		when n01<=150000 then 80
+		when n01<=200000 then 60
+		when n01<=250000 then 40
+		when n01<=300000 then 20
+		when n01<=350000 then 10
+		when n01<=500000 then 0
+		when n01<=100000 then 0 
+		else  0 end
+	update @tmp set n06=ISNULL(b.n,0)
+	from @tmp a
+	left join @tmpg b on a.noa=b.sssno 
+	--【未達標者扣50元/每家】
+	--【第２個月起，試用期間未達標必須扣保收薪資】
+	declare @date nvarchar(20) = dbo.AD2ChineseEraName(DATEADD(MM,-2, DATEADD(DD,-1, dateadd(MM,1,dbo.ChineseEraName2AD(@t_mon+'/01')))))
+	update @tmp set m12 = 1000 - case when n05>n06 then (n05-n06)*50 else 0 end
+	update @tmp set m12 = 0
+	where m12<0 and indate>@date
+	
+	
+	--報價、成交
+	--報價獎金 (每單×25)
+	--成交獎金  當月每家×100
+	--未填妥資料扣30元/家
+	update @tmp set a01=isnull(b.n,0)
+	from @tmp a
+	left join @tmph b on a.noa=b.sssno
+	update @tmp set a02=isnull(b.n,0)
+	from @tmp a
+	left join @tmpj b on a.noa=b.sssno 
+	-- 本月成交件數  		
+	update @tmp set b01 = isnull(b.n,0)
+	from @tmp a
+	left join  @tmpi b on a.noa=b.sssno 
+	--本月應增加件數 
+	update @tmp set b02 =
+		case when n02 < 10000 then 12
+			when n02 < 30000 then 9
+			when n02 < 50000 then 6
+			when n02 < 100000 then 4
+			when n02 < 150000 then 2
+			else 0 end
+	--下月應成交件數
+	update @tmp set b03 = isnull(b01,0) + isnull(b02,0)	
+
+--select @t_lastdate
+--select * from @tmp where len(isnull(indate,''))>0
+--return
+
+	--毛利目標
+	update @tmp set c01=
+		case DATEDIFF(MM,dbo.ChineseEraName2AD(indate),@t_lastdate) 
+			when 0 then 0
+			when 1 then 20000
+			when 2 then 40000
+			when 3 then 60000
+			when 4 then 60000
+			when 5 then 80000
+			when 6 then 100000
+			else 120000 end
+	where len(isnull(indate,''))>0
+		
+	--未能達標者扣500/每萬【第七個月起開始扣】
+	update @tmp set c02= case when n02<c01 then floor(((c01-n02)/10000))*500 else 0 end
+	where DATEDIFF(MM,dbo.ChineseEraName2AD(indate),@t_lastdate)>=7
+	and  len(isnull(indate,''))>0
+
+
+	
+	
+	
+	
+	--update @tmp set n10=isnull(b.n,0)
+	--from @tmp a
+	--left join @tmph b on a.noa=b.sssno
+	--where b.mon = @t_mon 
+	
+	--update @tmp set n11=isnull(b.n,0)
+	--from @tmp a
+	--left join @tmpi b on a.noa=b.sssno 
+	--where b.mon = @t_mon
+	
+	--update @tmp set n12=isnull(b.n,0)
+	--from @tmp a
+	--left join @tmpj b on a.noa=b.sssno 
+	--where b.mon = @t_mon
+			
+	update @tmp set m06 = ISNULL(b01,0)*100
+	update @tmp set m11 = ISNULL(a01,0)*25 - ISNULL(a02,0)*30
+	update @tmp set m11 = case when m11<0 then 0 else m11 end
+	/*
+		五，每週應執行標準
+			每月        3天內應           下月應增加
+			毛利        報價案件          成交客戶數
+			1萬內→      6件                   12家
+			3萬內→      4件                    9家
+			5萬內→      3件                    6家
+			10萬內→    2件                   4家
+			15萬內→    1件                   2家
+			15萬以上→  0                      0
+
+			(報價3天為一期，可以累積計算)
+			【第３個月起，每月累積，每少報價案件扣100/件】
+
+			(本月成交客戶數+應增加客戶數=下月應成交客戶數)
+			【第４個月起，每減少成交一家扣300/家】
+	*/
+	
+	--------------------------------------------------------------------------------------
+	update @tmp set total = ISNULL(m01,0)+ISNULL(m02,0)+ISNULL(m03,0)+ISNULL(m04,0)
+		+ISNULL(m05,0)+ISNULL(m06,0)+ISNULL(m07,0)+ISNULL(m08,0)
+		+ISNULL(m09,0)+ISNULL(m10,0)+ISNULL(m11,0)+ISNULL(m12,0)
+	
+	select * from @tmp;
+
 import3:--salaryfe.txt import3          salaryfe3.aspx	財會
 	declare @t_mon nvarchar(20) = [1]
 	
