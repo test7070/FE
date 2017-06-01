@@ -415,9 +415,11 @@
 						var t_where="1=1 and product like '%"+getucc[i].spec+"%' ";
 						t_where=t_where+" and product like '%"+getucc[i].size+"%' ";
 						
-						if(getucc[i].lengthb.toString().slice(-1)=='5'){ //106/03/22扣除多的5公分
+						/*if(getucc[i].lengthb.toString().slice(-1)=='5'){ //106/03/22扣除多的5公分
 							getucc[i].lengthb=dec(getucc[i].lengthb.toString().substr(0,getucc[i].lengthb.toString().length-1)+'0');
-						}
+						}*/
+						getucc[i].lengthb=dec(getucc[i].lengthb.toString().substr(0,getucc[i].lengthb.toString().length-2)+'00');
+						
 						t_where=t_where+" and (product like '%*"+(getucc[i].lengthb/100).toString()+"M' or product like '%*"+(getucc[i].lengthb/100).toString()+".0M' )";
 						t_where="where=^^"+t_where+"^^";
 						
@@ -1070,6 +1072,7 @@
 									var tsize2=t_same[k].size;
 									var lengthb2=t_same[k].lengthb;
 									var tdata2=t_same[k].data;
+									var texists2=false;
 									for (var x=0;x<tdata2.length;x++){
 										if(tspec1==tspec2 && tsize1==tsize2 && dec(tdata2[x].mount)>0 
 											&& dec(cuttmp[m].lengthb)<=dec(lengthb2) && dec(cuttmp[m].lengthb)>=(dec(lengthb2)-dec(tdata2[x].tw03))
@@ -1102,8 +1105,12 @@
 												t_nor=t_nor+(t_nor.length>0?',':'')+(t_same[k].data[x].nor+1);
 											}
 											
+											texists2=true;
 											break;
 										}
+									}
+									if(texists2){
+										break;
 									}
 								}
 							}
@@ -1946,6 +1953,7 @@
 									var tsize2=t_same[k].size;
 									var lengthb2=t_same[k].lengthb;
 									var tdata2=t_same[k].data;
+									var texists2=false;
 									for (var x=0;x<tdata2.length;x++){
 										if(tspec1==tspec2 && tsize1==tsize2 && dec(tdata2[x].mount)>0 
 											&& dec(cuttmp[m].lengthb)<=dec(lengthb2) && dec(cuttmp[m].lengthb)>=(dec(lengthb2)-dec(tdata2[x].tw03))
@@ -1978,8 +1986,12 @@
 												t_nor=t_nor+(t_nor.length>0?',':'')+(t_same[k].data[x].nor+1);
 											}
 											
+											texists2=true;
 											break;
 										}
+									}
+									if(texists2){
+										break;
 									}
 								}
 							}
@@ -2781,6 +2793,7 @@
 									var tsize2=t_same[k].size;
 									var lengthb2=t_same[k].lengthb;
 									var tdata2=t_same[k].data;
+									var texists2=false;
 									for (var x=0;x<tdata2.length;x++){
 										if(tspec1==tspec2 && tsize1==tsize2 && dec(tdata2[x].mount)>0 
 											&& dec(cuttmp[m].lengthb)<=dec(lengthb2) && dec(cuttmp[m].lengthb)>=(dec(lengthb2)-dec(tdata2[x].tw03))
@@ -2813,8 +2826,12 @@
 												t_nor=t_nor+(t_nor.length>0?',':'')+(t_same[k].data[x].nor+1);
 											}
 											
+											texists2=true;
 											break;
 										}
+									}
+									if(texists2){
+										break;
 									}
 								}
 							}
@@ -3422,7 +3439,7 @@
 							var cmount=dec(t_memo2[k].split('*')[1]);
 							chklength=q_add(chklength,q_mul(clength,cmount));
 						}
-						if(q_add(chklength,lengthc)!=tlength && q_add(chklength,lengthc)!=(tlength+5)){
+						if(q_add(chklength,lengthc)!=tlength && q_add(chklength,lengthc)!=(tlength+dec($('#txtLevel').val()))){
 							if(tlength>chklength){
 								t_err=t_err+'領料 第'+(j+1)+'項 領料長度('+tlength.toString()+')大於裁剪總長度('+chklength.toString()+')+損耗('+lengthc+')!! \n';
 							}else{
