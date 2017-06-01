@@ -71,6 +71,7 @@
             	//放在mainPost 避免 r_accy抓不到
             	aPop = new Array(
             	['txtCustno', 'lblCust', 'cust', 'noa,nick', 'txtCustno,txtComp', 'cust_b.aspx']
+            	,['txtEngno', 'lblEng', 'engo', 'engno,eng,custno,comp', 'txtEngno,txtEng,txtCustno,txtComp', 'engo_b.aspx']
             	, ['txtAcc1_', '', 'acc', 'acc1,acc2', 'txtAcc1_,txtAcc2_,txtMoney_', "acc_b.aspx?" + r_userno + ";" + r_name + ";" + q_time + "; ;" + r_accy + '_' + r_cno]
             	, ['txtBankno_', 'btnBank_', 'bank', 'noa,bank', 'txtBankno_,txtBank_', 'bank_b.aspx']
             	, ['txtUmmaccno_', '', 'ummacc', 'noa,typea', 'txtUmmaccno_,txtTypea_', 'ummacc_b.aspx']);
@@ -87,6 +88,11 @@
 		        q_cmbParse("cmbHandle", optionAcc.item,'s');
 		        
 		        q_cmbParse("cmbRem1", ' ,'+q_getPara('gqb.rem1'),'s');
+		        
+				if (q_getPara('sys.project').toUpperCase()=='ENG'){
+					$('.isENGN').hide();
+					$('.isENG').show();
+				}
 				
 		         $('#txtDatea').blur(function() {
 		         	if(!emp($('#txtDatea').val())&&(q_cur==1 || q_cur==2)){
@@ -163,16 +169,26 @@
                 });
                 
                 $('#btnVcc').click(function(e) {
-                	var t_noa = $.trim($('#txtNoa').val());
-                	var t_custno = $.trim($('#txtCustno').val());
-                	var t_custno2 = $.trim($('#txtCustno2').val()).replace(/\,/g,'@');
-                	var t_mon = $.trim($('#txtMon').val());
-                	if(t_custno.length==0){
-                		alert('請先輸入'+q_getMsg('lblCust')+'!!');
-                		return;
-                	}
-                	q_gt('umm_import',"where=^^['"+t_noa+"','"+t_custno+"','"+t_custno2+"','"+t_mon+"','"+q_getPara('sys.d4taxtype')+"')^^", 0, 0, 0, "umm_import");
-                	
+                	if (q_getPara('sys.project').toUpperCase()=='ENG'){
+						if(q_cur==1 || q_cur==2){
+							var t_engno = $.trim($('#txtEngno').val());
+							var t_noa = $.trim($('#txtNoa').val());
+							t_where = "where=^^ engno='" + t_engno + "'^^ ";
+							t_where1 = "where[1]=^^ vccno=a.noa and noa!='" + t_noa + "'^^ ";
+							q_gt('umm_eng', t_where+t_where1, 0, 0, 0, "umm_eng", r_accy);
+						}
+					}else{
+						var t_noa = $.trim($('#txtNoa').val());
+	                	var t_custno = $.trim($('#txtCustno').val());
+	                	var t_custno2 = $.trim($('#txtCustno2').val()).replace(/\,/g,'@');
+	                	var t_mon = $.trim($('#txtMon').val());
+	                	if(t_custno.length==0){
+	                		alert('請先輸入'+q_getMsg('lblCust')+'!!');
+	                		return;
+	                	}
+	                	q_gt('umm_import',"where=^^['"+t_noa+"','"+t_custno+"','"+t_custno2+"','"+t_mon+"','"+q_getPara('sys.d4taxtype')+"')^^", 0, 0, 0, "umm_import");
+	                	
+					}	
                 });
                 
                 $('#btnMon').click(function(e) {
@@ -195,17 +211,34 @@
             }
 			
 			
-            function getOpay() {
-            	Lock(1,{opacity:0});
-                var t_custno = $('#txtCustno').val();
-                var s2 = (q_cur == 2 ? " and noa!='" + $('#txtNoa').val() + "'" : '');
-                
-                if(q_cur==4 ||q_cur==0 )
-                	var t_where = "where=^^custno='" + t_custno + "'" + s2 + " and datea<='"+$('#txtDatea').val()+"' ^^";
-                else
-                	var t_where = "where=^^custno='" + t_custno + "'" + s2 + "^^";
-                
-                q_gt("umm_opay", t_where, 1, 1, 0, '', r_accy);
+            function getOpay() {	
+            	if (q_getPara('sys.project').toUpperCase()=='ENG'){
+						Lock(1, {
+							opacity : 0
+						});
+						var t_engno = $.trim($('#txtEngno').val()) ;
+						var s2 = (q_cur == 2 ? " and noa!='" + $('#txtNoa').val() + "'" : '');
+		
+						if (q_cur == 4 || q_cur == 0)
+							var t_where = "where=^^engno='" + t_engno + "'" + s2 + " and datea<='" + $('#txtDatea').val() + "' ^^";
+						else
+							var t_where = "where=^^engno='" + t_engno + "'" + s2 + "^^";
+		
+						q_gt("umm_opay", t_where, 1, 1, 0, '', r_accy);
+				}else{
+						var t_noa = $.trim($('#txtNoa').val());
+			            Lock(1,{opacity:0});
+		                var t_custno = $('#txtCustno').val();
+		                var s2 = (q_cur == 2 ? " and noa!='" + $('#txtNoa').val() + "'" : '');
+		                
+		                if(q_cur==4 ||q_cur==0 )
+		                	var t_where = "where=^^custno='" + t_custno + "'" + s2 + " and datea<='"+$('#txtDatea').val()+"' ^^";
+		                else
+		                	var t_where = "where=^^custno='" + t_custno + "'" + s2 + "^^";
+		                
+		                q_gt("umm_opay", t_where, 1, 1, 0, '', r_accy);		                	
+				}	
+            
             }
 
             function q_popPost(s1) {
@@ -213,6 +246,9 @@
                     case 'txtAcc1_':
                         sum();
                         break;
+                    case 'txtEngno':
+						getOpay();
+						break;
                 }
             }
 
@@ -314,6 +350,30 @@
                 		
                 		sum();
                 		break;
+                	case 'umm_eng':
+						for (var i = 0; i < q_bbsCount; i++) {
+							if ($('#txtVccno_' + i).val().length > 0) {
+								$('#txtVccno_' + i).val('');
+								$('#txtTablea_' + i).val('');
+                                $('#txtAccy_' + i).val('');
+								$('#txtPaysale_' + i).val('');
+								$('#txtUnpay_' + i).val('');
+								$('#txtUnpayorg_' + i).val('');
+							}
+						}
+						var as = _q_appendData("eng2", "", true);
+						for (var i = 0; i < as.length; i++) {
+							if (as[i].money - as[i].paysale == 0) {
+								as.splice(i, 1);
+								i--;
+							} else {
+								as[i].paysale = 0;
+								as[i].paymon=q_date().substr(0,6);
+							}
+						}
+						q_gridAddRow(bbsHtm, 'tbbs', 'txtVccno,txtPaysale,txtUnpay,txtUnpayorg,txtTablea,txtAccy,txtPaymon,txtMemo2', as.length, as, 'noa,paysale,unpay,unpay,tablea,tableaccy,paymon,comp', 'txtVccno', '');
+						sum();
+						break;
                     case 'umm_opay':
                         var as = _q_appendData('umm', '', true);
                         var s1 = q_trv((as.length > 0 ? round(as[0].total, 0) : 0));
@@ -900,6 +960,12 @@
 		        	//$("#btnMon").attr("disabled","disabled");
 		        	$("#btnAuto").attr("disabled","disabled");
 		        }
+		        
+				if (q_getPara('sys.project').toUpperCase()=='ENG'){
+					$('.isENGN').hide();
+					$('.isENG').show();
+				}
+				
 		        StatusAcc1();
                 getOpay();
             }
@@ -1213,6 +1279,13 @@
 						<td><input id="txtPayc"  type="text" class="txt c1"/></td>
 						<td class="tdZ"><input type="button" id="btnTip" value="?" style="float:right;" onclick="tipShow()"/></td>
 					</tr>
+					<tr class="isENG" style="display:none;">
+						<td class="td1"><span> </span><a id='lblEng' class="lbl btn"> </a></td>
+						<td class="td2" colspan="4">
+							<input id="txtEngno" type="text" class="txt" style="width: 20%;"/>
+							<input id="txtEng" type="text" class="txt" style="width: 75%;"/>
+						</td>
+					</tr>
 					<tr class="tr2">
 						<td><span> </span><a id='lblAcomp' class="lbl"> </a></td>
 						<td>
@@ -1225,8 +1298,8 @@
 						<input id="txtComp"  type="text" class="txt" style="float:left;width:60%;"/>
 						</td>
 						<td colspan="2">
-							<input type="button" id="btnVcc" class="txt c1 " style="display:none;"/>
-							<input type="button" id="btnMon" class="txt c1 " style="width: 95px;"/>
+							<input type="button" id="btnVcc" class="txt c1 isENG" style="display:none;width: 95px;"/>
+							<input type="button" id="btnMon" class="txt c1 isENGN" style="width: 95px;"/>
 							<span> </span><a id='lblCust2' class="lbl btn"> </a>
 						</td>
 						<td >

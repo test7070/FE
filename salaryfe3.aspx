@@ -3,7 +3,7 @@
 		protected void Page_Load(object sender, EventArgs e)
 		{
 		    jwcf wcf = new jwcf();
-			wcf.q_content("salaryfe", " typea='內勤'");
+			wcf.q_content("salaryfe", " typea='財會'");
 		    wcf.q_content("salaryfes", " left( $r_userno,1)!='B' or ( sno=$r_userno or $r_rank >= 8 )");
 		    
 		}
@@ -99,11 +99,11 @@
                 q_getFormat();
                 bbmMask = [['txtMon', r_picm]];
                 q_mask(bbmMask);
-                document.title= '內勤薪資';
+                document.title= '財會薪資';
                 
                 $('#btnImport').click(function(e){
                 	var t_mon = $.trim($('#txtMon').val());
-                	q_func('qtxt.query.import2', 'salaryfe.txt,import2,'+t_mon);
+                	q_func('qtxt.query.import3', 'salaryfe.txt,import3,'+t_mon);
                 });
             }
 
@@ -137,8 +137,7 @@
             		alert('請輸入月份');
             		return;
             	}
-            	
-				$('#txtTypea').val('內勤');
+				$('#txtTypea').val('財會');
                 sum();
                 if (q_cur == 1)
                     $('#txtWorker').val(r_name);
@@ -153,7 +152,7 @@
             }
             function q_funcPost(t_func, result) {
                 switch(t_func) {
-					case 'qtxt.query.import2':
+					case 'qtxt.query.import3':
 						var as = _q_appendData("tmp0", "", true);
                         if (as[0] != undefined) {
                         	for(var i=0;i<q_bbsCount;i++){
@@ -491,17 +490,17 @@
                     <tr>
                     	<td><span> </span><a id='lblP04' class="lbl">主管津貼</a></td>
                         <td><input id="txtP04" type="text" class="txt num c1"/></td>
-                        <td><span> </span><a id='lblP05' class="lbl">團體獎金</a></td>
+                        <td><span> </span><a id='lblP05' class="lbl">稅務主辦</a></td>
                         <td><input id="txtP05" type="text" class="txt num c1"/></td>
-                        <td><span> </span><a id='lblP06' class="lbl">個人獎金</a></td>
+                        <td><span> </span><a id='lblP06' class="lbl">借款獎金</a></td>
                         <td><input id="txtP06" type="text" class="txt num c1"/></td>
                     </tr>
                     <tr>
-                    	<td><span> </span><a id='lblP07' class="lbl">業務會議出席獎金</a></td>
+                    	<td><span> </span><a id='lblP07' class="lbl">貸款獎金</a></td>
                         <td><input id="txtP07" type="text" class="txt num c1"/></td>
-                        <td><span> </span><a id='lblP08' class="lbl">簽約獎金</a></td>
+                        <td><span> </span><a id='lblP08' class="lbl">計帳獎金</a></td>
                         <td><input id="txtP08" type="text" class="txt num c1"/></td>
-                        <td><span> </span><a id='lblP09' class="lbl">試用加給</a></td>
+                        <td><span> </span><a id='lblP09' class="lbl">團體獎金</a></td>
                         <td><input id="txtP09" type="text" class="txt num c1"/></td>
                     </tr>
                     <tr>
@@ -540,11 +539,11 @@
                     <td align="center" style="width:120px;"><a id="lblP02_s">無遲到</a></td>
                     <td align="center" style="width:120px;"><a id="lblP03_s">職等級</a></td>
                     <td align="center" style="width:120px;"><a id="lblP04_s">主管津貼</a></td>
-                    <td align="center" style="width:120px;"><a id="lblP05_s">團體獎金</a></td>
-                    <td align="center" style="width:120px;"><a id="lblP06_s">個人獎金</a></td>
-                    <td align="center" style="width:120px;"><a id="lblP07_s">業務會議出席獎金</a></td>
-                    <td align="center" style="width:120px;"><a id="lblP08_s">簽約獎金</a></td>
-                    <td align="center" style="width:120px;"><a id="lblP09_s">試用加給</a></td>
+                    <td align="center" style="width:120px;"><a id="lblP05_s">稅務主辦</a></td>
+                    <td align="center" style="width:120px;"><a id="lblP06_s">借款獎金</a></td>
+                    <td align="center" style="width:120px;"><a id="lblP07_s">貸款獎金</a></td>
+                    <td align="center" style="width:120px;"><a id="lblP08_s">計帳獎金</a></td>
+                    <td align="center" style="width:120px;"><a id="lblP09_s">團體獎金</a></td>
                     <td align="center" style="width:120px;"><a id="lblP10_s">加班</a></td>
                     <td align="center" style="width:120px;"><a id="lblTotal_s">小計</a></td>
                 </tr>
