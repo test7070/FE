@@ -33,19 +33,15 @@
             	,'p01','p02','p03','p04','p05','p06','p07','p08','p09'
             	,'p10','p11','p12','p13','p14','p15','p16','p17','p18'
             	,'m01','m02','m03','m04'];
-            var q_readonlys = ['txtNoq','txtPlus','txtMinus','txtTransfer','txtTotal'];
-            var bbmNum = [['txtBase',10,0,1],['txtPlus',10,0,1],['txtMinus',10,0,1],['txtTransfer',10,0,1],['txtCash',10,0,1],['txtTotal',10,0,1]
+            var q_readonlys = ['txtNoq','txtTotal'];
+            var bbmNum = [['txtBase',10,0,1],['txtTotal',10,0,1]
             	,['txtP01',10,0,1],['txtP02',10,0,1],['txtP03',10,0,1],['txtP04',10,0,1],['txtP05',10,0,1]
             	,['txtP06',10,0,1],['txtP07',10,0,1],['txtP08',10,0,1],['txtP09',10,0,1],['txtP10',10,0,1]
-            	,['txtP11',10,0,1],['txtP12',10,0,1],['txtP13',10,0,1],['txtP14',10,0,1],['txtP15',10,0,1]
-            	,['txtP16',10,0,1],['txtP17',10,0,1],['txtP18',10,0,1]
-            	,['txtM01',10,0,1],['txtM02',10,0,1],['txtM03',10,0,1],['txtM04',10,0,1]];
-            var bbsNum = [['txtBase',10,0,1],['txtPlus',10,0,1],['txtMinus',10,0,1],['txtTransfer',10,0,1],['txtCash',10,0,1],['txtTotal',10,0,1]
+            	,['txtP11',10,0,1]];
+            var bbsNum = [['txtBase',10,0,1],['txtTotal',10,0,1]
             	,['txtP01',10,0,1],['txtP02',10,0,1],['txtP03',10,0,1],['txtP04',10,0,1],['txtP05',10,0,1]
             	,['txtP06',10,0,1],['txtP07',10,0,1],['txtP08',10,0,1],['txtP09',10,0,1],['txtP10',10,0,1]
-            	,['txtP11',10,0,1],['txtP12',10,0,1],['txtP13',10,0,1],['txtP14',10,0,1],['txtP15',10,0,1]
-            	,['txtP16',10,0,1],['txtP17',10,0,1],['txtP18',10,0,1]
-            	,['txtM01',10,0,1],['txtM02',10,0,1],['txtM03',10,0,1],['txtM04',10,0,1]];
+            	,['txtP11',10,0,1]];
             var bbmMask = [];
             var bbsMask = [];
             q_sqlCount = 6;
@@ -91,48 +87,6 @@
             		p09 += q_float('txtP09_'+i);
             		p10 += q_float('txtP10_'+i);
             		p11 += q_float('txtP11_'+i);
-            		
-            		//plus  可領   base + p01~p18
-            		//minus 應扣  m01~m04
-            		//transfer 薪轉   total - cash	
-            		//cash  領現
-            		$('#txtPlus_'+i).val(q_float('txtBase_'+i)
-            			+q_float('txtP01_'+i)+q_float('txtP02_'+i)+q_float('txtP03_'+i)+q_float('txtP04_'+i)
-            			+q_float('txtP05_'+i)+q_float('txtP06_'+i)+q_float('txtP07_'+i)+q_float('txtP08_'+i)
-            			+q_float('txtP09_'+i)+q_float('txtP10_'+i)+q_float('txtP11_'+i)+q_float('txtP12_'+i)
-            			+q_float('txtP13_'+i)+q_float('txtP14_'+i)+q_float('txtP15_'+i)+q_float('txtP16_'+i)
-            			+q_float('txtP17_'+i)+q_float('txtP18_'+i));
-            		$('#txtMinus_'+i).val(q_float('txtM01_'+i)+q_float('txtM02_'+i)+q_float('txtM03_'+i)+q_float('txtM04_'+i));
-            		$('#txtTotal_'+i).val(q_float('txtPlus_'+i)-q_float('txtMinus_'+i));
-            		$('#txtTransfer_'+i).val(q_float('txtTotal_'+i)-q_float('txtCash_'+i));
-            		
-            		base += q_float('txtBase_'+i);
-            		p01 += q_float('txtP01_'+i);
-            		p02 += q_float('txtP02_'+i);
-            		p03 += q_float('txtP03_'+i);
-            		p04 += q_float('txtP04_'+i);
-            		p05 += q_float('txtP05_'+i);
-            		p06 += q_float('txtP06_'+i);
-            		p07 += q_float('txtP07_'+i);
-            		p08 += q_float('txtP08_'+i);
-            		p09 += q_float('txtP09_'+i);
-            		p10 += q_float('txtP10_'+i);
-            		p11 += q_float('txtP11_'+i);
-            		p12 += q_float('txtP12_'+i);
-            		p13 += q_float('txtP13_'+i);
-            		p14 += q_float('txtP14_'+i);
-            		p15 += q_float('txtP15_'+i);
-            		p16 += q_float('txtP16_'+i);
-            		p17 += q_float('txtP17_'+i);
-            		p18 += q_float('txtP18_'+i);
-            		plus += q_float('txtPlus_'+i);
-            		m01 += q_float('txtM01_'+i);
-            		m02 += q_float('txtM02_'+i);
-            		m03 += q_float('txtM03_'+i);
-            		m04 += q_float('txtM04_'+i);
-            		minus += q_float('txtMinus_'+i);
-            		transfer += q_float('txtTransfer_'+i);
-            		cash += q_float('txtCash_'+i); 
             		total += q_float('txtTotal_'+i);
             	}	
             	$('#txtBase').val(FormatNumber(base));
@@ -147,21 +101,6 @@
             	$('#txtP09').val(FormatNumber(p09));
             	$('#txtP10').val(FormatNumber(p10));
             	$('#txtP11').val(FormatNumber(p11));
-            	$('#txtP12').val(FormatNumber(p12));
-            	$('#txtP13').val(FormatNumber(p13));
-            	$('#txtP14').val(FormatNumber(p14));
-            	$('#txtP15').val(FormatNumber(p15));
-            	$('#txtP16').val(FormatNumber(p16));
-            	$('#txtP17').val(FormatNumber(p17));
-            	$('#txtP18').val(FormatNumber(p18));
-            	$('#txtPlus').val(FormatNumber(plus));
-            	$('#txtM01').val(FormatNumber(m01));
-            	$('#txtM02').val(FormatNumber(m02));
-            	$('#txtM03').val(FormatNumber(m03));
-            	$('#txtM04').val(FormatNumber(m04));
-            	$('#txtMinus').val(FormatNumber(minus));
-            	$('#txtTransfer').val(FormatNumber(transfer));
-            	$('#txtCash').val(FormatNumber(cash));
               	$('#txtTotal').val(FormatNumber(total));
             }
 

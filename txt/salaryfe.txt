@@ -288,8 +288,8 @@ import:--salaryfe.txt import          salaryfe.aspx	業務
 	-------------------------------------------------------------------------------------------
 	declare @tmp table(
 		sel int identity(1,1)
-		,noa nvarchar(20)
-		,name nvarchar(20)
+		,sssno nvarchar(20)
+		,sss nvarchar(20)
 		,indate nvarchar(20) -- 到職日
 		
 		,n01 int --業績
@@ -323,26 +323,26 @@ import:--salaryfe.txt import          salaryfe.aspx	業務
 		,m12 int --親恰拜訪獎金  預設1000  扣到0?
 		,total int 
 	)
-	insert into @tmp(noa,name,indate)
+	insert into @tmp(sssno,sss,indate)
 	select noa,namea,indate from sss where noa like 'B%' and len(ISNULL(outdate,''))=0
 
 	-- 本薪、全勤
 	update @tmp set m01=ISNULL(b.[money],0),m02=ISNULL(b.[bo_full],0)
 	from @tmp a
-	outer apply(SELECT top 1 noa,[money],bo_full FROM saladjust where noa=a.noa and LEFT(datea,6) <= @t_mon) b 
+	outer apply(SELECT top 1 noa,[money],bo_full FROM saladjust where noa=a.sssno and LEFT(datea,6) <= @t_mon) b 
 	-- 業績、毛利
 	update @tmp set n01=ISNULL(b.total,0),n02=ISNULL(b.profit,0)
 	from @tmp a
-	left join @tmpb b on a.noa=b.salesno
+	left join @tmpb b on a.sssno=b.salesno
 	--個人獎金  (個人毛利額×4.5%)
 	update @tmp set m04 = round(n02 * 4.5 /100,0) where n02>0
 	--收現獎金
 	update @tmp set n03=ISNULL(b.n,0)
 	from @tmp a
-	left join @tmpf b on a.noa=b.sssno and b.typea='15'
+	left join @tmpf b on a.sssno=b.sssno and b.typea='15'
 	update @tmp set n04=ISNULL(b.n,0)
 	from @tmp a
-	left join @tmpf b on a.noa=b.sssno and b.typea='30'
+	left join @tmpf b on a.sssno=b.sssno and b.typea='30'
 	update @tmp set m07 = n03*150 + n04*100
 	--拜訪客戶
 	/*
@@ -369,7 +369,7 @@ import:--salaryfe.txt import          salaryfe.aspx	業務
 		else  0 end
 	update @tmp set n06=ISNULL(b.n,0)
 	from @tmp a
-	left join @tmpg b on a.noa=b.sssno 
+	left join @tmpg b on a.sssno=b.sssno 
 	--【未達標者扣50元/每家】
 	--【第２個月起，試用期間未達標必須扣保收薪資】
 	declare @date nvarchar(20) = dbo.AD2ChineseEraName(DATEADD(MM,-2, DATEADD(DD,-1, dateadd(MM,1,dbo.ChineseEraName2AD(@t_mon+'/01')))))
@@ -384,14 +384,14 @@ import:--salaryfe.txt import          salaryfe.aspx	業務
 	--未填妥資料扣30元/家
 	update @tmp set a01=isnull(b.n,0)
 	from @tmp a
-	left join @tmph b on a.noa=b.sssno
+	left join @tmph b on a.sssno=b.sssno
 	update @tmp set a02=isnull(b.n,0)
 	from @tmp a
-	left join @tmpj b on a.noa=b.sssno 
+	left join @tmpj b on a.sssno=b.sssno 
 	-- 本月成交件數  		
 	update @tmp set b01 = isnull(b.n,0)
 	from @tmp a
-	left join  @tmpi b on a.noa=b.sssno 
+	left join  @tmpi b on a.sssno=b.sssno 
 	--本月應增加件數 
 	update @tmp set b02 =
 		case when n02 < 10000 then 12
@@ -425,11 +425,6 @@ import:--salaryfe.txt import          salaryfe.aspx	業務
 	where DATEDIFF(MM,dbo.ChineseEraName2AD(indate),@t_lastdate)>=7
 	and  len(isnull(indate,''))>0
 
-
-	
-	
-	
-	
 	--update @tmp set n10=isnull(b.n,0)
 	--from @tmp a
 	--left join @tmph b on a.noa=b.sssno
