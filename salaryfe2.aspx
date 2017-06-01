@@ -3,7 +3,7 @@
 		protected void Page_Load(object sender, EventArgs e)
 		{
 		    jwcf wcf = new jwcf();
-			wcf.q_content("salaryfe", " typea='員工'");
+			wcf.q_content("salaryfe", " typea='內勤'");
 		    wcf.q_content("salaryfes", " left( $r_userno,1)!='B' or ( sno=$r_userno or $r_rank >= 8 )");
 		    
 		}
@@ -99,7 +99,7 @@
                 q_getFormat();
                 bbmMask = [['txtMon', r_picm]];
                 q_mask(bbmMask);
-                document.title= '員工薪資';
+                document.title= '內勤薪資';
                 
                 $('#btnImport').click(function(e){
                 	var t_mon = $.trim($('#txtMon').val());
@@ -133,7 +133,12 @@
             }
             
             function btnOk() {
-				$('#txtTypea').val('員工');
+            	if($.trim($('#txtMon').val()).length==0){
+            		alert('請輸入月份');
+            		return;
+            	}
+            	
+				$('#txtTypea').val('內勤');
                 sum();
                 if (q_cur == 1)
                     $('#txtWorker').val(r_name);
@@ -530,18 +535,18 @@
                     </td>
                     <td align="center" style="width:20px;"> </td>
                     <td align="center" style="width:200px;"><a>員工</a></td>
-                    <td align="center" style="width:120px;"><a>底薪</a></td>
-                    <td align="center" style="width:120px;"><a>全勤</a></td>
-                    <td align="center" style="width:120px;"><a>無遲到</a></td>
-                    <td align="center" style="width:120px;"><a>職等級</a></td>
-                    <td align="center" style="width:120px;"><a>主管津貼</a></td>
-                    <td align="center" style="width:120px;"><a>團體獎金</a></td>
-                    <td align="center" style="width:120px;"><a>個人獎金</a></td>
-                    <td align="center" style="width:120px;"><a>業務會議出席獎金</a></td>
-                    <td align="center" style="width:120px;"><a>簽約獎金</a></td>
-                    <td align="center" style="width:120px;"><a>試用加給</a></td>
-                    <td align="center" style="width:120px;"><a>加班</a></td>
-                    <td align="center" style="width:120px;"><a>小計</a></td>
+                    <td align="center" style="width:120px;"><a id="lblBase_s">底薪</a></td>
+                    <td align="center" style="width:120px;"><a id="lblP01_s">全勤</a></td>
+                    <td align="center" style="width:120px;"><a id="lblP02_s">無遲到</a></td>
+                    <td align="center" style="width:120px;"><a id="lblP03_s">職等級</a></td>
+                    <td align="center" style="width:120px;"><a id="lblP04_s">主管津貼</a></td>
+                    <td align="center" style="width:120px;"><a id="lblP05_s">團體獎金</a></td>
+                    <td align="center" style="width:120px;"><a id="lblP06_s">個人獎金</a></td>
+                    <td align="center" style="width:120px;"><a id="lblP07_s">業務會議出席獎金</a></td>
+                    <td align="center" style="width:120px;"><a id="lblP08_s">簽約獎金</a></td>
+                    <td align="center" style="width:120px;"><a id="lblP09_s">試用加給</a></td>
+                    <td align="center" style="width:120px;"><a id="lblP10_s">加班</a></td>
+                    <td align="center" style="width:120px;"><a id="lblTotal_s">小計</a></td>
                 </tr>
                 <tr style='background:#cad3ff;'>
                     <td>

@@ -1,4 +1,194 @@
-import2:--salaryfe.txt import2          salaryfe2.aspx	
+import3:--salaryfe.txt import3          salaryfe3.aspx	財會
+	declare @t_mon nvarchar(20) = [1]
+	
+	--財會人員薪資制度
+	declare @tmpa table(
+		sel int identity(1,1)
+		,sssno nvarchar(20)
+		,sss nvarchar(50)
+		,jobno nvarchar(20)
+		,job nvarchar(50)
+		,level1 nvarchar(20) --職等
+		,level2 nvarchar(20) --職級
+		
+		,hr1 float -- 一般工時 (有包含請假時數)
+		,hr2 float -- 加班工時 1~2 hr
+		,hr3 float -- 加班工時 3~ hr
+		,hr4 float -- 假日加班
+		,hr5 float -- 請假時數
+		,hr float -- 上班基數
+		-- 會議出席
+		
+		,m01 float --底薪
+		,m02 float --全勤
+		,m03 float --無遲到
+		,m04 float --職等級
+		,m05 float --主管津貼
+		,m06 float --稅務主辦
+
+		,m07 float  --借款獎金
+		,m08 float  --貸款獎金
+		,m08a float --信用貸款           1%	
+		,m08b float --票貼及應收帳款   0.6%
+        ,m08c float --不動產抵押   	   0.3%
+
+		,m09 float  --計帳獎金
+		,m09a float --發票金額
+		,m09b float --計帳獎金(未分配) 
+		,m10 float  --團體獎金
+		,m11 float  --加班
+		
+		,total float
+	)
+	insert into @tmpa(sssno,sss,jobno,job,m01,m02,m05)
+	select a.noa,a.namea,b.jobno,b.job
+		,b.[money] --底薪
+		,b.bo_full --全勤
+		,b.bo_admin --主管津貼
+	from sss a
+	outer apply(select top 1 * from saladjust where noa=a.noa and datea<=@t_mon order by datea desc) b
+	where isnull(a.outdate,'')<=@t_mon+'/31'
+	order by a.noa
+
+	-------------------------------------------------------------------------------------------------------------------
+	--計帳獎金
+	declare @t_bvccadate nvarchar(20)
+	declare @t_evccadate nvarchar(20)
+	if CAST(RIGHT(@t_mon,2) as int)%2 = 1
+	begin
+		select @t_bvccadate = dbo.AD2ChineseEraName(DATEADD(MM,-2,dbo.ChineseEraName2AD(@t_mon+'/01')))
+			, @t_evccadate = dbo.AD2ChineseEraName(DATEADD(MM,-1,dbo.ChineseEraName2AD(@t_mon+'/01')))
+	end
+	else
+	begin
+		select @t_bvccadate = dbo.AD2ChineseEraName(DATEADD(MM,-3,dbo.ChineseEraName2AD(@t_mon+'/01')))
+			, @t_evccadate = dbo.AD2ChineseEraName(DATEADD(MM,-2,dbo.ChineseEraName2AD(@t_mon+'/01')))
+	end
+	
+	update @tmpa set m09a = ISNULL(b.[money],0)
+	from @tmpa a
+	left join(
+		select ISNULL(b.noa,'') sssno,ISNULL(a.worker,'') sss,SUM(ISNULL(a.[money],0)) [money]
+		from vcca a
+		outer apply(select top 1 * from sss where namea=a.worker order by noa) b
+		where a.datea between @t_bvccadate and @t_evccadate 
+		group by ISNULL(b.noa,''),ISNULL(a.worker,'')) b on a.sssno=b.sssno
+	
+	update @tmpa set m09b = case 
+		when m09a<=0 then 0
+		when m09a<=500000 then 800
+		when m09a<=1500000 then 1200
+		when m09a<=3000000 then 2000
+		when m09a<=6000000 then 4000
+		when m09a<=10000000 then 5000
+		when m09a<=13000000 then 6000
+		when m09a<=16000000 then 7000
+		when m09a<=20000000 then 8000
+		when m09a<=23000000 then 9000
+		when m09a<=26000000 then 10000
+		when m09a<=30000000 then 11000
+		else 12000 end
+	--還需再分配
+	update @tmpa set m09 = m09b	
+	------------------------------------------------------------------------------
+	update @tmpa set hr1=b.hr1,hr2=b.hr2,hr3=b.hr3,hr4=b.hr4
+	from @tmpa a
+	left join( select a.sssno
+			,sum(case when isnull(a.w100,0)=0 then 8 else 0 end) hr1 -- 一般工時 (有包含請假時數)
+			,sum(isnull(a.w133,0)) hr2 -- 加班工時 1~2 hr
+			,sum(isnull(a.w166,0)) hr3 -- 加班工時 3~ hr
+			,sum(isnull(a.w100,0)) hr4 -- 假日加班
+		from salpresents a
+		left join salpresent b on a.noa=b.noa
+		where left(a.noa,6)=@t_mon
+		and len(a.clockin)>0
+		group by a.sssno) b on a.sssno=b.sssno
+	------------------------------------------------------------------------------
+	declare @sssno nvarchar(20)
+	declare @bdate nvarchar(20)
+	declare @edate nvarchar(20)
+	declare @hr float
+
+	declare @tmpc table(
+		sel int identity(1,1)
+		,sssno nvarchar(20)
+		,datea nvarchar(20)
+		,hr float
+	)	
+	--只請一天的
+	insert into @tmpc(sssno,datea,hr)
+	select sssno,bdate,hr_used from salvacause where LEFT(bdate,6)=@t_mon and bdate=edate
+	
+	--連續請的
+	declare @t_bdate date 
+	declare @t_edate date	
+	declare @t_date date
+	declare @n float
+
+	declare cursor_table cursor for
+	select sssno,bdate,edate,hr_used from salvacause where (LEFT(bdate,6)=@t_mon or LEFT(edate,6)=@t_mon) and bdate!=edate
+	open cursor_table
+	fetch next from cursor_table
+	into @sssno,@bdate,@edate,@hr
+	while(@@FETCH_STATUS <> -1)
+	begin	
+		set @t_bdate = dbo.ChineseEraName2AD(@bdate)
+		set @t_edate = dbo.ChineseEraName2AD(@edate)				
+		set @n = @hr/(DATEDIFF(DD,@t_bdate,@t_edate)+1)		
+		set @t_date = @t_bdate
+		while @t_date<=@t_edate
+		begin
+			if LEFT(@t_date,6)=@t_mon
+			begin
+				insert into @tmpc(sssno,datea,hr)values(@sssno,@t_date,@n)
+			end
+			set @t_date = DATEADD(DD,1,@t_date)
+		end
+		fetch next from cursor_table
+		into @sssno,@bdate,@edate,@hr
+	end
+	close cursor_table
+	deallocate cursor_table
+	
+	update @tmpa set hr5=isnull(b.hr,0)
+	from @tmpa a
+	left join (select sssno,SUM(ISNULL(hr,0)) hr from @tmpc group by sssno) b on a.sssno=b.sssno
+	-----------------------------------------------------------------------------------------------------
+	--貸款獎金
+	update @tmpa set m08a=b.m08a,m08b=b.m08b,m08c=b.m08c
+	from @tmpa a
+	left join(
+		select a.sssno,a.sss
+			,case when a.typea='信用貸款' then round(a.[money]*0.01,0) else 0 end m08a
+			,case when a.typea='票貼及應收帳款' then round(a.[money]*0.006,0) else 0 end m08b
+			,case when a.typea='不動產抵押' then round(a.[money]*0.003,0) else 0 end m08c
+		from(
+			select ISNULL(b.noa,'') sssno,ISNULL(a.worker,'') sss,ISNULL(a.typea,'') typea,sum(isnull(a.[money],0)) [money]
+			from banks a
+			outer apply(select top 1 * from sss where namea=a.worker order by noa) b 
+			where @t_mon = LEFT(a.datea,6)
+			group by ISNULL(b.noa,''),ISNULL(a.worker,''),ISNULL(a.typea,'')) a) b on a.sssno=b.sssno
+	
+	update @tmpa set m08 = ISNULL(m08a,0)+ISNULL(m08b,0)+ISNULL(m08c,0)
+	-----------------------------------------------------------------------------------------------------
+	--加班：
+    --A，1~2時*      120/時
+    --B，3時以上*   135/時
+    --平日加班必須由部門主管簽核，方得計算加班。
+	--假日出勤一律自由換假補休（假日盡量以不出勤為原則）
+	update @tmpa set m11 = round(ISNULL(hr2,0)*120 + ISNULL(hr3,0)*135,0)
+	-----------------------------------------------------------------------------------------------------
+	
+	update @tmpa set total = ISNULL(m01,0)+ISNULL(m02,0)+ISNULL(m03,0)+ISNULL(m04,0)
+		+ISNULL(m05,0)+ISNULL(m06,0)+ISNULL(m07,0)+ISNULL(m08,0)+ISNULL(m09,0)
+		+ISNULL(m10,0)+ISNULL(m11,0)
+	
+	delete @tmpa where ISNULL(hr,0)=0 and isnull(m01,0)=0 and isnull(m02,0)=0 and isnull(m03,0)=0
+		and isnull(m04,0)=0 and isnull(m05,0)=0 and isnull(m06,0)=0 and isnull(m07,0)=0
+		 and isnull(m08,0)=0 and isnull(m09,0)=0 and isnull(m10,0)=0 and isnull(m11,0)=0	
+	select * from @tmpa order by sssno;
+
+import2:--salaryfe.txt import2          salaryfe2.aspx	內勤
 	declare @t_mon nvarchar(20) = [1]
 	
 	--主管及內勤營業人員
@@ -187,7 +377,13 @@ import2:--salaryfe.txt import2          salaryfe2.aspx
 		update @tmpa set m06b = round(@profit * 0.018 * hr/@hr,0)
 	
 	update @tmpa set m06 = ISNULL(m06a,0)+ISNULL(m06b,0)
-	--------------------------------------------------------------------------------------------------------
+	-----------------------------------------------------------------------------------------------------
+	--加班：
+    --A，1~2時*      120/時
+    --B，3時以上*    135/時
+    --C，假日 160    週六上班，可以選擇自由換假補休，或是領取湶祥的薪資
+	update @tmpa set m11 = round(ISNULL(hr2,0)*120 + ISNULL(hr3,0)*135 + ISNULL(hr4,0)*160,0)
+	--------------------------------------------------------------------------------------------------------	
 	update @tmpa set total = isnull(m01,0)+isnull(m02,0)+isnull(m03,0)+isnull(m04,0)+isnull(m05,0)
 		+isnull(m06,0)+isnull(m07,0)+isnull(m08,0)+isnull(m09,0)+isnull(m10,0)+isnull(m11,0)
 	
