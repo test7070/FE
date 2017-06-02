@@ -68,7 +68,6 @@
             	}
             	var total=0,base=0,p01=0,p02=0,p03=0,p04=0,p05=0,p06=0,p07=0,p08=0,p09=0,p10=0;
             	for(var i=0;i<q_bbsCount;i++){
-            		total += q_float('txtTotal_'+i);
             		base += q_float('txtBase_'+i);
             		p01 += q_float('txtP01_'+i);
             		p02 += q_float('txtP02_'+i);
@@ -80,6 +79,11 @@
             		p08 += q_float('txtP08_'+i);
             		p09 += q_float('txtP09_'+i);
             		p10 += q_float('txtP10_'+i);
+            		$('#txtTotal_'+i).val(q_float('txtBase_'+i)
+            			+q_float('txtP01_'+i)+q_float('txtP02_'+i)+q_float('txtP03_'+i)+q_float('txtP04_'+i)
+            			+q_float('txtP05_'+i)+q_float('txtP06_'+i)+q_float('txtP07_'+i)+q_float('txtP08_'+i)
+            			+q_float('txtP09_'+i)+q_float('txtP10_'+i));
+            		total += q_float('txtTotal_'+i);
             	}	
             	$('#txtTotal').val(FormatNumber(total));
             	$('#txtBase').val(FormatNumber(base));
@@ -203,6 +207,7 @@
                     $('#txtP08_'+i).change(function(e){sum();});
                     $('#txtP09_'+i).change(function(e){sum();});
                     $('#txtP10_'+i).change(function(e){sum();});
+                    $('#txtTotal_'+i).change(function(e){sum();});
                 }
                 _bbsAssign();
             }

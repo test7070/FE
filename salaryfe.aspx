@@ -70,10 +70,9 @@
             	if(!(q_cur=='1' || q_cur=='2')){
             		return;
             	}
-            	var base=0,plus=0,minus=0,transfer=0,cash=0,total=0
+            	var base=0,total=0
             		,p01=0,p02=0,p03=0,p04=0,p05=0,p06=0,p07=0,p08=0,p09=0
-            		,p10=0,p11=0,p12=0,p13=0,p14=0,p15=0,p16=0,p17=0,p18=0
-            		,m01=0,m02=0,m03=0,m04=0;
+            		,p10=0,p11=0;
             	for(var i=0;i<q_bbsCount;i++){
             		base += q_float('txtBase_'+i);
             		p01 += q_float('txtP01_'+i);
@@ -87,6 +86,10 @@
             		p09 += q_float('txtP09_'+i);
             		p10 += q_float('txtP10_'+i);
             		p11 += q_float('txtP11_'+i);
+            		$('#txtTotal_'+i).val(q_float('txtBase_'+i)
+            			+q_float('txtP01_'+i)+q_float('txtP02_'+i)+q_float('txtP03_'+i)+q_float('txtP04_'+i)
+            			+q_float('txtP05_'+i)+q_float('txtP06_'+i)+q_float('txtP07_'+i)+q_float('txtP08_'+i)
+            			+q_float('txtP09_'+i)+q_float('txtP10_'+i)+q_float('txtP11_'+i));
             		total += q_float('txtTotal_'+i);
             	}	
             	$('#txtBase').val(FormatNumber(base));

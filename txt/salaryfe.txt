@@ -545,6 +545,7 @@ import3:--salaryfe.txt import3          salaryfe3.aspx	財會
 	from sss a
 	outer apply(select top 1 * from saladjust where noa=a.noa and datea<=@t_mon order by datea desc) b
 	where isnull(a.outdate,'')<=@t_mon+'/31'
+	and a.partno='05'
 	order by a.noa
 
 	-------------------------------------------------------------------------------------------------------------------
@@ -743,6 +744,7 @@ import2:--salaryfe.txt import2          salaryfe2.aspx	內勤
 	from sss a
 	outer apply(select top 1 * from saladjust where noa=a.noa and datea<=@t_mon order by datea desc) b
 	where isnull(a.outdate,'')<=@t_mon+'/31'
+	and (a.partno='03' or a.partno='04')
 	order by a.noa
 	---------------------------------
 	----  毛利
