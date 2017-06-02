@@ -29,14 +29,16 @@
             var decbbs = [];
             var decbbm = [];
             var q_readonly = ['txtNoa','txtWorker','txtWorker2','txtTotal','txtBase'
-            	,'txtP01','txtP02','txtP03','txtP04','txtP05','txtP06','txtP07','txtP08','txtP09','txtP10'];
+            	,'txtP01','txtP02','txtP03','txtP04','txtP05','txtP06','txtP07','txtP08','txtP09','txtP10'
+            	,'txtP17','txtP18'];
             var q_readonlys = ['txtNoq','txtTotal'];
             var bbmNum = [['txtTotal',10,0,1],['txtBase',10,0,1]
             	,['txtP01',10,0,1],['txtP02',10,0,1],['txtP03',10,0,1],['txtP04',10,0,1],['txtP05',10,0,1]
             	,['txtP06',10,0,1],['txtP07',10,0,1],['txtP08',10,0,1],['txtP09',10,0,1],['txtP10',10,0,1]];
             var bbsNum = [['txtTotal',10,0,1],['txtBase',10,0,1]
             	,['txtP01',10,0,1],['txtP02',10,0,1],['txtP03',10,0,1],['txtP04',10,0,1],['txtP05',10,0,1]
-            	,['txtP06',10,0,1],['txtP07',10,0,1],['txtP08',10,0,1],['txtP09',10,0,1],['txtP10',10,0,1]];
+            	,['txtP06',10,0,1],['txtP07',10,0,1],['txtP08',10,0,1],['txtP09',10,0,1],['txtP10',10,0,1]
+            	,['txtP17',10,0,1],['txtP18',10,0,1]];
             var bbmMask = [];
             var bbsMask = [];
             q_sqlCount = 6;
@@ -66,7 +68,7 @@
             	if(!(q_cur=='1' || q_cur=='2')){
             		return;
             	}
-            	var total=0,base=0,p01=0,p02=0,p03=0,p04=0,p05=0,p06=0,p07=0,p08=0,p09=0,p10=0;
+            	var total=0,base=0,p01=0,p02=0,p03=0,p04=0,p05=0,p06=0,p07=0,p08=0,p09=0,p10=0,p17=0,p18=0;
             	for(var i=0;i<q_bbsCount;i++){
             		base += q_float('txtBase_'+i);
             		p01 += q_float('txtP01_'+i);
@@ -79,10 +81,13 @@
             		p08 += q_float('txtP08_'+i);
             		p09 += q_float('txtP09_'+i);
             		p10 += q_float('txtP10_'+i);
+            		p17 += q_float('txtP17_'+i);
+            		p18 += q_float('txtP18_'+i);
             		$('#txtTotal_'+i).val(q_float('txtBase_'+i)
             			+q_float('txtP01_'+i)+q_float('txtP02_'+i)+q_float('txtP03_'+i)+q_float('txtP04_'+i)
             			+q_float('txtP05_'+i)+q_float('txtP06_'+i)+q_float('txtP07_'+i)+q_float('txtP08_'+i)
-            			+q_float('txtP09_'+i)+q_float('txtP10_'+i));
+            			+q_float('txtP09_'+i)+q_float('txtP10_'+i)
+            			-q_float('txtP17_'+i)-q_float('txtP18_'+i));
             		total += q_float('txtTotal_'+i);
             	}	
             	$('#txtTotal').val(FormatNumber(total));
@@ -97,6 +102,8 @@
             	$('#txtP08').val(FormatNumber(p08));
             	$('#txtP09').val(FormatNumber(p09));
             	$('#txtP10').val(FormatNumber(p10));
+            	$('#txtP17').val(FormatNumber(p17));
+            	$('#txtP18').val(FormatNumber(p18));
             }
 
             function mainPost() {
@@ -208,6 +215,8 @@
                     $('#txtP08_'+i).change(function(e){sum();});
                     $('#txtP09_'+i).change(function(e){sum();});
                     $('#txtP10_'+i).change(function(e){sum();});
+                    $('#txtP17_'+i).change(function(e){sum();});
+                    $('#txtP18_'+i).change(function(e){sum();});
                     $('#txtTotal_'+i).change(function(e){sum();});
                 }
                 _bbsAssign();
@@ -488,36 +497,38 @@
                     <tr>
                     	<td><span> </span><a id='lblBase' class="lbl">本薪</a></td>
                         <td><input id="txtBase" type="text" class="txt num c1"/></td>
-                    </tr>
-                    <tr>
                     	<td><span> </span><a id='lblP01' class="lbl">全勤</a></td>
                         <td><input id="txtP01" type="text" class="txt num c1"/></td>
                         <td><span> </span><a id='lblP02' class="lbl">無遲到</a></td>
                         <td><input id="txtP02" type="text" class="txt num c1"/></td>
-                        <td><span> </span><a id='lblP03' class="lbl">職等級</a></td>
-                        <td><input id="txtP03" type="text" class="txt num c1"/></td>
                     </tr>
                     <tr>
+                    	<td><span> </span><a id='lblP03' class="lbl">職等級</a></td>
+                        <td><input id="txtP03" type="text" class="txt num c1"/></td>
                     	<td><span> </span><a id='lblP04' class="lbl">主管津貼</a></td>
                         <td><input id="txtP04" type="text" class="txt num c1"/></td>
                         <td><span> </span><a id='lblP05' class="lbl">團體獎金</a></td>
                         <td><input id="txtP05" type="text" class="txt num c1"/></td>
-                        <td><span> </span><a id='lblP06' class="lbl">個人獎金</a></td>
-                        <td><input id="txtP06" type="text" class="txt num c1"/></td>
                     </tr>
                     <tr>
+                    	<td><span> </span><a id='lblP06' class="lbl">個人獎金</a></td>
+                        <td><input id="txtP06" type="text" class="txt num c1"/></td>
                     	<td><span> </span><a id='lblP07' class="lbl">業務會議出席獎金</a></td>
                         <td><input id="txtP07" type="text" class="txt num c1"/></td>
                         <td><span> </span><a id='lblP08' class="lbl">簽約獎金</a></td>
                         <td><input id="txtP08" type="text" class="txt num c1"/></td>
-                        <td><span> </span><a id='lblP09' class="lbl">試用加給</a></td>
-                        <td><input id="txtP09" type="text" class="txt num c1"/></td>
                     </tr>
                     <tr>
+                    	<td><span> </span><a id='lblP09' class="lbl">試用加給</a></td>
+                        <td><input id="txtP09" type="text" class="txt num c1"/></td>
                     	<td><span> </span><a id='lblP10' class="lbl">加班</a></td>
                         <td><input id="txtP10" type="text" class="txt num c1"/></td>
-                        <td> </td>
-                        <td> </td>
+                    </tr> 
+                    <tr>
+                    	<td><span> </span><a id='lblP17' class="lbl">勞保</a></td>
+                        <td><input id="txtP17" type="text" class="txt num c1"/></td>
+                    	<td><span> </span><a id='lblP18' class="lbl">健保</a></td>
+                        <td><input id="txtP18" type="text" class="txt num c1"/></td>
                         <td><span> </span><a id='lblTotal' class="lbl">小計</a></td>
                         <td><input id="txtTotal" type="text" class="txt num c1"/></td>
                     </tr> 
@@ -544,7 +555,7 @@
                     </td>
                     <td align="center" style="width:20px;"> </td>
                     <td align="center" style="width:200px;"><a>員工</a></td>
-                    <td align="center" style="width:120px;"><a id="lblBase_s">底薪</a></td>
+                    <td align="center" style="width:120px;"><a id="lblBase_s">本薪</a></td>
                     <td align="center" style="width:120px;"><a id="lblP01_s">全勤</a></td>
                     <td align="center" style="width:120px;"><a id="lblP02_s">無遲到</a></td>
                     <td align="center" style="width:120px;"><a id="lblP03_s">職等級</a></td>
@@ -555,6 +566,8 @@
                     <td align="center" style="width:120px;"><a id="lblP08_s">簽約獎金</a></td>
                     <td align="center" style="width:120px;"><a id="lblP09_s">試用加給</a></td>
                     <td align="center" style="width:120px;"><a id="lblP10_s">加班</a></td>
+                    <td align="center" style="width:120px;background-color: pink;color:black;"><a>勞保</a></td>
+                    <td align="center" style="width:120px;background-color: pink;color:black;"><a>健保</a></td>
                     <td align="center" style="width:120px;"><a id="lblTotal_s">小計</a></td>
                 </tr>
                 <tr style='background:#cad3ff;'>
@@ -579,6 +592,8 @@
                     <td> <input id="txtP08.*" type="text" class="txt num" style="width:95%;"/></td>
                     <td> <input id="txtP09.*" type="text" class="txt num" style="width:95%;"/></td>
                     <td> <input id="txtP10.*" type="text" class="txt num" style="width:95%;"/></td>
+                    <td> <input id="txtP17.*" type="text" class="txt num" style="width:95%;"/></td>
+                    <td> <input id="txtP18.*" type="text" class="txt num" style="width:95%;"/></td>
                     <td> <input id="txtTotal.*" type="text" class="txt num" style="width:95%;"/></td>
                 </tr>
             </table>

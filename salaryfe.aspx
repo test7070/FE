@@ -72,7 +72,7 @@
             	}
             	var base=0,total=0
             		,p01=0,p02=0,p03=0,p04=0,p05=0,p06=0,p07=0,p08=0,p09=0
-            		,p10=0,p11=0;
+            		,p10=0,p11=0,p17=0,p18=0;
             	for(var i=0;i<q_bbsCount;i++){
             		base += q_float('txtBase_'+i);
             		p01 += q_float('txtP01_'+i);
@@ -86,10 +86,13 @@
             		p09 += q_float('txtP09_'+i);
             		p10 += q_float('txtP10_'+i);
             		p11 += q_float('txtP11_'+i);
+            		p17 += q_float('txtP17_'+i);
+            		p18 += q_float('txtP18_'+i);
             		$('#txtTotal_'+i).val(q_float('txtBase_'+i)
             			+q_float('txtP01_'+i)+q_float('txtP02_'+i)+q_float('txtP03_'+i)+q_float('txtP04_'+i)
             			+q_float('txtP05_'+i)+q_float('txtP06_'+i)+q_float('txtP07_'+i)+q_float('txtP08_'+i)
-            			+q_float('txtP09_'+i)+q_float('txtP10_'+i)+q_float('txtP11_'+i));
+            			+q_float('txtP09_'+i)+q_float('txtP10_'+i)+q_float('txtP11_'+i)
+            			-q_float('txtP17_'+i)-q_float('txtP18_'+i));
             		total += q_float('txtTotal_'+i);
             	}	
             	$('#txtBase').val(FormatNumber(base));
@@ -104,6 +107,8 @@
             	$('#txtP09').val(FormatNumber(p09));
             	$('#txtP10').val(FormatNumber(p10));
             	$('#txtP11').val(FormatNumber(p11));
+            	$('#txtP17').val(FormatNumber(p17));
+            	$('#txtP18').val(FormatNumber(p18));
               	$('#txtTotal').val(FormatNumber(total));
             }
 
@@ -214,6 +219,8 @@
                     $('#txtP09_'+i).change(function(e){sum();});
                     $('#txtP10_'+i).change(function(e){sum();});
                     $('#txtP11_'+i).change(function(e){sum();});
+                    $('#txtP17_'+i).change(function(e){sum();});
+                    $('#txtP18_'+i).change(function(e){sum();});
                 	$('#txtTotal_'+i).change(function(e){sum();});
                 }
                 _bbsAssign();
@@ -495,38 +502,47 @@
                     	</td>
                         <td><span> </span><a id='lblMon' class="lbl">月份</a></td>
                         <td><input id="txtMon" type="text" class="txt c1"/></td>
-                        <td><span> </span><a id='lblBase' class="lbl">本薪</a></td>
-                        <td><input id="txtBase" type="text" class="txt num c1"/></td>
                     </tr>
                     <tr>
+                    	<td><span> </span><a id='lblBase' class="lbl">本薪</a></td>
+                        <td><input id="txtBase" type="text" class="txt num c1"/></td>
                     	<td><span> </span><a id='lblP01' class="lbl">全勤</a></td>
                         <td><input id="txtP01" type="text" class="txt num c1"/></td>
                         <td><span> </span><a id='lblP02' class="lbl">無遲到</a></td>
                         <td><input id="txtP02" type="text" class="txt num c1"/></td>
-                        <td><span> </span><a id='lblP03' class="lbl">個人獎金</a></td>
-                        <td><input id="txtP03" type="text" class="txt num c1"/></td>
+                        
                     </tr>
                     <tr>
+                    	<td><span> </span><a id='lblP03' class="lbl">個人獎金</a></td>
+                        <td><input id="txtP03" type="text" class="txt num c1"/></td>
                     	<td><span> </span><a id='lblP04' class="lbl">會議出勤</a></td>
                         <td><input id="txtP04" type="text" class="txt num c1"/></td>
                         <td><span> </span><a id='lblP05' class="lbl">成交獎金</a></td>
                         <td><input id="txtP05" type="text" class="txt num c1"/></td>
-                        <td><span> </span><a id='lblP06' class="lbl">收現獎金</a></td>
-                        <td><input id="txtP06" type="text" class="txt num c1"/></td>
+                        
                     </tr>
                     <tr>
+                    	<td><span> </span><a id='lblP06' class="lbl">收現獎金</a></td>
+                        <td><input id="txtP06" type="text" class="txt num c1"/></td>
                     	<td><span> </span><a id='lblP07' class="lbl">早收獎金</a></td>
                         <td><input id="txtP07" type="text" class="txt num c1"/></td>
                         <td><span> </span><a id='lblP08' class="lbl">簽約獎金</a></td>
                         <td><input id="txtP08" type="text" class="txt num c1"/></td>
-                        <td><span> </span><a id='lblP09' class="lbl">職等級</a></td>
-                        <td><input id="txtP09" type="text" class="txt num c1"/></td>
+                        
                     </tr>
                     <tr>
+                    	<td><span> </span><a id='lblP09' class="lbl">職等級</a></td>
+                        <td><input id="txtP09" type="text" class="txt num c1"/></td>
                     	<td><span> </span><a id='lblP10' class="lbl">報價獎金</a></td>
                         <td><input id="txtP10" type="text" class="txt num c1"/></td>
                         <td><span> </span><a id='lblP11' class="lbl">親恰拜訪獎金</a></td>
                         <td><input id="txtP11" type="text" class="txt num c1"/></td>
+                    </tr>
+                    <tr>
+                    	<td><span> </span><a id='lblP17' class="lbl">勞保</a></td>
+                        <td><input id="txtP17" type="text" class="txt num c1"/></td>
+                    	<td><span> </span><a id='lblP18' class="lbl">健保</a></td>
+                        <td><input id="txtP18" type="text" class="txt num c1"/></td>
                         <td><span> </span><a id='lblTotal' class="lbl">總計</a></td>
                         <td><input id="txtTotal" type="text" class="txt num c1"/></td>
                     </tr>
@@ -566,6 +582,8 @@
                     <td align="center" style="width:120px;"><a>職等級</a></td>
                     <td align="center" style="width:120px;"><a>報價獎金</a></td>
                     <td align="center" style="width:120px;"><a>親恰拜訪<br>獎金</a></td>
+                    <td align="center" style="width:120px;background-color: pink;color:black;"><a>勞保</a></td>
+                    <td align="center" style="width:120px;background-color: pink;color:black;"><a>健保</a></td>
            			<td align="center" style="width:120px;"><a>實領</a></td>
            			
            			<td align="center" style="width:120px;"><a>營業額</a></td>
@@ -600,6 +618,8 @@
                     <td> <input id="txtP09.*" type="text" class="txt num" style="width:95%;"/></td>
                     <td> <input id="txtP10.*" type="text" class="txt num" style="width:95%;"/></td>
                     <td> <input id="txtP11.*" type="text" class="txt num" style="width:95%;"/></td>
+                    <td> <input id="txtP17.*" type="text" class="txt num" style="width:95%;"/></td>
+                    <td> <input id="txtP18.*" type="text" class="txt num" style="width:95%;"/></td>
                     <td> <input id="txtTotal.*" type="text" class="txt num" style="width:95%;"/></td>
                     
                     <td> <input id="txtC01.*" type="text" class="txt num" style="width:95%;"/></td>
