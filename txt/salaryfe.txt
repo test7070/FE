@@ -376,8 +376,35 @@ import:--salaryfe.txt import          salaryfe.aspx	業務
 	update @tmp set m12 = 1000 - case when n05>n06 then (n05-n06)*50 else 0 end
 	update @tmp set m12 = 0
 	where m12<0 and indate>@date
+	-------------------------------------------------------------------------------------------------------
+	--遲到 1000, 30分鐘內扣100/次
+	--暫時先不判斷是不是30分鐘, 不確定出勤記錄表的格式
+	--35~50萬        免計無遲到
+	update @tmp set m03 = 1000
+	update @tmp set m03 = m03 - ISNULL(b.n,0)*100
+	from @tmp a
+	left join (select a.sssno,count(1) n 
+		from salpresents a
+		left join salpresent b on a.noa=b.noa
+		where left(b.noa,6)=@t_mon
+		and CHARINDEX('遲',a.memo)>0
+		group by a.sssno) b on a.sssno=b.sssno
+	where n01<350000	
 	
+	update @tmp set m03 = case when m03<0 then 0 else m03 end
+	--全勤  30分鐘扣100
+	--50~100萬      免計全勤
+	update @tmp set m02 = m02 - ISNULL(b.n,0)*100
+	from @tmp a
+	left join (select a.sssno,count(1) n 
+		from salpresents a
+		left join salpresent b on a.noa=b.noa
+		where left(b.noa,6)=@t_mon
+		and CHARINDEX('遲',a.memo)>0
+		group by a.sssno) b on a.sssno=b.sssno
+	where n01<500000	
 	
+	update @tmp set m02 = case when m02<0 then 0 else m02 end
 	--報價、成交
 	--報價獎金 (每單×25)
 	--成交獎金  當月每家×100
@@ -647,6 +674,19 @@ import3:--salaryfe.txt import3          salaryfe3.aspx	財會
     --平日加班必須由部門主管簽核，方得計算加班。
 	--假日出勤一律自由換假補休（假日盡量以不出勤為原則）
 	update @tmpa set m11 = round(ISNULL(hr2,0)*120 + ISNULL(hr3,0)*135,0)
+	-------------------------------------------------------------------------------------------------------
+	--遲到 500, 30分鐘內扣100/次
+	--暫時先不判斷是不是30分鐘, 不確定出勤記錄表的格式
+	update @tmpa set m03 = 500
+	update @tmpa set m03 = m03 - ISNULL(b.n,0)*100
+	from @tmpa a
+	left join (select a.sssno,count(1) n 
+		from salpresents a
+		left join salpresent b on a.noa=b.noa
+		where left(b.noa,6)=@t_mon
+		and CHARINDEX('遲',a.memo)>0
+		group by a.sssno) b on a.sssno=b.sssno
+	update @tmpa set m03 = case when m03<0 then 0 else m03 end
 	-----------------------------------------------------------------------------------------------------
 	
 	update @tmpa set total = ISNULL(m01,0)+ISNULL(m02,0)+ISNULL(m03,0)+ISNULL(m04,0)
@@ -853,6 +893,19 @@ import2:--salaryfe.txt import2          salaryfe2.aspx	內勤
     --B，3時以上*    135/時
     --C，假日 160    週六上班，可以選擇自由換假補休，或是領取湶祥的薪資
 	update @tmpa set m11 = round(ISNULL(hr2,0)*120 + ISNULL(hr3,0)*135 + ISNULL(hr4,0)*160,0)
+	-------------------------------------------------------------------------------------------------------
+	--遲到 500, 30分鐘內扣100/次
+	--暫時先不判斷是不是30分鐘, 不確定出勤記錄表的格式
+	update @tmpa set m03 = 500
+	update @tmpa set m03 = m03 - ISNULL(b.n,0)*100
+	from @tmpa a
+	left join (select a.sssno,count(1) n 
+		from salpresents a
+		left join salpresent b on a.noa=b.noa
+		where left(b.noa,6)=@t_mon
+		and CHARINDEX('遲',a.memo)>0
+		group by a.sssno) b on a.sssno=b.sssno
+	update @tmpa set m03 = case when m03<0 then 0 else m03 end
 	--------------------------------------------------------------------------------------------------------	
 	update @tmpa set total = isnull(m01,0)+isnull(m02,0)+isnull(m03,0)+isnull(m04,0)+isnull(m05,0)
 		+isnull(m06,0)+isnull(m07,0)+isnull(m08,0)+isnull(m09,0)+isnull(m10,0)+isnull(m11,0)
