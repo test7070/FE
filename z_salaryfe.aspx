@@ -55,6 +55,9 @@
 						dbf : 'sss',
 						index : 'noa,namea',
 						src : 'sss_b.aspx'
+					},{
+						type : '6', //[9]      4
+						name : 'xmon'
 					}]
                 });
                 q_popAssign();
@@ -65,6 +68,7 @@
                 $('#txtXdate2').datepicker();
             	$('#txtXdate1').mask(r_picd);
             	$('#txtXdate2').mask(r_picd);
+            	$('#txtXmon').mask(r_picm);
             }
 
             function q_boxClose(s2) {
