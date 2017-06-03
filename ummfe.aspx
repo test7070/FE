@@ -169,14 +169,14 @@
                 });
                 
                 $('#btnVcc').click(function(e) {
-                	if (q_getPara('sys.project').toUpperCase()=='ENG'){
-						if(q_cur==1 || q_cur==2){
-							var t_engno = $.trim($('#txtEngno').val());
-							var t_noa = $.trim($('#txtNoa').val());
-							t_where = "where=^^ engno='" + t_engno + "'^^ ";
-							t_where1 = "where[1]=^^ vccno=a.noa and noa!='" + t_noa + "'^^ ";
-							q_gt('umm_eng', t_where+t_where1, 0, 0, 0, "umm_eng", r_accy);
-						}
+                	if (q_getPara('sys.project').toUpperCase()=='ENG' && !emp($('#txtEngno').val())){
+                			if(q_cur==1 || q_cur==2){
+								var t_engno = $.trim($('#txtEngno').val());
+								var t_noa = $.trim($('#txtNoa').val());
+								t_where = "where=^^ engno='" + t_engno + "'^^ ";
+								t_where1 = "where[1]=^^ vccno=a.noa and noa!='" + t_noa + "'^^ ";
+								q_gt('umm_eng', t_where+t_where1, 0, 0, 0, "umm_eng", r_accy);
+							}
 					}else{
 						var t_noa = $.trim($('#txtNoa').val());
 	                	var t_custno = $.trim($('#txtCustno').val());
@@ -212,7 +212,7 @@
 			
 			
             function getOpay() {	
-            	if (q_getPara('sys.project').toUpperCase()=='ENG'){
+            	if (q_getPara('sys.project').toUpperCase()=='ENG' && !emp($('#txtEngno').val())){
 						Lock(1, {
 							opacity : 0
 						});
@@ -337,7 +337,12 @@
                 	case 'umm_import':
                 		as = _q_appendData(t_name, "", true);
                 		for (var i = 0; i < as.length; i++) {
-                			as[i].tablea='vcc_fe';
+                			if(q_getPara('sys.project').toUpperCase()=='ENG'){
+                				as[i].tablea='vcc_eng';
+                			}else{
+								as[i].tablea='vcc_fe';
+							}
+                			
 						}
                 		q_gridAddRow(bbsHtm, 'tbbs', 'txtCno,txtCustno,txtPaymon,txtCoin,txtUnpay,txtUnpayorg,txtTablea,txtAccy,txtVccno,txtMemo2', as.length, as, 'cno,custno,mon,coin,unpay,unpay,tablea,tableaccy,vccno,memo', '', '');
                 		
