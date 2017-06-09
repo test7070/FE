@@ -246,8 +246,8 @@ z_uccfe6:--z_uccfe6
 	declare @t_estoreno nvarchar(50)
 	declare @t_bdate nvarchar(10)
 	declare @t_edate nvarchar(10)
-	set @t_bproductno = case when '#non'=[1] then '' else [1] end
-	set @t_eproductno = case when '#non'=[2] then char(255) else [2] end
+	set @t_bproductno = case when '#non'=[22] then '' else [22] end
+	set @t_eproductno = case when '#non'=[22] then '' else [22] end
 	set @t_bstoreno = case when '#non'=[3] then '' else [3] end
 	set @t_estoreno = case when '#non'=[4] then char(255) else [4] end
 	set @t_bdate = case when '#non'=[6] then '' else [6] end

@@ -15,6 +15,8 @@
 		<script src="css/jquery/ui/jquery.ui.widget.js"></script>
 		<script src="css/jquery/ui/jquery.ui.datepicker_tw.js"></script>
 		<script type="text/javascript">
+			aPop = new Array(['txtXproductno', 'lblXproduct_', 'ucaucc', 'noa,product', 'txtXproductno', 'ucaucc_b.aspx']);
+			
 			var uccgaItem = '';
 			$(document).ready(function() {
 				_q_boxClose();
@@ -106,6 +108,9 @@
 						type : '5',
 						name : 'xgroupano', //[21]
 						value : uccgaItem.split(',')
+					}, {
+						type : '6',
+						name : 'xproductno' //[22]
 					}]
 				});
 				q_popAssign();
