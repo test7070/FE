@@ -40,29 +40,29 @@
 					fileName : 'z_uccfe',
 					options : [{
 						type : '2',
-						name : 'product', //[1][2]
+						name : 'product', //[1][2]   1
 						dbf : 'ucaucc',
 						index : 'noa,product',
 						src : 'ucaucc_b.aspx'
 					}, {
 						type : '2',
-						name : 'storeno', //[3][4]
-						dbf : 'store',
+						name : 'storeno', //[3][4]   2
+						dbf : 'store', 
 						index : 'noa,store',
 						src : 'store_b.aspx'
 					}, {
 						type : '6',
-						name : 'edate' //[5]
+						name : 'edate' //[5]        3
 					},{
-						type : '1', //[6][7]
+						type : '1', //[6][7]        4
 						name : 'xdate'
 					}, {
 						type : '8',
-						name : 'xoption01',//[8]
+						name : 'xoption01',//[8]      5
 						value : ['倉庫明細']
 					}, {
 						type : '8',
-						name : 'xcarton',//[9]
+						name : 'xcarton',//[9]        6
 						value : "1@顯示箱數".split(',')
 					},{
 						type : '0',//[10]
@@ -82,35 +82,35 @@
                         value : q_getPara('vcc.pricePrecision')
                     }, {
 						type : '8',
-						name : 'xshowprice',//[14]
+						name : 'xshowprice',//[14]       7
 						value : "1@顯示單價".split(',')
 					}, {
 						type : '2',
-						name : 'xcust', //[15][16]
+						name : 'xcust', //[15][16]       8
 						dbf : 'cust',
 						index : 'noa,comp',
 						src : 'cust_b.aspx'
 					}, {
 						type : '2',
-						name : 'xsss', //[17][18]
+						name : 'xsss', //[17][18]        9
 						dbf : 'sss',
 						index : 'noa,namea',
 						src : 'sss_b.aspx'
 					}, {
-						type : '5', //[19]
+						type : '5', //[19]               10
 						name : 'xtrantype',
 						value :[q_getPara('report.all')].concat(q_getPara('fe.trantype').split(','))
 					}, {
 						type : '8',
-						name : 'xsel',//[20]
+						name : 'xsel',//[20]              11
 						value : "1@僅顯示退貨,2@客戶別統計,3@業務分析,4@業務排行榜,5@中類分析".split(',')
 					}, {
 						type : '5',
-						name : 'xgroupano', //[21]
+						name : 'xgroupano', //[21]         12
 						value : uccgaItem.split(',')
 					}, {
-						type : '6',
-						name : 'xproductno' //[22]
+						type : '6',  
+						name : 'xproductno' //[22]         13
 					}]
 				});
 				q_popAssign();
