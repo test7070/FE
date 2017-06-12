@@ -159,6 +159,7 @@ z_workjp02:-- EXCEL用 ref z_workjp01 因為要印頁小計，改為一次只能
 		,tolerance a09
 		,'<a style="font-family:'+ "'Times New Roman','標楷體', serif"+char(59)+'">'+trantype1+'</a>' a10
 		,'<a style="font-family:'+ "'Times New Roman','標楷體', serif"+char(59)+'">'+trantype2+'</a>' a11
+		,ordeno a13
 		
 		,spec b01
 		,num b02
@@ -341,6 +342,7 @@ z_workjp01:--z_workjp01 因為要印頁小計，改為一次只能印一張
 		,tolerance a09
 		,'<a style="font-family:'+ "'Times New Roman','標楷體', serif"+char(59)+'">'+trantype1+'</a>' a10
 		,'<a style="font-family:'+ "'Times New Roman','標楷體', serif"+char(59)+'">'+trantype2+'</a>' a11
+		,ordeno a13
 		
 		,spec b01
 		,num b02
