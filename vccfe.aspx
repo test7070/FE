@@ -891,10 +891,10 @@
 	                        			$('#txtUnit_'+j).val($.trim($('#txtUnit_'+j).val()));
 	                        			if($('#txtUnit_'+j).val().toUpperCase()=='KG' || $('#txtUnit_'+j).val().toUpperCase()=='公斤'){
 	                        				if(as[i].eweight<0)
-                        						t_err += (t_err.length>0?'\n':'') + as[i].productno +' 重量不足：'+Math.abs(as[i].eweight);
+                        						t_err += (t_err.length>0?'\n':'') + as[i].productno +' 重量不足：'+Math.abs(round(as[i].eweight,4));
 	                        			}else{
 	                        				if(as[i].emount<0)
-	                        					t_err += (t_err.length>0?'\n':'') + as[i].productno +' 數量不足：'+Math.abs(as[i].emount);
+	                        					t_err += (t_err.length>0?'\n':'') + as[i].productno +' 數量不足：'+Math.abs(round(as[i].emount,4));
 	                        			}
 	                        			break;
 	                        		}
