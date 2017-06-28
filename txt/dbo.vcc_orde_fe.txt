@@ -33,8 +33,7 @@ begin
 	and isnull(a.cancel,0)=0
 	and isnull(b.cancel,0)=0
 	and ISNULL(b.custno,0)=@t_custno
-	--要注意是訂單是否有勾專案,沒勾才不匯入已結案的
-	and (isnull(b.isproj,0)=1 or (isnull(b.isproj,0)=0 and ISNULL(b.enda,0)=0 and ISNULL(a.enda,0)=0))
+	and (ISNULL(b.enda,0)=0 and ISNULL(a.enda,0)=0)
 	and ISNULL(a.mount,0)-ISNULL(c.mount,0)>0
 	and ISNULL(a.[weight],0)-ISNULL(c.[weight],0)>0
 	order by a.odate desc,a.noa,a.no2
