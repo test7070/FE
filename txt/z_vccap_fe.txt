@@ -1,0 +1,142 @@
+z_vccap_fe01:--z_vccap_fe01	
+	SET QUOTED_IDENTIFIER OFF
+	declare @noa nvarchar(20)=case when '#non'=[1] then '' else [1] end
+	
+	declare @tmp table(
+		sel int identity(1,1)
+		,recno int
+		,gno nvarchar(10)
+		,datea nvarchar(10)
+		,comp nvarchar(max)
+		,buyer nvarchar(max)
+		,chkno nvarchar(10)
+		,serial nvarchar(10)
+		,noa nvarchar(20)
+		,taxtype nvarchar(20)
+		,chk1 nvarchar(10)--應稅    1
+		,chk2 nvarchar(10)--零稅率  2
+		,chk3 nvarchar(10)--免稅    4
+		,[money] decimal(20,0)
+		,tax decimal(20,0)
+		,total decimal(20,0)
+		,memo nvarchar(max)
+		,c1 nvarchar(10)--個
+		,c2 nvarchar(10)--拾
+		,c3 nvarchar(10)--佰
+		,c4 nvarchar(10)--仟
+		,c5 nvarchar(10)--萬
+		,c6 nvarchar(10)--拾萬
+		,c7 nvarchar(10)--佰萬
+		,c8 nvarchar(10)--仟萬
+		
+		,d1 nvarchar(10)--年
+		,d2 nvarchar(10)--月
+		,d3 nvarchar(10)--日
+		
+		,product_s nvarchar(max)
+		,mount_s float
+		,price_s float
+		,money_s float
+	)
+	insert into @tmp(gno,datea,comp,buyer,chkno,serial,noa,taxtype,[money],tax,total,memo
+		,product_s,mount_s,price_s,money_s)
+	select '1', a.datea,a.comp,a.buyer,a.chkno,a.serial,a.noa,a.taxtype,a.[money],a.tax,a.total,a.memo
+		,b.product,b.mount,b.price,b.[money]
+	from vcca a
+	left join vccas b on a.noa=b.noa 
+	where a.noa=@noa
+	order by b.noq
+	
+	update @tmp set chk1='V' where taxtype='1'
+	update @tmp set chk2='V' where taxtype='2'
+	update @tmp set chk3='V' where taxtype='4'
+	
+	update @tmp set d1=LEFT(datea,3),d2=SUBSTRING(datea,5,2),d3=SUBSTRING(datea,8,2)
+	
+	declare @string nvarchar(max) = '零壹貳參肆伍陸柒捌玖'
+	
+	update @tmp set c1=substring(@string,cast(substring(reverse(cast(total as nvarchar)),1,1) as int)+1,1) where total>0
+	update @tmp set c2=substring(@string,cast(substring(reverse(cast(total as nvarchar)),2,1) as int)+1,1) where total>0
+	update @tmp set c3=substring(@string,cast(substring(reverse(cast(total as nvarchar)),3,1) as int)+1,1) where total>0
+	update @tmp set c4=substring(@string,cast(substring(reverse(cast(total as nvarchar)),4,1) as int)+1,1) where total>0
+	update @tmp set c5=substring(@string,cast(substring(reverse(cast(total as nvarchar)),5,1) as int)+1,1) where total>0
+	update @tmp set c6=substring(@string,cast(substring(reverse(cast(total as nvarchar)),6,1) as int)+1,1) where total>0
+	update @tmp set c7=substring(@string,cast(substring(reverse(cast(total as nvarchar)),7,1) as int)+1,1) where total>0
+	update @tmp set c8=substring(@string,cast(substring(reverse(cast(total as nvarchar)),8,1) as int)+1,1) where total>0
+	-------------------------------------------------------------------------
+	--一頁只能印明細8筆
+	declare @sel int
+	declare @n int = 0
+	declare @m int = 0 
+	select @m = count(1) from @tmp
+	
+	declare cursor_table cursor for
+	select sel from @tmp where gno='1' order by sel
+	open cursor_table
+	fetch next from cursor_table
+	into @sel
+	while(@@FETCH_STATUS <> -1)
+	begin		
+		update @tmp set recno=@n where sel=@sel
+		set @n=@n+1	
+		if @sel%8=0 --and @m%8!=0
+		begin
+			insert into @tmp(gno,recno)values('2',@n)
+			set @n=@n+1	
+			insert into @tmp(gno,recno)values('2',@n)
+			set @n=@n+1	
+			insert into @tmp(gno,recno)values('2',@n)
+			set @n=@n+1	
+			insert into @tmp(gno,recno)values('2',@n)
+			set @n=@n+1	
+		end
+		
+		fetch next from cursor_table
+		into @sel
+	end
+	close cursor_table
+	deallocate cursor_table
+
+	select @n = count(1) from @tmp
+	while @n%12!=0
+	begin
+		insert into @tmp(gno,recno)values('2',@n)
+		set @n=@n+1
+	end
+	
+	select @n = count(1) from @tmp
+	update @tmp set gno = '3',[money]= b.[money]
+	from @tmp a
+	outer apply (select * from @tmp where sel=1) b
+	where a.recno=@n-4
+	
+	update @tmp set gno = '4',chk1=b.chk1,chk2=b.chk2,chk3=b.chk3,tax=b.tax
+	from @tmp a
+	outer apply (select * from @tmp where sel=1) b
+	where a.recno=@n-3
+	
+	update @tmp set gno = '5',[total]= b.[total]
+	from @tmp a
+	outer apply (select * from @tmp where sel=1) b
+	where a.recno=@n-2
+	
+	update @tmp set gno = '6',c1= b.c1,c2= b.c2,c3= b.c3,c4= b.c4,c5= b.c5,c6= b.c6,c7= b.c7,c8= b.c8
+	from @tmp a
+	outer apply (select * from @tmp where sel=1) b
+	where a.recno=@n-1
+	
+	update @tmp set product_s = REPLACE(product_s,"~#$","'")
+	--有買受人優先顯示
+	update @tmp set comp=case when len(buyer)>0 then buyer else comp end
+	
+	--2017/03/01  改為小數2位     2017/02/06  麗芳說的
+	--2017/05/31  改為小數3位    因為ASPX已經改為3位了     BY 陳雅齡
+	select noa vccano
+		,dbo.getComma(mount_s,2) mount   --數量還是維持2位
+		,dbo.getComma(price_s,3) price
+		,dbo.getComma(money_s,-1) e1
+		,dbo.getComma([money],0) e2
+		,dbo.getComma(tax,0) e3
+		,dbo.getComma(total,0) e4
+		,* 
+	from @tmp order by recno;

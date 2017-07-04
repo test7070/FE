@@ -1,0 +1,220 @@
+﻿uccp_price:--uccp_price  訂單單價檢查	
+	declare @t_noa nvarchar(max) = [1]
+	declare @t_contract nvarchar(max) = [2]
+	declare @t_data nvarchar(max) = [3]
+	--declare @t_data nvarchar(max) ='1@G18059@25.5@105/07/01$2@G18029@20.1@105/06/29'
+	
+	declare @tmpa table(
+		sel int identity(1,1)
+		,n int
+		,productno nvarchar(30)
+		,price float
+		,datea nvarchar(20)
+		,uccpprice float
+		,uccpdate nvarchar(20)
+		,contprice float
+	)
+	declare @string nvarchar(max)
+	declare @n nvarchar(max)
+	declare @productno nvarchar(max)
+	declare @price nvarchar(max)
+	declare @datea nvarchar(max)
+	
+	while CHARINDEX('$',@t_data)>0
+	begin
+		set @string = LEFT(@t_data,CHARINDEX('$',@t_data)-1)
+		set @t_data = RIGHT(@t_data,len(@t_data)-len(@string)-1)
+		
+		set @n = left(@string,CHARINDEX('@',@string)-1)
+		set @string = RIGHT(@string,len(@string)-len(@n)-1)
+		set @productno = left(@string,CHARINDEX('@',@string)-1)
+		set @string = RIGHT(@string,len(@string)-len(@productno)-1)
+		set @price = left(@string,CHARINDEX('@',@string)-1)
+		set @string = RIGHT(@string,len(@string)-len(@price)-1)
+		set @datea = @string
+		
+		insert into @tmpa(n,productno,price,datea)
+		select CAST(@n as int),@productno,CAST(@price as float),@datea
+	end
+	if len(@t_data)>0
+	begin
+		set @string = @t_data
+		
+		set @n = left(@string,CHARINDEX('@',@string)-1)
+		set @string = RIGHT(@string,len(@string)-len(@n)-1)
+		set @productno = left(@string,CHARINDEX('@',@string)-1)
+		set @string = RIGHT(@string,len(@string)-len(@productno)-1)
+		set @price = left(@string,CHARINDEX('@',@string)-1)
+		set @string = RIGHT(@string,len(@string)-len(@price)-1)
+		set @datea = @string
+		
+		insert into @tmpa(n,productno,price,datea)
+		select CAST(@n as int),@productno,CAST(@price as float),@datea
+	end
+
+	update @tmpa set uccpprice=b.sprice,uccpdate=b.datea
+	from @tmpa a
+	outer apply(select top 1 * from uccps where productno=a.productno and a.datea>=datea order by datea desc,noa desc) b
+	
+	update @tmpa set contprice=b.price
+	from @tmpa a
+	left join conts b on b.noa=@t_contract and a.productno=b.productno 
+	---------------------------------------------------------------------------
+	select * from @tmpa;
+
+groupb:--uccp.txt groupb  
+	declare @t_date nvarchar(20) = [1]
+	declare @t_groupbno nvarchar(20) = [2]
+	declare @t_price float = cast([3] as float) 
+	---------------------------------------------------------------------------------------
+	declare @string nvarchar(max) = '0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZ'
+	declare @n int
+	declare @m nvarchar(3)
+	declare @noa nvarchar(20) = REPLACE(@t_date,'/','')
+	declare @maxnoa nvarchar(20) = ''
+	select top 1 @maxnoa=noa from uccp where noa like @noa+'[0-9,A-Z][0-9][0-9]' order by noa desc
+	if len(isnull(@maxnoa,''))=0
+	begin
+		set @maxnoa = @noa+'000'
+	end
+	set @n = (charindex(left(right(@maxnoa,3),1),@string)-1)*100 + cast(RIGHT(@maxnoa,2) as int) + 1
+	set @m = substring(@string,floor(@n/100)+1,1)+RIGHT('00'+CAST(@n%100 as nvarchar),2)
+	set @noa = @noa + @m
+
+	declare @tmps table(
+		sel int identity(1,1)
+		,noa nvarchar(20)
+		,noq nvarchar(10)
+		,productno nvarchar(20)
+		,product nvarchar(50)
+		,price float
+	)
+	insert into @tmps(noa,noq,productno,product,price)
+	select @noa,'',noa,product,@t_price
+	from ucc
+	where groupbno=@t_groupbno
+	------寫入NOQ
+	declare cursor_table cursor for
+	select sel from @tmps order by sel 
+	open cursor_table
+	fetch next from cursor_table
+	into @n
+	while(@@FETCH_STATUS <> -1)
+	begin		
+		set @m = substring(@string,floor(@n/100)+1,1)+RIGHT('00'+CAST(@n%100 as nvarchar),2)
+		update @tmps set noq=@m where sel=@n
+		
+		fetch next from cursor_table
+		into @n
+	end
+	close cursor_table
+	deallocate cursor_table
+	--------------寫入UCCP
+	DECLARE @chk tinyint = 0
+	Begin Transaction [Trans_Name]
+	begin try
+		insert into drun(datea,timea,usera,[action],noa,tablea,accno,title,memo)
+		select left(CONVERT(nvarchar,getdate(),111),10) ,left(CONVERT(nvarchar,getdate(),108),5)
+				,'群組修改','Insert',isnull(@noa,''),'uccp','基價作業','',@t_groupbno+' '+CAST(@t_price as nvarchar)
+		IF @@Error <> 0 BEGIN SET @chk = 1 END
+				
+		insert into uccp(noa,datea,worker)values(@noa,@t_date,'群組修改')
+		IF @@Error <> 0 BEGIN SET @chk = 1 END
+		insert into uccps(noa,noq,productno,product,sprice,ldate,datea)
+		select noa,noq,productno,product,price,'',@t_date from @tmps
+		IF @@Error <> 0 BEGIN SET @chk = 1 END
+		
+		IF @chk <> 0 BEGIN -- 若是新增資料發生錯誤
+			Rollback Transaction [Trans_Name] -- 復原所有操作所造成的變更
+		END
+		ELSE BEGIN
+			Commit Transaction [Trans_Name] -- 提交所有操作所造成的變更
+		END
+	end try
+	begin catch
+		Rollback Transaction [Trans_Name] -- 復原所有操作所造成的變更
+	end catch
+	select * from @tmps order by sel;
+
+import:--uccp import 
+	declare @t_datea nvarchar(10) = [1]
+	declare @t_bdate nvarchar(10) = [2]
+	declare @t_edate nvarchar(10) = [3]
+	declare @t_bproductno nvarchar(30) = [4]
+	declare @t_eproductno nvarchar(30) = [5]
+	---------------------------------------------------------------------------------------
+	set @t_edate = case when len(@t_edate)=0 then CHAR(255) else @t_edate end
+	set @t_eproductno = case when len(@t_eproductno)=0 then CHAR(255) else @t_eproductno end
+	
+	declare @tmp table(
+		productno nvarchar(20)
+	)
+	insert into @tmp(productno)
+	select ISNULL(ltrim(rtrim(a.productno)),'') productno 
+	from view_vccs a 
+	left join view_vcc b on a.accy=b.accy and a.noa=b.noa
+	where ISNULL(b.datea,'') between @t_bdate and @t_edate
+	and ISNULL(a.productno,'') between @t_bproductno and @t_eproductno
+	and len(ISNULL(ltrim(rtrim(a.productno)),''))>0 
+	group by ISNULL(ltrim(rtrim(a.productno)),'')
+
+	insert into @tmp(productno)
+	select ISNULL(ltrim(rtrim(a.productno)),'') productno 
+	from view_rc2s a 
+	left join view_rc2 b on a.accy=b.accy and a.noa=b.noa
+	where ISNULL(b.datea,'') between @t_bdate and @t_edate
+	and ISNULL(a.productno,'') between @t_bproductno and @t_eproductno
+	and len(ISNULL(ltrim(rtrim(a.productno)),''))>0 
+	group by ISNULL(ltrim(rtrim(a.productno)),'')
+
+	--2017/01/17 部分產品只經加工出入庫並沒有進出貨
+	insert into @tmp(productno)
+	select ISNULL(ltrim(rtrim(a.productno)),'') productno 
+	from view_inas a 
+	left join view_ina b on a.accy=b.accy and a.noa=b.noa
+	where ISNULL(b.datea,'') between @t_bdate and @t_edate
+	and ISNULL(a.productno,'') between @t_bproductno and @t_eproductno
+	and len(ISNULL(ltrim(rtrim(a.productno)),''))>0 
+	group by ISNULL(ltrim(rtrim(a.productno)),'')
+	
+	IF OBJECT_ID('tempdb..#uccp_import')is not null
+	BEGIN
+		drop table #uccp_import
+	END
+	create table #uccp_import(
+		productno nvarchar(20),
+		product nvarchar(50),
+		mount float,
+		[weight] float,
+		sprice float,
+		lprice float,
+		ldate nvarchar(10)
+	)
+	--insert into #uccp_import(productno,product,mount,[weight])
+	--select productno,product,SUM(isnull(mount,0)),SUM(isnull([weight],0)) 
+	--from dbo.stkucc(@t_edate,'','') 
+	--group by productno,product
+	--having not(SUM(isnull(mount,0))=0 and SUM(isnull([weight],0))=0)
+	--delete #uccp_import
+	--from #uccp_import a
+	--left join (select productno from @tmp group by productno) b on a.productno=b.productno
+	--where b.productno is null	
+	
+	insert into #uccp_import(productno,product)
+	select a.productno,b.product
+	from (select productno from @tmp group by productno) a
+	left join ucc b on a.productno=b.noa
+	order by a.productno
+	
+	update #uccp_import set lprice= case when isnull(b.sprice,0)=0 then (case when isnull(c.inprice,0)!=0 then c.inprice else isnull(c.saleprice,0) end) else isnull(b.sprice,0)end ,ldate=isnull(b.datea,'')
+	from #uccp_import a
+	left join ucc c on a.productno=c.noa
+	outer apply(select top 1 uccps.productno,uccps.sprice,uccp.datea 
+		from uccp 
+		left join uccps on uccp.noa=uccps.noa 
+		where uccp.datea<@t_datea 
+		and uccps.productno=a.productno 
+		and isnull(uccps.sprice,0)!=0 order by uccp.datea desc,uccp.noa desc) b
+	
+	select * from #uccp_import order by productno
+	drop table #uccp_import;
