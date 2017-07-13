@@ -768,53 +768,57 @@
 								}
 								
 								if(dec($('#txtLevel').val())>0){
-									clength=(dec(t_cutsheet[k])*100)+dec($('#txtLevel').val()); //原單位M
-									if(sheetlength.indexOf(t_cutsheet[k])>-1){//要使用板料=設定中可用的裁剪板料
-										bcount++;
-										//106/04/20 調整可裁減長度
-										var iswlenzero=false;
-										for (var l=0;l<maxcutlengthbs.length;l++){
-											for (var m=0;m<cutlengthballs.length;m++){
-												if(maxcutlengthbs[l]==cutlengthballs[m].chgmaxlength){
-													//最短裁剪長度限制
-													for(var n=0;n<cutlengthballs[m].cutlengthbs.length;n++){
-														var cutlengthbs=cutlengthballs[m].cutlengthbs[n];
-														var a_cutlengthbs=[];
-														var b_cutlengthbs=[];
-														for (var x=0;x<cutlengthbs.length;x++){
-															if(dec(cutlengthbs[x])!=dec(cutlengthballs[m].chgmaxlength)){
-																if(dec(t_sortlen)>=dec(cutlengthbs[x])){
-																	a_cutlengthbs.push(dec(cutlengthbs[x]));
-																}else{
-																	b_cutlengthbs.push(dec(cutlengthbs[x]));
+									var t_level=dec($('#txtLevel').val());
+									while (t_level>0){
+										clength=(dec(t_cutsheet[k])*100)+t_level; //原單位M
+										if(sheetlength.indexOf(t_cutsheet[k])>-1){//要使用板料=設定中可用的裁剪板料
+											bcount++;
+											//106/04/20 調整可裁減長度
+											var iswlenzero=false;
+											for (var l=0;l<maxcutlengthbs.length;l++){
+												for (var m=0;m<cutlengthballs.length;m++){
+													if(maxcutlengthbs[l]==cutlengthballs[m].chgmaxlength){
+														//最短裁剪長度限制
+														for(var n=0;n<cutlengthballs[m].cutlengthbs.length;n++){
+															var cutlengthbs=cutlengthballs[m].cutlengthbs[n];
+															var a_cutlengthbs=[];
+															var b_cutlengthbs=[];
+															for (var x=0;x<cutlengthbs.length;x++){
+																if(dec(cutlengthbs[x])!=dec(cutlengthballs[m].chgmaxlength)){
+																	if(dec(t_sortlen)>=dec(cutlengthbs[x])){
+																		a_cutlengthbs.push(dec(cutlengthbs[x]));
+																	}else{
+																		b_cutlengthbs.push(dec(cutlengthbs[x]));
+																	}
 																}
 															}
-														}
-														//a_cutlengthbs.sort(function(a, b) {if(a>b) {return 1;} if (a < b) {return -1;} return 0;});
-														//b_cutlengthbs.sort(function(a, b) {if(a>b) {return -1;} if (a < b) {return 1;} return 0;});
-														cutlengthbs=[dec(cutlengthballs[m].chgmaxlength)];
-														cutlengthbs=cutlengthbs.concat(a_cutlengthbs);
-														cutlengthbs=cutlengthbs.concat(b_cutlengthbs);
-														//cutlengthbs.sort(function(a, b) {if(a>b) {return -1;} if (a < b) {return 1;} return 0;});
-														//取得裁切組合(原板料長度,目前板料長度(隨裁剪減少),本次裁剪長度,要裁剪長度,已裁剪長度,暫存裁剪陣列,目前已做陣列配對數值)
-														rep='';
-														var t_cup=getmlength(clength,clength,cutlengthballs[m].chgmaxlength,cutlengthbs,'',[],0);
-														t_cup.sort(function(a, b) { if(a.wrate > b.wrate) {return 1;} if (a.wrate < b.wrate) {return -1;}if(a.cutlength.split(',').length>b.cutlength.split(',').length) {return 1;}if(a.cutlength.split(',').length<b.cutlength.split(',').length) {return -1;}return 0;});
-														t_cups=t_cups.concat(t_cup);
-														
-														//106/05/10 取到最無損號就不計算可誤差
-														if(t_cup.length>0){
-															if(t_cup[0].wlenhth==0){
-																iswlenzero=true;
-																break;
-															}													
+															//a_cutlengthbs.sort(function(a, b) {if(a>b) {return 1;} if (a < b) {return -1;} return 0;});
+															//b_cutlengthbs.sort(function(a, b) {if(a>b) {return -1;} if (a < b) {return 1;} return 0;});
+															cutlengthbs=[dec(cutlengthballs[m].chgmaxlength)];
+															cutlengthbs=cutlengthbs.concat(a_cutlengthbs);
+															cutlengthbs=cutlengthbs.concat(b_cutlengthbs);
+															//cutlengthbs.sort(function(a, b) {if(a>b) {return -1;} if (a < b) {return 1;} return 0;});
+															//取得裁切組合(原板料長度,目前板料長度(隨裁剪減少),本次裁剪長度,要裁剪長度,已裁剪長度,暫存裁剪陣列,目前已做陣列配對數值)
+															rep='';
+															var t_cup=getmlength(clength,clength,cutlengthballs[m].chgmaxlength,cutlengthbs,'',[],0);
+															t_cup.sort(function(a, b) { if(a.wrate > b.wrate) {return 1;} if (a.wrate < b.wrate) {return -1;}if(a.cutlength.split(',').length>b.cutlength.split(',').length) {return 1;}if(a.cutlength.split(',').length<b.cutlength.split(',').length) {return -1;}return 0;});
+															t_cups=t_cups.concat(t_cup);
+															
+															//106/05/10 取到最無損號就不計算可誤差
+															if(t_cup.length>0){
+																if(t_cup[0].wlenhth==0){
+																	iswlenzero=true;
+																	break;
+																}													
+															}
 														}
 													}
+													if(iswlenzero){break;}
 												}
 												if(iswlenzero){break;}
 											}
-											if(iswlenzero){break;}
 										}
+										t_level--;
 									}
 								}
 							}
@@ -1649,53 +1653,57 @@
 								}
 								
 								if(dec($('#txtLevel').val())>0){
-									clength=(dec(t_cutsheet[k])*100)+dec($('#txtLevel').val()); //原單位M
-									if(sheetlength.indexOf(t_cutsheet[k])>-1){//要使用板料=設定中可用的裁剪板料
-										bcount++;
-										//106/04/20 調整可裁減長度
-										var iswlenzero=false;
-										for (var l=0;l<maxcutlengthbs.length;l++){
-											for (var m=0;m<cutlengthballs.length;m++){
-												if(maxcutlengthbs[l]==cutlengthballs[m].chgmaxlength){
-													//最短裁剪長度限制
-													for(var n=0;n<cutlengthballs[m].cutlengthbs.length;n++){
-														var cutlengthbs=cutlengthballs[m].cutlengthbs[n];
-														var a_cutlengthbs=[];
-														var b_cutlengthbs=[];
-														for (var x=0;x<cutlengthbs.length;x++){
-															if(dec(cutlengthbs[x])!=dec(cutlengthballs[m].chgmaxlength)){
-																if(dec(t_sortlen)>=dec(cutlengthbs[x])){
-																	a_cutlengthbs.push(dec(cutlengthbs[x]));
-																}else{
-																	b_cutlengthbs.push(dec(cutlengthbs[x]));
+									var t_level=dec($('#txtLevel').val());
+									while (t_level>0){
+										clength=(dec(t_cutsheet[k])*100)+t_level; //原單位M
+										if(sheetlength.indexOf(t_cutsheet[k])>-1){//要使用板料=設定中可用的裁剪板料
+											bcount++;
+											//106/04/20 調整可裁減長度
+											var iswlenzero=false;
+											for (var l=0;l<maxcutlengthbs.length;l++){
+												for (var m=0;m<cutlengthballs.length;m++){
+													if(maxcutlengthbs[l]==cutlengthballs[m].chgmaxlength){
+														//最短裁剪長度限制
+														for(var n=0;n<cutlengthballs[m].cutlengthbs.length;n++){
+															var cutlengthbs=cutlengthballs[m].cutlengthbs[n];
+															var a_cutlengthbs=[];
+															var b_cutlengthbs=[];
+															for (var x=0;x<cutlengthbs.length;x++){
+																if(dec(cutlengthbs[x])!=dec(cutlengthballs[m].chgmaxlength)){
+																	if(dec(t_sortlen)>=dec(cutlengthbs[x])){
+																		a_cutlengthbs.push(dec(cutlengthbs[x]));
+																	}else{
+																		b_cutlengthbs.push(dec(cutlengthbs[x]));
+																	}
 																}
 															}
-														}
-														//a_cutlengthbs.sort(function(a, b) {if(a>b) {return 1;} if (a < b) {return -1;} return 0;});
-														//b_cutlengthbs.sort(function(a, b) {if(a>b) {return -1;} if (a < b) {return 1;} return 0;});
-														cutlengthbs=[dec(cutlengthballs[m].chgmaxlength)];
-														cutlengthbs=cutlengthbs.concat(a_cutlengthbs);
-														cutlengthbs=cutlengthbs.concat(b_cutlengthbs);
-														//cutlengthbs.sort(function(a, b) {if(a>b) {return -1;} if (a < b) {return 1;} return 0;});
-														//取得裁切組合(原板料長度,目前板料長度(隨裁剪減少),本次裁剪長度,要裁剪長度,已裁剪長度,暫存裁剪陣列,目前已做陣列配對數值)
-														rep='';
-														var t_cup=getmlength(clength,clength,cutlengthballs[m].chgmaxlength,cutlengthbs,'',[],0);
-														t_cup.sort(function(a, b) { if(a.wrate > b.wrate) {return 1;} if (a.wrate < b.wrate) {return -1;}if(a.cutlength.split(',').length>b.cutlength.split(',').length) {return 1;}if(a.cutlength.split(',').length<b.cutlength.split(',').length) {return -1;}return 0;});
-														t_cups=t_cups.concat(t_cup);
-														
-														//106/05/10 取到最無損號就不計算可誤差
-														if(t_cup.length>0){
-															if(t_cup[0].wlenhth==0){
-																iswlenzero=true;
-																break;
-															}													
+															//a_cutlengthbs.sort(function(a, b) {if(a>b) {return 1;} if (a < b) {return -1;} return 0;});
+															//b_cutlengthbs.sort(function(a, b) {if(a>b) {return -1;} if (a < b) {return 1;} return 0;});
+															cutlengthbs=[dec(cutlengthballs[m].chgmaxlength)];
+															cutlengthbs=cutlengthbs.concat(a_cutlengthbs);
+															cutlengthbs=cutlengthbs.concat(b_cutlengthbs);
+															//cutlengthbs.sort(function(a, b) {if(a>b) {return -1;} if (a < b) {return 1;} return 0;});
+															//取得裁切組合(原板料長度,目前板料長度(隨裁剪減少),本次裁剪長度,要裁剪長度,已裁剪長度,暫存裁剪陣列,目前已做陣列配對數值)
+															rep='';
+															var t_cup=getmlength(clength,clength,cutlengthballs[m].chgmaxlength,cutlengthbs,'',[],0);
+															t_cup.sort(function(a, b) { if(a.wrate > b.wrate) {return 1;} if (a.wrate < b.wrate) {return -1;}if(a.cutlength.split(',').length>b.cutlength.split(',').length) {return 1;}if(a.cutlength.split(',').length<b.cutlength.split(',').length) {return -1;}return 0;});
+															t_cups=t_cups.concat(t_cup);
+															
+															//106/05/10 取到最無損號就不計算可誤差
+															if(t_cup.length>0){
+																if(t_cup[0].wlenhth==0){
+																	iswlenzero=true;
+																	break;
+																}													
+															}
 														}
 													}
+													if(iswlenzero){break;}
 												}
 												if(iswlenzero){break;}
 											}
-											if(iswlenzero){break;}
 										}
+										t_level--;
 									}
 								}
 							}
@@ -2489,53 +2497,57 @@
 								}
 								
 								if(dec($('#txtLevel').val())>0){
-									clength=(dec(t_cutsheet[k])*100)+dec($('#txtLevel').val()); //原單位M
-									if(sheetlength.indexOf(t_cutsheet[k])>-1){//要使用板料=設定中可用的裁剪板料
-										bcount++;
-										//106/04/20 調整可裁減長度
-										var iswlenzero=false;
-										for (var l=0;l<maxcutlengthbs.length;l++){
-											for (var m=0;m<cutlengthballs.length;m++){
-												if(maxcutlengthbs[l]==cutlengthballs[m].chgmaxlength){
-													//最短裁剪長度限制
-													for(var n=0;n<cutlengthballs[m].cutlengthbs.length;n++){
-														var cutlengthbs=cutlengthballs[m].cutlengthbs[n];
-														var a_cutlengthbs=[];
-														var b_cutlengthbs=[];
-														for (var x=0;x<cutlengthbs.length;x++){
-															if(dec(cutlengthbs[x])!=dec(cutlengthballs[m].chgmaxlength)){
-																if(dec(t_sortlen)>=dec(cutlengthbs[x])){
-																	a_cutlengthbs.push(dec(cutlengthbs[x]));
-																}else{
-																	b_cutlengthbs.push(dec(cutlengthbs[x]));
+									var t_level=dec($('#txtLevel').val());
+									while (t_level>0){
+										clength=(dec(t_cutsheet[k])*100)+t_level; //原單位M
+										if(sheetlength.indexOf(t_cutsheet[k])>-1){//要使用板料=設定中可用的裁剪板料
+											bcount++;
+											//106/04/20 調整可裁減長度
+											var iswlenzero=false;
+											for (var l=0;l<maxcutlengthbs.length;l++){
+												for (var m=0;m<cutlengthballs.length;m++){
+													if(maxcutlengthbs[l]==cutlengthballs[m].chgmaxlength){
+														//最短裁剪長度限制
+														for(var n=0;n<cutlengthballs[m].cutlengthbs.length;n++){
+															var cutlengthbs=cutlengthballs[m].cutlengthbs[n];
+															var a_cutlengthbs=[];
+															var b_cutlengthbs=[];
+															for (var x=0;x<cutlengthbs.length;x++){
+																if(dec(cutlengthbs[x])!=dec(cutlengthballs[m].chgmaxlength)){
+																	if(dec(t_sortlen)>=dec(cutlengthbs[x])){
+																		a_cutlengthbs.push(dec(cutlengthbs[x]));
+																	}else{
+																		b_cutlengthbs.push(dec(cutlengthbs[x]));
+																	}
 																}
 															}
-														}
-														//a_cutlengthbs.sort(function(a, b) {if(a>b) {return 1;} if (a < b) {return -1;} return 0;});
-														//b_cutlengthbs.sort(function(a, b) {if(a>b) {return -1;} if (a < b) {return 1;} return 0;});
-														cutlengthbs=[dec(cutlengthballs[m].chgmaxlength)];
-														cutlengthbs=cutlengthbs.concat(a_cutlengthbs);
-														cutlengthbs=cutlengthbs.concat(b_cutlengthbs);
-														//cutlengthbs.sort(function(a, b) {if(a>b) {return -1;} if (a < b) {return 1;} return 0;});
-														//取得裁切組合(原板料長度,目前板料長度(隨裁剪減少),本次裁剪長度,要裁剪長度,已裁剪長度,暫存裁剪陣列,目前已做陣列配對數值)
-														rep='';
-														var t_cup=getmlength(clength,clength,cutlengthballs[m].chgmaxlength,cutlengthbs,'',[],0);
-														t_cup.sort(function(a, b) { if(a.wrate > b.wrate) {return 1;} if (a.wrate < b.wrate) {return -1;}if(a.cutlength.split(',').length>b.cutlength.split(',').length) {return 1;}if(a.cutlength.split(',').length<b.cutlength.split(',').length) {return -1;}return 0;});
-														t_cups=t_cups.concat(t_cup);
-														
-														//106/05/10 取到最無損號就不計算可誤差
-														if(t_cup.length>0){
-															if(t_cup[0].wlenhth==0){
-																iswlenzero=true;
-																break;
-															}													
+															//a_cutlengthbs.sort(function(a, b) {if(a>b) {return 1;} if (a < b) {return -1;} return 0;});
+															//b_cutlengthbs.sort(function(a, b) {if(a>b) {return -1;} if (a < b) {return 1;} return 0;});
+															cutlengthbs=[dec(cutlengthballs[m].chgmaxlength)];
+															cutlengthbs=cutlengthbs.concat(a_cutlengthbs);
+															cutlengthbs=cutlengthbs.concat(b_cutlengthbs);
+															//cutlengthbs.sort(function(a, b) {if(a>b) {return -1;} if (a < b) {return 1;} return 0;});
+															//取得裁切組合(原板料長度,目前板料長度(隨裁剪減少),本次裁剪長度,要裁剪長度,已裁剪長度,暫存裁剪陣列,目前已做陣列配對數值)
+															rep='';
+															var t_cup=getmlength(clength,clength,cutlengthballs[m].chgmaxlength,cutlengthbs,'',[],0);
+															t_cup.sort(function(a, b) { if(a.wrate > b.wrate) {return 1;} if (a.wrate < b.wrate) {return -1;}if(a.cutlength.split(',').length>b.cutlength.split(',').length) {return 1;}if(a.cutlength.split(',').length<b.cutlength.split(',').length) {return -1;}return 0;});
+															t_cups=t_cups.concat(t_cup);
+															
+															//106/05/10 取到最無損號就不計算可誤差
+															if(t_cup.length>0){
+																if(t_cup[0].wlenhth==0){
+																	iswlenzero=true;
+																	break;
+																}													
+															}
 														}
 													}
+													if(iswlenzero){break;}
 												}
 												if(iswlenzero){break;}
 											}
-											if(iswlenzero){break;}
 										}
+										t_level--;
 									}
 								}
 							}
@@ -3093,7 +3105,7 @@
 						//	rep=rep+repall.toString()+'#';
 							cutarry.push({'olength':olength,'cutlength':cutall,'wlenhth':lengthb,'wrate':round(lengthb/olength,4)});
 						//}
-						if(cutlength.length>5 || cutarry.length>2000) //仍要抓避免 無法 調整最後剩餘數量的最低損耗率
+						if(cutlength.length>25 || cutarry.length>2000) //仍要抓避免 無法 調整最後剩餘數量的最低損耗率
 							rep='@@';
 						return cutarry;
 					}else//在損耗範圍內組合 
