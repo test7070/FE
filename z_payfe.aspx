@@ -43,7 +43,7 @@
 						type : '2', //[2][3]           2
 						name : 'xtgg',
 						dbf : 'tgg',
-						index : 'noa,comp',
+						index : 'noa,comp,nick',
 						src : 'tgg_b.aspx'
 					}, {
 						type : '1', //[4][5]           3

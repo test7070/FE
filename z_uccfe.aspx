@@ -88,7 +88,7 @@
 						type : '2',
 						name : 'xcust', //[15][16]       8
 						dbf : 'cust',
-						index : 'noa,comp',
+						index : 'noa,comp,nick',
 						src : 'cust_b.aspx'
 					}, {
 						type : '2',

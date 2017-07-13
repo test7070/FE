@@ -26,13 +26,13 @@
                         type : '2',
                         name : 'cust',
                         dbf : 'cust',
-                        index : 'noa,comp',
+                        index : 'noa,comp,nick',
                         src : 'cust_b.aspx'
                     }, {/*[3][4]*///2
                         type : '2',
                         name : 'group',
                         dbf : 'cust',
-                        index : 'noa,comp',
+                        index : 'noa,comp,nick',
                         src : 'cust_b.aspx'
                     }, {
                         type : '0', //[5]

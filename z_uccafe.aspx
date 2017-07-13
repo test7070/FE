@@ -66,7 +66,7 @@
                         type : '2', //[5][6] 3
                         name : 'xcust',
                         dbf : 'cust',
-                        index : 'noa,comp',
+                        index : 'noa,comp,nick',
                         src : 'cust_b.aspx'
                     }, {
                         type : '2', //[7][8] 4
