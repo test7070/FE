@@ -1284,7 +1284,7 @@
 						<td><input id="txtPayc"  type="text" class="txt c1"/></td>
 						<td class="tdZ"><input type="button" id="btnTip" value="?" style="float:right;" onclick="tipShow()"/></td>
 					</tr>
-					<tr class="isENG" style="display:none;">
+					<tr style="display:none;">
 						<td class="td1"><span> </span><a id='lblEng' class="lbl btn"> </a></td>
 						<td class="td2" colspan="4">
 							<input id="txtEngno" type="text" class="txt" style="width: 20%;"/>
@@ -1303,8 +1303,8 @@
 						<input id="txtComp"  type="text" class="txt" style="float:left;width:60%;"/>
 						</td>
 						<td colspan="2">
-							<input type="button" id="btnVcc" class="txt c1 isENG" style="display:none;width: 95px;"/>
-							<input type="button" id="btnMon" class="txt c1 isENGN" style="width: 95px;"/>
+							<input type="button" id="btnVcc" class="txt c1" style="display:none;width: 95px;"/>
+							<input type="button" id="btnMon" class="txt c1" style="width: 95px;"/>
 							<span> </span><a id='lblCust2' class="lbl btn"> </a>
 						</td>
 						<td >
