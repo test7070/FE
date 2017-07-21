@@ -212,7 +212,12 @@
 				$('#c6_1_b_1').change(function(e){
 					refreshData();
 				});
-				
+				$('#b1_1_c').change(function(e){
+					refreshData();
+				});
+				$('#c1_1_c').change(function(e){
+					refreshData();
+				});
 			}
 
 			function q_boxClose(s2) {
@@ -322,6 +327,10 @@
 						}else if(cobj.eq(i)[0].nodeName == 'BR'){
 							string += '\n';
 						}else if(!cobj.eq(i).is(":visible")){
+							;
+						}else if(cobj.eq(i).attr('id')=='b1_1_c'){
+							;
+						}else if(cobj.eq(i).attr('id')=='c1_1_c'){
 							;
 						}else if(cobj.eq(i).attr('id')=='b5_1'){
 							;
@@ -523,6 +532,22 @@
 			}
 			function refreshDivBB(){
 				$('#divBB').show();
+				
+				$('.b1_1_c').hide();
+				switch($('#b1_1_c').val()){
+					case 'A':
+						$('#b1_1_c_1').show();
+						break;
+					case 'B':
+						$('#b1_1_c_2').show();
+						break;
+					case 'C':
+						$('#b1_1_c_3').show();
+						break;
+					default:
+						break;	
+				}
+				
 				$('.b5_1x').hide();
 				if($('#b1_1_a').val()=='含'){
 					switch($('#b5_1').val()){
@@ -637,6 +662,21 @@
 			}
 			function refreshDivCC(){
 				$('#divCC').show();
+				
+				$('.c1_1_c').hide();
+				switch($('#c1_1_c').val()){
+					case 'A':
+						$('#c1_1_c_1').show();
+						break;
+					case 'B':
+						$('#c1_1_c_2').show();
+						break;
+					case 'C':
+						$('#c1_1_c_3').show();
+						break;
+					default:
+						break;	
+				}
 				
 				$('.c5_1x').hide();
 				if($('#c5_1').val()=='A' && $('#c1_1_a').val()=='含'){
@@ -1221,13 +1261,26 @@
 			<table>
 				<tr>
 					<td>
-						<a>1.</a><a>(1)</a><a>本報價單價不含5%稅金。</a>
-						<select id="b1_1_a"><option value='含'>含</option><option value='不含'>不含</option></select>
-						<a>運費、</a>
-						<select id="b1_1_b"><option value='含'>含</option><option value='不含'>不含</option></select>
-						<a>磅費、</a>
-						<select id="b1_1_c"><option value='含'>含</option><option value='不含'>不含</option></select>
-						<a>檢驗費。</a>
+						<a style="float:left;">1.(1)本報價單價不含5%稅金。</a>
+						<select id="b1_1_a" style="float:left;"><option value='含'>含</option><option value='不含'>不含</option></select>
+						<a style="float:left;">運費、</a>
+						<select id="b1_1_b" style="float:left;"><option value='含'>含</option><option value='不含'>不含</option></select>
+						<a style="float:left;">磅費、</a>
+						<select id="b1_1_c" style="float:left;">
+							<option value='A'>A</option>
+							<option value='B'>B</option>
+							<option value='C'>C</option>
+						</select>
+						<div id="b1_1_c_1" class="b1_1_c" style="float:left;"><a>不含檢驗費。</a></div>
+						<div id="b1_1_c_2" class="b1_1_c" style="float:left;"><a>含物性檢驗費，不分爐號，每</a><input type="text" style="width:60px;" id="b1_1_c_2a" /><a>噸。檢驗1支，共</a><input type="text" style="width:60px;" id="b1_1_c_2b" /><a>支。</a></div>
+						<div id="b1_1_c_3" class="b1_1_c" style="float:left;">
+							<a>含物性及化性檢驗費，不分爐號，每</a><input type="text" style="width:60px;" id="b1_1_c_3a" />
+							<a>噸檢驗1支，共</a><input type="text" style="width:60px;" id="b1_1_c_3b" />
+							<a>支，</a>
+							<br><a>　　 物性共</a><input type="text" style="width:60px;" id="b1_1_c_3c" />
+							<a>支，化性共</a><input type="text" style="width:60px;" id="b1_1_c_3d" />
+							<a>支。</a>
+						</div>
 					</td>
 				</tr>
 				<tr class="b1_3">
@@ -1511,13 +1564,26 @@
 			<table>
 				<tr>
 					<td>
-						<a>1.</a><a>(1)</a><a>本報價單價不含5%稅金。</a>
-						<select id="c1_1_a"><option value='含'>含</option><option value='不含'>不含</option></select>
-						<a>運費、</a>
-						<select id="c1_1_b"><option value='含'>含</option><option value='不含'>不含</option></select>
-						<a>磅費、</a>
-						<select id="c1_1_c"><option value='含'>含</option><option value='不含'>不含</option></select>
-						<a>檢驗費。</a>
+						<a style="float:left;">1.(1)本報價單價不含5%稅金。</a>
+						<select id="c1_1_a" style="float:left;"><option value='含'>含</option><option value='不含'>不含</option></select>
+						<a style="float:left;">運費、</a>
+						<select id="c1_1_b" style="float:left;"><option value='含'>含</option><option value='不含'>不含</option></select>
+						<a style="float:left;">磅費、</a>
+						<select id="c1_1_c" style="float:left;">
+							<option value='A'>A</option>
+							<option value='B'>B</option>
+							<option value='C'>C</option>
+						</select>
+						<div id="c1_1_c_1" class="c1_1_c" style="float:left;"><a>不含檢驗費。</a></div>
+						<div id="c1_1_c_2" class="c1_1_c" style="float:left;"><a>含物性檢驗費，不分爐號，每</a><input type="text" style="width:60px;" id="c1_1_c_2a" /><a>噸。檢驗1支，共</a><input type="text" style="width:60px;" id="c1_1_c_2b" /><a>支。</a></div>
+						<div id="c1_1_c_3" class="c1_1_c" style="float:left;">
+							<a>含物性及化性檢驗費，不分爐號，每</a><input type="text" style="width:60px;" id="c1_1_c_3a" />
+							<a>噸檢驗1支，共</a><input type="text" style="width:60px;" id="c1_1_c_3b" />
+							<a>支，</a>
+							<br><a>　　 物性共</a><input type="text" style="width:60px;" id="c1_1_c_3c" />
+							<a>支，化性共</a><input type="text" style="width:60px;" id="c1_1_c_3d" />
+							<a>支。</a>
+						</div>
 					</td>
 				</tr>
 				<tr><td><a>　(2)</a><a>定尺品每噸加價</a><input type="text" style="width:60px;" id="c1_2_a" /><a>元。定尺品長度最短2米，以0.1米為一單位，尺寸公差為±10公分。16米以上定尺價格另</a></td></tr>
