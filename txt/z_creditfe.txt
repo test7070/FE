@@ -109,11 +109,11 @@ z_creditfe01:--z_creditfe01
 	--==========================================================================
 	declare @tmp table(
 		custno nvarchar(20),
-		cust nvarchar(50),
+		cust nvarchar(100),
 		sssno nvarchar(50),
 		sss nvarchar(50),
 		grpno nvarchar(20),
-		grpname nvarchar(50),
+		grpname nvarchar(100),
 		credit float,
 		orde float,
 		ordetax float,

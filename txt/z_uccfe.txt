@@ -389,10 +389,10 @@ begin
 		'0' gno, ROW_NUMBER()over(order by R1.productno,R1.storeno,R1.datea,R1.typea)as recno,R1.*, 0 totmount, 0 totweight,''
 	from(
 		select '' storeno ,'' store,productno,product xproduct,isnull(datea,'') datea,'01' typea,'盤點調整' typec, 
-		       noa,'' comp, unit, sum(mount) mount, sum(weight) weight,'ucce?noa=$noa?'+accy qhref,0 price
+		       '' noa,'' comp, unit, sum(mount) mount, sum(weight) weight,'ucce?noa=$noa?'+accy qhref,0 price
 		from view_ucces
 		where  productno BETWEEN @t_bproductno AND @t_eproductno and datea<=@t_edate and isnull(storeno,'') between @t_bstoreno and @t_estoreno
-		group by productno,product,datea,noa,unit,accy,price
+		group by productno,product,datea,unit,accy,price
 		union all
 		select '','',b.productno,b.product xproduct,isnull(b.datea,'') datea,case a.typea when '2' then 'A0' else '10' end typea,case a.typea when '2' then '進貨退回' else '進貨' end typec,
 		       b.noa, isNull(a.tgg,'') comp, b.unit, b.mount, b.weight,'rc2'+@qhref_acomp+'?noa=$noa?'+b.accy qhref,b.price
