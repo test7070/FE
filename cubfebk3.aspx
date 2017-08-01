@@ -1654,7 +1654,7 @@
 								
 								if(dec($('#txtLevel').val())>0){
 									var t_level=dec($('#txtLevel').val());
-									if (t_level>0){
+									while (t_level>0){
 										clength=(dec(t_cutsheet[k])*100)+t_level; //原單位M
 										if(sheetlength.indexOf(t_cutsheet[k])>-1){//要使用板料=設定中可用的裁剪板料
 											bcount++;
@@ -1703,7 +1703,7 @@
 												if(iswlenzero){break;}
 											}
 										}
-										//t_level--;
+										t_level--;
 									}
 								}
 							}
@@ -2498,7 +2498,7 @@
 								
 								if(dec($('#txtLevel').val())>0){
 									var t_level=dec($('#txtLevel').val());
-									if (t_level>0){
+									while (t_level>0){
 										clength=(dec(t_cutsheet[k])*100)+t_level; //原單位M
 										if(sheetlength.indexOf(t_cutsheet[k])>-1){//要使用板料=設定中可用的裁剪板料
 											bcount++;
@@ -2547,7 +2547,7 @@
 												if(iswlenzero){break;}
 											}
 										}
-										//t_level--;
+										t_level--;
 									}
 								}
 							}
@@ -3101,8 +3101,11 @@
 					
 					//損耗0的組合
 					if(lengthb==0){
-						cutarry.push({'olength':olength,'cutlength':cutall,'wlenhth':lengthb,'wrate':round(lengthb/olength,4)});
-						//if(cutlength.length>25 || cutarry.length>2000) //仍要抓避免 無法 調整最後剩餘數量的最低損耗率
+						//if(rep.indexOf('#'+repall.toString()+'#')==-1){
+						//	rep=rep+repall.toString()+'#';
+							cutarry.push({'olength':olength,'cutlength':cutall,'wlenhth':lengthb,'wrate':round(lengthb/olength,4)});
+						//}
+						if(cutlength.length>25 || cutarry.length>2000) //仍要抓避免 無法 調整最後剩餘數量的最低損耗率
 							rep='@@';
 						return cutarry;
 					}else//在損耗範圍內組合 
