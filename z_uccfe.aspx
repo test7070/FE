@@ -202,7 +202,7 @@
 						break;
 					case 'uccga':
                         var as = _q_appendData("uccga", "", true);
-                        uccgaItem = " @全部";
+                        uccgaItem = "";
                         for ( i = 0; i < as.length; i++) {
                             uccgaItem = uccgaItem + (uccgaItem.length > 0 ? ',' : '') + as[i].noa + '@' + as[i].noa + ' . ' + as[i].namea;
                         }
