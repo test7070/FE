@@ -1490,6 +1490,11 @@ z_uccfe1:--z_uccfe1
 	declare @t_project nvarchar(20) = case when '#non'='[10]' then '' else '[10]' end
 	declare @t_showprice nvarchar(20) = case when '#non'=[14] then '0' else [14] end
 	declare @t_ucctype nvarchar(60) = case when '#non'=[21] then '' else [21] end
+	--2017/08/21 若有 設定產品編號,就不判斷大類群組
+	if LEN(@t_bproductno)>0 and LEN(@t_eproductno)>0
+	begin
+		set @t_ucctype=''
+	end
 	------------------------------------------------------------------------------------
 --前期
 	declare @tmpa table(
