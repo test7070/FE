@@ -207,16 +207,17 @@
                 	setTimeout(function(){$('#btnPrint_d').removeAttr('disabled');}, 3000);
                 	Lock(1,{opacity:0});
                 	var t_noq = '';
-                	if($('#combPrint').val()=='barfe2.bat'){
+                	if($('#combPrint').val()=='barfe2-1.bat'){
                 		var t_printCount = 0;
                 		for(var i=0;i<q_bbtCount;i++){
 	                		if($('#checkIsprint__'+i).prop('checked') && $.trim($('#txtBno__'+i).val()).length>0){
-	                			t_noq = t_noq + (t_noq.length>0?'^'.val():'')+$('#txtNoq__'+i);	
+	                			t_noq += (t_noq.length>0?'^':'')+$('#txtNoq__'+i).val();	
 	                			t_printCount ++;
 	                		}            
 	                	}        
 	                	if(t_noq.length==0){
 	                		alert('未選擇要列印的資料(餘料)。');
+	                		Unlock(1);
 	                	}else{
 	                		if (confirm("已選擇 "+t_printCount+" 筆，是否列印條碼?") ) {
 	                			q_func( 'barfe.gen2', $('#txtNoa').val()+',workjt,'+t_noq+','+$('#combPrint').val()); 
@@ -487,7 +488,7 @@
                         }
                         Unlock(1);
                         //取得餘料編號
-                        //q_gt('workj', "where=^^noa='"+$('#txtNoa').val()+"'^^", 0, 0, 0, 'getBno'); 
+                        q_gt('workj', "where=^^noa='"+$('#txtNoa').val()+"'^^", 0, 0, 0, 'getBno'); 
                 		break;
                     default:
                         break;
@@ -1403,6 +1404,8 @@
 							<option value="barfe1-2.bat">綠色</option>
 							<option value="barfe1-3.bat">黃色、膚色</option>
 							<option value="barfe1-4.bat">藍色、桃紅色</option>
+							<option value="barfe2-1.bat">條碼2</option>
+							
 						</select>
 					</td>
 					<td></td>
@@ -1646,7 +1649,7 @@
 		</div>
 		
 		<input id="q_sys" type="hidden" />
-		<div id="dbbt" style="display:none;">
+		<div id="dbbt" style="display:noxne;">
 			<table id="tbbt">
 				<tbody>
 					<tr class="head" style="color:white; background:#003366;">
@@ -1664,7 +1667,7 @@
 						<td style="width:100px; text-align: center;">餘料數量</td>
 						<td style="width:100px; text-align: center;">餘料重量</td>
 						<td style="width:100px; text-align: center;">儲位</td>
-						<td style="width:200px; text-align: center;">備註</td>
+						<td style="width:200px; text-align: center;">備註/爐號</td>
 					</tr>
 					<tr>
 						<td>
