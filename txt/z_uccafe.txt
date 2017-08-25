@@ -904,6 +904,51 @@ z_uccafe02:--z_uccafe02 銷售分析明細表(業務)
 		*0.0004*(case when typea='2' then -1 else 1 end),0),0)
 	
 	update @tmpa set profit = total-tranmoney1-tranmoney2-tranmoney3-spricemoney-wcost-inte
+	
+	---------------------------------------------------------------------------------------------------
+	--收款票據利息
+	declare @tmpb table(
+		custno nvarchar(50),
+		comp nvarchar(100),
+		noa nvarchar(50),
+		checkno nvarchar(50),
+		datea nvarchar(10),
+		chkdatea nvarchar(10),
+		total float,
+		strdate nvarchar(10),
+		datea1 nvarchar(10),--起日
+		datea2 nvarchar(10),--迄日
+		datea3 nvarchar(10),--票據日
+		day1 float,
+		day2 float,
+		interest float,
+		salesno nvarchar(50),
+		sales nvarchar(50)
+	)
+	insert @tmpb
+	select a.custno,a.comp,a.noa,b.checkno,a.datea,b.indate,b.money
+	,case when left(RIGHT(vccno,6),1)!='/' and len(vccno)!=0 then RIGHT(vccno,6) else a.mon end
+	,convert(varchar,DATEADD(day, 0, DATEADD(mm, DATEDIFF(mm, '',case when left(RIGHT(vccno,6),1)!='/' and len(vccno)!=0 then cast(left(RIGHT(vccno,6),3)+1911 as nvarchar(4))+RIGHT(RIGHT(vccno,6),3) else cast(left(a.mon,3)+1911 as nvarchar(4))+right(a.mon,3) end+'/01')+1, '')),111)
+	,'',cast(left(b.indate,3)+1911 as nvarchar(4))+right(b.indate,6),dbo.get_num(c.paytype),'',0,c.salesno,c.sales
+	from umm a left join umms b on a.noa=b.noa
+	left join cust c on a.custno=c.noa
+	left join sss d on c.salesno=d.noa
+	where isnull(b.checkno,'')!=''
+	and a.datea between @t_bdate and @t_edate
+	and isnull(c.salesno,'') between @t_bsalesno and @t_esalesno
+	and isnull(a.custno,'') between @t_bcustno and @t_ecustno
+	and (len(@t_salesgroup)=0 or d.salesgroup=@t_salesgroup)
+	and (len(@t_acomp)=0 or a.cno=@t_acomp)
+
+	delete @tmpb where isnull(day1,0)=0
+
+	update @tmpb
+	set datea2=convert(varchar,DATEADD(DAY,day1,datea1),111),day2=DATEDIFF(DAY,convert(varchar,DATEADD(DAY,day1,datea1),111),datea3)+1
+
+	delete @tmpb where isnull(day2,0)<=0
+
+	update @tmpb
+	set interest=day2*total*0.0004
 	---------------------------------------------------------------------------------------------------
 	declare @tmp table(
 		sel int identity(1,1)
@@ -934,8 +979,14 @@ z_uccafe02:--z_uccafe02 銷售分析明細表(業務)
 		,price float
 		,sprice float
 		,sprice2 float
+		,interest float--計息
+		,interest2 float--計息
+		,mon nvarchar(10)--帳款月份
+		,intdate nvarchar(10)--計息日
+		,exdate nvarchar(10)--計息日
+		,billtotal float
 	)
-	insert into @tmp(recno,gno,salesno,sales,total,tranmoney1,tranmoney2,tranmoney3,spricemoney,wcost,inte,profit)
+	insert into @tmp(recno,gno,salesno,sales,total,tranmoney1,tranmoney2,tranmoney3,spricemoney,wcost,inte,profit,interest)
 	select 0,'1',salesno,sales
 		,SUM(case when typea='1' then 1 else -1 end*isnull(total,0)) total
 		,SUM(case when typea='1' then 1 else -1 end*isnull(tranmoney1,0)) tranmoney1
@@ -945,8 +996,10 @@ z_uccafe02:--z_uccafe02 銷售分析明細表(業務)
 		,SUM(case when typea='1' then 1 else -1 end*isnull(wcost,0)) wcost
 		,SUM(case when typea='1' then 1 else -1 end*isnull(inte,0)) inte
 		,SUM(case when typea='1' then 1 else -1 end*isnull(profit,0)) profit
-	from @tmpa
-	group by salesno,sales
+		,isnull(b.interest,0)
+	from @tmpa a
+	outer apply(select SUM(interest)interest from @tmpb where a.salesno=salesno)b
+	group by salesno,sales,b.interest
 	
 	update @tmp set rr=b.recno
 	from @tmp a
@@ -968,6 +1021,18 @@ z_uccafe02:--z_uccafe02 銷售分析明細表(業務)
 		,datea,accy,vccno,cust
 	from @tmpa
 	group by salesno,sales,datea,accy,vccno,cust
+	
+	--收款票據
+	insert into @tmp(recno,recno2,gno,salesno,sales,datea,cust,vccno,interest,accy)
+	select ROW_NUMBER()over(partition by a.salesno order by a.datea,a.noa),0
+		,'2',a.salesno,a.sales,a.datea,comp,noa,SUM(a.interest),LEFT(strdate,3)
+	from @tmpb a
+	group by a.salesno,a.sales,a.datea,comp,a.datea,noa,strdate
+	
+	update a
+	set recno=rx
+	from (select ROW_NUMBER()over(partition by salesno order by left(vccno,1),datea,vccno)rx,recno from @tmp where gno='2')a
+	
 	--出貨單明細 
 	insert into @tmp(recno,recno2,gno,salesno,sales
 		,total,tranmoney1,tranmoney2,tranmoney3,spricemoney,wcost,inte,profit
@@ -987,6 +1052,16 @@ z_uccafe02:--z_uccafe02 銷售分析明細表(業務)
 		,datea,accy,vccno,cust
 		,productno,product,unit,mount,[weight],price,sprice,sprice2
 	from @tmpa
+	
+	--票據利息明細
+	insert into @tmp(recno,recno2,gno,salesno,sales
+		,datea,accy,vccno,cust
+		,productno,mon,exdate,intdate,billtotal,interest2)
+	select ROW_NUMBER()over(partition by salesno order by datea,LEFT(strdate,3),noa)
+		,ROW_NUMBER()over(partition by LEFT(strdate,3),noa order by checkno)
+		,'3',salesno,sales,datea,LEFT(strdate,3),noa,comp
+		,checkno,strdate,chkdatea,day2,total,interest
+	from @tmpb
 				
 	update @tmp set recno=b.recno
 	from @tmp a
@@ -1004,16 +1079,18 @@ z_uccafe02:--z_uccafe02 銷售分析明細表(業務)
 		,SUM(case when typea='1' then 1 else -1 end*isnull(profit,0)) profit
 	from @tmpa
 	select * 
-		,"<a href="+CHAR(34)+"JavaScript:q_box('vccfe.aspx',' "+char(59)+"noa="+vccno+char(59)+accy+"','95%','95%','"+accy+"')"+CHAR(34)+">"+vccno+"</a>" xvccno
+		,case when LEFT(vccno,1)='D' then "<a href="+CHAR(34)+"JavaScript:q_box('vccfe.aspx',' "+char(59)+"noa="+vccno+char(59)+accy+"','95%','95%','"+accy+"')"+CHAR(34)+">"+vccno+"</a>" 
+		else "<a href="+CHAR(34)+"JavaScript:q_box('ummfe.aspx',' "+char(59)+"noa="+vccno+char(59)+accy+"','95%','95%','"+accy+"')"+CHAR(34)+">"+vccno+"</a>"  end xvccno
 		,salesno a01
 		,sales a02
-		,dbo.getComma(total,0) a03
-		,dbo.getComma(tranmoney1,0) a04
+		,dbo.getComma(isnull(total,0),0) a03
+		,dbo.getComma(isnull(tranmoney1,0),0) a04
 		,dbo.getComma(isnull(tranmoney2,0)+isnull(tranmoney3,0),0) a05
-		,dbo.getComma(spricemoney,0) a06
-		,dbo.getComma(wcost,0) a07
-		,dbo.getComma(inte,0) a08
-		,dbo.getComma(profit,0) a09
+		,dbo.getComma(isnull(spricemoney,0),0) a06
+		,dbo.getComma(isnull(wcost,0),0) a07
+		,dbo.getComma(isnull(inte,0),0) a08
+		,dbo.getComma(isnull(profit,0),0) a09
+		,dbo.getComma(isnull(interest,0),0) a10
 		
 		,productno b01
 		,product b02
@@ -1025,11 +1102,16 @@ z_uccafe02:--z_uccafe02 銷售分析明細表(業務)
 		,dbo.getComma(sprice2,-1) b08
 		,dbo.getComma(total,0) b09
 		,dbo.getComma(tranmoney1,0) b10
-		,dbo.getComma(isnull(tranmoney2,0)+isnull(tranmoney3,0),0) b11
+		,case when LEFT(vccno,1)='D' then dbo.getComma(isnull(tranmoney2,0)+isnull(tranmoney3,0),0) else null end b11 
 		,dbo.getComma(spricemoney,0) b12
 		,dbo.getComma(wcost,0) b13
 		,dbo.getComma(inte,0) b14
 		,dbo.getComma(profit,0) b15
+		,mon b16
+		,exdate b17
+		,intdate b18
+		,dbo.getComma(billtotal,0) b19
+		,dbo.getComma(interest2,0) b20
 	from @tmp order by salesno,recno,recno2;
 	
 z_uccafe01:--z_uccafe01 銷售分析明細表(業務)
@@ -1122,6 +1204,51 @@ z_uccafe01:--z_uccafe01 銷售分析明細表(業務)
 		*0.0004*(case when typea='2' then -1 else 1 end),0),0)
 	
 	update @tmpa set profit = total-tranmoney1-tranmoney2-tranmoney3-spricemoney-wcost-inte
+	
+	--票據利息
+	declare @tmpb table(
+		custno nvarchar(50),
+		comp nvarchar(100),
+		noa nvarchar(50),
+		checkno nvarchar(50),
+		datea nvarchar(10),
+		chkdatea nvarchar(10),
+		total float,
+		strdate nvarchar(10),
+		datea1 nvarchar(10),--起日
+		datea2 nvarchar(10),--迄日
+		datea3 nvarchar(10),--票據日
+		day1 float,
+		day2 float,
+		interest float,
+		sssno nvarchar(50),
+		sss nvarchar(50)
+	)
+	insert @tmpb
+	select a.custno,a.comp,a.noa,b.checkno,a.datea,b.indate,b.money
+	,case when left(RIGHT(vccno,6),1)!='/' and len(vccno)!=0 then RIGHT(vccno,6) else a.mon end
+	,convert(varchar,DATEADD(day, 0, DATEADD(mm, DATEDIFF(mm, '',case when left(RIGHT(vccno,6),1)!='/' and len(vccno)!=0 then cast(left(RIGHT(vccno,6),3)+1911 as nvarchar(4))+RIGHT(RIGHT(vccno,6),3) else cast(left(a.mon,3)+1911 as nvarchar(4))+right(a.mon,3) end+'/01')+1, '')),111)
+	,'',cast(left(b.indate,3)+1911 as nvarchar(4))+right(b.indate,6),dbo.get_num(c.paytype),'',0,c.salesno,c.sales
+	from umm a left join umms b on a.noa=b.noa
+	left join cust c on a.custno=c.noa
+	left join sss d on c.salesno=d.noa
+	where isnull(b.checkno,'')!=''
+	and a.datea between @t_bdate and @t_edate
+	and isnull(c.salesno,'') between @t_bsalesno and @t_esalesno
+	and isnull(a.custno,'') between @t_bcustno and @t_ecustno
+	and (len(@t_salesgroup)=0 or d.salesgroup=@t_salesgroup)
+	and (len(@t_acomp)=0 or a.cno=@t_acomp)
+
+	delete @tmpb where isnull(day1,0)=0
+
+	update @tmpb
+	set datea2=convert(varchar,DATEADD(DAY,day1,datea1),111),day2=DATEDIFF(DAY,convert(varchar,DATEADD(DAY,day1,datea1),111),datea3)+1
+
+	delete @tmpb where isnull(day2,0)<=0
+
+	update @tmpb
+	set interest=day2*total*0.0004
+
 	---------------------------------------------------------------------------------------------------
 	declare @tmp table(
 		sel int identity(1,1)
@@ -1137,11 +1264,12 @@ z_uccafe01:--z_uccafe01 銷售分析明細表(業務)
 		,wcost float
 		,inte float
 		,profit float
+		,interest float
 		
 		,rtotal float
 		,rprofit float
 	)
-	insert into @tmp(gno,salesno,sales,total,tranmoney1,tranmoney2,tranmoney3,spricemoney,wcost,inte,profit)
+	insert into @tmp(gno,salesno,sales,total,tranmoney1,tranmoney2,tranmoney3,spricemoney,wcost,inte,profit,interest)
 	select '1',salesno,sales
 		,SUM(case when typea='1' then 1 else -1 end*isnull(total,0)) total
 		,SUM(case when typea='1' then 1 else -1 end*isnull(tranmoney1,0)) tranmoney1
@@ -1151,14 +1279,16 @@ z_uccafe01:--z_uccafe01 銷售分析明細表(業務)
 		,SUM(case when typea='1' then 1 else -1 end*isnull(wcost,0)) wcost
 		,SUM(case when typea='1' then 1 else -1 end*isnull(inte,0)) inte
 		,SUM(case when typea='1' then 1 else -1 end*isnull(profit,0)) profit
-	from @tmpa
-	group by salesno,sales
+		,isnull(b.interest,0)
+	from @tmpa a
+	outer apply(select SUM(interest)interest from @tmpb where a.salesno=sssno)b
+	group by salesno,sales,b.interest
 	
 	update @tmp set rr=b.recno
 	from @tmp a
 	left join (select sel,ROW_NUMBER()over(order by total desc,salesno) recno from @tmp ) b on a.sel=b.sel
 
-	insert into @tmp(gno,salesno,sales,total,tranmoney1,tranmoney2,tranmoney3,spricemoney,wcost,inte,profit)
+	insert into @tmp(gno,salesno,sales,total,tranmoney1,tranmoney2,tranmoney3,spricemoney,wcost,inte,profit,interest)
 	select '2',CHAR(255),''
 		,SUM(case when typea='1' then 1 else -1 end*isnull(total,0)) total
 		,SUM(case when typea='1' then 1 else -1 end*isnull(tranmoney1,0)) tranmoney1
@@ -1168,7 +1298,10 @@ z_uccafe01:--z_uccafe01 銷售分析明細表(業務)
 		,SUM(case when typea='1' then 1 else -1 end*isnull(wcost,0)) wcost
 		,SUM(case when typea='1' then 1 else -1 end*isnull(inte,0)) inte
 		,SUM(case when typea='1' then 1 else -1 end*isnull(profit,0)) profit
-	from @tmpa
+		,isnull(b.interest,0)
+	from @tmpa a
+	outer apply(select SUM(interest)interest from @tmpb)b
+	group by b.interest
 	
 	--------------
 	declare @total float = 0
@@ -1177,12 +1310,13 @@ z_uccafe01:--z_uccafe01 銷售分析明細表(業務)
 	update @tmp set rtotal = case when @total>0 then round(total*100/@total,2) else null end
 		,rprofit = case when total>0 then round(profit*100/total,2) else null end
 	
-	select * 
+		select * 
 		,salesno a01
 		,sales a02
 		,dbo.getComma(total,0) a03
 		,case when rtotal is null then '' else CAST(rtotal as nvarchar)+'%' end a04
 		,dbo.getComma(profit,0) a05
 		,case when rprofit is null then '' else CAST(rprofit as nvarchar)+'%' end a06
+		,dbo.getComma(interest,0) a07
 		
 	from @tmp order by gno,rr;
