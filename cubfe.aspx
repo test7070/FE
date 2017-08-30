@@ -133,6 +133,15 @@
 					t_where += " and (a.odate between '" + t_bdate + "' and '" + t_edate + "') ";
 					if(t_spec.length>0){
 						var specwhere='';
+						//106/08/30 判斷有沒有SD280W 字串問題
+						var is280w=false;
+						for (var i=0;i<t_spec.length;i++){
+							if(trim(t_spec[i])=='SD280W'){
+								is280w=true;
+								break;
+							}
+						}
+						
 						for (var i=0;i<t_spec.length;i++){
 							if(trim(t_spec[i])!=''){
 								specwhere = specwhere+" or (case when b.product like '%基礎螺栓%' then 'SD420W' else b.product end) like '%" + t_spec[i] + "%'";
@@ -140,12 +149,22 @@
 						}
 						if (specwhere.length>0){
 							specwhere='1=0'+specwhere;
-							t_where += " and ("+specwhere+") ";
+							if(!is280w)
+								t_where += " and ("+specwhere+") and b.product not like '%SD280W%' ";
+							else
+								t_where += " and ("+specwhere+") ";
 						}
 					}
 					if(t_m1.length>0){
 						t_where += " and (b.product like '%" + t_m1 + "%') ";
 					}
+					
+					//106/08/30 不出現理貨
+					t_where += " and (b.mech1 not between '04' and '06Z') ";
+					t_where += " and (b.mech2 not between '04' and '06Z') ";
+					t_where += " and (b.mech3 not between '04' and '06Z') ";
+					t_where += " and (b.mech4 not between '04' and '06Z') ";
+					t_where += " and (b.mech5 not between '04' and '06Z') ";
 					
 					if(q_cur==1 || q_cur==2)
 						q_box("workjsfe_b.aspx?" + r_userno + ";" + r_name + ";" + q_time + ";" + t_where, 'workjsfe_b', "95%", "95%", q_getMsg('popOrde'));
