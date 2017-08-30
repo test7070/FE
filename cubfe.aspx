@@ -159,13 +159,6 @@
 						t_where += " and (b.product like '%" + t_m1 + "%') ";
 					}
 					
-					//106/08/30 不出現理貨
-					t_where += " and (b.mech1 not between '04' and '06Z') ";
-					t_where += " and (b.mech2 not between '04' and '06Z') ";
-					t_where += " and (b.mech3 not between '04' and '06Z') ";
-					t_where += " and (b.mech4 not between '04' and '06Z') ";
-					t_where += " and (b.mech5 not between '04' and '06Z') ";
-					
 					if(q_cur==1 || q_cur==2)
 						q_box("workjsfe_b.aspx?" + r_userno + ";" + r_name + ";" + q_time + ";" + t_where, 'workjsfe_b', "95%", "95%", q_getMsg('popOrde'));
 				});
