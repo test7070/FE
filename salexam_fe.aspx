@@ -34,8 +34,7 @@
             function sum() {
                 var t_total = 0,t_total2=0,t_total3=0;
                 for (var i = 0; i < q_bbsCount; i++) {
-					$('#txtTotal_'+i).val(q_float('txtEfficiency_'+i)*q_float('txtWorkdegree_'+i));
-					$('#txtDuty_'+i).css({"display":"none"});
+			$('#txtTotal_'+i).val(q_float('txtEfficiency_'+i)*q_float('txtWorkdegree_'+i));
                 	t_total += q_float('txtTotal_'+i);
                 	t_total2 += q_float('txtDuty_'+i);
                 }
@@ -46,7 +45,7 @@
 
             $(document).ready(function() {
 			q_brwCount();
-			if(r_rank<7){
+			if(r_rank<7){	//人員限制
 				$('#Duty').css({"display":"none"});
 				$('#Dutytd').css({"display":"none"});
 				$('#txtTotal2').css({"display":"none"});
@@ -118,7 +117,7 @@
 						//console.log(a);
 						//console.log(as);
 						break;
-               		case q_name:
+					case q_name:
 					
                     if (q_cur == 4)
                         q_Seek_gtPost();
