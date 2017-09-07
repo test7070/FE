@@ -1,0 +1,480 @@
+﻿vccfe_apv:--vccfe_apv
+	declare @t_userno nvarchar(max) = [1]
+	declare @t_form nvarchar(max) = [2]
+	declare @t_guid nvarchar(max) = [3]
+	declare @t_noa nvarchar(max) = [4]
+	declare @t_custno nvarchar(max) = [5]
+	declare @t_typea nvarchar(max) = [6]
+	declare @t_date nvarchar(max) = [7]
+	declare @t_mon nvarchar(max) = [8]
+	declare @t_item nvarchar(max) = [9]
+	
+	declare @t_rank int = 0
+	declare @t_user nvarchar(20) = ''
+	select @t_rank=[RANK],@t_user=namea from nhpe where noa=@t_userno
+	---------------------------------------------------------------------------
+	-- RANK >=8 不用檢查
+	if @t_rank>=8
+	begin
+		select 1 val,@t_userno+'等級'+cast(@t_rank as nvarchar)+',不需檢查。' msg
+		return 
+	end
+	-- 只檢查當時送簽核前的資料,若送完後再改資料則無法判斷
+	if exists(select * from [sign] where zno=@t_guid and sender=@t_user and LTRIM(RTRIM(isnull(enda,'')))='Y')
+	begin
+		select 1 val,'已簽核' msg
+		return
+	end
+	else if exists(select * from [sign] where zno=@t_guid and sender=@t_user and LTRIM(RTRIM(isnull(enda,'')))!='Y')
+	begin
+		select 0 val,'簽核已送，尚未核准，請稍後！' msg
+		return
+	end
+---------------------------------------------------------------------------------------
+	declare @t_memo nvarchar(max) = '' -- 簽核訊息
+---------------------------------------------------------------------------------------
+	--退貨
+	if(@t_typea != '1')
+	begin
+		set @t_memo = @t_memo + case when len(@t_memo)>0 then CHAR(13) else '' end + '【退貨】'
+	end
+	
+	--35天未收
+	declare @date date = convert(date, cast(cast(left(@t_date,3) as int)+1911 as nvarchar)+right(@t_date,6))
+	select @date = DATEADD(MM,-1,@date)
+	select @date = DATEADD(DD,-35,@date)
+	declare @bmon nvarchar(20)= right('000'+cast(year(@date)-1911 as nvarchar),3)
+		+'/'+right('00'+cast(month(@date) as nvarchar),2) 
+	declare @total float = 0
+	select @total = SUM(case when typea='1' then 1 else -1 end *isnull(total,0))
+	from view_vcc 
+	where not(noa=@t_noa)
+	and custno=@t_custno
+	and mon=@t_mon
+	
+	declare @money float = 0
+	declare @tax float = 0
+	declare @pay float = 0
+	
+	select @money = SUM(isnull(total,0))
+	from view_vcc
+	where custno=@t_custno 
+	and mon=@bmon
+	and total!=0
+	
+	select @tax = SUM(ISNULL(tax,0))
+	from vcca
+	where custno=@t_custno
+	and left(datea,6)=@bmon
+	
+	select @tax = @tax + SUM(ISNULL(-b.tax,0))
+	from vccb a
+	left join vccbs b on a.noa=b.noa
+	where LEFT(a.datea,6)=@bmon
+	and b.custno = @t_custno
+	
+	select @pay=SUM(ISNULL(paysale,0))
+	from umms 
+	where mon=@bmon
+	and custno=@t_custno
+	
+	if(@money+@tax)>@pay
+	begin
+		set @t_memo = @t_memo + case when len(@t_memo)>0 then CHAR(13) else '' end + '【35天未收】'
+	end
+	--呆帳  
+	set @date = convert(date, cast(cast(left(@t_mon,3) as int)+1911 as nvarchar)+right(@t_mon,3)+'/01')
+	select @date = DATEADD(MM,-3,@date)
+	
+	set @bmon = right('000'+cast(year(@date)-1911 as nvarchar),3)+'/'+right('00'+cast(month(@date) as nvarchar),2)
+	
+	declare @unpay float = 0
+	select top 1 @unpay=sum(isnull(unpay,0)) from cust_2s
+	where noa=@t_custno
+	and mon<=@bmon and unpay!=0
+	
+	if (LEN(@unpay)>0)
+	begin
+		set @t_memo = @t_memo + case when len(@t_memo)>0 then CHAR(13) else '' end + '【呆帳】'                                                                                                                                                             
+	end
+------------------------------------------------------------------------------------------------
+	declare @string nvarchar(max)
+	declare @string2 nvarchar(max)
+	declare @n int	
+	-- 修改前 VCCS
+	declare @previous table(
+		noq nvarchar(max)
+		,productno nvarchar(max)
+		,product nvarchar(max)
+		,unit nvarchar(max)
+		,mount float
+		,[weight] float
+		,[money] float
+	)
+	insert into @previous(noq,productno,product,unit,mount,[weight],[money])
+	select noq,productno,product,unit,mount,[weight],[total] 
+	from view_vccs
+	where noa=@t_noa
+	order by noq
+	-- 修改後 VCCS
+	declare @current table(
+		noq nvarchar(20)
+		,[money] float
+	)	
+	set @string = ltrim(rtrim(@t_item))
+	while LEN(@string)>0 
+	begin
+	
+		set @n = CHARINDEX('|',@string)
+		if @n = 0
+		begin
+			set @string2= @string
+			set @string = ''
+		end
+		else 
+		begin
+			set @string2 = ltrim(rtrim(LEFT(@string,@n-1)))
+			set @string = ltrim(rtrim(SUBSTRING(@string,@n+1,LEN(@string))))
+		end
+		
+		while len(@string2)>0
+		begin
+			
+			set @n = CHARINDEX('@',@string2)
+			if @n = 0
+			begin
+				insert into @current(noq,[money])values(@string2,0)
+				set @string2=''
+			end
+			else
+			begin 
+				insert into @current(noq,[money])
+				select ltrim(rtrim(LEFT(@string2,@n-1)))
+					,cast(ltrim(rtrim(SUBSTRING(@string2,@n+1,LEN(@string2)))) as float)
+				set @string2=''
+			end
+		end
+	end
+	------------------------------------------------------------------------------
+	--檢查明細筆數
+	declare @count1 int = 0, @count2 int = 0
+	select @count1 = count(1) from @current
+	select @count2 = count(1) from @previous
+	if @count1!=@count2 and isnull(@count2,0)>0
+	begin
+		set @t_memo = @t_memo + case when len(@t_memo)>0 then CHAR(13) else '' end + '【資料筆數異動】'                                                                                                                                                             
+	end
+	
+	declare @productno nvarchar(max)
+	declare @product nvarchar(max)
+	declare @money1 float
+	declare @money2 float
+	--檢查金額(金額只可以改大不可以改小，改小要"特別權限")
+	if exists(select * from @previous a left join @current b on a.noq=b.noq where a.[money]>b.[money])
+	begin
+		declare cursor_table cursor for
+		select a.productno,a.product,a.[money],b.[money]
+		from @previous a 
+		left join @current b on a.noq=b.noq 
+		where a.[money]>b.[money]
+		open cursor_table
+		fetch next from cursor_table
+		into @productno,@product,@money1,@money2
+		while(@@FETCH_STATUS <> -1)
+		begin
+			set @t_memo = @t_memo + case when len(@t_memo)>0 then CHAR(13) else '' end
+				+ @productno+' '+@product+'：金額變動 '+dbo.getComma(@money1,-1)+' -> '+dbo.getComma(@money2,-1)
+			fetch next from cursor_table
+			into @productno,@product,@money1,@money2
+		end
+		close cursor_table
+		deallocate cursor_table
+	end
+	-- 額度
+	declare @credit float =0
+	select @credit=ISNULL(total,0) from dbo.credit_fe(@t_custno,@t_noa) 
+	select @money1=0,@money2=0
+	select @money1= SUM(ISNULL([money],0)) from @previous
+	select @money2= SUM(ISNULL([money],0)) from @current
+	
+	set @money = ISNULL(@credit,0)+ISNULL(@money1,0)-ISNULL(@money2,0)
+	if ISNULL(@money,0)<0
+	begin
+		set @t_memo = @t_memo + case when len(@t_memo)>0 then CHAR(13) else '' end + '【額度不足】'+dbo.getComma(abs(@money),-1)                                                                                                                                                             
+	end
+	
+----------------------------------------------------------------------------
+	if len(@t_memo)>0
+	begin
+		declare @cust nvarchar(max) = ''
+		select @cust = case when len(isnull(nick,''))>0 then nick else ISNULL(comp,'') end from cust where noa=@t_custno
+		set @t_memo = '單號：'+@t_noa+CHAR(13)+'客戶：【'+@t_custno+'】'+@cust+CHAR(13)+@t_memo
+
+		declare @x_date nvarchar(20) = dbo.AD2ChineseEraName(getdate())
+		declare @x_time nvarchar(20) = left(CONVERT(nvarchar,getdate(),108),5)
+		declare @number nvarchar(max)
+		declare @sign nvarchar(max) = '0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZ'
+		declare @nn int
+		declare @mm nvarchar(max)
+		declare @noa nvarchar(20) = ''
+		declare @t_checker nvarchar(max) = ''
+		
+		select top 1 @noa = case when noa>isnull(@noa,'') then noa else @noa end from [sign] where noa like REPLACE(@t_date,'/','')+'[0-9,A-Z][0-9][0-9]' order by noa desc
+		if LEN(ISNULL(@noa,'')) = 0
+			set @noa = REPLACE(@x_date,'/','')+'000'
+		set @number  = right(@noa,3)				
+		set @nn = (charindex(left(@number,1),@sign)-1) * 100 + cast(right(@number,2) as int) + 1
+		set @mm = substring(@sign,floor(@nn/100)+1,1)
+		set @noa =  REPLACE(@t_date,'/','')+@mm+RIGHT('00'+cast(@nn as nvarchar),2)
+		
+		begin try
+			select @t_checker=checker from signform where noa='vccfe'
+			insert into [sign](noa,datea,timea,form,sender,checker,zno,memo,enda,memochecker)
+			select @noa,@x_date,@x_time,@t_form,@t_user,@t_checker,@t_guid,@t_memo,'N',''
+			select 0 val,'【需核准】簽核已送，請稍後！' msg
+			return
+		end try
+		begin catch
+			select 0 val,'錯誤：簽核產生異常。' msg
+			return
+		end catch
+	end
+	else
+	begin
+		select 1 val,'沒問題。' msg
+	end;
+
+checkMount:--vccfe.txt checkMount  檢查庫存量
+	--  出貨單日期要是有變動,資料可能不一定會正確
+	declare @t_noa nvarchar(max) = [1]
+	declare @t_edate nvarchar(max) = [2]
+	declare @t_data nvarchar(max) = [3]
+	----------------------------------------------------------------
+	declare @tmpa table(
+		sel int identity(1,1)
+		,productno nvarchar(50)
+		,mount float
+		,[weight] float
+	)
+	declare @t_string nvarchar(max)=@t_data
+	declare @productno nvarchar(max)
+	declare @mount float
+	declare @weight float
+	
+	while CHARINDEX('　',@t_string)>0
+	begin
+		set @productno = LEFT(@t_string,CHARINDEX('　',@t_string)-1)
+		set @t_string = SUBSTRING(@t_string,CHARINDEX('　',@t_string)+1,LEN(@t_string))
+		set @mount = cast(LEFT(@t_string,CHARINDEX('　',@t_string)-1) as float)
+		set @t_string = SUBSTRING(@t_string,CHARINDEX('　',@t_string)+1,LEN(@t_string))
+		if(CHARINDEX('　',@t_string)>0)
+		begin
+			set @weight = cast(LEFT(@t_string,CHARINDEX('　',@t_string)-1) as float)
+			set @t_string = SUBSTRING(@t_string,CHARINDEX('　',@t_string)+1,LEN(@t_string))
+		end
+		else
+		begin
+			set @weight = cast(@t_string as float)
+			set @t_string = ''
+		end
+		insert into @tmpa(productno,mount,[weight])values(@productno,@mount,@weight)
+	end
+	------------------------------------------------------------------------------------------
+	declare @tmpb table( 
+		sel int identity(1,1)
+		,productno nvarchar(30) 
+		,storeno nvarchar(30) 
+		,mount float
+		,[weight] float 
+	) 
+	declare @t_bstoreno nvarchar(20) = ''
+	declare @t_estoreno nvarchar(20) = char(255)
+	
+	declare cursor_tablex cursor for
+	select productno from @tmpa group by productno
+	open cursor_tablex
+	fetch next from cursor_tablex
+	into @productno
+	while(@@FETCH_STATUS <> -1)
+	begin		
+		insert into @tmpb(productno,storeno,mount,[weight])
+		execute dbo.stkucc2 @t_edate,@t_bstoreno,@t_estoreno,@productno,@productno
+		
+		fetch next from cursor_tablex
+		into @productno
+	end
+	close cursor_tablex
+	deallocate cursor_tablex
+	----------------------------------------------------------------------------
+	
+	declare @tmp table( 
+		sel int identity(1,1)
+		,productno nvarchar(30) 
+		--　出貨(修改後)
+		,mount float
+		,[weight] float
+		--  當前庫存
+		,curmount float
+		,curweight float
+		--  出貨(修改前)
+		,vccmount float
+		,vccweight float 
+		--  出貨後庫存
+		,emount float
+		,eweight float
+	) 
+	insert into @tmp(productno,mount,[weight])
+	select productno,SUM(ISNULL(mount,0)),SUM(ISNULL([weight],0))
+	from @tmpa 
+	group by productno
+	
+	update @tmp set curmount=ISNULL(b.mount,0),curweight=ISNULL(b.[weight],0)
+	from @tmp a
+	left join (select productno,SUM(ISNULL(mount,0)) mount,SUM(ISNULL([weight],0)) [weight] from @tmpb group by productno) b on a.productno=b.productno
+	
+	update @tmp set vccmount=ISNULL(b.mount,0),vccweight=ISNULL(b.[weight],0)
+	from @tmp a
+	left join(select productno,SUM(ISNULL(mount,0)*case typea when '1' then 1 else -1 end) mount,SUM(ISNULL([weight],0)*case typea when '1' then 1 else -1 end) [weight] from view_vccs where noa=@t_noa group by productno) b on a.productno=b.productno
+
+	update @tmp set emount = ISNULL(curmount,0)+ISNULL(vccmount,0)-ISNULL(mount,0)
+		,eweight = ISNULL(curweight,0)+ISNULL(vccweight,0)-ISNULL([weight],0)
+	select * from @tmp;
+
+getPrice:--vccfe.txt getPrice 找上一次出貨單價 	
+	declare @t_noa nvarchar(max) = [1]
+	declare @t_bdate nvarchar(max) = [2]
+	declare @t_productno nvarchar(max) = [3]
+	--------------------------------------
+	declare @price float = 0
+	
+	select @price=max(a.price)
+	from view_vccs a
+	left join view_vcc b on a.accy=b.accy and a.noa=b.noa
+	where a.productno=@t_productno 
+	and b.datea<=@t_bdate
+	and a.noa!=@t_noa
+	
+	declare @tmp table(
+		price float
+	)
+	insert into @tmp(price)values(@price)
+	select * from @tmp;
+	
+vcc_tranmoney:--vccfe.txt	 vcc_tranmoney  基價和運費
+	SET QUOTED_IDENTIFIER OFF
+	declare @cmd nvarchar(max)
+	declare @t_noa nvarchar(max) = [1]
+	----------------------------------------------------------------------------------------------------
+	IF OBJECT_ID('tempdb..#vcc_tranmoney')is not null
+	BEGIN
+		drop table #vcc_tranmoney
+	END
+	create  table #vcc_tranmoney(
+		accy nvarchar(10)
+		,noa nvarchar(20)
+		,noq nvarchar(10)
+		,datea nvarchar(10)
+		,productno nvarchar(20)
+		,mount float
+		,[weight] float
+		,sprice float
+		,sprice2 float
+		,unit nvarchar(20)
+		,styleno nvarchar(20)
+		,tranmoney float
+		,transtartno nvarchar(20)
+		,trantype nvarchar(50)
+		,ordeno nvarchar(20)
+		,odate nvarchar(20)
+	)
+	insert into #vcc_tranmoney(accy,noa,noq,datea,productno,mount,[weight],sprice,sprice2,unit
+		,tranmoney,transtartno,trantype,ordeno)
+	select a.accy,a.noa,a.noq,b.datea,a.productno,a.mount,a.[weight],a.sprice,a.sprice2,a.unit
+		,0,b.transtartno,b.trantype,a.ordeno
+	from view_vccs a
+	left join view_vcc b on a.accy=b.accy and a.noa=b.noa
+	where a.noa=@t_noa
+	
+	-- 鉅昕  基價是以 orde.odate 來判斷,不是出貨單日期
+	-- 105/04/30以前維持依出貨單日期
+	-- 105/05/01以後以 orde.odate
+	update #vcc_tranmoney set odate = case when a.datea>='105/05/01' then isnull(b.odate,'') else a.datea end
+	from #vcc_tranmoney a
+	left join view_orde b on a.ordeno=b.noa
+	
+	update #vcc_tranmoney set sprice = b.sprice
+	from #vcc_tranmoney a
+	outer apply(select top 1 x.sprice 
+		from uccps x
+		left join uccp y on x.noa=y.noa
+		where x.productno=a.productno 
+		and y.datea<=a.odate
+		order by y.datea desc,y.noa desc) b
+	where isnull(a.sprice,0)=0
+	and len(isnull(a.productno,''))>0
+	
+	--運費
+	update #vcc_tranmoney set styleno =isnull(b.styleno,'') 
+		,tranmoney=case when b.styleno between 'A' and 'H' then a.mount*b.uweight 
+		when b.styleno between 'I' and 'NZ' then a.mount*case when a.sprice2>0 then a.sprice2 else a.sprice end
+		when b.styleno between 'O' and 'TZ' or b.styleno between '0' and '9Z' then case when a.sprice2>0 then a.sprice2 else a.sprice end * case when upper(a.unit)='KG' or len(ISNULL(a.unit,''))=0 then a.[weight] else a.mount end
+		when b.styleno between 'U' and 'ZZ' then a.[weight]
+		end	
+	from #vcc_tranmoney a
+	left join ucc b on a.productno=b.noa
+	where len(ISNULL(a.productno,''))>0
+	and CHARINDEX('送達',a.trantype)>0
+	
+	update #vcc_tranmoney set tranmoney=round(a.tranmoney*isnull(c.price,0),0)
+	from #vcc_tranmoney a
+	left join addr2 b on a.transtartno=b.noa
+	outer apply(select top 1 * from carp where styleno=a.styleno and addrno=b.p_post)c
+	
+	--update
+	declare @accy nvarchar(20)
+	declare @tranmoney float
+	
+	DECLARE @chk tinyint = 0
+	Begin Transaction [Trans_Name]
+	
+	
+	declare cursor_table cursor for
+	select accy from #vcc_tranmoney group by accy
+	open cursor_table
+	fetch next from cursor_table
+	into @accy
+	while(@@FETCH_STATUS <> -1)
+	begin		
+		select @tranmoney =0
+		select @tranmoney=SUM(ISNULL(tranmoney,0)) from #vcc_tranmoney where accy=@accy
+		
+		set @cmd = "update vcc"+@accy+" set tranmoney=@tranmoney where noa=@t_noa"
+		execute sp_executesql @cmd,N'@t_noa nvarchar(20),@tranmoney float',@t_noa=@t_noa,@tranmoney=@tranmoney
+		IF @@Error <> 0 BEGIN SET @chk = 1 END
+		
+		set @cmd = "update vccs"+@accy+" set tranmoney=isnull(b.tranmoney,0)
+			,sprice=isnull(b.sprice,0)
+		from vccs"+@accy+" a
+		left join #vcc_tranmoney b on a.noa=b.noa and a.noq=b.noq
+		where b.accy=@accy and b.noa is not null"	
+		execute sp_executesql @cmd,N'@accy nvarchar(20)',@accy=@accy
+		IF @@Error <> 0 BEGIN SET @chk = 1 END
+		
+		fetch next from cursor_table
+		into @accy
+	end
+	close cursor_table
+	deallocate cursor_table
+	
+	IF @chk <> 0 BEGIN -- 若是新增資料發生錯誤
+		Rollback Transaction [Trans_Name] -- 復原所有操作所造成的變更
+	END
+	ELSE BEGIN
+		Commit Transaction [Trans_Name] -- 提交所有操作所造成的變更
+	END
+		
+	drop table #vcc_tranmoney
+	
+	declare @tmp table(msg nvarchar(max))
+	insert into @tmp(msg)values('done!')
+	select * from @tmp;

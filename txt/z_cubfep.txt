@@ -1,0 +1,509 @@
+﻿z_cubfep01:--z_cubfep01
+declare @t_bdate nvarchar(10)
+declare @t_edate nvarchar(10)
+declare @t_bnoa nvarchar(50)
+declare @t_enoa nvarchar(50)
+declare @t_bcust nvarchar(50)
+declare @t_ecust nvarchar(50)
+declare @t_order nvarchar(50)
+
+set @t_bdate = case when '#non' = [3] then '' else [3] end
+set @t_edate = case when '#non' = [4] then CHAR(255) else [4] end
+set @t_bnoa = case when '#non' = [5] then '' else [5] end
+set @t_enoa = case when '#non' = [6] then CHAR(255) else [6] end
+set @t_bcust = case when '#non' = [7] then '' else [7] end
+set @t_ecust = case when '#non' = [8] then CHAR(255) else [8] end
+set @t_order = case when '#non' = [11] then '' else [11] end
+--************************************************************************
+declare @tmp table( 
+	noa nvarchar(50), 
+	noq nvarchar(50),
+	productno nvarchar(100),
+	product nvarchar(100),
+	spec nvarchar(100),
+	size nvarchar(100),
+	lengthb float,
+	mount float,
+	a float,--整料+算料+卸料
+	b float,--撞齊/刀
+	c float,--送料/刀 
+	d float,--裁剪
+	e float,--卸料/刀
+	dmount float,--每次可裁支數
+	cutcount float,--刀次
+	memo2 nvarchar(MAX)--裁剪內容
+)
+
+insert @tmp
+select a.noa,b.noq,b.productno,b.product
+,SUBSTRING(b.product,CHARINDEX('SD',b.product),CHARINDEX(' ',b.product)-CHARINDEX('SD',b.product)) spec
+,SUBSTRING(b.product,CHARINDEX(' ',b.product)+1,CHARINDEX('#',b.product)-CHARINDEX(' ',b.product))size
+,cast(SUBSTRING(b.product,CHARINDEX('*',b.product)+1,CHARINDEX('M',b.product)-CHARINDEX('*',b.product)-1) as float)lengthb
+,b.gmount,0,0,0,0,0,0,0,replace(substring(b.memo2,0,CHARINDEX('=',b.memo2)),'(入庫)','')
+from view_cub a left join view_cubt b on a.noa=b.noa
+
+declare @noa nvarchar(50)
+declare @noq nvarchar(50)
+declare @memo2 nvarchar(MAX)
+declare @tmemo2 nvarchar(MAX)
+declare @cutlength float
+declare @count int
+
+declare cursor_table cursor for
+select noa,noq,memo2 from @tmp
+open cursor_table
+fetch next from cursor_table
+into @noa,@noq,@memo2
+while(@@FETCH_STATUS <> -1)
+begin
+	set @count=0
+	set @tmemo2=@memo2+'+'
+	while(charindex('+',@tmemo2)>0)
+	begin
+		set @count=@count+cast(dbo.split(dbo.split(@tmemo2,'+',0),'*',1) as int)
+		set @tmemo2=SUBSTRING(@tmemo2,CHARINDEX('+',@tmemo2)+1,len(@tmemo2))
+	end
+	
+	update @tmp
+	set cutcount=@count
+	where noa=@noa and noq=@noq
+
+	fetch next from cursor_table
+	into @noa,@noq,@memo2
+end
+close cursor_table
+deallocate cursor_table
+
+update a
+set a=cast(b.m2 as float)
+,b=cast(b.m3 as float)
+,c=cast(case when lengthb<1.5 then b.m4 when lengthb >=1.5 and lengthb<4 then b.m5 when lengthb >=4 and lengthb<7 then b.m6 else b.m7 end as float)
+,d=cast(b.m8 as float)
+,e=case when lengthb<1.5 then b.bdime when lengthb >=1.5 and lengthb<8 then b.edime else b.odime end
+,dmount=c.knife1
+from @tmp a left join view_cub b on a.noa=b.noa
+left join adknife c on a.size=c.style
+where isNumeric(isnull(m2,0))=1 or len(isnull(m2,0))=0
+and isNumeric(isnull(m3,0))=1 or len(isnull(m3,0))=0
+and isNumeric(isnull(m4,0))=1 or len(isnull(m4,0))=0
+and isNumeric(isnull(m5,0))=1 or len(isnull(m5,0))=0
+and isNumeric(isnull(m6,0))=1 or len(isnull(m6,0))=0
+and isNumeric(isnull(m7,0))=1 or len(isnull(m7,0))=0
+and isNumeric(isnull(m8,0))=1 or len(isnull(m8,0))=0
+
+update a --時間*(總數量/每次可裁支數)裁剪次數*刀次
+--整料時間*(總數量/每次可裁支數)裁剪次數
+set a=a*case when dmount=0 then 1 else CEILING(mount/dmount) end 
+,b=b*case when dmount=0 then 1 else CEILING(mount/dmount) end*cutcount
+,c=c*case when dmount=0 then 1 else CEILING(mount/dmount) end*cutcount
+,d=d*case when dmount=0 then 1 else CEILING(mount/dmount) end*cutcount
+,e=e*case when dmount=0 then 1 else CEILING(mount/dmount) end*cutcount
+from @tmp a
+
+declare @tmpa table( 
+	gno nvarchar(50),
+	noa nvarchar(50), 
+	datea nvarchar(50),
+	ordeno nvarchar(50),
+	workjno nvarchar(50),
+	no2 nvarchar(50),
+	custno nvarchar(100),
+	comp nvarchar(100),
+	spec nvarchar(100),
+	size nvarchar(100),
+	lengthb float,
+	mount float,
+	a float,--整料+算料+卸料
+	b float,--撞齊/刀
+	c float,--送料/刀 
+	d float,--裁剪
+	e float,--卸料/刀
+	timea float --總時數
+)
+
+insert @tmpa
+select '0',a.noa,a.datea,c.ordeno,b.ordeno,b.no2,b.custno,b.comp
+,SUBSTRING(b.product,CHARINDEX('SD',b.product),CHARINDEX(' ',b.product)-CHARINDEX('SD',b.product)) spec
+,SUBSTRING(b.product,CHARINDEX(' ',b.product)+1,CHARINDEX('#',b.product)-CHARINDEX(' ',b.product))size
+,b.lengthb,b.mount,0,0,0,0,0,0
+from view_cub a left join view_cubs b on a.noa=b.noa
+left join workj c on b.ordeno=c.noa
+
+update a
+set a=mount*isnull((select SUM(isnull(a,0))/SUM(mount) from @tmp where noa=a.noa and spec=a.spec and size=a.size),0)
+,b=mount*isnull((select SUM(isnull(b,0))/SUM(mount) from @tmp where noa=a.noa and spec=a.spec and size=a.size),0)
+,c=mount*isnull((select SUM(isnull(c,0))/SUM(mount) from @tmp where noa=a.noa and spec=a.spec and size=a.size),0)
+,d=mount*isnull((select SUM(isnull(d,0))/SUM(mount) from @tmp where noa=a.noa and spec=a.spec and size=a.size),0)
+,e=mount*isnull((select SUM(isnull(e,0))/SUM(mount) from @tmp where noa=a.noa and spec=a.spec and size=a.size),0)
+,timea=mount*(select SUM(isnull(a,0)+isnull(b,0)+isnull(c,0)+isnull(d,0)+isnull(e,0))/SUM(mount) from @tmp where noa=a.noa and spec=a.spec and size=a.size)
+from @tmpa a
+
+--select* from @tmp
+
+--總計
+if((select count(*) from @tmpa)>0)
+begin
+	insert @tmpa(gno,noa,datea,ordeno,workjno,no2,custno,a,b,c,d,e,timea)
+	select '2',char(255),char(255),char(255),char(255),char(255),char(255),sum(a),sum(b),sum(c),sum(d),sum(e),sum(timea)
+	from @tmpa where gno='0'
+end
+
+--cub@裁剪單號,orde@訂單號碼,cust@客戶,datea@裁剪日
+if(@t_order='orde')
+begin
+	insert @tmpa(gno,noa,datea,ordeno,no2,a,b,c,d,e,timea)
+	select '1',char(255),char(255),ordeno,char(255),sum(a),sum(b),sum(c),sum(d),sum(e),sum(timea)
+	from @tmpa where gno='0' group by ordeno
+	
+	select 
+	dbo.getComma(lengthb,-1)lengthb,
+	dbo.getComma(mount,-1)lengthb,
+	case when isnull(floor(a/(24*60*60)),0)>0 then cast(floor(a/(24*60*60)) as nvarchar(10))+'天' else '' end 
+	+case when isnull(floor(a/(60*60)),0)>0
+	then cast(isnull(floor((a-(floor(a/(24*60*60))*(24*60*60)))/(60*60)),0) as nvarchar(10))+'時' else '' end 
+	+case when isnull(floor(a/(60)),0)>0
+	then cast(isnull(floor((a-(floor(a/(24*60*60))*(24*60*60))-(floor((a-(floor(a/(24*60*60))*(24*60*60)))/(60*60))*60*60))/60),0) as nvarchar(10))+'分' else '' end 
+	+case when isnull(cast(a as int)%(24*60*60),0)>0
+	then cast(isnull(cast(a as int)%(60),0) as nvarchar(10))+'秒' else '' end a,
+	
+	case when isnull(floor(b/(24*60*60)),0)>0 then cast(floor(b/(24*60*60)) as nvarchar(10))+'天' else '' end 
+	+case when isnull(floor(b/(60*60)),0)>0
+	then cast(isnull(floor((b-(floor(b/(24*60*60))*(24*60*60)))/(60*60)),0) as nvarchar(10))+'時' else '' end 
+	+case when isnull(floor(b/(60)),0)>0
+	then cast(isnull(floor((b-(floor(b/(24*60*60))*(24*60*60))-(floor((b-(floor(b/(24*60*60))*(24*60*60)))/(60*60))*60*60))/60),0) as nvarchar(10))+'分' else '' end 
+	+case when isnull(cast(b as int)%(24*60*60),0)>0
+	then cast(isnull(cast(b as int)%(60),0) as nvarchar(10))+'秒' else '' end b,
+	
+	case when isnull(floor(c/(24*60*60)),0)>0 then cast(floor(c/(24*60*60)) as nvarchar(10))+'天' else '' end 
+	+case when isnull(floor(c/(60*60)),0)>0
+	then cast(isnull(floor((c-(floor(c/(24*60*60))*(24*60*60)))/(60*60)),0) as nvarchar(10))+'時' else '' end 
+	+case when isnull(floor(c/(60)),0)>0
+	then cast(isnull(floor((c-(floor(c/(24*60*60))*(24*60*60))-(floor((c-(floor(c/(24*60*60))*(24*60*60)))/(60*60))*60*60))/60),0) as nvarchar(10))+'分' else '' end 
+	+case when isnull(cast(c as int)%(24*60*60),0)>0
+	then cast(isnull(cast(c as int)%(60),0) as nvarchar(10))+'秒' else '' end c,
+	
+	case when isnull(floor(d/(24*60*60)),0)>0 then cast(floor(d/(24*60*60)) as nvarchar(10))+'天' else '' end 
+	+case when isnull(floor(d/(60*60)),0)>0
+	then cast(isnull(floor((d-(floor(d/(24*60*60))*(24*60*60)))/(60*60)),0) as nvarchar(10))+'時' else '' end 
+	+case when isnull(floor(d/(60)),0)>0
+	then cast(isnull(floor((d-(floor(d/(24*60*60))*(24*60*60))-(floor((d-(floor(d/(24*60*60))*(24*60*60)))/(60*60))*60*60))/60),0) as nvarchar(10))+'分' else '' end 
+	+case when isnull(cast(d as int)%(24*60*60),0)>0
+	then cast(isnull(cast(d as int)%(60),0) as nvarchar(10))+'秒' else '' end d,
+	
+	case when isnull(floor(e/(24*60*60)),0)>0 then cast(floor(e/(24*60*60)) as nvarchar(10))+'天' else '' end 
+	+case when isnull(floor(e/(60*60)),0)>0
+	then cast(isnull(floor((e-(floor(e/(24*60*60))*(24*60*60)))/(60*60)),0) as nvarchar(10))+'時' else '' end 
+	+case when isnull(floor(e/(60)),0)>0
+	then cast(isnull(floor((e-(floor(e/(24*60*60))*(24*60*60))-(floor((e-(floor(e/(24*60*60))*(24*60*60)))/(60*60))*60*60))/60),0) as nvarchar(10))+'分' else '' end 
+	+case when isnull(cast(e as int)%(24*60*60),0)>0
+	then cast(isnull(cast(e as int)%(60),0) as nvarchar(10))+'秒' else '' end e,
+	
+	case when isnull(floor(timea/(24*60*60)),0)>0 then cast(floor(timea/(24*60*60)) as nvarchar(10))+'天' else '' end 
+	+case when isnull(floor(timea/(60*60)),0)>0
+	then cast(isnull(floor((timea-(floor(timea/(24*60*60))*(24*60*60)))/(60*60)),0) as nvarchar(10))+'時' else '' end 
+	+case when isnull(floor(timea/(60)),0)>0
+	then cast(isnull(floor((timea-(floor(timea/(24*60*60))*(24*60*60))-(floor((timea-(floor(timea/(24*60*60))*(24*60*60)))/(60*60))*60*60))/60),0) as nvarchar(10))+'分' else '' end 
+	+case when isnull(cast(timea as int)%(24*60*60),0)>0
+	then cast(isnull(cast(timea as int)%(60),0) as nvarchar(10))+'秒' else '' end timea,ordeno ttitle,
+	* from @tmpa order by ordeno,gno,datea,noa,custno,no2 
+end
+else if(@t_order='cust')
+begin
+	insert @tmpa(gno,noa,datea,ordeno,no2,custno,comp,a,b,c,d,e,timea)
+	select '1',char(255),char(255),char(255),char(255),custno,MAX(comp),sum(a),sum(b),sum(c),sum(d),sum(e),sum(timea)
+	from @tmpa where gno='0' group by custno
+	
+	select 
+	dbo.getComma(lengthb,-1)lengthb,
+	dbo.getComma(mount,-1)lengthb,
+	case when isnull(floor(a/(24*60*60)),0)>0 then cast(floor(a/(24*60*60)) as nvarchar(10))+'天' else '' end 
+	+case when isnull(floor(a/(60*60)),0)>0
+	then cast(isnull(floor((a-(floor(a/(24*60*60))*(24*60*60)))/(60*60)),0) as nvarchar(10))+'時' else '' end 
+	+case when isnull(floor(a/(60)),0)>0
+	then cast(isnull(floor((a-(floor(a/(24*60*60))*(24*60*60))-(floor((a-(floor(a/(24*60*60))*(24*60*60)))/(60*60))*60*60))/60),0) as nvarchar(10))+'分' else '' end 
+	+case when isnull(cast(a as int)%(24*60*60),0)>0
+	then cast(isnull(cast(a as int)%(60),0) as nvarchar(10))+'秒' else '' end a,
+	
+	case when isnull(floor(b/(24*60*60)),0)>0 then cast(floor(b/(24*60*60)) as nvarchar(10))+'天' else '' end 
+	+case when isnull(floor(b/(60*60)),0)>0
+	then cast(isnull(floor((b-(floor(b/(24*60*60))*(24*60*60)))/(60*60)),0) as nvarchar(10))+'時' else '' end 
+	+case when isnull(floor(b/(60)),0)>0
+	then cast(isnull(floor((b-(floor(b/(24*60*60))*(24*60*60))-(floor((b-(floor(b/(24*60*60))*(24*60*60)))/(60*60))*60*60))/60),0) as nvarchar(10))+'分' else '' end 
+	+case when isnull(cast(b as int)%(24*60*60),0)>0
+	then cast(isnull(cast(b as int)%(60),0) as nvarchar(10))+'秒' else '' end b,
+	
+	case when isnull(floor(c/(24*60*60)),0)>0 then cast(floor(c/(24*60*60)) as nvarchar(10))+'天' else '' end 
+	+case when isnull(floor(c/(60*60)),0)>0
+	then cast(isnull(floor((c-(floor(c/(24*60*60))*(24*60*60)))/(60*60)),0) as nvarchar(10))+'時' else '' end 
+	+case when isnull(floor(c/(60)),0)>0
+	then cast(isnull(floor((c-(floor(c/(24*60*60))*(24*60*60))-(floor((c-(floor(c/(24*60*60))*(24*60*60)))/(60*60))*60*60))/60),0) as nvarchar(10))+'分' else '' end 
+	+case when isnull(cast(c as int)%(24*60*60),0)>0
+	then cast(isnull(cast(c as int)%(60),0) as nvarchar(10))+'秒' else '' end c,
+	
+	case when isnull(floor(d/(24*60*60)),0)>0 then cast(floor(d/(24*60*60)) as nvarchar(10))+'天' else '' end 
+	+case when isnull(floor(d/(60*60)),0)>0
+	then cast(isnull(floor((d-(floor(d/(24*60*60))*(24*60*60)))/(60*60)),0) as nvarchar(10))+'時' else '' end 
+	+case when isnull(floor(d/(60)),0)>0
+	then cast(isnull(floor((d-(floor(d/(24*60*60))*(24*60*60))-(floor((d-(floor(d/(24*60*60))*(24*60*60)))/(60*60))*60*60))/60),0) as nvarchar(10))+'分' else '' end 
+	+case when isnull(cast(d as int)%(24*60*60),0)>0
+	then cast(isnull(cast(d as int)%(60),0) as nvarchar(10))+'秒' else '' end d,
+	
+	case when isnull(floor(e/(24*60*60)),0)>0 then cast(floor(e/(24*60*60)) as nvarchar(10))+'天' else '' end 
+	+case when isnull(floor(e/(60*60)),0)>0
+	then cast(isnull(floor((e-(floor(e/(24*60*60))*(24*60*60)))/(60*60)),0) as nvarchar(10))+'時' else '' end 
+	+case when isnull(floor(e/(60)),0)>0
+	then cast(isnull(floor((e-(floor(e/(24*60*60))*(24*60*60))-(floor((e-(floor(e/(24*60*60))*(24*60*60)))/(60*60))*60*60))/60),0) as nvarchar(10))+'分' else '' end 
+	+case when isnull(cast(e as int)%(24*60*60),0)>0
+	then cast(isnull(cast(e as int)%(60),0) as nvarchar(10))+'秒' else '' end e,
+	
+	case when isnull(floor(timea/(24*60*60)),0)>0 then cast(floor(timea/(24*60*60)) as nvarchar(10))+'天' else '' end 
+	+case when isnull(floor(timea/(60*60)),0)>0
+	then cast(isnull(floor((timea-(floor(timea/(24*60*60))*(24*60*60)))/(60*60)),0) as nvarchar(10))+'時' else '' end 
+	+case when isnull(floor(timea/(60)),0)>0
+	then cast(isnull(floor((timea-(floor(timea/(24*60*60))*(24*60*60))-(floor((timea-(floor(timea/(24*60*60))*(24*60*60)))/(60*60))*60*60))/60),0) as nvarchar(10))+'分' else '' end 
+	+case when isnull(cast(timea as int)%(24*60*60),0)>0
+	then cast(isnull(cast(timea as int)%(60),0) as nvarchar(10))+'秒' else '' end timea,comp ttitle,
+	* from @tmpa order by custno,gno,datea,noa,ordeno,no2
+end
+else if(@t_order='cub')
+begin
+	insert @tmpa(gno,noa,datea,ordeno,no2,a,b,c,d,e,timea)
+	select '1',noa,char(255),char(255),char(255),sum(a),sum(b),sum(c),sum(d),sum(e),sum(timea)
+	from @tmpa where gno='0' group by noa
+	
+	select 
+	dbo.getComma(lengthb,-1)lengthb,
+	dbo.getComma(mount,-1)lengthb,
+	case when isnull(floor(a/(24*60*60)),0)>0 then cast(floor(a/(24*60*60)) as nvarchar(10))+'天' else '' end 
+	+case when isnull(floor(a/(60*60)),0)>0
+	then cast(isnull(floor((a-(floor(a/(24*60*60))*(24*60*60)))/(60*60)),0) as nvarchar(10))+'時' else '' end 
+	+case when isnull(floor(a/(60)),0)>0
+	then cast(isnull(floor((a-(floor(a/(24*60*60))*(24*60*60))-(floor((a-(floor(a/(24*60*60))*(24*60*60)))/(60*60))*60*60))/60),0) as nvarchar(10))+'分' else '' end 
+	+case when isnull(cast(a as int)%(24*60*60),0)>0
+	then cast(isnull(cast(a as int)%(60),0) as nvarchar(10))+'秒' else '' end a,
+	
+	case when isnull(floor(b/(24*60*60)),0)>0 then cast(floor(b/(24*60*60)) as nvarchar(10))+'天' else '' end 
+	+case when isnull(floor(b/(60*60)),0)>0
+	then cast(isnull(floor((b-(floor(b/(24*60*60))*(24*60*60)))/(60*60)),0) as nvarchar(10))+'時' else '' end 
+	+case when isnull(floor(b/(60)),0)>0
+	then cast(isnull(floor((b-(floor(b/(24*60*60))*(24*60*60))-(floor((b-(floor(b/(24*60*60))*(24*60*60)))/(60*60))*60*60))/60),0) as nvarchar(10))+'分' else '' end 
+	+case when isnull(cast(b as int)%(24*60*60),0)>0
+	then cast(isnull(cast(b as int)%(60),0) as nvarchar(10))+'秒' else '' end b,
+	
+	case when isnull(floor(c/(24*60*60)),0)>0 then cast(floor(c/(24*60*60)) as nvarchar(10))+'天' else '' end 
+	+case when isnull(floor(c/(60*60)),0)>0
+	then cast(isnull(floor((c-(floor(c/(24*60*60))*(24*60*60)))/(60*60)),0) as nvarchar(10))+'時' else '' end 
+	+case when isnull(floor(c/(60)),0)>0
+	then cast(isnull(floor((c-(floor(c/(24*60*60))*(24*60*60))-(floor((c-(floor(c/(24*60*60))*(24*60*60)))/(60*60))*60*60))/60),0) as nvarchar(10))+'分' else '' end 
+	+case when isnull(cast(c as int)%(24*60*60),0)>0
+	then cast(isnull(cast(c as int)%(60),0) as nvarchar(10))+'秒' else '' end c,
+	
+	case when isnull(floor(d/(24*60*60)),0)>0 then cast(floor(d/(24*60*60)) as nvarchar(10))+'天' else '' end 
+	+case when isnull(floor(d/(60*60)),0)>0
+	then cast(isnull(floor((d-(floor(d/(24*60*60))*(24*60*60)))/(60*60)),0) as nvarchar(10))+'時' else '' end 
+	+case when isnull(floor(d/(60)),0)>0
+	then cast(isnull(floor((d-(floor(d/(24*60*60))*(24*60*60))-(floor((d-(floor(d/(24*60*60))*(24*60*60)))/(60*60))*60*60))/60),0) as nvarchar(10))+'分' else '' end 
+	+case when isnull(cast(d as int)%(24*60*60),0)>0
+	then cast(isnull(cast(d as int)%(60),0) as nvarchar(10))+'秒' else '' end d,
+	
+	case when isnull(floor(e/(24*60*60)),0)>0 then cast(floor(e/(24*60*60)) as nvarchar(10))+'天' else '' end 
+	+case when isnull(floor(e/(60*60)),0)>0
+	then cast(isnull(floor((e-(floor(e/(24*60*60))*(24*60*60)))/(60*60)),0) as nvarchar(10))+'時' else '' end 
+	+case when isnull(floor(e/(60)),0)>0
+	then cast(isnull(floor((e-(floor(e/(24*60*60))*(24*60*60))-(floor((e-(floor(e/(24*60*60))*(24*60*60)))/(60*60))*60*60))/60),0) as nvarchar(10))+'分' else '' end 
+	+case when isnull(cast(e as int)%(24*60*60),0)>0
+	then cast(isnull(cast(e as int)%(60),0) as nvarchar(10))+'秒' else '' end e,
+	
+	case when isnull(floor(timea/(24*60*60)),0)>0 then cast(floor(timea/(24*60*60)) as nvarchar(10))+'天' else '' end 
+	+case when isnull(floor(timea/(60*60)),0)>0
+	then cast(isnull(floor((timea-(floor(timea/(24*60*60))*(24*60*60)))/(60*60)),0) as nvarchar(10))+'時' else '' end 
+	+case when isnull(floor(timea/(60)),0)>0
+	then cast(isnull(floor((timea-(floor(timea/(24*60*60))*(24*60*60))-(floor((timea-(floor(timea/(24*60*60))*(24*60*60)))/(60*60))*60*60))/60),0) as nvarchar(10))+'分' else '' end 
+	+case when isnull(cast(timea as int)%(24*60*60),0)>0
+	then cast(isnull(cast(timea as int)%(60),0) as nvarchar(10))+'秒' else '' end timea,noa ttitle,
+	* from @tmpa order by noa,gno,datea,ordeno,no2
+end
+else
+begin
+	select 
+	dbo.getComma(lengthb,-1)lengthb,
+	dbo.getComma(mount,-1)lengthb,
+	case when isnull(floor(a/(24*60*60)),0)>0 then cast(floor(a/(24*60*60)) as nvarchar(10))+'天' else '' end 
+	+case when isnull(floor(a/(60*60)),0)>0
+	then cast(isnull(floor((a-(floor(a/(24*60*60))*(24*60*60)))/(60*60)),0) as nvarchar(10))+'時' else '' end 
+	+case when isnull(floor(a/(60)),0)>0
+	then cast(isnull(floor((a-(floor(a/(24*60*60))*(24*60*60))-(floor((a-(floor(a/(24*60*60))*(24*60*60)))/(60*60))*60*60))/60),0) as nvarchar(10))+'分' else '' end 
+	+case when isnull(cast(a as int)%(24*60*60),0)>0
+	then cast(isnull(cast(a as int)%(60),0) as nvarchar(10))+'秒' else '' end a,
+	
+	case when isnull(floor(b/(24*60*60)),0)>0 then cast(floor(b/(24*60*60)) as nvarchar(10))+'天' else '' end 
+	+case when isnull(floor(b/(60*60)),0)>0
+	then cast(isnull(floor((b-(floor(b/(24*60*60))*(24*60*60)))/(60*60)),0) as nvarchar(10))+'時' else '' end 
+	+case when isnull(floor(b/(60)),0)>0
+	then cast(isnull(floor((b-(floor(b/(24*60*60))*(24*60*60))-(floor((b-(floor(b/(24*60*60))*(24*60*60)))/(60*60))*60*60))/60),0) as nvarchar(10))+'分' else '' end 
+	+case when isnull(cast(b as int)%(24*60*60),0)>0
+	then cast(isnull(cast(b as int)%(60),0) as nvarchar(10))+'秒' else '' end b,
+	
+	case when isnull(floor(c/(24*60*60)),0)>0 then cast(floor(c/(24*60*60)) as nvarchar(10))+'天' else '' end 
+	+case when isnull(floor(c/(60*60)),0)>0
+	then cast(isnull(floor((c-(floor(c/(24*60*60))*(24*60*60)))/(60*60)),0) as nvarchar(10))+'時' else '' end 
+	+case when isnull(floor(c/(60)),0)>0
+	then cast(isnull(floor((c-(floor(c/(24*60*60))*(24*60*60))-(floor((c-(floor(c/(24*60*60))*(24*60*60)))/(60*60))*60*60))/60),0) as nvarchar(10))+'分' else '' end 
+	+case when isnull(cast(c as int)%(24*60*60),0)>0
+	then cast(isnull(cast(c as int)%(60),0) as nvarchar(10))+'秒' else '' end c,
+	
+	case when isnull(floor(d/(24*60*60)),0)>0 then cast(floor(d/(24*60*60)) as nvarchar(10))+'天' else '' end 
+	+case when isnull(floor(d/(60*60)),0)>0
+	then cast(isnull(floor((d-(floor(d/(24*60*60))*(24*60*60)))/(60*60)),0) as nvarchar(10))+'時' else '' end 
+	+case when isnull(floor(d/(60)),0)>0
+	then cast(isnull(floor((d-(floor(d/(24*60*60))*(24*60*60))-(floor((d-(floor(d/(24*60*60))*(24*60*60)))/(60*60))*60*60))/60),0) as nvarchar(10))+'分' else '' end 
+	+case when isnull(cast(d as int)%(24*60*60),0)>0
+	then cast(isnull(cast(d as int)%(60),0) as nvarchar(10))+'秒' else '' end d,
+	
+	case when isnull(floor(e/(24*60*60)),0)>0 then cast(floor(e/(24*60*60)) as nvarchar(10))+'天' else '' end 
+	+case when isnull(floor(e/(60*60)),0)>0
+	then cast(isnull(floor((e-(floor(e/(24*60*60))*(24*60*60)))/(60*60)),0) as nvarchar(10))+'時' else '' end 
+	+case when isnull(floor(e/(60)),0)>0
+	then cast(isnull(floor((e-(floor(e/(24*60*60))*(24*60*60))-(floor((e-(floor(e/(24*60*60))*(24*60*60)))/(60*60))*60*60))/60),0) as nvarchar(10))+'分' else '' end 
+	+case when isnull(cast(e as int)%(24*60*60),0)>0
+	then cast(isnull(cast(e as int)%(60),0) as nvarchar(10))+'秒' else '' end e,
+	
+	case when isnull(floor(timea/(24*60*60)),0)>0 then cast(floor(timea/(24*60*60)) as nvarchar(10))+'天' else '' end 
+	+case when isnull(floor(timea/(60*60)),0)>0
+	then cast(isnull(floor((timea-(floor(timea/(24*60*60))*(24*60*60)))/(60*60)),0) as nvarchar(10))+'時' else '' end 
+	+case when isnull(floor(timea/(60)),0)>0
+	then cast(isnull(floor((timea-(floor(timea/(24*60*60))*(24*60*60))-(floor((timea-(floor(timea/(24*60*60))*(24*60*60)))/(60*60))*60*60))/60),0) as nvarchar(10))+'分' else '' end 
+	+case when isnull(cast(timea as int)%(24*60*60),0)>0
+	then cast(isnull(cast(timea as int)%(60),0) as nvarchar(10))+'秒' else '' end timea,'' ttitle,
+	* from @tmpa order by gno,datea,noa,ordeno,no2
+end
+;
+----------------------------------------------------------------------------------------------------------------------------------------
+z_cubfep02:--z_cubfep02
+declare @t_bdate nvarchar(10)
+declare @t_edate nvarchar(10)
+declare @t_bmech nvarchar(50)
+declare @t_emech nvarchar(50)
+
+set @t_bdate = case when '#non' = [3] then '' else [3] end
+set @t_edate = case when '#non' = [4] then CHAR(255) else [4] end
+set @t_bmech = case when '#non' = [9] then '' else [9] end
+set @t_emech = case when '#non' = [10] then CHAR(255) else [10] end
+--************************************************************************
+declare @tmp table( 
+	gno nvarchar(50),
+	noa nvarchar(50),
+	noq nvarchar(50),
+	mechno nvarchar(50),
+	mech nvarchar(50), 
+	datea nvarchar(50),
+	ordeno nvarchar(50),
+	no2 nvarchar(50),
+	custno nvarchar(100),
+	comp nvarchar(100),
+	productno nvarchar(50),
+	products nvarchar(100),
+	lengthb float,
+	mount float,
+	weight float
+)
+
+insert @tmp
+select '0',a.noa,b.noq,a.mechno,c.mech,a.datea,b.ordeno,b.no2,b.custno,b.comp
+,b.productno,b.product,b.lengthb,b.mount,b.weight
+from view_cub a left join view_cubs b on a.noa=b.noa
+left join mech c on a.mechno=c.noa
+where a.datea between @t_bdate and @t_edate 
+and a.mechno between @t_bmech and @t_emech
+
+if((select count(*) from @tmp)>0)
+begin
+	insert @tmp (gno,mechno,mech,datea,mount,weight)
+	select '1' ,mechno,MAX(mech),datea,sum(mount),sum(weight)
+	from @tmp
+	group by mechno,datea
+end
+
+select  
+dbo.getComma(lengthb,-1)lengthb
+,dbo.getComma(mount,-1)mount
+,dbo.getComma(weight,-1)weight
+,*
+from @tmp order by mechno,datea,gno;
+---------------------------------------------------------------------------------------------------------------------
+
+z_cubfep03:--z_cubfep03
+declare @t_bdate nvarchar(10)
+declare @t_edate nvarchar(10)
+declare @t_bnoa nvarchar(50)
+declare @t_enoa nvarchar(50)
+declare @t_bcust nvarchar(50)
+declare @t_ecust nvarchar(50)
+declare @t_order nvarchar(50)
+declare @t_bmech nvarchar(50)
+declare @t_emech nvarchar(50)
+
+set @t_bdate = case when '#non' = [3] then '' else [3] end
+set @t_edate = case when '#non' = [4] then CHAR(255) else [4] end
+set @t_bnoa = case when '#non' = [5] then '' else [5] end
+set @t_enoa = case when '#non' = [6] then CHAR(255) else [6] end
+set @t_bcust = case when '#non' = [7] then '' else [7] end
+set @t_ecust = case when '#non' = [8] then CHAR(255) else [8] end
+set @t_bmech = case when '#non' = [9] then '' else [9] end
+set @t_emech = case when '#non' = [10] then CHAR(255) else [10] end
+
+declare @tmp table(
+	gno nvarchar(1),
+	noa nvarchar(100),
+	comp nvarchar(100),
+	spec nvarchar(100),
+	m1 nvarchar(10),
+	mechno nvarchar(100),
+	mech nvarchar(100),
+	productno nvarchar(100),
+	product nvarchar(100),
+	mount float,
+	nor nvarchar(100),
+	memo2 nvarchar(max),
+	image1 nvarchar(max),
+	worker nvarchar(max)
+)
+
+insert @tmp
+select '2',a.noa,'',a.spec,a.m1,a.mechno,case a.mechno when '01' then '剪台' when '02' then '火切' when '12' then 'D1盤圓' when '13' then 'D13盤圓' when '20' then '續接裁剪' end
+		,c.productno,c.product,c.gmount,c.nor,c.memo2,'',a.worker
+from  view_cubt c left join view_cub a on a.noa=c.noa
+where (a.datea between @t_bdate and @t_edate)
+and (a.noa between @t_bnoa and @t_enoa)
+and (a.mechno between @t_bmech and @t_emech)
+
+declare @noa nvarchar(50)
+declare @comp nvarchar(200)
+
+declare cursor_table cursor for
+select noa,comp from view_cubs group by noa,comp
+open cursor_table
+fetch next from cursor_table
+into @noa,@comp
+while(@@FETCH_STATUS <> -1)
+begin		
+	update @tmp
+	set comp=comp+'<br/>'+@comp
+	where noa=@noa
+	
+	fetch next from cursor_table 
+	into @noa,@comp
+end
+close cursor_table 
+deallocate cursor_table
+
+insert @tmp(gno,noa,spec,m1,mech,productno,product,worker,comp)
+select '1',noa,spec,m1,mech,productno,product,worker,comp
+from @tmp
+group by noa,spec,m1,mech,productno,product,worker,comp
+
+select 
+SUBSTRING(comp,6,len(comp))comp,
+* from @tmp
+order by noa,spec,m1,mech,productno,gno
+;
