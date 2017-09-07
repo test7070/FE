@@ -1,0 +1,44 @@
+ALTER function [dbo].[ordc_fe](@t_noa nvarchar(max), @t_tggno nvarchar(max))
+returns @tmp table(	
+	sel int identity(1,1)
+	,accy nvarchar(10)
+	,noa nvarchar(20)
+	,no2 nvarchar(10)
+	,datea nvarchar(10)
+	,odate nvarchar(10)
+	,tggno nvarchar(20)
+	,tgg nvarchar(50)
+	,productno nvarchar(30)
+	,product nvarchar(100)
+	,unit nvarchar(20)
+	,price float
+	,mount decimal(15,3)
+	,[weight] decimal(15,3)
+	,gmount decimal(15,3)
+	,gweight decimal(15,3)
+	,emount decimal(15,3)
+	,eweight decimal(15,3)
+	,memo nvarchar(max) 
+) as
+begin
+	insert into @tmp(accy,noa,no2,datea,odate,tggno,tgg,productno,product,unit,price
+		,mount,[weight],memo,gmount,gweight,emount,eweight)
+	select a.accy,a.noa,a.no2,b.datea,b.odate,b.tggno,c.nick,a.productno,a.product,a.unit,a.price
+		,a.mount,a.[weight],a.memo,0,0,0,0
+	from view_ordcs a
+	left join view_ordc b on a.accy=b.accy and a.noa=b.noa
+	left join tgg c on b.tggno=c.noa
+	--where not( ISNULL(a.enda,0)=1 or ISNULL(b.enda,0)=1)
+	where ISNULL(b.enda,0)=0
+	and b.tggno=@t_tggno
+	order by b.odate,a.accy,a.noa,a.no2
+
+	update @tmp set gmount=isnull(b.mount,0),gweight=isnull(b.[weight],0)
+	from @tmp a
+	outer apply(select SUM(ISNULL(mount,0)) mount,sum(ISNULL([weight],0)) [weight] 
+		from view_rc2s where ordeno=a.noa and no2=a.no2 and noa!=@t_noa) b
+	update @tmp set emount = mount - gmount,eweight=[weight]-gweight
+	delete @tmp where emount<=0
+	
+	return
+end	

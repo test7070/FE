@@ -1,0 +1,165 @@
+check:--check
+	declare @t_userno nvarchar(max) = [1]
+	declare @t_form nvarchar(max) = [2]
+	declare @t_guid nvarchar(max) = [3]
+	declare @t_item nvarchar(max) = [4]
+	declare @t_rank int = 0
+	declare @t_user nvarchar(20) = ''
+	select @t_rank=[RANK],@t_user=namea from nhpe where noa=@t_userno
+	--RANK >=8 不用檢查
+	if @t_rank>=8
+	begin
+		select 1 val,@t_userno+'等級'+cast(@t_rank as nvarchar)+',不需檢查。' msg
+		return 
+	end
+	-----------------------------------------------------------------
+	declare @string nvarchar(max)
+	declare @string2 nvarchar(max)
+	declare @n int
+	declare @m int
+	declare @o int
+	
+	declare @item table(
+		sel int identity(1,1)
+		,checkno nvarchar(30)
+		,indate nvarchar(20)
+		,custno nvarchar(20)
+		,paymon nvarchar(20)
+		,paytype nvarchar(30)
+		,daya int 
+		,edate nvarchar(20)
+	)
+	declare @checkno nvarchar(30)
+	declare @indate nvarchar(20)
+	declare @custno nvarchar(20)
+	declare @paymon nvarchar(20)
+	
+	set @string = ltrim(rtrim(@t_item))
+	while LEN(@string)>0 
+	begin
+		set @n = CHARINDEX('|',@string)
+		if @n = 0
+		begin
+			set @string2= @string
+			set @string = ''
+		end
+		else 
+		begin
+			set @string2 = ltrim(rtrim(LEFT(@string,@n-1)))
+			set @string = ltrim(rtrim(SUBSTRING(@string,@n+1,LEN(@string))))
+		end
+		----------------------------------------------------------------
+		set @n = charindex('@',@string2,1)
+		set @m = charindex('@',@string2,@n+1)
+		set @o = charindex('@',@string2,@m+1)
+		
+		insert into @item(checkno,indate,custno,paymon,daya,edate)
+		select SUBSTRING(@string2,1,@n-1)
+			,SUBSTRING(@string2,@n+1,@m-@n-1)
+			,SUBSTRING(@string2,@m+1,@o-@m-1)
+			,SUBSTRING(@string2,@o+1,LEN(@string2))
+			,0,''
+	end
+	update @item set paytype=ISNULL(b.paytype,'')
+	from @item a
+	outer apply (select top 1 paytype from view_vcc where mon=a.paymon and custno=a.custno order by noa) b
+
+	declare @sel int
+	declare @paytype nvarchar(30)
+	
+	declare cursor_table cursor for
+	select sel,paymon,ltrim(rtrim(paytype)) from @item where len(ltrim(rtrim(paytype)))>0
+	open cursor_table
+	fetch next from cursor_table
+	into @sel,@paymon,@paytype
+	while(@@FETCH_STATUS <> -1)
+	begin	
+		set @n=1
+		set @string = ''
+		while @n<=len(@paytype)
+		begin
+			if SUBSTRING(@paytype,@n,1) between '0' and '9'
+			begin
+				set @string = @string + SUBSTRING(@paytype,@n,1)	
+			end
+			else if LEN(@string)>0
+			begin
+				break
+			end
+			set @n=@n+1
+		end
+		update @item set daya = CAST(@string as int) 
+			,edate = dbo.AD2ChineseEraName( DATEADD(DD,CAST(@string as int), DATEADD(MM,1, dbo.ChineseEraName2AD(@paymon+'/01'))))
+			where sel=@sel
+		
+		fetch next from cursor_table
+		into @sel,@paymon,@paytype
+	end
+	close cursor_table
+	deallocate cursor_table
+	
+	declare @adate nvarchar(20) = '' 
+	declare @bdate nvarchar(20) = ''
+	
+	select @adate = MAX(indate) from @item where len(indate)>0
+	select @bdate = MIN(edate) from @item where len(edate)>0
+	
+	declare @t_date nvarchar(20) = dbo.AD2ChineseEraName(getdate())
+	declare @t_time nvarchar(20) = left(CONVERT(nvarchar,getdate(),108),5)
+	declare @number nvarchar(max)
+	declare @sign nvarchar(max) = '0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZ'
+	declare @nn int
+	declare @mm nvarchar(max)
+	declare @noa nvarchar(20) = ''
+	
+	declare @t_checker nvarchar(max) = ''
+	declare @t_memo nvarchar(max) = ''
+	declare @productno nvarchar(max)
+	declare @product nvarchar(max)
+	declare @money1 float
+	declare @money2 float
+	declare @cust nvarchar(50)
+	
+	if exists(select * from [sign] where zno=@t_guid and LTRIM(RTRIM(isnull(enda,'')))='Y')
+	begin
+		select 1 val,'已簽核' msg
+		return
+	end
+	else if exists(select * from [sign] where zno=@t_guid  and LTRIM(RTRIM(isnull(enda,'')))!='Y')
+	begin
+		select 0 val,'簽核已送，尚未核准，請稍後！' msg
+		return
+	end
+	else if LEN(@adate)!=0 and LEN(@bdate)!=0 and @adate>@bdate
+	begin
+		select top 1 @noa = case when noa>isnull(@noa,'') then noa else @noa end from [sign] where noa like REPLACE(@t_date,'/','')+'[0-9,A-Z][0-9][0-9]' order by noa desc
+		if LEN(ISNULL(@noa,'')) = 0
+			set @noa = REPLACE(@t_date,'/','')+'000'
+		set @number  = right(@noa,3)				
+		set @nn = (charindex(left(@number,1),@sign)-1) * 100 + cast(right(@number,2) as int) + 1
+		set @mm = substring(@sign,floor(@nn/100)+1,1)
+		set @noa =  REPLACE(@t_date,'/','')+@mm+RIGHT('00'+cast(@nn as nvarchar),2)
+		
+		select @custno='',@cust=''
+		select @custno=custno from @item  where len(ltrim(rtrim(paytype)))>0 and len(custno)>0
+		select @cust=nick from cust where noa=@custno
+		
+		set @t_memo = isnull(@custno,'')+' '+isnull(@cust,'')+ '  到期日不可大於 '+@bdate
+
+		begin try
+			select @t_checker=checker from signform where noa='ummfe'
+			insert into [sign](noa,datea,timea,form,sender,checker,zno,memo,enda,memochecker)
+			select @noa,@t_date,@t_time,@t_form,@t_user,@t_checker,@t_guid,@t_memo,'N',''
+			select 0 val,'簽核已送，請稍後！' msg
+			return
+		end try
+		begin catch
+			select 0 val,'錯誤：簽核產生異常。' msg
+			return
+		end catch
+	end
+	else
+	begin
+		select 1 val,'沒問題。' msg
+		return
+	end;

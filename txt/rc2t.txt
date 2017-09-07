@@ -1,0 +1,38 @@
+import:--rc2t import 
+	declare @rc2no nvarchar(20) = [1]
+	declare @rc2noq nvarchar(10) = [2]
+	declare @custno nvarchar(max) = [3]
+	--------------------------------------------------------------
+	declare @productno nvarchar(50) = '' 
+	declare @datea nvarchar(20) = '' 
+	
+	select @datea=datea from view_rc2 where noa=@rc2no 
+	select @productno=productno from view_rc2s where noa=@rc2no and noq=@rc2noq 
+	
+	declare @tmp table( 
+		custno nvarchar(20) 
+		,cust nvarchar(20) 
+		,productno nvarchar(50) 
+		,product nvarchar(50) 
+		,unit nvarchar(20) 
+		,mount float 
+		,[weight] float 
+		,price float 
+		,total float 
+		,vccno nvarchar(20) 
+		,vccnoq nvarchar(10) 
+	) 
+	insert into @tmp(custno,cust,productno,product,unit,mount,[weight],price,total,vccno,vccnoq) 
+	select b.custno,f.nick,a.productno,a.product,a.unit,a.mount,a.[weight],a.price,a.total,a.noa,a.noq 
+	from view_vccs a 
+	left join view_vcc b on a.accy=b.accy and a.noa=b.noa 
+	left join rc2ts c on a.noa=c.vccno and a.noq=c.vccnoq 
+	left join rc2t d on c.noa=d.noa 
+	left join view_rc2s e on d.rc2no=e.noa and d.rc2noq=e.noq--排出進貨單已刪除的
+	left join cust f on b.custno=f.noa 
+	where a.productno=@productno 
+	and b.datea>=@datea 
+	and ((d.noa is null) or (e.noa is null) or(d.rc2no=@rc2no and d.rc2noq=@rc2noq) ) 
+	and (len(@custno)=0 or CHARINDEX('~'+b.custno+'~','~'+@custno+'~')>0) 
+	order by b.custno,a.noa,a.noq 
+	select * from @tmp;
