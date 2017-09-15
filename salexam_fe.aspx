@@ -1,3 +1,4 @@
+﻿
 <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
 <html xmlns="http://www.w3.org/1999/xhtml" dir="ltr">
 	<head>
@@ -33,10 +34,8 @@
 
             function sum() {
                 var t_total = 0,t_total2=0,t_total3=0;
-                
                 for (var i = 0; i < q_bbsCount; i++) {
 					$('#txtTotal_'+i).val(q_float('txtEfficiency_'+i)*q_float('txtWorkdegree_'+i));
-                	
                 	t_total += q_float('txtTotal_'+i);
                 	t_total2 += q_float('txtDuty_'+i);
                 }
@@ -46,10 +45,13 @@
             }
 
             $(document).ready(function() {
+				q_brwCount();
+				var t_where = "where=^^ noa='"+r_userno+"' ^^";
                 bbmKey = ['noa'];
                 bbsKey = ['noa', 'noq'];
-                q_brwCount();
-                q_gt(q_name, q_content, q_sqlCount, 1, 0, '');
+				q_gt(q_name, q_content, q_sqlCount, 1, 0, '');
+				q_gt('sss', t_where, 0, 0, 0, "jobno", r_accy);
+				sum();
             });
 
             function main() {
@@ -57,15 +59,13 @@
                     dataErr = false;
                     return;
                 }
-
                 mainForm(1);
             }
 
             function mainPost() {
-                q_getFormat();
+                q_getFormat();				
                 bbmMask = [['txtDatea', r_picd]];
                 q_mask(bbmMask);
-                
                 $('#btnImportBase').click(function(e){
                 	var t_typea = $.trim($('#txtTypea').val());
                 	var t_where = "where=^^ typea='"+t_typea+"' ^^";
@@ -88,7 +88,6 @@
                 	case 'import':
                 		var a = _q_appendData("salexambase", "", true);
                 		var as = _q_appendData("salexambases", "", true);
-						
 						for(var i=0;i<q_bbsCount;i++){
 							$('#btnMinus_'+i).click();
 						}
@@ -112,9 +111,38 @@
 						//console.log(a);
 						//console.log(as);
 						break;
-               		case q_name:
+					case q_name:					
                     if (q_cur == 4)
                         q_Seek_gtPost();
+                    break;
+					case 'jobno':
+					var as = _q_appendData('sss','', true);
+					if(as.length>0){			//有員工資料
+						if(as[0].job=='組員'){	//人員限制
+							for(var i=0;i<q_bbsCount;i++){
+								$('#Dutytd').remove();
+								$('#Duty').remove();
+								$('#txtTotal2').remove();
+								$('#Dutylabel').remove();
+							}
+								$('#Dutytd').remove();
+								$('#Duty').remove();
+								$('#txtTotal2').remove();
+								$('#Dutylabel').remove();
+						}
+						if (as[0].job=='內勤'){
+							for(var i=0;i<q_bbsCount;i++){
+								$('#Dutytd').remove();
+								$('#Duty').remove();
+								$('#txtTotal2').remove();
+								$('#Dutylabel').remove();
+							}
+								$('#Dutytd').remove();
+								$('#Duty').remove();
+								$('#txtTotal2').remove();
+								$('#Dutylabel').remove();
+						}
+					}
                     break;
                 }
             }
@@ -143,7 +171,6 @@
             function _btnSeek() {
                 if (q_cur > 0 && q_cur < 4)
                     return;
-
                 q_box('salexam_s.aspx', q_name + '_s', "500px", "350px", q_getMsg("popSeek"));
             }
 
@@ -400,7 +427,32 @@
 		</style>
 	</head>
 	<body>
-		<!--#include file="../inc/toolbar.inc"-->
+		<div id="toolbar">
+  <div id="q_menu"></div>
+  <div>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+  <input id="btnXchg" type="button" style="display:none;background:url(../image/xchg_24.png) no-repeat;width:28px;height:26px"/>
+  <a id='lblQcopy' style="display:none;"></a>
+  <input id="chekQcopy" type="checkbox" style="display:none;"/>
+  <input id="btnIns" type="button"/>
+  <input id="btnModi" type="button"/>
+  <input id="btnDele" type="button"/>
+  <input id="btnSeek" type="button"/>
+  <input id="btnPrint" type="button"/>
+  <input id="btnPrevPage" type="button"/>
+  <input id="btnPrev" type="button"/>
+  <input id="btnNext" type="button"/>
+  <input id="btnNextPage" type="button"/>
+  <input id="btnOk" type="button" disabled="disabled" />&nbsp;&nbsp;&nbsp;&nbsp;
+  <input id="btnCancel" type="button" disabled="disabled"/>&nbsp;&nbsp;
+  <input id="btnAuthority" type="button" />&nbsp;&nbsp;
+  <span id="btnSign" style="text-decoration: underline;"></span>&nbsp;&nbsp;
+  <span id="btnAsign" style="text-decoration: underline;"></span>&nbsp;&nbsp;
+  <span id="btnLogout" style="text-decoration: underline;color:orange;"></span>&nbsp;&nbsp;
+  <input id="pageNow" type="text"  style="position: relative;text-align:center;"  size="2"/> /
+  <input id="pageAll" type="text"  style="position: relative;text-align:center;"  size="2"/>
+  </div>
+  <div id="q_acDiv"></div>
+</div>
 		<div id='dmain' >
 			<div class="dview" id="dview">
 				<table class="tview" id="tview">
@@ -455,7 +507,7 @@
 					<tr>
 						<td><span> </span><a class="lbl">分數</a></td>
 						<td><input id="txtTotal" type="text" class="txt c1 num"/></td>
-						<td><span> </span><a class="lbl">主管加減</a></td>
+						<td><span> </span><a class="lbl" id="Dutylabel">主管加減</a></td>
 						<td><input id="txtTotal2" type="text" class="txt c1 num"/></td>
 						<td><span> </span><a class="lbl">總分</a></td>
 						<td><input id="txtTotal3" type="text" class="txt c1 num"/></td>
@@ -479,12 +531,12 @@
 					<td align="center" style="width:80px"><a>評分(0-5)</a></td>
 					<td align="center" style="width:80px"><a>權重</a></td>
 					<td align="center" style="width:80px"><a>分數</a></td>
-					<td align="center" style="width:80px"><a>主管加減</a></td>
+					<td align="center" style="width:80px;" id="Duty"><a>主管加減</a></td>
 					<td align="center" style="width:200px"><a>備註</a></td>
 				</tr>
 				<tr class="data" style='background:#cad3ff;'>
 					<td align="center">
-						<input class="btn"  id="btnMinus.*" type="button" value='-' style=" font-weight: bold;" />
+						<input class="btn" id="btnMinus.*" type="button" value='-' style=" font-weight: bold;" />
 						<input type="text" id="txtNoq.*" style="display:none;"/>
 					</td>
 					<td><a id="lblNo.*" style="font-weight: bold;text-align: center;display: block;"> </a></td>
@@ -496,8 +548,8 @@
 					</td>
 					<td><input type="text" id="txtEfficiency.*" class="num" style="width:95%;" /> </td>
 					<td><input type="text" id="txtWorkdegree.*" class="num" style="width:95%;" /> </td>
-					<td><input type="text" id="txtTotal.*" class="num" style="width:95%;" /></td>
-					<td><input type="text" id="txtDuty.*" class="num" style="width:95%;" /></td>
+					<td><input type="text" id="txtTotal.*" class="num" style="width:95%;", /></td>
+					<td id="Dutytd"><input type="text" id="txtDuty.*" class="num" style="width:95%;" /></td>
 					<td><input type="text" id="txtMemo.*" style="width:95%;" /></td>
 				</tr>
 			</table>
@@ -509,3 +561,4 @@
 		<input id="q_sys" type="hidden" />
 	</body>
 </html>
+
