@@ -365,9 +365,9 @@
 						for (var j = 0; j < getucc[i].noras.length; j++) {
 							var ttn=dec(getucc[i].noras[j].nor)-1;
 							if(!emp($('#txtComp_'+ttn).val())){
-								t_memo3=t_memo3+(t_memo3.length>0?',':'')+'【'+$('#txtComp_'+ttn).val().substr(0,4)+'】-'+$('#txtLengthb_'+ttn).val()+'*'+getucc[i].noras[j].mount.toString();
+								t_memo3=t_memo3+(t_memo3.length>0?'\n':'')+'【'+$('#txtComp_'+ttn).val().substr(0,4)+'】-'+dec($('#txtLengthb_'+ttn).val())+'*'+getucc[i].noras[j].mount.toString();
 							}else{
-								t_memo3=t_memo3+(t_memo3.length>0?',':'')+'第'+getucc[i].noras[j].nor+'項'+'-'+$('#txtLengthb_'+ttn).val()+'*'+getucc[i].noras[j].mount.toString();
+								t_memo3=t_memo3+(t_memo3.length>0?'\n':'')+'第'+getucc[i].noras[j].nor+'項'+'-'+dec($('#txtLengthb_'+ttn).val())+'*'+getucc[i].noras[j].mount.toString();
 							}
 						}
 						//-------------------------------------------
@@ -1984,7 +1984,7 @@
 				var t_err='';
 				//檢查bbt
 				for (var j = 0; j < q_bbtCount; j++) {
-					if(!emp($('#txtProductno_'+j).val()) && !emp($('#txtProduct__'+j).val()) &&!emp($('#txtMemo2__'+j).val()) &&!emp($('#txtNor__'+j).val())){
+					if(!emp($('#txtProductno__'+j).val()) && !emp($('#txtProduct__'+j).val()) &&!emp($('#txtMemo2__'+j).val()) &&!emp($('#txtNor__'+j).val())){
 						var tproduct=$('#txtProduct__'+j).val();
 						var tmount=dec($('#txtGmount__'+j).val());//領料數量
 						//材質號數長度
@@ -3025,7 +3025,9 @@
 						<input id="txtStore..*" type="text" class="txt c1"  style="width: 60%;"/>
 					</td>
 					<td><input id="txtNor..*" type="text" class="txt c1"/></td>
-					<td><input id="txtMemo..*" type="text" class="txt c1"/></td>
+					<td><!--<input id="txtMemo..*" type="text" class="txt c1"/>-->
+						<textarea id="txtMemo..*" rows='5' cols='10' style="width:99%; height: 50px;"> </textarea>
+					</td>
 					<td><input id="txtMemo2..*" type="text" class="txt c1"/></td>
 					<td><input id="txtLengthc..*" type="text" class="txt c1 num"/></td>
 					<!--<td><input id="txtScolor..*" type="text" class="txt c1"/></td>
