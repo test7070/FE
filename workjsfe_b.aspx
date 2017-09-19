@@ -37,6 +37,7 @@
 				$('#btnPrev').hide();
 				$('#btnNext').hide();
 				$('#btnBott').hide();
+				q_gt('mech', "", 0, 0, 0, 'mech'); 
 			}
 
 			function bbsAssign() {
@@ -45,6 +46,25 @@
 					if(!emp($('#txtImgdata_'+j).val())){
 						$('#imgPic_'+j).attr('src',$('#txtImgdata_'+j).val()).show();
 					}
+					
+					for (var i = 0; i < z_mech.length; i++) {
+						if($('#txtMech1_'+j).val()==z_mech[i].noa){
+							$('#txtMech1_'+j).val(z_mech[i].mech);
+						}
+						if($('#txtMech2_'+j).val()==z_mech[i].noa){
+							$('#txtMech2_'+j).val(z_mech[i].mech);
+						}
+						if($('#txtMech3_'+j).val()==z_mech[i].noa){
+							$('#txtMech3_'+j).val(z_mech[i].mech);
+						}
+						if($('#txtMech4_'+j).val()==z_mech[i].noa){
+							$('#txtMech4_'+j).val(z_mech[i].mech);
+						}
+						if($('#txtMech5_'+j).val()==z_mech[i].noa){
+							$('#txtMech5_'+j).val(z_mech[i].mech);
+						}
+					}
+					
 				}
 				$('#checkAllCheckbox').click(function() {
                     $('input[type=checkbox][id^=chkSel]').each(function() {
@@ -52,9 +72,14 @@
                     });
                 });
 			}
-
-			function q_gtPost() {
-
+			
+			var z_mech=[];
+			function q_gtPost(t_name) {
+				switch (t_name) {
+					case 'mech':
+                		z_mech = _q_appendData("mech", "", true);
+                		break;
+				}
 			}
 
 			function refresh() {
@@ -87,6 +112,7 @@
 					<td align="center" style="width:80px;"><a id='lblLengthb'>長度</a></td>
 					<td align="center" style="width:80px;"><a id='lblMonnt'>數量</a></td>
 					<td align="center" style="width:95px;"><a id='lblWeight'>重量</a></td>
+					<td align="center" style="width:60px;"><a id='lblMech'>機台</a></td>
 					<td align="center"><a id='lblMemo'>備註</a><BR><a id='lblNoa'>加工單</a></td>
 				</tr>
 				<tr  style='background:#cad3ff;'>
@@ -109,6 +135,17 @@
 					<td><input class="txt" id="txtLengthb.*" type="text" style="width:98%; text-align:right;"/></td>
 					<td><input class="txt" id="txtMount.*" type="text" style="width:98%; text-align:right;"/></td>
 					<td><input class="txt" id="txtWeight.*" type="text" style="width:98%; text-align:right;"/></td>
+					<td>
+						<input class="txt" id="txtMech1.*" type="text" style="width:98%; text-align:left;"/>
+						<br>
+						<input class="txt" id="txtMech2.*" type="text" style="width:98%; text-align:left;"/>
+						<br>
+						<input class="txt" id="txtMech3.*" type="text" style="width:98%; text-align:left;"/>
+						<br>
+						<input class="txt" id="txtMech4.*" type="text" style="width:98%; text-align:left;"/>
+						<br>
+						<input class="txt" id="txtMech5.*" type="text" style="width:98%; text-align:left;"/>
+					</td>
 					<td>
 						<input class="txt" id="txtMemo.*" type="text" style="width:98%; text-align:left;"/>
 						<input class="txt" id="txtNoa.*" type="text" style="width:75%;"/>

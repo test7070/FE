@@ -454,30 +454,63 @@ set @t_emech = case when '#non' = [10] then CHAR(255) else [10] end
 
 declare @tmp table(
 	gno nvarchar(1),
-	noa nvarchar(100),
+	noa nvarchar(50),
+	noq nvarchar(50),
 	comp nvarchar(100),
-	spec nvarchar(100),
-	m1 nvarchar(10),
-	mechno nvarchar(100),
-	mech nvarchar(100),
 	productno nvarchar(100),
 	product nvarchar(100),
 	mount float,
-	nor nvarchar(100),
+	memo1 nvarchar(max),
 	memo2 nvarchar(max),
-	image1 nvarchar(max),
 	worker nvarchar(max)
 )
 
 insert @tmp
-select '2',a.noa,'',a.spec,a.m1,a.mechno,case a.mechno when '01' then '剪台' when '02' then '火切' when '12' then 'D1盤圓' when '13' then 'D13盤圓' when '20' then '續接裁剪' end
-		,c.productno,c.product,c.gmount,c.nor,c.memo2,'',a.worker
-from  view_cubt c left join view_cub a on a.noa=c.noa
+select '2',a.noa,MIN(noq),''
+,b.productno,b.product,sum(b.gmount)
+,stuff((select ','+replace(memo,'chr(10)',',') from view_cubt 
+where noa=a.noa and productno=b.productno and comp=b.comp and memo2=b.memo2 
+FOR XML PATH('')),1,1,'')
+,b.memo2,a.worker
+from  view_cubt b left join view_cub a on a.noa=b.noa
 where (a.datea between @t_bdate and @t_edate)
 and (a.noa between @t_bnoa and @t_enoa)
 and (a.mechno between @t_bmech and @t_emech)
+group by a.noa,b.comp,b.productno,b.product,b.memo2,a.worker
 
 declare @noa nvarchar(50)
+declare @noq nvarchar(50)
+declare @memo nvarchar(MAX)
+
+declare @tmpa table(
+	comp nvarchar(MAX),
+	lengthb nvarchar(100),
+	mount float
+)
+
+declare cursor_table cursor for
+select noa,noq,memo1 from @tmp order by noa,noq
+open cursor_table
+fetch next from cursor_table
+into @noa,@noq,@memo
+while(@@FETCH_STATUS <> -1)
+begin
+	delete @tmpa
+	
+	insert @tmpa(comp,lengthb,mount)
+	select LEFT(n,6),dbo.split(SUBSTRING(n,8,len(n)),'*',0),cast(dbo.split(SUBSTRING(n,8,len(n)),'*',1) as float)
+	from dbo.fnSplit(@memo)
+	
+	update @tmp
+	set memo1=stuff(isnull((select ','+comp+'-'+lengthb+'*'+cast(SUM(mount)as nvarchar(MAX)) from @tmpa group by comp,lengthb FOR XML PATH('') ),''),1,1,'')
+	where noa=@noa and noq=@noq
+	
+	fetch next from cursor_table 
+	into @noa,@noq,@memo
+end
+close cursor_table 
+deallocate cursor_table
+
 declare @comp nvarchar(200)
 
 declare cursor_table cursor for
@@ -497,13 +530,13 @@ end
 close cursor_table 
 deallocate cursor_table
 
-insert @tmp(gno,noa,spec,m1,mech,productno,product,worker,comp)
-select '1',noa,spec,m1,mech,productno,product,worker,comp
+insert @tmp(gno,noa,productno,product,worker,comp)
+select '1',noa,productno,product,worker,comp
 from @tmp
-group by noa,spec,m1,mech,productno,product,worker,comp
+group by noa,productno,product,worker,comp
 
 select 
 SUBSTRING(comp,6,len(comp))comp,
 * from @tmp
-order by noa,spec,m1,mech,productno,gno
+order by noa,productno,gno,noq
 ;
