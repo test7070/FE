@@ -103,7 +103,7 @@
         			switch($('#q_report').data('info').radioIndex) {
                         case 0:
                         	//預設事務機
-        					$('#cmbPcPrinter').val('NT33__SHARP MX-M283N PCL6');
+        					//$('#cmbPcPrinter').val('NT33__SHARP MX-M283N PCL6');
                             $('#btnOk').click();
                             break;
                         case 1:
