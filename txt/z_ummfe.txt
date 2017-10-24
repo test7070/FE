@@ -595,6 +595,8 @@ z_ummfe03:--z_ummfe03
 	and ISNULL(a.mon,'') between @t_bmon and @t_emon
 	and isnull(a.datea,'') between @t_bdate and @t_edate
 	---------------------------------------------------------------------------------------------
+
+	---------------------------------------------------------------------------------------------
 	declare @cno nvarchar(20)
 	declare @custno nvarchar(20)
 	declare @paytype nvarchar(50)
@@ -618,7 +620,17 @@ z_ummfe03:--z_ummfe03
 	declare @string nvarchar(max)
 
 	declare cursor_table cursor for
-	select cno,custno from @tmp group by cno,custno
+	
+	select cno,custno
+	from(
+		select cno,custno from @tmp 
+		union all
+		select cno,noa from cust_2s 
+		where isnull(unpay,0)!=0
+		and (len(@t_cno)=0 or cno=@t_cno)
+		and ISNULL(noa,'') between @t_bcustno and @t_ecustno
+	)a
+	group by cno,custno
 	open cursor_table
 	fetch next from cursor_table
 	into @cno,@custno
