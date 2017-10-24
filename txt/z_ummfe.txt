@@ -530,7 +530,7 @@ z_ummfe03:--z_ummfe03
 		,custno nvarchar(20)
 		,cust nvarchar(50)
 		,tel nvarchar(50)
-		,addr nvarchar(50)
+		,addr nvarchar(100)
 		,page int
 		,tablea nvarchar(20)
 		,accy nvarchar(20)
