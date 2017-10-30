@@ -131,15 +131,15 @@
 				$('#txtXdate1').mask(r_picd);
 				$('#txtXdate2').mask(r_picd);
 				
-				$('#Xoption01').css('width','300px').css('height','30px');
-				$('#chkXoption01').css('width','215px');
-				$('#chkXoption01 span').css('width','175px');
-				$('#Xcarton').css('width','300px').css('height','30px');
-				$('#chkXcarton').css('width','215px');
-				$('#chkXcarton span').css('width','175px');
-				$('#Xshowprice').css('width','300px').css('height','30px');
-				$('#chkXshowprice').css('width','215px');
-				$('#chkXshowprice span').css('width','175px');
+                $('#Xoption01').css('width','300px').css('height','30px');
+                $('#chkXoption01').css('width','205px');
+                $('#chkXoption01 span').css('width','165px');
+                $('#Xcarton').css('width','300px').css('height','30px');
+                $('#chkXcarton').css('width','205px');
+                $('#chkXcarton span').css('width','165px');
+                $('#Xshowprice').css('width','300px').css('height','30px');
+                $('#chkXshowprice').css('width','205px');
+                $('#chkXshowprice span').css('width','165px');
 				
 				/*if (q_getPara('sys.project').toUpperCase()=='FE'){
 					$('#btnUcf').hide();
