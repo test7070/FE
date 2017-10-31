@@ -836,7 +836,12 @@
 						t_where += (t_where.length>0?'　':'')+ t_productno+' '+q_float('txtMount_'+i)+'　'+q_float('txtWeight_'+i);
 					}
 				}
-				q_func('qtxt.query.vccfe_checkMount', 'vccfe.txt,checkMount,'+t_noa+';'+t_datea+';' + t_where); 
+				if($('#cmbTypea').val()=='2'){
+					//退貨就不檢查庫存量    2017/10/31
+					chkPrice(0);
+				}else{
+					q_func('qtxt.query.vccfe_checkMount', 'vccfe.txt,checkMount,'+t_noa+';'+t_datea+';' + t_where); 
+				}
             }
             function chkPrice(n){
             	//如果是有產品編號的東西    出貨單價如無打 應該要自動跳最高單價
