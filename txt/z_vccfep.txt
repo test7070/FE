@@ -14,15 +14,15 @@ z_vccfep01:--z_vccfep01
 		accy nvarchar(10),
 		noa nvarchar(20),
 		datea nvarchar(10),
-		custno nvarchar(20),
-		cust nvarchar(50),
-		addr nvarchar(50),
+		custno nvarchar(max),
+		cust nvarchar(max),
+		addr nvarchar(max),
 		cno nvarchar(20),
-		acomp nvarchar(50),
+		acomp nvarchar(max),
 		
-		productno nvarchar(20),
-		product nvarchar(50),
-		unit nvarchar(20),
+		productno nvarchar(max),
+		product nvarchar(max),
+		unit nvarchar(max),
 		price float,
 		lengthb float,
 		mount float,
@@ -53,8 +53,8 @@ z_vccfep01:--z_vccfep01
 	declare @noa nvarchar(20)
 	declare @datea nvarchar(20)
 	declare @custno nvarchar(20)
-	declare @cust nvarchar(50)
-	declare @addr nvarchar(100)
+	declare @cust nvarchar(max)
+	declare @addr nvarchar(max)
 	declare @cno nvarchar(20)
 	declare @acomp nvarchar(50)
 	declare @n int
