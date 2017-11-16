@@ -67,8 +67,8 @@
 				$('#txtXdate2').mask(r_picd);
 				$('#txtXdate2').datepicker();
 				
-				$('#txtXdate1').val(q_date().substr(0,r_lenm)+'/01');
-				$('#txtXdate2').val(q_cdn(q_cdn(q_date().substr(0,r_lenm)+'/01',45).substr(0,r_lenm)+'/01',-1));
+				//$('#txtXdate1').val(q_date().substr(0,r_lenm)+'/01');
+				//$('#txtXdate2').val(q_cdn(q_cdn(q_date().substr(0,r_lenm)+'/01',45).substr(0,r_lenm)+'/01',-1));
 				
 				var t_key = q_getHref();
                 if(t_key[1] != undefined){
