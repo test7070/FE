@@ -26,7 +26,7 @@
 
         bbmMask = [['txtBdate', r_picd], ['txtEdate', r_picd]];
         q_mask(bbmMask);
-        q_cmbParse("cmbMechno", "01@剪台,02@火切");
+        q_cmbParse("cmbMechno", "@全部,01@剪台,02@火切");
 		$('#lblMechno').text('機台');
         $('#txtBdate').focus();
     }
