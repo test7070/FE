@@ -55,6 +55,10 @@
                         type : '5', //[11]
                         name : 'xorder',
                         value : 'cub@裁剪單號,orde@訂單號碼,cust@客戶,datea@裁剪日'.split(',')
+                    },{
+                        type : '5', //[12]
+                        name : 'xshow',
+                        value : '0@合併,1@配料'.split(',')
                     }]
 				});
 				q_popAssign();
