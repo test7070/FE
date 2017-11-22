@@ -41,6 +41,8 @@ select a.noa,b.noq,b.productno,b.product
 ,cast(SUBSTRING(b.product,CHARINDEX('*',b.product)+1,CHARINDEX('M',b.product)-CHARINDEX('*',b.product)-1) as float)lengthb
 ,b.gmount,0,0,0,0,0,0,0,replace(substring(b.memo2,0,CHARINDEX('=',b.memo2)),'(入庫)','')
 from view_cub a left join view_cubt b on a.noa=b.noa
+where a.noa between @t_bnoa and @t_enoa
+and a.datea between @t_bdate and @t_edate
 
 declare @noa nvarchar(50)
 declare @noq nvarchar(50)
@@ -128,6 +130,9 @@ select '0',a.noa,a.datea,c.ordeno,b.ordeno,b.no2,b.custno,b.comp
 ,b.lengthb,b.mount,0,0,0,0,0,0
 from view_cub a left join view_cubs b on a.noa=b.noa
 left join workj c on b.ordeno=c.noa
+where a.noa between @t_bnoa and @t_enoa
+and a.datea between @t_bdate and @t_edate
+and b.custno between @t_bcust and @t_ecust
 
 update a
 set a=mount*isnull((select SUM(isnull(a,0))/SUM(mount) from @tmp where noa=a.noa and spec=a.spec and size=a.size),0)
