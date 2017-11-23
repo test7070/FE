@@ -1,0 +1,131 @@
+﻿orde:-- workj -> orde 
+	-- 一張鋼筋加工單 只會產生一張訂單
+	-- 訂單號碼先產生
+	SET QUOTED_IDENTIFIER OFF
+	declare @cmd nvarchar(max)
+	declare @ordekey nvarchar(20) = [1]
+	declare @workjno nvarchar(20) = [2]
+	------------------------------------------------------------------------------------------------
+	declare @accy nvarchar(20)
+	declare @ordeno nvarchar(20)
+	declare @ordeno1 nvarchar(20) = ''
+	declare @ordeno2 nvarchar(20) = ''
+	declare @string nvarchar(max) = '0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZ'
+	declare @n int
+	
+	select  top 1 @accy=accy,@ordeno =noa from view_ordes where quatno=@workjno
+	if len(isnull(@ordeno,''))=0
+		select  @accy=ordeaccy,@ordeno = ordeno from workj where noa=@workjno
+	---========================================================================================
+	declare @t_custno nvarchar(20) = ''
+	declare @credit float = 0
+	select @t_custno = custno from workj where noa=@workjno
+	if len(@t_custno)>0
+	begin
+		select @credit=isnull(total,0) from dbo.credit_fe(@t_custno,@ordeno)
+	end
+	if @credit<=0
+	begin
+		select '客戶【'+@t_custno+'】額度不足，可用額度【'+dbo.getComma(@credit,0)+'】' msg
+		return 
+	end
+	---========================================================================================
+	if len(@ordeno)!=0
+	begin
+		--訂單若結案則不異動
+		if exists(select * from view_orde where accy=@accy and noa=@ordeno and isnull(enda,0)=1)
+		or exists(select * from view_ordes where accy=@accy and noa=@ordeno and isnull(enda,0)=1)
+		begin
+			select '訂單【'+@ordeno+'】已結案' msg
+			return 
+		end
+		--已出貨則不異動  
+		if exists(select top 1 noa from view_vccs where ordeno=@ordeno)
+		begin
+			select '訂單【'+@ordeno+'】已出貨' msg
+			return 
+		end
+	end
+	else
+	begin
+		declare @odate nvarchar(10) = ''
+		select @odate = datea from workj where noa=@workjno
+		set @accy = LEFT(@odate,3)
+		declare @noa nvarchar(20)= @ordekey+replace(@odate,'/','')
+		select top 1 @ordeno1=noa from view_orde where noa like @noa+'[0-9,A-Z][0-9][0-9]' order by noa desc
+		select top 1 @ordeno2=ordeno from workj where ordeno like @noa+'[0-9,A-Z][0-9][0-9]' order by ordeno desc
+		set @ordeno = case when isnull(@ordeno1,'')>isnull(@ordeno2,'') then isnull(@ordeno1,'') else isnull(@ordeno2,'') end
+
+		if len(ISNULL(@ordeno,''))=0
+			set @ordeno = @noa + '001'
+		else
+		begin
+			set @ordeno = REPLACE(@ordeno,@noa,'')
+			set @n = (charindex(LEFT(@ordeno,1),@string)-1)*100 + cast(RIGHT(@ordeno,2) as int) + 1
+			set @ordeno = @noa +  substring(@string,floor(@n/100)+1,1)+ right('00'+ cast((@n%100) as nvarchar),2)
+		end
+	end
+	---========================================================================================
+	DECLARE @chk tinyint = 0
+	Begin Transaction [Trans_Name]
+	
+	begin try
+		--刪除訂單，重新產生
+		set @cmd  = "delete orde"+@accy+" where noa=@ordeno"
+		execute sp_executesql @cmd,N'@ordeno nvarchar(20)',@ordeno=@ordeno
+		set @cmd  = "delete ordes"+@accy+" where noa=@ordeno"
+		execute sp_executesql @cmd,N'@ordeno nvarchar(20)',@ordeno=@ordeno
+		
+		--quatno  no3
+		set @cmd=
+		"insert into orde"+@accy+"(noa,datea,odate,custno,comp,nick,isproj,stype,enda,cancel,apv,trantype,memo2,memo,worker)
+		select @ordeno,odate,datea,custno,cust,nick,1,'1',0,0,'*',trantype,trantype2,site,worker
+		from workj where noa=@workjno"
+		execute sp_executesql @cmd,N'@ordeno nvarchar(20),@workjno nvarchar(20)',@ordeno=@ordeno,@workjno=@workjno
+		-------------------------------------------------------------------------------------------
+		--合併productno
+		set @cmd =
+		"insert into ordes"+@accy+"(noa,no2,datea,custno,productno,product,unit,lengthb,[weight],mount,price,total
+			,quatno,no3,tablea,enda,cancel,c1,notv)
+		select @ordeno,right('000'+cast(ROW_NUMBER()over(order by a.productno) as nvarchar),3)
+			,c.datea,c.custno,a.productno,a.product,'KG',0,a.[weight],a.mount,a.price,a.total
+			,'','','workj',0,0,0,a.notv
+		from(
+			select a.productno,a.product,isnull(b.unit,'') unit,isnull(b.price,0) price
+				,SUM(a.[weight]) [weight],SUM(a.mount) mount
+				,sum(round(case when UPPER(b.unit)='KG' or UPPER(b.unit)='公斤' or len(b.unit)=0 then a.[weight] else a.mount end * isnull(b.price,0),0)) total
+				,sum(case when UPPER(b.unit)='KG' or UPPER(b.unit)='公斤' or len(b.unit)=0 then a.[weight] else a.mount end) notv
+			from workjs a
+			left join conts b on a.contno=b.noa and a.contnoq=b.noq
+			where a.noa=@workjno
+			group by a.productno,a.product,b.unit,b.price) a
+		left join workj c on noa=@workjno"
+		execute sp_executesql @cmd,N'@ordeno nvarchar(20),@workjno nvarchar(20)',@ordeno=@ordeno,@workjno=@workjno
+		--------------------------------------------------------------------------------------------
+		set @cmd=
+		"update orde"+@accy+" set [money] = b.total,tax = ROUND(b.total*0.05,0),total=b.total+ROUND(b.total*0.05,0)
+		from orde"+@accy+" a
+		outer apply (select SUM(total) total from ordes"+@accy+" where noa=a.noa) b
+		where a.noa=@ordeno"
+		execute sp_executesql @cmd,N'@ordeno nvarchar(20),@workjno nvarchar(20)',@ordeno=@ordeno,@workjno=@workjno
+		
+		update workj set ordeaccy=@accy,ordeno=@ordeno where noa=@workjno
+		
+		Commit Transaction [Trans_Name]
+	end try
+	begin catch
+		Rollback Transaction [Trans_Name]
+		select ERROR_MESSAGE() msg
+		return
+	end catch
+	select '匯出訂單【'+@ordeno+'】' msg,@accy ordeaccy,@ordeno ordeno;
+----------------------------------------------------------------------------------------------------------
+checker:--複檢人修改
+	SET QUOTED_IDENTIFIER OFF
+	declare @noa nvarchar(20) = [1]
+	declare @checker nvarchar(50) = [2]
+	
+	update workj
+	set checker=@checker
+	where noa=@noa
+;

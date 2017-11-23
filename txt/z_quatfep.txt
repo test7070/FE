@@ -1,0 +1,270 @@
+z_quatfep02:--	z_quatfep02
+	SET QUOTED_IDENTIFIER OFF
+	declare @t_path nvarchar(max) = '[1]'
+	declare @t_db nvarchar(max) = '[2]'
+	declare @t_noa nvarchar(max) = case when '#non' = [3] then '' else [3] end
+	declare @t_conn nvarchar(max) = case when '#non' = [4] then '' else [4] end
+	-------------------------------------------------------------
+	declare @tmp table(
+		sel int identity(1,1)
+		,gno nvarchar(10)
+		,pno int
+		,typea nvarchar(20)
+		,worker nvarchar(20)
+		,odate nvarchar(20)
+		,datea nvarchar(20)
+		,noa nvarchar(20)
+		,custno nvarchar(20)
+		,cust nvarchar(50)
+		,conn nvarchar(50)
+		,tel nvarchar(50)
+		,fax nvarchar(50)
+		
+		,productno nvarchar(20)
+		,product nvarchar(50)
+		,size nvarchar(50)
+		,unit nvarchar(50)
+		,mount float
+		,price float
+		,memo nvarchar(max)
+	)
+	
+	insert into @tmp(gno)values('1')
+	insert into @tmp(gno)values('2')
+	insert into @tmp(gno)values('3')
+	insert into @tmp(gno)values('4')
+	insert into @tmp(gno)values('5')
+	--insert into @tmp(gno)values('6')  5,6合併成一行
+	--insert into @tmp(gno)values('13') --空白行
+	insert into @tmp(gno)values('7')
+	insert into @tmp(gno)values('8')
+	insert into @tmp(gno)values('9')
+	---------------------------------------------------------------------------
+	declare @mount float = 0
+	declare @price1 float = 0
+	declare @price2 float = 0
+	declare @price3 float = 0
+	declare @memos nvarchar(max)
+	
+	if exists(select * from view_quat where noa=@t_noa and typea='加工成型')
+	begin
+		set @memos = '加工成型'
+		select @mount=value from view_quatt where noa=@t_noa and keya='b0_1_a'
+		select @price1=value from view_quatt where noa=@t_noa and keya='b0_2_a'
+		select @price2=value from view_quatt where noa=@t_noa and keya='b0_2_b'
+		select @price3=value from view_quatt where noa=@t_noa and keya='b0_2_c'
+	end
+	else
+	begin
+		set @memos = '板車料，以件數出貨'
+		select @mount=value from view_quatt where noa=@t_noa and keya='c0_1_a'
+		select @price1=value from view_quatt where noa=@t_noa and keya='c0_2_a'
+		select @price2=value from view_quatt where noa=@t_noa and keya='c0_2_b'
+		select @price3=value from view_quatt where noa=@t_noa and keya='c0_2_c'
+	end
+	if isnull(@price1,0)!=0
+	begin
+		insert into @tmp(gno,pno,productno,product,size,unit,mount,price,memo)
+		select '10',1,'','熱軋鋼筋SD280','4#、5#','噸',null,@price1,@memos
+	end
+	if isnull(@price2,0)!=0
+	begin
+		
+		insert into @tmp(gno,pno,productno,product,size,unit,mount,price,memo)
+		select '10',2,'','熱軋鋼筋SD280W','4#、5#','噸',null,@price2,@memos
+		
+	end
+	if isnull(@price3,0)!=0
+	begin
+		insert into @tmp(gno,pno,productno,product,size,unit,mount,price,memo)
+		select '10',3,'','熱軋鋼筋SD420W','4#、5#、6#、7#、8#、10#','噸',null,@price3,@memos
+	end
+	
+	declare @n int = case when isnull(@price1,0)!=0 then 1 else 0 end 
+		+case when isnull(@price2,0)!=0 then 1 else 0 end 
+		+case when isnull(@price3,0)!=0 then 1 else 0 end 
+	
+	if @n=3
+	begin
+		update @tmp set mount=@mount
+		from @tmp a
+		left join (select sel,ROW_NUMBER()over(order by pno,sel) rr from @tmp where gno='10') b on a.sel=b.sel
+		where b.rr=2
+	end
+	else
+	begin
+		update @tmp set mount=@mount
+		from @tmp a
+		left join (select sel,ROW_NUMBER()over(order by pno,sel) rr from @tmp where gno='10') b on a.sel=b.sel
+		where b.rr=1
+	end
+	
+	update @tmp set gno='11'
+	from @tmp a
+	outer apply(select top 1 * from @tmp where gno='10' order by sel desc) b
+	where a.sel=b.sel
+	
+	--insert into @tmp(gno)values('13') --空白行
+	----------------------------------------------------------------------------
+	declare @memo2 nvarchar(max) = ''
+	select @memo2=memo2 from view_quat where noa=@t_noa
+	declare @string nvarchar(max) 
+	while CHARINDEX('chr(10)',@memo2)>0
+	begin
+		set @string = LEFT(@memo2,CHARINDEX('chr(10)',@memo2)-1)	
+		set @memo2 = substring(@memo2,CHARINDEX('chr(10)',@memo2)+7,LEN(@memo2))
+		insert into @tmp(gno,memo)values('12',@string)
+	end
+	if LEN(@memo2)>0
+	begin
+		insert into @tmp(gno,memo)values('12',@memo2)
+	end
+	
+	-------------------------------------------------------------------------------------
+	update @tmp set worker=b.worker,datea=b.datea,odate=b.odate,noa=b.noa,custno=b.custno,cust=b.comp
+		,conn=b.conn,tel=b.tel,fax=b.fax,typea=b.typea
+	from @tmp a
+	left join view_quat b on b.noa=@t_noa
+	-------------------------------------------------------------------------------------
+	select gno
+		,'<a style="font-size:30px'+char(59)+'font-family:'+ "'Times New Roman','標楷體', serif"+char(59)+'">報價單</a>' 
+			+'<a style="font-size:20px'+char(59)+'font-family:'+ "'Times New Roman','標楷體', serif"+char(59)+'">('+typea+')</a>'a01
+		,'<a style="font-family:'+ "'Times New Roman','標楷體', serif"+char(59)+'">聯絡人：'+@t_conn+'</a>' a02
+		,'<a style="font-family:'+ "'Times New Roman','標楷體', serif"+char(59)+'">TEL：07-6661653 FAX：07-6662927 e-mail：jyu.sin@msa.hinet.net</a>' a03
+		,'<a style="font-family:'+ "'Times New Roman','標楷體', serif"+char(59)+'">報價日期：'+odate+'</a>' a04
+		,'<a style="font-family:'+ "'Times New Roman','標楷體', serif"+char(59)+'">報價編號：'+noa+'</a>' a05
+		,'<a style="font-family:'+ "'Times New Roman','標楷體', serif"+char(59)+'">謹致：'+cust+'   聯絡人：'+conn+'</a>' a06
+		,'<a style="font-family:'+ "'Times New Roman','標楷體', serif"+char(59)+'">電話：'+tel+'   傳真：'+fax+'</a>' a07
+		,'<a style="font-family:'+ "'Times New Roman','標楷體', serif"+char(59)+'">登打人：'+worker+'</a>' a08
+		,product b01
+		,size b02
+		,unit b03
+		,dbo.getComma(mount,-1) b04
+		,dbo.getComma(price,-1) b05
+		,memo b06
+	from @tmp;
+
+z_quatfep01:--	z_quatfep01
+	SET QUOTED_IDENTIFIER OFF
+	declare @t_path nvarchar(max) = '[1]'
+	declare @t_db nvarchar(max) = '[2]'
+	declare @t_noa nvarchar(max) = case when '#non' = [3] then '' else [3] end
+	----------------------------------------------------------------------------------
+	declare @tmp table(
+		sel int identity(1,1)
+		,gno nvarchar(10)
+		,pno int
+		,custno nvarchar(20)
+		,cust nvarchar(50)
+		,tel nvarchar(50)
+		,fax nvarchar(50)
+		,addr nvarchar(max)
+		,con nvarchar(20)
+		,acomp nvarchar(50)
+		,atel nvarchar(50)
+		,afax nvarchar(50)
+		
+		,odate nvarchar(20)
+		,datea nvarchar(20)
+		,timea nvarchar(10)
+		,quatno nvarchar(20)
+		,paytype nvarchar(20)
+		,trantype nvarchar(20)
+		
+		,noq nvarchar(20)
+		,productno nvarchar(30)
+		,product nvarchar(50)
+		,unit nvarchar(20)
+		,mounts float
+		,[weights] float
+		,price float
+		,[moneys] float
+		,memos nvarchar(max)
+		
+		,[money] float
+		,tax float
+		,total float
+		,memo nvarchar(max)
+		,worker nvarchar(20)
+	)
+	insert into @tmp(gno,pno,quatno,noq,productno,product,unit,mounts,weights,price,moneys,memos)
+	select '1',1,a.noa,b.noq,b.productno,b.product,b.unit,b.mount,b.[weight],b.price,b.total,b.memo
+	from view_quat a
+	left join view_quats b on a.accy=b.accy and a.noa=b.noa
+	where a.noa=@t_noa
+	
+	--稅額
+	insert into @tmp (gno,pno,quatno,tax)
+	select '2',2,@t_noa,round(SUM(ISNULL(moneys,0))*0.05,0) 
+	from @tmp 
+	where gno='1'
+	--總計
+	insert into @tmp (gno,pno,quatno,total)
+	select '3',3,@t_noa,SUM(ISNULL(moneys,0)+ISNULL(tax,0)) 
+	from @tmp 
+	where gno='1' or gno='2'
+	
+	declare @n int 
+	declare @memo nvarchar(max) = ''
+	declare @worker nvarchar(max) = ''
+	select @memo = isnull(memo,''),@worker = ISNULL(worker,'') from view_quat where noa=@t_noa
+	--備註
+	insert into @tmp (gno,pno,quatno)select '4',4,@t_noa
+	--備註
+	while LEN(@memo)>0
+	begin
+		if CHARINDEX('chr(10)',@memo)=0
+		begin
+			insert into @tmp (gno,pno,quatno,memo)select '5',5,@t_noa,@memo
+			set @memo = ''
+		end
+		else
+		begin
+			set @n = CHARINDEX('chr(10)',@memo)
+			insert into @tmp (gno,pno,quatno,memo)select '5',5,@t_noa,LEFT(@memo,@n-1)
+			set @memo = SUBSTRING(@memo,@n+7,LEN(@memo))
+		end
+	end
+	--
+	insert into @tmp (gno,pno,quatno)select '6',6,@t_noa
+	insert into @tmp (gno,pno,quatno)select '7',7,@t_noa
+	insert into @tmp (gno,pno,quatno)select '8',8,@t_noa
+	insert into @tmp (gno,pno,quatno,worker)select '9',9,@t_noa,@worker
+	--------------------------------------------------------------------
+	update @tmp set custno=isnull(b.custno,''),cust=isnull(b.comp,''),tel=b.tel,fax=b.fax
+		,addr=case when len(ISNULL(b.addr2,''))>0 then ISNULL(b.post2,'')+ISNULL(b.addr2,'') else ISNULL(b.post,'')+ISNULL(b.addr,'') end
+		,acomp = c.acomp,atel=isnull(c.tel,''),afax=isnull(c.fax,'')
+		,odate=b.odate,datea=b.datea,timea=b.timea,paytype=b.paytype,trantype=b.trantype
+	from @tmp a
+	left join view_quat b on a.quatno=b.noa
+	left join acomp c on b.cno=c.noa
+	
+	select gno
+		,acomp a01
+		,case when len(atel)>0 then 'TEL：'+atel else '' end
+			+ case when len(atel)>0 and len(afax)>0 then '　FAX：'+afax when len(afax)>0 then 'FAX：'+afax else '' end a02
+		,custno+'　'+cust a03
+		,tel a04
+		,fax a05
+		,addr a06
+		,odate a07
+		,quatno a08
+		,paytype a09
+		,trantype a10
+		
+		,CAST(sel as nvarchar) b01
+		,product b02
+		,unit b03
+		,dbo.getComma(mounts,-1) b04
+		,dbo.getComma(weights,-1) b05
+		,dbo.getComma(price,-1) b06
+		,dbo.getComma(moneys,-1) b07
+		,memos b08
+		,dbo.getComma(tax,-1) c01
+		,dbo.getComma(total,-1) c02
+		,memo c03
+		,worker c04
+		,dbo.AD2ChineseEraName(GETDATE()) c05--+' '+left(CONVERT(nvarchar,GETDATE(),108),5) c05
+		,'報價有效日期：'+ISNULL(datea,'')+' '+ISNULL(timea,'') xxdate
+	from @tmp 
+	order by pno,sel;

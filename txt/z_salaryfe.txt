@@ -1,0 +1,514 @@
+z_salaryfe07:--FE/z_salaryfe.txt   z_salaryfe07
+	SET QUOTED_IDENTIFIER OFF
+	declare @t_path nvarchar(max) = '[1]'
+	declare @t_db nvarchar(max) = '[2]'
+	declare @t_name nvarchar(max) = '[3]'
+	declare @t_bdate nvarchar(20) = case when '#non' = [4] then '' else [4] end
+	declare @t_edate nvarchar(20) = case when '#non' = [5] then char(255) else [5] end
+	declare @t_type nvarchar(max) = case when '#non' = [6] then '' else [6] end
+	declare @t_bsssno nvarchar(max) = case when '#non' = [7] then '' else [7] end
+	declare @t_esssno nvarchar(max) = case when '#non' = [8] then char(255) else [8] end
+	declare @t_mon nvarchar(20) = case when '#non' = [9] then '' else [9] end
+	--------------------------------------------------------------------------------------------
+	declare @tmp table(
+		sel int identity(1,1)
+		,sssno nvarchar(20)
+		,sss nvarchar(20)
+		,base float
+		,p01 float
+		,p02 float
+		,p03 float
+		,p04 float
+		,p05 float
+		,p06 float
+		,p07 float
+		,p08 float
+		,p09 float
+		,p10 float
+		,p11 float
+		
+		,p17 float
+		,p18 float
+		,total float
+	)
+	insert into @tmp(sssno,sss,base
+		,p01,p02,p03,p04,p05,p06,p07,p08,p09,p10,p11,p17,p18
+		,total)
+	select a.sssno,a.sss,a.base
+		,a.p01,a.p02,a.p03,a.p04,a.p05,a.p06,a.p07,a.p08,a.p09,a.p10,a.p11,a.p17,a.p18
+		,a.total
+	from salaryfes a
+	left join salaryfe b on a.noa=b.noa
+	where b.mon=@t_mon
+	and b.typea='業務'
+	and a.sssno between @t_bsssno and @t_esssno
+	order by a.noa,a.noq
+	
+	if not exists(select * from @tmp)
+		insert into @tmp(sssno)values('')
+	
+	select '0' gno
+		,sss a01
+		,@t_mon a02
+		,dbo.getComma(base,-1) b01
+		,case when p01 !=0 then dbo.getComma(p01,-1) else '' end b02
+		,case when p02 !=0 then dbo.getComma(p02,-1) else '' end b03
+		,case when p03 !=0 then dbo.getComma(p03,-1) else '' end b04
+		,case when p04 !=0 then dbo.getComma(p04,-1) else '' end b05
+		,case when p05 !=0 then dbo.getComma(p05,-1) else '' end b06
+		,case when p06 !=0 then dbo.getComma(p06,-1) else '' end b07
+		,case when p07 !=0 then dbo.getComma(p07,-1) else '' end b08
+		,case when p08 !=0 then dbo.getComma(p08,-1) else '' end b09
+		,case when p09 !=0 then dbo.getComma(p09,-1) else '' end b10
+		,case when p10 !=0 then dbo.getComma(p10,-1) else '' end b11
+		,case when p11 !=0 then dbo.getComma(p11,-1) else '' end b12
+		
+		,case when p17 !=0 then dbo.getComma(p17,-1) else '' end c01
+		,case when p18 !=0 then dbo.getComma(p18,-1) else '' end c02
+		
+		,dbo.getComma(total,-1) d01
+	from @tmp;
+
+z_salaryfe06:--FE/z_salaryfe.txt   z_salaryfe06
+	SET QUOTED_IDENTIFIER OFF
+	declare @t_path nvarchar(max) = '[1]'
+	declare @t_db nvarchar(max) = '[2]'
+	declare @t_name nvarchar(max) = '[3]'
+	declare @t_bdate nvarchar(20) = case when '#non' = [4] then '' else [4] end
+	declare @t_edate nvarchar(20) = case when '#non' = [5] then char(255) else [5] end
+	declare @t_type nvarchar(max) = case when '#non' = [6] then '' else [6] end
+	declare @t_bsssno nvarchar(max) = case when '#non' = [7] then '' else [7] end
+	declare @t_esssno nvarchar(max) = case when '#non' = [8] then char(255) else [8] end
+	declare @t_mon nvarchar(20) = case when '#non' = [9] then '' else [9] end
+	--------------------------------------------------------------------------------------------
+	declare @tmp table(
+		sel int identity(1,1)
+		,sssno nvarchar(20)
+		,sss nvarchar(20)
+		,base float
+		,p01 float
+		,p02 float
+		,p03 float
+		,p04 float
+		,p05 float
+		,p06 float
+		,p07 float
+		,p08 float
+		,p09 float
+		,p10 float
+		
+		,p17 float
+		,p18 float
+		,total float
+	)
+	insert into @tmp(sssno,sss,base
+		,p01,p02,p03,p04,p05,p06,p07,p08,p09,p10,p17,p18
+		,total)
+	select a.sssno,a.sss,a.base
+		,a.p01,a.p02,a.p03,a.p04,a.p05,a.p06,a.p07,a.p08,a.p09,a.p10,a.p17,a.p18
+		,a.total
+	from salaryfes a
+	left join salaryfe b on a.noa=b.noa
+	where b.mon=@t_mon
+	and b.typea='財會'
+	and a.sssno between @t_bsssno and @t_esssno
+	order by a.noa,a.noq
+	
+	if not exists(select * from @tmp)
+		insert into @tmp(sssno)values('')
+	
+	select '0' gno
+		,sss a01
+		,@t_mon a02
+		,dbo.getComma(base,-1) b01
+		,case when p01 !=0 then dbo.getComma(p01,-1) else '' end b02
+		,case when p02 !=0 then dbo.getComma(p02,-1) else '' end b03
+		,case when p03 !=0 then dbo.getComma(p03,-1) else '' end b04
+		,case when p04 !=0 then dbo.getComma(p04,-1) else '' end b05
+		,case when p05 !=0 then dbo.getComma(p05,-1) else '' end b06
+		,case when p06 !=0 then dbo.getComma(p06,-1) else '' end b07
+		,case when p07 !=0 then dbo.getComma(p07,-1) else '' end b08
+		,case when p08 !=0 then dbo.getComma(p08,-1) else '' end b09
+		,case when p09 !=0 then dbo.getComma(p09,-1) else '' end b10
+		,case when p10 !=0 then dbo.getComma(p10,-1) else '' end b11
+		
+		,case when p17 !=0 then dbo.getComma(p17,-1) else '' end c01
+		,case when p18 !=0 then dbo.getComma(p18,-1) else '' end c02
+		
+		,dbo.getComma(total,-1) d01
+	from @tmp;
+	
+z_salaryfe05:--FE/z_salaryfe.txt   z_salaryfe05
+	SET QUOTED_IDENTIFIER OFF
+	declare @t_path nvarchar(max) = '[1]'
+	declare @t_db nvarchar(max) = '[2]'
+	declare @t_name nvarchar(max) = '[3]'
+	declare @t_bdate nvarchar(20) = case when '#non' = [4] then '' else [4] end
+	declare @t_edate nvarchar(20) = case when '#non' = [5] then char(255) else [5] end
+	declare @t_type nvarchar(max) = case when '#non' = [6] then '' else [6] end
+	declare @t_bsssno nvarchar(max) = case when '#non' = [7] then '' else [7] end
+	declare @t_esssno nvarchar(max) = case when '#non' = [8] then char(255) else [8] end
+	declare @t_mon nvarchar(20) = case when '#non' = [9] then '' else [9] end
+	--------------------------------------------------------------------------------------------
+	declare @tmp table(
+		sel int identity(1,1)
+		,sssno nvarchar(20)
+		,sss nvarchar(20)
+		,base float
+		,p01 float
+		,p02 float
+		,p03 float
+		,p04 float
+		,p05 float
+		,p06 float
+		,p07 float
+		,p08 float
+		,p09 float
+		,p10 float
+		
+		,p17 float
+		,p18 float
+		,total float
+	)
+	insert into @tmp(sssno,sss,base
+		,p01,p02,p03,p04,p05,p06,p07,p08,p09,p10,p17,p18
+		,total)
+	select a.sssno,a.sss,a.base
+		,a.p01,a.p02,a.p03,a.p04,a.p05,a.p06,a.p07,a.p08,a.p09,a.p10,a.p17,a.p18
+		,a.total
+	from salaryfes a
+	left join salaryfe b on a.noa=b.noa
+	where b.mon=@t_mon
+	and b.typea='內勤'
+	and a.sssno between @t_bsssno and @t_esssno
+	order by a.noa,a.noq
+	
+	if not exists(select * from @tmp)
+		insert into @tmp(sssno)values('')
+	
+	select '0' gno
+		,sss a01
+		,@t_mon a02
+		,dbo.getComma(base,-1) b01
+		,case when p01 !=0 then dbo.getComma(p01,-1) else '' end b02
+		,case when p02 !=0 then dbo.getComma(p02,-1) else '' end b03
+		,case when p03 !=0 then dbo.getComma(p03,-1) else '' end b04
+		,case when p04 !=0 then dbo.getComma(p04,-1) else '' end b05
+		,case when p05 !=0 then dbo.getComma(p05,-1) else '' end b06
+		,case when p06 !=0 then dbo.getComma(p06,-1) else '' end b07
+		,case when p07 !=0 then dbo.getComma(p07,-1) else '' end b08
+		,case when p08 !=0 then dbo.getComma(p08,-1) else '' end b09
+		,case when p09 !=0 then dbo.getComma(p09,-1) else '' end b10
+		,case when p10 !=0 then dbo.getComma(p10,-1) else '' end b11
+		
+		,case when p17 !=0 then dbo.getComma(p17,-1) else '' end c01
+		,case when p18 !=0 then dbo.getComma(p18,-1) else '' end c02
+		
+		,dbo.getComma(total,-1) d01
+	from @tmp;
+
+z_salaryfe02:--FE/z_salaryfe.txt   z_salaryfe02
+	SET QUOTED_IDENTIFIER OFF
+	declare @t_path nvarchar(max) = '[1]'
+	declare @t_db nvarchar(max) = '[2]'
+	declare @t_name nvarchar(max) = '[3]'
+	declare @t_bdate nvarchar(20) = case when '#non' = [4] then '' else [4] end
+	declare @t_edate nvarchar(20) = case when '#non' = [5] then char(255) else [5] end
+	declare @t_type nvarchar(max) = case when '#non' = [6] then '' else [6] end
+	declare @t_bsssno nvarchar(max) = case when '#non' = [7] then '' else [7] end
+	declare @t_esssno nvarchar(max) = case when '#non' = [8] then char(255) else [8] end
+	---------------------------------------------------------------------------------------
+	declare @tmpa table(
+		sel int identity(1,1)
+		,gno nvarchar(20)
+		,pno int 
+		,sssno nvarchar(20)
+		,sss nvarchar(50)
+		,typea nvarchar(20)
+		,basenoa nvarchar(20)
+		,basenoq nvarchar(10)
+		,recno1 int
+		,description1 nvarchar(50)
+		,recno2 int
+		,description2 nvarchar(50)
+		,number float
+		,[weight] float
+		,total float
+		,total2 float
+		
+		,tt1 float --分數小計
+		,tt2 float --主管加減小計
+		,tt3 float --總計
+	)
+	insert into @tmpa(gno,pno,sssno,sss,typea,basenoa,basenoq,description1,description2,number,[weight],total,total2,recno2)
+	select '2',2,b.sssno,b.sss,b.typea,a.jobno,a.job,a.part,a.namea,a.efficiency,a.workdegree,a.total,a.duty
+		,ROW_NUMBER()over(partition by b.sssno,b.sss,b.typea,a.jobno order by a.job,a.noq)
+	from salexams a
+	left join salexam b on a.noa=b.noa
+	where (len(@t_type)=0 or CHARINDEX(','+b.typea+',',','+@t_type+',')>0)
+	and b.sssno between @t_bsssno and @t_esssno
+	and b.datea between @t_bdate and @t_edate
+	order by b.sssno,b.sss,b.typea,a.jobno,a.job
+	
+	insert into @tmpa(gno,pno,sssno,sss,typea,basenoa,description1,recno1)
+	select '1',1,sssno,sss,typea,basenoa,description1
+		,ROW_NUMBER()over(partition by sssno,sss,typea order by basenoa,description1)
+	from @tmpa 
+	group by sssno,sss,typea,basenoa,description1
+	
+	update @tmpa set tt1=b.total,tt2=b.total2,tt3=b.total+b.total2
+	from @tmpa a
+	left join (select sssno,typea,SUM(ISNULL(total,0)) total,SUM(ISNULL(total2,0)) total2 
+		from @tmpa group by sssno,typea) b on a.sssno=b.sssno and a.typea=b.typea
+	------------------------------------------------------------------------------------------------------------
+	declare @pagecount int = 40
+	
+	declare @sssno nvarchar(20)
+	declare @sss nvarchar(50)
+	declare @typea nvarchar(20)
+	declare @n int
+	
+	declare cursor_table cursor for
+	select sssno,sss,typea,count(1) from @tmpa group by	sssno,sss,typea 
+	open cursor_table
+	fetch next from cursor_table
+	into @sssno,@sss,@typea,@n
+	while(@@FETCH_STATUS <> -1)
+	begin	
+		while @n%@pagecount!=0
+		begin
+			insert into @tmpa(gno,pno,sssno,sss,typea,basenoa)values('3',3,@sssno,@sss,@typea,CHAR(255))
+			
+			set @n = @n + 1
+		end
+	
+		fetch next from cursor_table
+		into @sssno,@sss,@typea,@n
+	end
+	close cursor_table
+	deallocate cursor_table
+	
+	declare @string nvarchar(max) = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ'
+	
+	select gno 
+		,typea + '  '+sssno+'  '+sss a01
+		,tt1 a02
+		,tt2 a03
+		,tt3 a04
+		,SUBSTRING(@string,recno1,1) rr1
+		,description1 b01
+		,recno2 rr2
+		,description2 c01
+		,case number when 1 then '*' else '' end c02
+		,case number when 2 then '*' else '' end c03
+		,case number when 3 then '*' else '' end c04
+		,case number when 4 then '*' else '' end c05
+		,case number when 5 then '*' else '' end c06
+		,[weight] c07
+		,total c08
+		,total2 c09
+	from @tmpa 
+	order by sssno,typea,basenoa,pno,sel;
+
+
+z_salaryfe01:--FE/z_salaryfe.txt   z_salaryfe01
+	SET QUOTED_IDENTIFIER OFF
+	declare @t_path nvarchar(max) = '[1]'
+	declare @t_db nvarchar(max) = '[2]'
+	declare @t_name nvarchar(max) = '[3]'
+	declare @t_bdate nvarchar(20) = case when '#non' = [4] then '' else [4] end
+	declare @t_edate nvarchar(20) = case when '#non' = [5] then char(255) else [5] end
+	declare @t_type nvarchar(max) = case when '#non' = [6] then '' else [6] end
+	declare @t_bsssno nvarchar(max) = case when '#non' = [7] then '' else [7] end
+	declare @t_esssno nvarchar(max) = case when '#non' = [8] then char(255) else [8] end
+	----------------------------------------------------------------
+	declare @tmp table(
+		sel int identity(1,1)
+		,gno nvarchar(20)
+		,pno nvarchar(20)
+		,typea nvarchar(20)
+		,noa nvarchar(20)
+		,r1 nvarchar(20)
+		,description1 nvarchar(50)
+		,noq nvarchar(10)
+		,r2 nvarchar(20)
+		,description2 nvarchar(50)
+		,[weight] float
+		,memo nvarchar(max)
+	)
+	declare @noa nvarchar(20)
+	declare @noq nvarchar(10)
+	declare @typea nvarchar(20)
+	declare @description1 nvarchar(max)
+	declare @description2 nvarchar(max)
+	declare @weight float
+	declare @memo nvarchar(max)
+	declare @n1 int
+	declare @n2 int
+	
+	declare @string nvarchar(max) = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ'
+	
+	declare cursor_table cursor for
+	select noa,typea,[description],row_number()over(partition by typea order by noa) from salexambase 
+	where len(@t_type)=0 or CHARINDEX(','+typea+',',','+@t_type+',')>0
+	order by typea,noa
+	open cursor_table
+	fetch next from cursor_table
+	into @noa,@typea,@description1,@n1
+	while(@@FETCH_STATUS <> -1)
+	begin	
+		insert into @tmp(gno,pno,typea,noa,description1,r1)
+		select '1',1,@typea,@noa,@description1,SUBSTRING(@string,@n1,1)
+		
+		declare cursor_table2 cursor for
+		select noq,[description],[weight],memo,row_number()over(order by noq) from salexambases 
+		where noa=@noa
+		order by noq
+		open cursor_table2
+		fetch next from cursor_table2
+		into @noq,@description2,@weight,@memo,@n2
+		while(@@FETCH_STATUS <> -1)
+		begin	
+			insert into @tmp(gno,pno,typea,noa,description1
+				,noq,description2,[weight],memo,r2)
+			select '2',2,@typea,@noa,@description1
+				,@noq,@description2,@weight,@memo,CAST(@n2 as nvarchar)
+	
+			fetch next from cursor_table2
+			into @noq,@description2,@weight,@memo,@n2
+		end
+		close cursor_table2
+		deallocate cursor_table2
+		
+		fetch next from cursor_table
+		into @noa,@typea,@description1,@n1
+	end
+	close cursor_table
+	deallocate cursor_table	
+	------------------------------------------------------------
+	declare @pagecount int = 40
+	
+	declare cursor_table cursor for
+	select typea,count(1) from @tmp group by typea 
+	open cursor_table
+	fetch next from cursor_table
+	into @typea,@n1
+	while(@@FETCH_STATUS <> -1)
+	begin	
+		while(@n1%@pagecount!=0)
+		begin
+			insert into @tmp(gno,pno,typea,noa)values('3',3,@typea,CHAR(255))
+			set @n1 = @n1 + 1
+		end
+		fetch next from cursor_table
+		into @typea,@n1
+	end
+	close cursor_table
+	deallocate cursor_table
+
+	select gno
+		,typea a01
+		,r1
+		,description1 b01
+		,r2
+		,description2 c01
+		,[weight] c02
+		,memo c03 
+	from @tmp 
+	order by typea,noa,pno,noq;
+
+
+z_salaryfe02_old:--z_salaryfe02_old
+	SET QUOTED_IDENTIFIER OFF
+	declare @t_path nvarchar(max) = '[1]'
+	declare @t_db nvarchar(max) = '[2]'
+	declare @t_mon nvarchar(max) = case when '#non' = [3] then '' else [3] end
+	---------------------------------------------------------------------------------------
+	select '0' gno
+		,b.mon mon
+		,a.sss sss
+		,dbo.getComma(a.base,-1) base
+		,dbo.getComma(a.p01,-1) p01
+		,dbo.getComma(a.p02,-1) p02
+		,dbo.getComma(a.p03,-1) p03
+		,dbo.getComma(a.p04,-1) p04
+		,dbo.getComma(a.p05,-1) p05
+		,dbo.getComma(a.p06,-1) p06
+		,dbo.getComma(a.p07,-1) p07
+		,dbo.getComma(a.p08,-1) p08
+		,dbo.getComma(a.p09,-1) p09
+		,dbo.getComma(a.p10,-1) p10
+		,dbo.getComma(a.p11,-1) p11
+		,dbo.getComma(a.p12,-1) p12
+		,dbo.getComma(a.p13,-1) p13
+		,dbo.getComma(a.p14,-1) p14
+		,dbo.getComma(a.p15,-1) p15
+		,dbo.getComma(a.p16,-1) p16
+		,dbo.getComma(a.p17,-1) p17
+		,dbo.getComma(a.plus,-1) plus
+		,dbo.getComma(a.m01,-1) m01
+		,dbo.getComma(a.m02,-1) m02
+		,dbo.getComma(a.m03,-1) m03
+		,dbo.getComma(a.m04,-1) m04
+		,dbo.getComma(a.minus,-1) minus
+		,dbo.getComma(a.[transfer],-1) [transfer]
+		,dbo.getComma(a.cash,-1) cash
+		,dbo.getComma(a.total,-1) total
+		
+		,dbo.getComma(a.d01,-1) d01
+		,dbo.getComma(a.d02,-1) d02
+		,dbo.getComma(a.d03,-1) d03
+		,dbo.getComma(a.d04,-1) d04
+		,dbo.getComma(a.d05,-1) d05
+	from salaryfes a 
+	left join salaryfe b on a.noa=b.noa
+	where b.mon=@t_mon and b.typea='業務'
+	order by a.sssno;	
+
+z_salaryfe01_old:--z_salaryfe01_old	
+	SET QUOTED_IDENTIFIER OFF
+	declare @t_path nvarchar(max) = '[1]'
+	declare @t_db nvarchar(max) = '[2]'
+	declare @t_mon nvarchar(max) = case when '#non' = [3] then '' else [3] end
+	---------------------------------------------------------------------------------------
+	select '0' gno
+		,b.mon mon
+		,a.sss sss
+		,dbo.getComma(a.base,-1) base
+		,dbo.getComma(a.p01,-1) p01
+		,dbo.getComma(a.p02,-1) p02
+		,dbo.getComma(a.p03,-1) p03
+		,dbo.getComma(a.p04,-1) p04
+		,dbo.getComma(a.p05,-1) p05
+		,dbo.getComma(a.p06,-1) p06
+		,dbo.getComma(a.p07,-1) p07
+		,dbo.getComma(a.p08,-1) p08
+		,dbo.getComma(a.p09,-1) p09
+		,dbo.getComma(a.p10,-1) p10
+		,dbo.getComma(a.p11,-1) p11
+		,dbo.getComma(a.p12,-1) p12
+		,dbo.getComma(a.p13,-1) p13
+		,dbo.getComma(a.p14,-1) p14
+		,dbo.getComma(a.p15,-1) p15
+		,dbo.getComma(a.p16,-1) p16
+		,dbo.getComma(a.p17,-1) p17
+		,dbo.getComma(a.plus,-1) plus
+		,dbo.getComma(a.m01,-1) m01
+		,dbo.getComma(a.m02,-1) m02
+		,dbo.getComma(a.m03,-1) m03
+		,dbo.getComma(a.m04,-1) m04
+		,dbo.getComma(a.minus,-1) minus
+		,dbo.getComma(a.[transfer],-1) [transfer]
+		,dbo.getComma(a.cash,-1) cash
+		,dbo.getComma(a.total,-1) total
+		
+		,dbo.getComma(a.d01,-1) d01
+		,dbo.getComma(a.d02,-1) d02
+		,dbo.getComma(a.d03,-1) d03
+		,dbo.getComma(a.d04,-1) d04
+		,dbo.getComma(a.d05,-1) d05
+	from salaryfes a 
+	left join salaryfe b on a.noa=b.noa
+	where b.mon=@t_mon and b.typea='員工'
+	order by a.sssno;	
+
