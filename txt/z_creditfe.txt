@@ -8,6 +8,14 @@ z_creditfe01:--z_creditfe01
 	declare @t_project nvarchar(MAX)='[5]'
 	declare @t_userno nvarchar(100)='[6]'
 	declare @t_rank nvarchar(100)='[7]' 
+	declare @t_bcredit float = 0
+	declare @t_ecredit float = 999999999
+	begin try
+		 set @t_bcredit = cast(case when '#non'=[8] then '0' else [8] end as float)
+		 set @t_ecredit = cast(case when '#non'=[9] then '999999999' else [9] end as float)
+	end try
+	begin catch
+	end catch
 	------------------------------------------------------------------------------------------
 	declare @t_rate float = 0.05
 	----------------------------------------------------------------------------------
@@ -155,16 +163,18 @@ z_creditfe01:--z_creditfe01
 	
 	select case when total>=0 then '1' else '2' end gno 
 		,ROW_NUMBER()over(order by custno) rr
-		,custno a01
-		,cust a02
-		,grpno a03
-		,grpname a04
-		,dbo.getComma(credit,0) a05
-		,dbo.getComma(orde+ordetax,0) a06
-		,dbo.getComma(vcctotal+vcca-umm,0) a07
-		,dbo.getComma(gqb,0) a08
-		,dbo.getComma(total,0) a09
-	from @tmp
+		,a.custno a01
+		,a.cust a02
+		,a.grpno a03
+		,a.grpname a04
+		,dbo.getComma(a.credit,0) a05
+		,dbo.getComma(a.orde+ordetax,0) a06
+		,dbo.getComma(a.vcctotal+vcca-umm,0) a07
+		,dbo.getComma(a.gqb,0) a08
+		,dbo.getComma(a.total,0) a09
+	from @tmp a
+	left join cust b on a.custno = b.noa
+	where b.credit between @t_bcredit and @t_ecredit
 	order by custno
 	
 	drop table #tmpcust;
