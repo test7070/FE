@@ -46,6 +46,9 @@
                         type : '0', //[7]
                         name : 'rank',
                         value : r_rank
+                    },{
+                        type : '1', //[8][9]
+			name : 'Credit'
                     }]
                 });
                 q_popAssign();

@@ -1,4 +1,4 @@
-import:--salaryfe.txt import          salaryfe.aspx	業務
+﻿import:--salaryfe.txt import          salaryfe.aspx	業務
 	declare @t_mon nvarchar(20) = [1]
 	
 	declare @t_bmon nvarchar(20) = left(dbo.AD2ChineseEraName(dateadd(MM,-1, dbo.ChineseEraName2AD(@t_mon+'/01'))),6)
@@ -36,8 +36,6 @@ import:--salaryfe.txt import          salaryfe.aspx	業務
 		(每單×25)
 		12，親恰拜訪獎金    估1000  ----  外勤作業(拜訪)
 		(達標者)(必須親自接洽到關係人)
-
-	
 	*/
 	-----------------------------------------------------------------
 	declare @tmpa table(
@@ -498,7 +496,7 @@ import:--salaryfe.txt import          salaryfe.aspx	業務
 import3:--salaryfe.txt import3          salaryfe3.aspx	財會
 	declare @t_mon nvarchar(20) = [1]
 	
-	--財會人員薪資制度
+		--財會人員薪資制度
 	declare @tmpa table(
 		sel int identity(1,1)
 		,sssno nvarchar(20)
@@ -524,6 +522,9 @@ import3:--salaryfe.txt import3          salaryfe3.aspx	財會
 		,m06 float --稅務主辦
 
 		,m07 float  --借款獎金
+		,m07a float
+		,m07b float
+		,m07c float
 		,m08 float  --貸款獎金
 		,m08a float --信用貸款           1%	
 		,m08b float --票貼及應收帳款   0.6%
@@ -537,17 +538,54 @@ import3:--salaryfe.txt import3          salaryfe3.aspx	財會
 		
 		,total float
 	)
-	insert into @tmpa(sssno,sss,jobno,job,m01,m02,m05)
-	select a.noa,a.namea,b.jobno,b.job
-		,b.[money] --底薪
+	insert into @tmpa(sssno,sss,jobno,job,m01,m02)
+	select a.noa,a.namea,a.jobno,a.job
+		,isnull(b.[money],16000) --底薪
 		,b.bo_full --全勤
-		,b.bo_admin --主管津貼
 	from sss a
 	outer apply(select top 1 * from saladjust where noa=a.noa and datea<=@t_mon order by datea desc) b
 	where isnull(a.outdate,'')<=@t_mon+'/31'
-	and a.partno='05'
+	and (a.partno='05')
 	order by a.noa
-
+	/*m05主管津貼
+	董事長	               20000
+	副董事長	           18000
+	總經理	               16000
+	副總經理	           12000
+	營業經理	           9000
+	營業副理               6000
+	業務協理	           5000
+	業務經理	           4000
+	業務副理	           3000
+	業務課長               2000
+	業務副課長（特助）     1000
+	廠長	    		   10,000
+	副廠長	    		   7,000
+	課長	   		   	   5,000
+	副課長	    		   4,000
+	組長       	    	   2,000
+	副組長	    		   1,000
+	*/
+	update @tmpa set m05 = case when b.jobno='A001' then 20000
+								when b.jobno='A002' then 18000
+								when b.jobno='A101' then 16000
+								when b.jobno='A102' then 12000
+								when b.jobno='A201' then 9000
+								when b.jobno='A202' then 6000
+								when b.jobno='A203' then 5000
+								when b.jobno='A204' then 4000
+								when b.jobno='A205' then 3000
+								when b.jobno='A206' then 2000
+								when b.jobno='A301' then 1000
+								when b.jobno='B001' then 10000
+								when b.jobno='B002' then 7000
+								when b.jobno='B101' then 5000
+								when b.jobno='B102' then 4000
+								when b.jobno='B201' then 2000
+								when b.jobno='B202' then 1000 end
+	from @tmpa a
+	outer apply (select * from sss where noa=a.sssno) b
+	update @tmpa set m05 = ISNULL(m05,0)
 	-------------------------------------------------------------------------------------------------------------------
 	--計帳獎金
 	declare @t_bvccadate nvarchar(20)
@@ -668,6 +706,25 @@ import3:--salaryfe.txt import3          salaryfe3.aspx	財會
 			group by ISNULL(b.noa,''),ISNULL(a.worker,''),ISNULL(a.typea,'')) a) b on a.sssno=b.sssno
 	
 	update @tmpa set m08 = ISNULL(m08a,0)+ISNULL(m08b,0)+ISNULL(m08c,0)
+	--借款獎金
+	update @tmpa set m07a=b.m07a,m07b=b.m07b,m07c=b.m07c
+	from @tmpa a
+	left join(
+		select a.sssno,a.sss
+			--,case when a.typea='信用貸款' then round(a.[money]/10000,0)*2.4 , 0) else 0 end m07a
+			--,case when a.typea='票貼及應收帳款' then round(a.[money]/10000,0)*1.6 , 0) else 0 end m07b
+			--,case when a.typea='不動產抵押' then round(a.[money]/10000,0)*0.8 , 0) else 0 end m07c
+			,case when a.typea='信用貸款' then round((a.[money]/10000)*2.4,0) else 0 end m07a
+			,case when a.typea='票貼及應收帳款' then round((a.[money]/10000)*1.6,0) else 0 end m07b
+			,case when a.typea='不動產抵押' then round((a.[money]/10000)*0.8,0) else 0 end m07c
+		from(
+			select ISNULL(b.noa,'') sssno,ISNULL(a.worker,'') sss,ISNULL(a.typea,'') typea,sum(isnull(a.[money],0)) [money]
+			from banks a
+			outer apply(select top 1 * from sss where namea=a.worker order by noa) b 
+			where @t_mon = LEFT(a.datea,6)
+			group by ISNULL(b.noa,''),ISNULL(a.worker,''),ISNULL(a.typea,'')) a) b on a.sssno=b.sssno
+	
+	update @tmpa set m07 = ISNULL(m07a,0)+ISNULL(m07b,0)+ISNULL(m07c,0)
 	-----------------------------------------------------------------------------------------------------
 	--加班：
     --A，1~2時*      120/時
@@ -736,16 +793,54 @@ import2:--salaryfe.txt import2          salaryfe2.aspx	內勤
 		
 		,total float
 	)
-	insert into @tmpa(sssno,sss,jobno,job,m01,m02,m05)
-	select a.noa,a.namea,b.jobno,b.job
-		,b.[money] --底薪
+	insert into @tmpa(sssno,sss,jobno,job,m01,m02)
+	select a.noa,a.namea,a.jobno,a.job
+		,isnull(b.[money],16000) --底薪
 		,b.bo_full --全勤
-		,b.bo_admin --主管津貼
 	from sss a
 	outer apply(select top 1 * from saladjust where noa=a.noa and datea<=@t_mon order by datea desc) b
 	where isnull(a.outdate,'')<=@t_mon+'/31'
 	and (a.partno='03' or a.partno='04')
 	order by a.noa
+	/*m05主管津貼
+	董事長	               20000
+	副董事長	           18000
+	總經理	               16000
+	副總經理	           12000
+	營業經理	           9000
+	營業副理               6000
+	業務協理	           5000
+	業務經理	           4000
+	業務副理	           3000
+	業務課長               2000
+	業務副課長（特助）     1000
+	廠長	    		   10,000
+	副廠長	    		   7,000
+	課長	   		   	   5,000
+	副課長	    		   4,000
+	組長       	    	   2,000
+	副組長	    		   1,000
+	*/
+	update @tmpa set m05 = case when b.jobno='A001' then 20000
+								when b.jobno='A002' then 18000
+								when b.jobno='A101' then 16000
+								when b.jobno='A102' then 12000
+								when b.jobno='A201' then 9000
+								when b.jobno='A202' then 6000
+								when b.jobno='A203' then 5000
+								when b.jobno='A204' then 4000
+								when b.jobno='A205' then 3000
+								when b.jobno='A206' then 2000
+								when b.jobno='A301' then 1000
+								when b.jobno='B001' then 10000
+								when b.jobno='B002' then 7000
+								when b.jobno='B101' then 5000
+								when b.jobno='B102' then 4000
+								when b.jobno='B201' then 2000
+								when b.jobno='B202' then 1000 end
+	from @tmpa a
+	outer apply (select * from sss where noa=a.sssno) b
+	update @tmpa set m05 = ISNULL(m05,0)
 	---------------------------------
 	----  毛利
 	declare @tmpb table(
