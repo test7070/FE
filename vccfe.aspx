@@ -141,6 +141,15 @@
                 q_cmbParse("combPay", q_getPara('vcc.paytype'));
                 q_cmbParse("cmbTrantype", q_getPara('fe.trantype'));
                 
+                //過磅
+                $('#lblEardno').click(function(e){
+                	//e.preventDefault();
+                	var t_eardno = $.trim($('#txtEardno').val());
+	                if (t_eardno.length > 0) {
+	                    q_box("eard.aspx?" + r_userno + ";" + r_name + ";" + q_time + ";noa='" + t_eardno + "';" + r_accy, 'eard', "95%", "95%", q_getMsg("popEard"));
+	                }
+                });
+                
 				$('#btnFile').change(function(e){
 					event.stopPropagation(); 
 				    event.preventDefault();
@@ -1790,6 +1799,10 @@
 						<td class="td4" colspan='4'>
 						<input id="txtApvmemo" type="text" class="txt c1"/>
 						</td>
+					</tr>
+					<tr>
+						<td><span> </span><a id='lblEardno' class="lbl">過磅單號</a></td>
+						<td><input id="txtEardno" type="text" class="txt" style="float:left;"/></td>
 					</tr>
 				</table>
 			</div>
