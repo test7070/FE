@@ -287,7 +287,7 @@
 
 			function bbsSave(as) {
 				t_err = '';
-				if (!as['productno'] && !as['product']) {
+				if (!as['datea'] && !as['dime']) {
                     as[bbsKey[1]] = '';
                     return;
                 }
