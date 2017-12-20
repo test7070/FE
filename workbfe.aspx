@@ -35,6 +35,7 @@
 			});
 			
 			aPop = new Array(
+			    ['txtStationno', 'lblStationno', 'sss', 'noa,namea', 'txtStationno,txtStation', 'sss_b.aspx']
 			);
 
 			function main() {
@@ -52,10 +53,158 @@
 				bbmMask = [['txtDatea', r_picd]];
 				bbsMask = [['txtDatea', r_picd]];
 				q_mask(bbmMask);
-				q_cmbParse("cmbTypea", '1@介紹,2@共享業務,3@居家業務,4@居家專職業務,5@在職專職業務');
-				q_cmbParse("cmbWorkno", '@,1@由公司報價2@自主報價');
-				q_cmbParse("cmbMechno", '@,1@入門級（初期入會的會員）,2@銀級（成交3個5萬元以上案件+交貨收款完成）,3@金級（成交10個5萬元案件+交貨收款完成）,4@鑽石級（成交20個5萬元以上案件+交貨收款完成),5@鼎級（成交40個5萬元以上案件+交貨收款完成）');
-			    q_cmbParse("cmbMech", '@,1@抽傭金,2@抽毛利,3@參照現有居家業務獎金制度 * 1.2,4@參照現有居家業務獎金制度 * 1.4,5@參照現有居家業務獎金制度 * 1.6,6@參照現有居家業務獎金制度 * 1.8,7@參照現有居家業務獎金制度 * 2,8@參照現有居家業務獎懲制度,9@參照現有居家業務制度,10@參照現有業務制度');
+				q_cmbParse("cmbTypea",'1@介紹,2@共享業務,3@居家業務,4@居家專職業務,5@在職專職業務');
+				q_cmbParse("cmbWorkno",'1@由公司報價,2@自主報價');
+				q_cmbParse("cmbWorktime",'@,1@是,2@否');
+				q_cmbParse("cmbWorkbqno",'@,1@是,2@否');
+				q_cmbParse("cmbWorkano",'@,1@無,2@保障最低薪資,3@保障7個月最低薪資');
+				q_cmbParse("cmbMechno",'@,1@入門級（初期入會的會員）,2@銀級（成交3個5萬元以上案件+交貨收款完成）,3@金級（成交10個5萬元案件+交貨收款完成）,4@鑽石級（成交20個5萬元以上案件+交貨收款完成),5@鼎級（成交40個5萬元以上案件+交貨收款完成）');
+			    q_cmbParse("cmbMech",'@,1@抽傭金,2@抽毛利,3@參照現有居家業務獎金制度 * 1.2,4@參照現有居家業務獎金制度 * 1.4,5@參照現有居家業務獎金制度 * 1.6,6@參照現有居家業務獎金制度 * 1.8,7@參照現有居家業務獎金制度 * 2,8@參照現有居家業務獎懲制度,9@參照現有居家業務制度,10@參照現有業務制度');
+			    q_cmbParse("cmbTeam",'@,1@只有獎金明細,2@有公司程式密碼+只可以看自己的客戶交易明細及產品資料,3@需進公司開會+有公司程式密碼+只可以看自己的客戶交易明細及產品資料,4@配手機+需進公司開會+知道基價+有公司程式密碼,5@配手機+勞健保+勞退+誠信險+可收款+需進公司開會+需隨時讓公司找到+知道基價+有公司程式密碼,6@配車+配手機+勞健保+勞退+誠信險+可收款+需進公司開會+需隨時讓公司找到+知道基價+有公司程式密碼');
+
+			    $('#cmbMech').change(function() {
+                    if($('#cmbMech').val()=='1'){
+                        $('.isMech').show();
+                        $('#lblBonus_st').text('抽傭金');
+                    }else if($('#cmbMech').val()=='2'){
+                        $('.isMech').show();
+                        $('#lblBonus_st').text('抽毛利');
+                    }else{
+                        $('.isMech').hide();
+                    }
+                });
+                
+                $('#btnPrice').click(function() {
+                    q_box("uccp.aspx?" + r_userno + ";" + r_name + ";" + q_time, 'uccp', "95%", "650px", q_getMsg('popUccp'));
+                });
+                
+                $('#cmbTypea').click(function() {
+                    $('#txtTelfee').val('');
+                    $('#txtSalary').val('');
+                    $('.isFee').hide();
+                    switch ($('#cmbTypea').val()){
+                        case '1':
+                            $('.isSal').hide();
+                            $('#cmbWorkno').val('1');
+                            $('#cmbMechno').val('');
+                            $('#cmbMech').val('');
+                            $('#cmbWorktime').val('');
+                            $('#cmbWorkano').val('');
+                            $('#cmbWorkbqno').val('');
+                            $('#cmbTeam').val('');
+                            $('#txtSalary').val('28000'); 
+                            break;
+                        case '2':
+                            $('.isSal').hide();
+                            $('#cmbWorkno').val('1');
+                            $('#cmbMechno').val('');
+                            $('#cmbMech').val('');
+                            $('#cmbWorktime').val('');
+                            $('#cmbWorkano').val('');
+                            $('#cmbWorkbqno').val('');
+                            $('#cmbTeam').val('');
+                            break;
+                        case '3':
+                            $('.isSal').show();
+                            $('#cmbWorkno').val('2');
+                            $('#cmbMechno').val('');
+                            $('#cmbMech').val('8');
+                            $('#cmbWorktime').val('1');
+                            $('#cmbWorkano').val('2');
+                            $('#cmbWorkbqno').val('');
+                            $('#cmbTeam').val('5');
+                            break;
+                        case '4':
+                            $('.isSal').show();
+                            $('#cmbWorkno').val('2');
+                            $('#cmbMechno').val('');
+                            $('#cmbMech').val('9');
+                            $('#cmbWorktime').val('2');
+                            $('#cmbWorkano').val('3');
+                            $('#cmbWorkbqno').val('');
+                            $('#cmbTeam').val('6');
+                            $('#txtSalary').val('28000'); 
+                            break;
+                        case '5':
+                            $('.isSal').show();
+                            $('#cmbWorkno').val('2');
+                            $('#cmbMechno').val('');
+                            $('#cmbMech').val('10');
+                            $('#cmbWorktime').val('2');
+                            $('#cmbWorkano').val('3');
+                            $('#cmbWorkbqno').val('');
+                            $('#cmbTeam').val('6');
+                            $('#txtSalary').val('31000');
+                            break;
+                        default:
+                            $('#cmbWorkno').val('1'); 
+                            break;
+                    }
+                });
+                
+                $('#cmbMechno').click(function() {
+                    $('#txtTelfee').val('');
+                    $('#txtSalary').val('');
+                    switch ($('#cmbMechno').val()){
+                        case '1':
+                            $('.isFee').hide();
+                            $('#cmbWorkno').val('1'); 
+                            $('#cmbMech').val('3');
+                            $('#cmbWorktime').val('');
+                            $('#cmbWorkano').val('1');
+                            $('#cmbWorkbqno').val('1');
+                            $('#cmbTeam').val('1');
+                            break;
+                        case '2':
+                            $('.isFee').hide();
+                            $('#cmbWorkno').val('1'); 
+                            $('#cmbMech').val('4');
+                            $('#cmbWorktime').val('');
+                            $('#cmbWorkano').val('1');
+                            $('#cmbWorkbqno').val('1');
+                            $('#cmbTeam').val('1');
+                            break;
+                        case '3':
+                            $('.isFee').show();
+                            $('#cmbWorkno').val('1'); 
+                            $('#cmbMech').val('5');
+                            $('#cmbWorktime').val('');
+                            $('#cmbWorkano').val('1');
+                            $('#cmbWorkbqno').val('1');
+                            $('#cmbTeam').val('2');
+                            $('#txtTelfee').val('500');
+                            break;
+                        case '4':
+                            $('.isFee').show();
+                            $('#cmbWorkno').val('1'); 
+                            $('#cmbMech').val('6');
+                            $('#cmbWorktime').val('');
+                            $('#cmbWorkano').val('1');
+                            $('#cmbWorkbqno').val('1');
+                            $('#cmbTeam').val('3');
+                            $('#txtTelfee').val('1000');
+                            break;
+                        case '5':
+                            $('.isFee').hide();
+                            $('#cmbWorkno').val('2'); 
+                            $('#cmbMech').val('7');
+                            $('#cmbWorktime').val('');
+                            $('#cmbWorkano').val('1');
+                            $('#cmbWorkbqno').val('1');
+                            $('#cmbTeam').val('4');
+                            break;
+                        default:
+                            $('.isFee').hide();
+                            $('#cmbWorkno').val('1');
+                            $('#cmbMechno').val('');
+                            $('#cmbMech').val('');
+                            $('#cmbWorktime').val('');
+                            $('#cmbWorkano').val('');
+                            $('#cmbWorkbqno').val('');
+                            $('#cmbTeam').val(''); 
+                            break;
+                    }
+                });  
 			}
 
 			function q_boxClose(s2) {
@@ -156,6 +305,34 @@
 
 			function refresh(recno) {
 				_refresh(recno);
+
+                if($('#cmbMech').val()=='1'){
+                    $('.isMech').show();
+                    $('#lblBonus_st').text('抽傭金');
+                }else if($('#cmbMech').val()=='2'){
+                    $('.isMech').show();
+                    $('#lblBonus_st').text('抽毛利');
+                }else{
+                    $('.isMech').hide();
+                }
+                
+                if($('#cmbWorkano').val()=='2' || $('#cmbWorkano').val()=='3'){
+                    $('.isSal').show();
+                }else{
+                    $('.isSal').hide();
+                }
+
+                if($('#cmbMechno').val()=='3' || $('#cmbMechno').val()=='4'){
+                     $('.isFee').show();
+                }else{
+                     $('.isFee').hide();
+                }
+                
+                if($('#cmbMechno').val()=='5' || $('#cmbTypea').val()=='3' || $('#cmbTypea').val()=='4' || $('#cmbTypea').val()=='5'){
+                     $('#btnPrice').show();
+                }else{
+                     $('#btnPrice').hide();                     
+                }
 			}
 
 			function readonly(t_para, empty) {
@@ -364,43 +541,44 @@
                         <td class="td2"><input id="txtDatea" type="text" class="txt c1"/></td>
                         <td class="td4"><span> </span><a id='lblNoa_st' class="lbl">單據編號</a></td>
                         <td class="td5"><input id="txtNoa" type="text" class="txt c1" /></td>
+                        <td> <input id="btnPrice" type="button" value="基價"/></td>
                     </tr>
                     <tr>
-                        <td class="td1"><span> </span><a id='lblStationno' class="lbl">業務</a></td>
+                        <td class="td1"><span> </span><a id='lblStationno' class="lbl btn">業務</a></td>
                         <td class="td2"><input id="txtStationno" type="text" class="txt c3"/>
                                         <input id="txtStation" type="text" class="txt c3" /></td>
-                        <td class="td3"><span> </span><a id='lblTimea_st' class="lbl">入會日期</a></td>
-                        <td class="td4"><input id="txtTimea" type="text" class="txt c1"/></td>
                         <td class="td5"><span> </span><a id='lblType' class="lbl"> </a></td>
                         <td class="td6"><select id="cmbTypea"> </select></td>
+                        <td class="td3"><span> </span><a id='lblTimea_fe' class="lbl">入會日期</a></td>
+                        <td class="td4"><input id="txtTimea" type="text" class="txt c1"/></td>
                     </tr>
                     <tr>
-                        <td class="td1"><span> </span><a id='lblMechno_st' class="lbl">等級</a></td>
-                        <td class="td2" colspan="3"><select id="cmbMechno"> </select></td>
-                        <td class="td5"><span> </span><a id='lblWorkno_st' class="lbl">報價</a></td>
-                        <td class="td6"><select id="cmbWorkno"> </select></td>
+                        <td class="td1"><span> </span><a id='lblWorkno_st' class="lbl">報價</a></td>
+                        <td class="td2"><select id="cmbWorkno"> </select></td>
+                        <td class="td3"><span> </span><a id='lblMechno_st' class="lbl">等級</a></td>
+                        <td class="td4" colspan="3"><select id="cmbMechno"> </select></td>
                     </tr>
                     <tr>
                         <td class="td1"><span> </span><a id='lblMech_st' class="lbl">獎金制度類型</a></td>
                         <td class="td2" colspan="3"><select id="cmbMech"> </select></td>
-                        <td class="td5"><span> </span><a id='lblBonus_st' class="lbl">抽傭金/毛利</a></td>
-                        <td class="td6"><input id="txtPercent" type="text" class="txt c3"/> %</td>
+                        <td class="td5 isMech"><span> </span><a id='lblBonus_st' class="lbl"> </a></td>
+                        <td class="td6 isMech"><input id="txtPert" type="text" class="txt c3"/> %</td>
                     </tr>
                     <tr>
-                        <td class="td1"><span> </span><a id='lblWorkano_st' class="lbl">保障最低薪資</a></td>
-                        <td class="td2" colspan="2"><select id="cmbWorkano"> </select></td>
-                        <td class="td4"><input id="txtSalary" type="text" class="txt c3"/>/月</td>
-                        <td class="td5"><span> </span><a id='lblWorktime_st' class="lbl">兼職</a></td>
-                        <td class="td6"><select id="cmbWorktime"> </select></td>
+                        <td class="td1"><span> </span><a id='lblWorktime_st' class="lbl">兼職</a></td>
+                        <td class="td2"><select id="cmbWorktime"> </select></td>
+                        <td class="td3"><span> </span><a id='lblWorkano_st' class="lbl">保障薪資</a></td>
+                        <td class="td4" colspan="2"><select id="cmbWorkano"> </select></td>
+                        <td class="td6 isSal"><input id="txtSalary" type="text" class="txt c3"/>/月</td>
                     </tr>
                     <tr>
                         <td class="td1"><span> </span><a id='lblWorkbqno' class="lbl">客戶資料調查</a></td>
                         <td class="td2"><select id="cmbWorkbqno"> </select></td>
-                        <td class="td5"><span> </span><a id='lblTelfee_st' class="lbl">電話費用補助</a></td>
-                        <td class="td4"><input id="txtTelfee" type="text" class="txt c3"/>元/月</td>
+                        <td class="td4 isFee"><span> </span><a id='lblTelfee_st' class="lbl">電話費用補助</a></td>
+                        <td class="td5 isFee"><input id="txtTelfee" type="text" class="txt c3"/>元/月</td>
                     </tr>
                     <tr>
-                        <td class="td1"><span> </span><a id='lblTeam' class="lbl">權責</a></td>
+                        <td class="td1"><span> </span><a id='lblTeam_fe' class="lbl">權責</a></td>
                         <td class="td2" colspan="5"><select id="cmbTeam"> </select></td>
                     </tr>
                     <tr>
@@ -414,7 +592,7 @@
                         <td class="td4"><input id="txtTotal" type="text" class="txt c1"/></td>
                     </tr>
                     <tr>
-                        <td><span> </span><a id='lblMemo' class="lbl"> </a></td>
+                        <td><span> </span><a id='lblMemo_fe' class="lbl">備註</a></td>
                         <td colspan="5"><textarea id="txtMemo" rows='5' cols='10' style="width:99%; height: 50px;"> </textarea></td>
                     </tr>
                     <tr>
@@ -434,7 +612,7 @@
 					<td align="center" style="width:90px;"><a id='lblDime_s'>交易金額</a></td>
 					<td align="center" style="width:90px;"><a id='lblWidth_s'>獎金</a></td>
 					<td align="center" style="width:60px;"><a id='lblEnda_s'>交貨收款</a></td>
-					<td align="center" style="width:60px;"><a id='lblVcc_s'>出貨明細</a></td>
+					<td align="center" style="width:120px;"><a id='lblVccno_s'>出貨單號</a></td>
 				</tr>
 				<tr style='background:#cad3ff;'>
 					<td align="center">
@@ -445,7 +623,7 @@
 					<td><input id="txtDime.*" type="text" class="txt c1"/></td>
 					<td><input id="txtWidth.*" type="text" class="txt c1"/></td>
 					<td align="center"><input id="chkEnda.*" type="checkbox"/></td>
-					<td align="center"><input class="btn" id="btnVcc.*" type="button" value='.' style=" font-weight: bold;" /></td>
+					<td><input id="txtOrdeno.*" type="text" class="txt c1"/></td>
 				</tr>
 			</table>
 		</div>
