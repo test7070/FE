@@ -1,0 +1,29 @@
+﻿import:--import
+declare @t_bdate nvarchar(30)= case when '#non' = [1] then '' else [1] end
+declare @t_edate nvarchar(30)= case when '#non'=[2] then CHAR(255) else [2] end
+declare @t_sssno nvarchar(30)= case when '#non' = [3] then '' else [3] end 
+
+declare @custno table(
+	custno nvarchar(50)
+)
+insert @custno
+select custno from umms a where RIGHT(vccno,6)=LEFT(@t_bdate,6)
+group by custno
+
+declare @tmp table(
+	datea nvarchar(10),
+	noa nvarchar(50),
+	money float,
+	salesno nvarchar(50),
+	sales nvarchar(50),
+	enda bit
+)
+insert @tmp
+select datea,noa,money,salesno,sales,case when isnull(b.custno,'')!='' then 1 else 0 end
+from vcc106 a left join @custno b on a.custno=b.custno
+where (datea between @t_bdate and @t_edate)
+and (salesno=@t_sssno)
+
+select * from @tmp
+order by datea,noa
+;

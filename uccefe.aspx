@@ -84,10 +84,10 @@
 			}
 			function q_popPost(id) {
                 switch (id) {
-                	case 'txtProductno_':
-                		var n = b_seq;
-                		getWeight(n);
-                		break;
+                    case 'txtProductno_':
+                        var n = b_seq;
+                        getWeight(n);
+                        break;
                     default:
                         break;
                 }
@@ -153,6 +153,12 @@
                         var n = $(this).attr('id').replace(/^(.*)_(\d+)$/,'$2');
                         $('#btnStore_' + n).click();
                     });
+                    
+                    $('#txtProductno_' + j).change(function() {
+                        var n = $(this).attr('id').replace(/^(.*)_(\d+)$/,'$2');
+                        getWeight(n);
+                    });
+
 					$('#txtMount_' + j).change(function() {
 						var n = $(this).attr('id').replace(/^(.*)_(\d+)$/,'$2');
 						var t_productno = $.trim($('#txtProductno_'+n).val());
@@ -173,7 +179,19 @@
 					$('.unfe').hide();
 				}
 			}
-
+			
+            function getWeight(n){
+                var t_productno = $.trim($('#txtProductno_'+n).val());
+                if(t_productno.length>0)
+                    q_gt('ucc', "where=^^ noa='"+t_productno+"'^^", 0, 0, 0, 'getWeight_'+n,r_accy,1);
+                    var as = _q_appendData("ucc", "", true);
+                    if(as[0]!=undefined){
+                         var t_mount = q_float('txtMount_'+n);
+                         var t_weight = as[0].uweight;
+                         $('#txtWeight_'+n).val(round(q_mul(t_weight,t_mount),2));
+                    }
+            }
+            
 			function btnIns() {
 				_btnIns();
 				$('#txtNoa').val('AUTO');

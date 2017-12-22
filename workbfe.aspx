@@ -17,9 +17,9 @@
 			q_tables = 's';
 			var q_name = "workb";
 			var q_readonly = ['txtNoa'];
-			var q_readonlys = [];
-			var bbmNum = [];
-			var bbsNum = [];
+			var q_readonlys = ['txtOrdeno'];
+			var bbmNum = [['txtTotal', 10, 0, 1]];
+			var bbsNum = [['txtDime', 10, 0, 1],['txtWidth', 10, 0, 1]];
 			var bbmMask = [];
 			var bbsMask = [];
 			q_sqlCount = 6;
@@ -47,10 +47,25 @@
                 mainForm(1);
                 $('#txtDatea').focus();
             }
+            
+            function sum() {
+                var t_money=0;
+                for (var j = 0; j < q_bbsCount; j++) { 
+                   switch ($('#cmbTypea').val()){
+                        case '1':
+                            $('#txtWidth_'+j).val(q_mul(q_div($('#txtPert').val(),100),$('#txtDime_'+j).val())); 
+                        default:
+                            $('#txtWidth_'+j).val(); 
+                            break;
+                   }   
+                   t_money=q_add(t_money, q_float('txtWidth_' + j));
+                }
+                $('#txtTotal').val(t_money);
+            }
 
 			function mainPost() {
 				q_getFormat();
-				bbmMask = [['txtDatea', r_picd]];
+				bbmMask = [['txtDatea', r_picd],['txtBdate', r_picd],['txtEdate', r_picd],['txtTime', r_picd]];
 				bbsMask = [['txtDatea', r_picd]];
 				q_mask(bbmMask);
 				q_cmbParse("cmbTypea",'1@介紹,2@共享業務,3@居家業務,4@居家專職業務,5@在職專職業務');
@@ -78,9 +93,10 @@
                     q_box("uccp.aspx?" + r_userno + ";" + r_name + ";" + q_time, 'uccp', "95%", "650px", q_getMsg('popUccp'));
                 });
                 
-                $('#cmbTypea').click(function() {
+                $('#cmbTypea').change(function() {
                     $('#txtTelfee').val('');
                     $('#txtSalary').val('');
+                    $('#txtPert').val('');
                     $('.isFee').hide();
                     switch ($('#cmbTypea').val()){
                         case '1':
@@ -99,10 +115,10 @@
                             $('#cmbWorkno').val('1');
                             $('#cmbMechno').val('');
                             $('#cmbMech').val('');
-                            $('#cmbWorktime').val('');
                             $('#cmbWorkano').val('');
                             $('#cmbWorkbqno').val('');
                             $('#cmbTeam').val('');
+                            $('#cmbWorktime').val('');
                             break;
                         case '3':
                             $('.isSal').show();
@@ -142,7 +158,7 @@
                     }
                 });
                 
-                $('#cmbMechno').click(function() {
+                $('#cmbMechno').change(function() {
                     $('#txtTelfee').val('');
                     $('#txtSalary').val('');
                     switch ($('#cmbMechno').val()){
@@ -204,8 +220,38 @@
                             $('#cmbTeam').val(''); 
                             break;
                     }
-                });  
+                });
+                
+                $('#btnImport').click(function(e){
+                    var t_bdate = $('#txtBdate').val();
+                    var t_edate = $('#txtEdate').val();
+                    var t_salesno = $('#txtStationno').val();
+                    if(t_bdate.length==0 || t_edate.length==0){
+                        alert('請輸入日期。');
+                        return;
+                    }
+                    q_func('qtxt.query.workbfe_vcc', 'workbfe.txt,import,' + encodeURI(t_bdate) + ';' + encodeURI(t_edate)+ ';' + encodeURI(t_salesno));     
+                });
 			}
+
+			function q_funcPost(t_func, result) {
+                switch(t_func) {
+                    case 'qtxt.query.workbfe_vcc':
+                        var as = _q_appendData("tmp0", "", true, true);
+                        if (as[0] != undefined) {
+                            q_gridAddRow(bbsHtm, 'tbbs', 'txtDatea,txtDime,chkEnda,txtOrdeno'
+                            , as.length, as, 'datea,money,enda,noa', 'txtDatea,txtDime,txtOrdeno','');
+                            sum();
+                        } else {
+                            alert('無資料!');
+                        }
+                        Unlock(1);
+                        break;
+                    
+                    default:
+                        break;
+                }
+            }
 
 			function q_boxClose(s2) {
 				var ret;
@@ -237,11 +283,31 @@
 				var t_date = $('#txtDatea').val();
 				var s1 = $('#txt' + bbmKey[0].substr(0, 1).toUpperCase() + bbmKey[0].substr(1)).val();
                 var t_date = $('#txtDatea').val();
-                                        
+
+                //共享業務等級沒有Key且入月3個月以上
+                var t_timea;
+                if(r_len=='4'){
+                     t_timea=q_cdn(q_date(),-93).substr(0,r_lenm)+q_date().substr(7,3); 
+                }else{
+                     t_timea=q_cdn(q_date(),-93).substr(0,r_lenm)+q_date().substr(6,3);
+                }
+                if($('#cmbTypea').val()=='2' && $('#cmbMechno').val().length==0 && $('#txtTime').val().length!=0 && t_timea>$('#txtTime').val()){
+                      $('.isFee').hide();
+                      $('#cmbMechno').val('1');
+                      $('#cmbWorkno').val('1'); 
+                      $('#cmbMech').val('3');
+                      $('#cmbWorktime').val('');
+                      $('#cmbWorkano').val('1');
+                      $('#cmbWorkbqno').val('1');
+                      $('#cmbTeam').val('1');
+                }                  
                 if (q_cur == 1)
                     $('#txtWorker').val(r_name);
                 else
                     $('#txtWorker2').val(r_name);
+              
+                sum();
+                      
                 
                 if (s1.length == 0 || s1 == "AUTO")
                      q_gtnoa(q_name, replaceAll(q_getPara('sys.key_workb') + (t_date.length == 0 ? q_date() : t_date), '/', ''));
@@ -279,7 +345,9 @@
 			function bbsAssign() {
 				for (var i = 0; i < q_bbsCount; i++) {
 					if (!$('#btnMinus_' + i).hasClass('isAssign')) {
-					   
+					   $('#txtWidth_' + i).change(function() {
+                            sum();
+                       });
 					}
 				}
 				_bbsAssign();
@@ -298,9 +366,6 @@
 					return false;
 				}
 				return true;
-			}
-
-			function sum() {
 			}
 
 			function refresh(recno) {
@@ -513,15 +578,15 @@
 				<table class="tview" id="tview">
 					<tr>
                         <td align="center" style="width:5%"><a id='vewChk'> </a></td>
-                        <td align="center" style="width:20%"><a id='vewDatea_bq'>檢驗日期</a></td>
-                        <td align="center" style="width:30%"><a id='vewNoa'> </a></td>
-                        <td align="center" style="width:45%"><a id='vewCardeal_bq'>客戶</a></td>
+                        <td align="center" style="width:20%"><a id='vewDatea_bq'>日期</a></td>
+                        <td align="center" style="width:20%"><a id='vewStation_bq'>業務</a></td>
+                        <td align="center" style="width:40%"><a id='vewNoa_bq'> </a>出貨單日期</td>
                     </tr>
                     <tr>
                         <td ><input id="chkBrow.*" type="checkbox" style=''/></td>
                         <td align="center" id='datea'>~datea</td>
-                        <td align="center" id='noa'>~noa</td>
-                        <td align="center" id='cardeal'>~cardeal</td>
+                        <td align="center" id='station'>~station</td>
+                        <td id="bdate edate" style="text-align: center;">~bdate - ~edate</td>
                     </tr>
 				</table>
 			</div>
@@ -549,8 +614,8 @@
                                         <input id="txtStation" type="text" class="txt c3" /></td>
                         <td class="td5"><span> </span><a id='lblType' class="lbl"> </a></td>
                         <td class="td6"><select id="cmbTypea"> </select></td>
-                        <td class="td3"><span> </span><a id='lblTimea_fe' class="lbl">入會日期</a></td>
-                        <td class="td4"><input id="txtTimea" type="text" class="txt c1"/></td>
+                        <td class="td3"><span> </span><a id='lblTime_fe' class="lbl">入會日期</a></td>
+                        <td class="td4"><input id="txtTime" type="text" class="txt c1"/></td>
                     </tr>
                     <tr>
                         <td class="td1"><span> </span><a id='lblWorkno_st' class="lbl">報價</a></td>
@@ -587,9 +652,9 @@
                             <input id="txtBdate" type="text" class="txt c3" style="width: 120px;"/>
                             <a style="float: left;">~</a>
                             <input id="txtEdate" type="text" class="txt c3" style="width: 120px;"/></td>
-                        <td> <input id="btnVccs" type="button" value="匯入"/></td>
+                        <td> <input id="btnImport" type="button" value="匯入"/></td>
                         <td class="td5"><span> </span><a id='lblTotal_st' class="lbl">獎金總額</a></td>
-                        <td class="td4"><input id="txtTotal" type="text" class="txt c1"/></td>
+                        <td class="td4"><input id="txtTotal" type="text" class="txt c1 num"/></td>
                     </tr>
                     <tr>
                         <td><span> </span><a id='lblMemo_fe' class="lbl">備註</a></td>
@@ -620,8 +685,8 @@
 						<input id="txtNoq.*" type="text" style="display: none;" />
 					</td>
 					<td><input id="txtDatea.*" type="text" class="txt c1"/></td>
-					<td><input id="txtDime.*" type="text" class="txt c1"/></td>
-					<td><input id="txtWidth.*" type="text" class="txt c1"/></td>
+					<td><input id="txtDime.*" type="text" class="txt c1 num"/></td>
+					<td><input id="txtWidth.*" type="text" class="txt c1 num"/></td>
 					<td align="center"><input id="chkEnda.*" type="checkbox"/></td>
 					<td><input id="txtOrdeno.*" type="text" class="txt c1"/></td>
 				</tr>
