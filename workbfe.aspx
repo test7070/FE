@@ -55,7 +55,7 @@
                         case '1':
                             $('#txtWidth_'+j).val(q_mul(q_div($('#txtPert').val(),100),$('#txtDime_'+j).val())); 
                         default:
-                            $('#txtWidth_'+j).val(); 
+                            $('#txtWidth_'+j).val(q_float('txtWidth_' + j)); 
                             break;
                    }   
                    t_money=q_add(t_money, q_float('txtWidth_' + j));
@@ -112,16 +112,13 @@
                             break;
                         case '2':
                             $('.isSal').hide();
-                            $('#cmbWorkno').val('1');
-                            $('#cmbMechno').val('');
-                            $('#cmbMech').val('');
-                            $('#cmbWorkano').val('');
-                            $('#cmbWorkbqno').val('');
-                            $('#cmbTeam').val('');
-                            $('#cmbWorktime').val('');
+                            $('.isMech').hide();
+                            var t_salesno = $('#txtStationno').val();
+                            q_func('qtxt.query.salelevel', 'workbfe.txt,salelevel,'+ encodeURI(t_salesno)); 
                             break;
                         case '3':
                             $('.isSal').show();
+                            $('.isMech').hide();
                             $('#cmbWorkno').val('2');
                             $('#cmbMechno').val('');
                             $('#cmbMech').val('8');
@@ -132,6 +129,7 @@
                             break;
                         case '4':
                             $('.isSal').show();
+                            $('.isMech').hide();
                             $('#cmbWorkno').val('2');
                             $('#cmbMechno').val('');
                             $('#cmbMech').val('9');
@@ -143,6 +141,7 @@
                             break;
                         case '5':
                             $('.isSal').show();
+                            $('.isMech').hide();
                             $('#cmbWorkno').val('2');
                             $('#cmbMechno').val('');
                             $('#cmbMech').val('10');
@@ -236,6 +235,26 @@
 
 			function q_funcPost(t_func, result) {
                 switch(t_func) {
+                    case 'qtxt.query.salelevel':
+                        var as = _q_appendData("tmp0", "", true, true);
+                        if (as[0] != undefined) {
+                            $('#cmbMechno').val(as[0].mechno);
+                            $('#cmbMech').val(as[0].mech);
+                            $('#cmbWorkno').val(as[0].workno);
+                            $('#cmbWorkbqno').val(as[0].workbqno);
+                            $('#cmbWorkano').val(as[0].workano);
+                            $('#cmbTeam').val(as[0].team);
+                        } else {
+                            $('#cmbWorkno').val('1');
+                            $('#cmbMechno').val('');
+                            $('#cmbMech').val('');
+                            $('#cmbWorkano').val('');
+                            $('#cmbWorkbqno').val('');
+                            $('#cmbTeam').val('');
+                            $('#cmbWorktime').val('');
+                        }
+                        Unlock(1);
+                        break;
                     case 'qtxt.query.workbfe_vcc':
                         var as = _q_appendData("tmp0", "", true, true);
                         if (as[0] != undefined) {
@@ -247,7 +266,6 @@
                         }
                         Unlock(1);
                         break;
-                    
                     default:
                         break;
                 }
@@ -348,6 +366,15 @@
 					   $('#txtWidth_' + i).change(function() {
                             sum();
                        });
+                       
+                       $('#txtOrdeno_'+i).bind('contextmenu',function(e) {
+                            /*滑鼠右鍵*/
+                            e.preventDefault();
+                            var n = $(this).attr('id').replace(/^(.*)_(\d+)$/,'$2');
+                            if($('#cmbTypea').val()!='1' && (($('#cmbTypea').val()=='2' && $('#cmbMechno').val()!='1' && $('#cmbMechno').val()!='2'))){
+                                q_box("vcc.aspx?" + r_userno + ";" + r_name + ";" + q_time + ";noa='" + $(this).val() + "';" + r_accy, 'vcc', "95%", "95%", q_getMsg("popvcc"));
+                            }
+                        });
 					}
 				}
 				_bbsAssign();
@@ -677,7 +704,7 @@
 					<td align="center" style="width:90px;"><a id='lblDime_s'>交易金額</a></td>
 					<td align="center" style="width:90px;"><a id='lblWidth_s'>獎金</a></td>
 					<td align="center" style="width:60px;"><a id='lblEnda_s'>交貨收款</a></td>
-					<td align="center" style="width:120px;"><a id='lblVccno_s'>出貨單號</a></td>
+					<td align="center" style="width:100px;"><a id='lblVccno_s'>出貨單號</a></td>
 				</tr>
 				<tr style='background:#cad3ff;'>
 					<td align="center">

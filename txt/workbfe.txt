@@ -27,3 +27,74 @@ and (salesno=@t_sssno)
 select * from @tmp
 order by datea,noa
 ;
+---------------------------------------------------------------------------------------------------
+salelevel:--salelevel
+SET QUOTED_IDENTIFIER OFF
+declare @t_sssno nvarchar(30)= case when '#non' = [1] then '' else [1] end
+
+IF OBJECT_ID('tempdb..#tmpwork')is not null
+BEGIN
+	drop table #tmpwork
+END
+
+create table #tmpwork(
+	gno nvarchar(1),
+	custno nvarchar(50),
+	mon nvarchar(50),
+	counta float
+)
+insert #tmpwork
+select '9',custno,right(vccno,6)mon,'' from umms
+where ISNULL(custno,'')!='' and ISNULL(right(vccno,7),'')!=''
+group by custno,right(vccno,6)
+
+insert #tmpwork(gno,custno,counta)
+select '0',a.salesno,count(*) from view_vcc a left join #tmpwork b on a.custno=b.custno and a.mon=b.mon
+where ISNULL(b.custno,'')!='' and ISNULL(b.mon,'')!=''
+and (salesno=@t_sssno)
+and a.money>=50000
+group by a.salesno
+
+delete #tmpwork where gno='9'
+
+/*共享業務會員升級辦法
+1.入門級會員
+（初期入會的會員）
+2.銀級會員
+（成交3個5萬元以上案件+交貨收款完成）
+3.金級會員
+（成交10個5萬元案件+交貨收款完成）
+4.鑽石級會員
+（成交20個5萬元以上案件+交貨收款完成）
+5.鼎級會員
+（成交40個5萬元以上案件+交貨收款完成*/
+
+declare @tmp table(
+	salesno nvarchar(50),
+	counta float,
+	mechno nvarchar(50),--等級
+	workno nvarchar(10),--報價
+	workbqno nvarchar(10),--客戶調查
+	workano nvarchar(10),--保障薪資
+	mech nvarchar(10),--獎金制度
+	team nvarchar(10)--權責
+)
+
+
+insert @tmp(salesno,counta,mechno)
+select custno,counta,
+case when counta>=40 then 5 else (case when counta>=20 then 4 else (case when counta>=10 then 3 else (case when counta>=3 then 2 else '' end) end) end)end 
+from #tmpwork
+
+update @tmp
+set workno=case when mechno='5' then 2 else 1 end,workbqno='1',workano='1',
+	mech=case mechno when 2 then 4 when 3 then 5 when 4 then 6 when 5 then 7 end,
+	team=case mechno when 2 then 1 when 3 then 2 when 4 then 3 when 5 then 4 end
+
+select * from @tmp
+
+IF OBJECT_ID('tempdb..#tmpwork')is not null
+BEGIN
+	drop table #tmpwork
+END
+;
