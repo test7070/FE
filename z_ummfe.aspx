@@ -182,8 +182,14 @@
                         	break;
 					}	
 				});
-				 
-				
+				//20171214嘉佑錯誤   改為若月份沒有起始月  就從今年1月份起算
+				$('#btnOk').hide();
+				$('#btnOk2').click(function(e) {
+                    if($('#txtXmon1').val().length==0){
+                       $('#txtXmon1').val(t_year+ '/01');
+                    }
+                    $('#btnOk').click();
+                });
 				
 			}
 
@@ -204,6 +210,7 @@
 				<div id="q_report"></div>
 			</div>
 			<div class="prt" style="margin-left: -40px;">
+			    <input type="button" id="btnOk2" style="float:left;font-size:16px;font-weight: bold;color: blue;cursor: pointer;margin-top: 18px;" value="查詢"/>
 				<!--#include file="../inc/print_ctrl.inc"-->
 			</div>
 		</div>

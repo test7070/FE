@@ -117,6 +117,15 @@
                 var t_where = "where=^^ 1=0 ^^ stop=100";
                 q_gt('custaddr', t_where, 0, 0, 0, "");
                 
+                //過磅
+                $('#lblEardno').click(function(e){
+                	//e.preventDefault();
+                	var t_eardno = $.trim($('#txtEardno').val());
+	                if (t_eardno.length > 0) {
+	                    q_box("eard.aspx?" + r_userno + ";" + r_name + ";" + q_time + ";noa='" + t_eardno + "';" + r_accy, 'eard', "95%", "95%", q_getMsg("popEard"));
+	                }
+                });
+                
                 //限制帳款月份的輸入 只有在備註的第一個字為*才能手動輸入                  
                 $('#txtMemo').change(function(){
                     if ($('#txtMemo').val().substr(0,1)=='*')
@@ -1126,6 +1135,10 @@
                         <td class="td4"><span> </span><a id='lblAccc' class="lbl btn"> </a></td>
                         <td class="td5" colspan="2"><input id="txtAccno" type="text" class="txt c1"/></td>
                     </tr>
+                    <tr>
+						<td><span> </span><a id='lblEardno' class="lbl">過磅單號</a></td>
+						<td><input id="txtEardno" type="text" class="txt" style="float:left;"/></td>
+					</tr>
                 </table>
             </div>
         </div>

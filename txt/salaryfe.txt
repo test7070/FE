@@ -48,7 +48,7 @@
 		,datea nvarchar(20)
 		,custno nvarchar(20)
 		,cust nvarchar(50)
-		
+	
 		,total float
 		,tranmoney1 float
 		,tranmoney2 float
@@ -90,6 +90,7 @@
 	and b.noa is not null
 	and isnull(a.salesno,'') like 'B%'
 	and len(ISNULL(c.outdate,''))=0
+	and c.partno='7'
 	
 	update @tmpa set paytype = rtrim(ltrim(ISNULL(b.paytype,'')))
 	from @tmpa a
@@ -319,6 +320,8 @@
 		,m10 int --職等級
 		,m11 int --報價獎金     未填妥資料  扣到0?      
 		,m12 int --親恰拜訪獎金  預設1000  扣到0?
+		,m13 int
+		,m14 int
 		,total int 
 	)
 	insert into @tmp(sssno,sss,indate)
@@ -485,13 +488,17 @@
 			(本月成交客戶數+應增加客戶數=下月應成交客戶數)
 			【第４個月起，每減少成交一家扣300/家】
 	*/
-	
+	--------------------------------------------------------------------------------------
+	update a set a.m13=b.la_person,a.m14=he_person
+	from @tmp a outer apply(select * from labase) b
+	where a.sssno = b.noa
 	--------------------------------------------------------------------------------------
 	update @tmp set total = ISNULL(m01,0)+ISNULL(m02,0)+ISNULL(m03,0)+ISNULL(m04,0)
 		+ISNULL(m05,0)+ISNULL(m06,0)+ISNULL(m07,0)+ISNULL(m08,0)
-		+ISNULL(m09,0)+ISNULL(m10,0)+ISNULL(m11,0)+ISNULL(m12,0)
+		+ISNULL(m09,0)+ISNULL(m10,0)+ISNULL(m11,0)+ISNULL(m12,0)-(ISNULL(m13,0)+ISNULL(m14,0))
 	
 	select * from @tmp;
+
 
 import3:--salaryfe.txt import3          salaryfe3.aspx	財會
 	declare @t_mon nvarchar(20) = [1]
@@ -535,6 +542,8 @@ import3:--salaryfe.txt import3          salaryfe3.aspx	財會
 		,m09b float --計帳獎金(未分配) 
 		,m10 float  --團體獎金
 		,m11 float  --加班
+		,m12 float	--勞保
+		,m13 float	--健保
 		
 		,total float
 	)
@@ -544,7 +553,7 @@ import3:--salaryfe.txt import3          salaryfe3.aspx	財會
 		,b.bo_full --全勤
 	from sss a
 	outer apply(select top 1 * from saladjust where noa=a.noa and datea<=@t_mon order by datea desc) b
-	where isnull(a.outdate,'')<=@t_mon+'/31'
+	where len(isnull(a.outdate,''))=0
 	and (a.partno='05')
 	order by a.noa
 	/*m05主管津貼
@@ -746,14 +755,17 @@ import3:--salaryfe.txt import3          salaryfe3.aspx	財會
 		group by a.sssno) b on a.sssno=b.sssno
 	update @tmpa set m03 = case when m03<0 then 0 else m03 end
 	-----------------------------------------------------------------------------------------------------
-	
+	update a set a.m12=b.la_person,a.m13=he_person
+	from @tmpa a outer apply(select * from labase) b
+	where a.sssno = b.noa
+	-----------------------------------------------------------------------------------------------------
 	update @tmpa set total = ISNULL(m01,0)+ISNULL(m02,0)+ISNULL(m03,0)+ISNULL(m04,0)
 		+ISNULL(m05,0)+ISNULL(m06,0)+ISNULL(m07,0)+ISNULL(m08,0)+ISNULL(m09,0)
-		+ISNULL(m10,0)+ISNULL(m11,0)
+		+ISNULL(m10,0)+ISNULL(m11,0)-(ISNULL(m12,0)+ISNULL(m13,0))
 	
 	delete @tmpa where ISNULL(hr,0)=0 and isnull(m01,0)=0 and isnull(m02,0)=0 and isnull(m03,0)=0
 		and isnull(m04,0)=0 and isnull(m05,0)=0 and isnull(m06,0)=0 and isnull(m07,0)=0
-		 and isnull(m08,0)=0 and isnull(m09,0)=0 and isnull(m10,0)=0 and isnull(m11,0)=0	
+		 and isnull(m08,0)=0 and isnull(m09,0)=0 and isnull(m10,0)=0 and isnull(m11,0)=0
 	select * from @tmpa order by sssno;
 
 import2:--salaryfe.txt import2          salaryfe2.aspx	內勤
@@ -768,7 +780,6 @@ import2:--salaryfe.txt import2          salaryfe2.aspx	內勤
 		,job nvarchar(50)
 		,level1 nvarchar(20) --職等
 		,level2 nvarchar(20) --職級
-		
 		,hr1 float -- 一般工時 (有包含請假時數)
 		,hr2 float -- 加班工時 1~2 hr
 		,hr3 float -- 加班工時 3~ hr
@@ -790,6 +801,8 @@ import2:--salaryfe.txt import2          salaryfe2.aspx	內勤
 		,m09 float --簽約獎金
 		,m10 float --試用加給
 		,m11 float --加班
+		,m12 float --勞保
+		,m13 float --
 		
 		,total float
 	)
@@ -799,8 +812,8 @@ import2:--salaryfe.txt import2          salaryfe2.aspx	內勤
 		,b.bo_full --全勤
 	from sss a
 	outer apply(select top 1 * from saladjust where noa=a.noa and datea<=@t_mon order by datea desc) b
-	where isnull(a.outdate,'')<=@t_mon+'/31'
-	and (a.partno='03' or a.partno='04')
+	where len(isnull(a.outdate,''))=0
+	and (a.partno='03' or a.partno='04') and (typea='廠務' or typea='員工')
 	order by a.noa
 	/*m05主管津貼
 	董事長	               20000
@@ -1003,9 +1016,13 @@ import2:--salaryfe.txt import2          salaryfe2.aspx	內勤
 		and CHARINDEX('遲',a.memo)>0
 		group by a.sssno) b on a.sssno=b.sssno
 	update @tmpa set m03 = case when m03<0 then 0 else m03 end
-	--------------------------------------------------------------------------------------------------------	
+	--------------------------------------------------------------------------------------------------------
+	update a set a.m12=b.la_person,a.m13=he_person
+	from @tmpa a outer apply(select * from labase) b
+	where a.sssno = b.noa
+	--------------------------------------------------------------------------------------------------------		
 	update @tmpa set total = isnull(m01,0)+isnull(m02,0)+isnull(m03,0)+isnull(m04,0)+isnull(m05,0)
-		+isnull(m06,0)+isnull(m07,0)+isnull(m08,0)+isnull(m09,0)+isnull(m10,0)+isnull(m11,0)
+		+isnull(m06,0)+isnull(m07,0)+isnull(m08,0)+isnull(m09,0)+isnull(m10,0)+isnull(m11,0)-(isnull(m12,0)+isnull(m13,0))
 	
 	delete @tmpa where ISNULL(hr,0)=0 and isnull(m01,0)=0 and isnull(m02,0)=0 and isnull(m03,0)=0
 		and isnull(m04,0)=0 and isnull(m05,0)=0 and isnull(m06,0)=0 and isnull(m07,0)=0

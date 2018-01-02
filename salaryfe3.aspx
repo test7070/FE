@@ -173,8 +173,8 @@
                         	for(var i=0;i<q_bbsCount;i++){
                         		$('#btnMinus_'+i).click();
                         	}
-                        	q_gridAddRow(bbsHtm, 'tbbs', 'txtSssno,txtSss,txtBase,txtP01,txtP02,txtP03,txtP04,txtP05,txtP06,txtP07,txtP08,txtP09,txtP10,txtTotal'
-                        	, as.length, as, 'sssno,sss,m01,m02,m03,m04,m05,m06,m07,m08,m09,m10,m11,total', '','');
+                        	q_gridAddRow(bbsHtm, 'tbbs', 'txtSssno,txtSss,txtBase,txtP01,txtP02,txtP03,txtP04,txtP05,txtP06,txtP07,txtP08,txtP09,txtP10,txtP17,txtP18,txtTotal'
+                        	, as.length, as, 'sssno,sss,m01,m02,m03,m04,m05,m06,m07,m08,m09,m10,m11,m12,m13,total', '','');
                         	sum();
                         }else{
                     		alert('無資料。');

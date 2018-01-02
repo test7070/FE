@@ -177,8 +177,8 @@
                         	for(var i=0;i<q_bbsCount;i++){
                         		$('#btnMinus_'+i).click();
                         	}
-                        	q_gridAddRow(bbsHtm, 'tbbs', 'txtSssno,txtSss,txtBase,txtP01,txtP02,txtP03,txtP04,txtP05,txtP06,txtP07,txtP08,txtP09,txtP10,txtP11,txtTotal,txtC01,txtC02,txtC03,txtC04,txtD01,txtD02,txtD03'
-                        	, as.length, as, 'sssno,sss,m01,m02,m03,m04,m05,m06,m07,m08,m09,m10,m11,m12,total,n01,n02,c01,c02,b01,b02,b03', '','');
+                        	q_gridAddRow(bbsHtm, 'tbbs', 'txtSssno,txtSss,txtBase,txtP01,txtP02,txtP03,txtP04,txtP05,txtP06,txtP07,txtP08,txtP09,txtP10,txtP11,txtP17,txtP18,txtTotal,txtC01,txtC02,txtC03,txtC04,txtD01,txtD02,txtD03'
+                        	, as.length, as, 'sssno,sss,m01,m02,m03,m04,m05,m06,m07,m08,m09,m10,m11,m12,m13,m14,total,n01,n02,c01,c02,b01,b02,b03', '','');
                         	sum();
                         }else{
                     		alert('無資料。');
