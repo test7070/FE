@@ -896,7 +896,7 @@
 								var cupolength=t_cups[0].olength;//裁剪的板料長度
 								
 								var bmount=0;//板料使用數量
-								cupcutlength=cupcutlength.concat(cupcutwlength);//加損耗
+								//cupcutlength=cupcutlength.concat(cupcutwlength);//加損耗
 								var usemax=0; //使用容許多入數量M09
 								while(!tt_zero){ //當最大長度需裁剪量數量<0 或 其他剪裁長度需才剪量<0
 									bmount++;
@@ -959,6 +959,7 @@
 										tt_zero=true;
 									}
 								}
+								cupcutlength=cupcutlength.concat(cupcutwlength);//加損耗
 								getucc.push({
 									'spec':tspec1,
 									'size':tsize1,
@@ -1505,7 +1506,7 @@
 								var cupolength=t_cups[0].olength;//裁剪的板料長度
 								
 								var bmount=0;//板料使用數量
-								cupcutlength=cupcutlength.concat(cupcutwlength);//加損耗
+								//cupcutlength=cupcutlength.concat(cupcutwlength);//加損耗
 								var usemax=0; //使用容許多入數量M09
 								while(!tt_zero){ //當最大長度需裁剪量數量<0 或 其他剪裁長度需才剪量<0
 									bmount++;
@@ -1568,6 +1569,7 @@
 										tt_zero=true;
 									}
 								}
+								cupcutlength=cupcutlength.concat(cupcutwlength);//加損耗
 								getucc.push({
 									'spec':tspec1,
 									'size':tsize1,
@@ -3357,7 +3359,7 @@
 								var cupolength=t_cups[0].olength;//裁剪的板料長度
 								
 								var bmount=0;//板料使用數量
-								cupcutlength=cupcutlength.concat(cupcutwlength);//加損耗
+								//cupcutlength=cupcutlength.concat(cupcutwlength);//加損耗
 								var usemax=0; //使用容許多入數量M09
 								while(!tt_zero){ //當最大長度需裁剪量數量<0 或 其他剪裁長度需才剪量<0
 									bmount++;
@@ -3420,6 +3422,7 @@
 										tt_zero=true;
 									}
 								}
+								cupcutlength=cupcutlength.concat(cupcutwlength);//加損耗
 								getucc.push({
 									'spec':tspec1,
 									'size':tsize1,
@@ -5254,6 +5257,9 @@
 										tt_zero=true;
 									}
 								}
+								
+								cupcutlength=cupcutlength.concat(cupcutwlength);//加損耗
+								
 								getucc.push({
 									'spec':tspec1,
 									'size':tsize1,
