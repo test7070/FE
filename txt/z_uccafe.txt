@@ -1241,8 +1241,7 @@ z_uccafe01:--z_uccafe01 銷售分析明細表(業務)
 
 	delete @tmpb where isnull(day1,0)=0
 
-	update @tmpb
-	set datea2=convert(varchar,DATEADD(DAY,day1,datea1),111),day2=DATEDIFF(DAY,convert(varchar,DATEADD(DAY,day1,datea1),111),datea3)+1
+--	update @tmpb set datea2=convert(varchar,DATEADD(DAY,day1,datea1),111),day2=DATEDIFF(DAY,convert(varchar,DATEADD(DAY,day1,datea1),111),datea3)+1
 
 	delete @tmpb where isnull(day2,0)<=0
 
