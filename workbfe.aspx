@@ -50,14 +50,7 @@
             
             function sum() {
                 var t_money=0;
-                for (var j = 0; j < q_bbsCount; j++) { 
-                   switch ($('#cmbTypea').val()){
-                        case '1':
-                            $('#txtWidth_'+j).val(q_mul(q_div($('#txtPert').val(),100),$('#txtDime_'+j).val())); 
-                        default:
-                            $('#txtWidth_'+j).val(q_float('txtWidth_' + j)); 
-                            break;
-                   }   
+                for (var j = 0; j < q_bbsCount; j++) {  
                    t_money=q_add(t_money, q_float('txtWidth_' + j));
                 }
                 $('#txtTotal').val(t_money);
@@ -83,7 +76,7 @@
                         $('#lblBonus_st').text('抽傭金');
                     }else if($('#cmbMech').val()=='2'){
                         $('.isMech').show();
-                        $('#lblBonus_st').text('抽毛利');
+                        $('#lblBonus_st').text('抽毛利30%');
                     }else{
                         $('.isMech').hide();
                     }
@@ -403,7 +396,7 @@
                     $('#lblBonus_st').text('抽傭金');
                 }else if($('#cmbMech').val()=='2'){
                     $('.isMech').show();
-                    $('#lblBonus_st').text('抽毛利');
+                    $('#lblBonus_st').text('抽毛利30%');
                 }else{
                     $('.isMech').hide();
                 }
@@ -654,7 +647,7 @@
                         <td class="td1"><span> </span><a id='lblMech_st' class="lbl">獎金制度類型</a></td>
                         <td class="td2" colspan="3"><select id="cmbMech"> </select></td>
                         <td class="td5 isMech"><span> </span><a id='lblBonus_st' class="lbl"> </a></td>
-                        <td class="td6 isMech"><input id="txtPert" type="text" class="txt c3"/> %</td>
+                        <td class="td6 isMech"><input id="txtPert" type="text" class="txt c1"/></td>
                     </tr>
                     <tr>
                         <td class="td1"><span> </span><a id='lblWorktime_st' class="lbl">兼職</a></td>
