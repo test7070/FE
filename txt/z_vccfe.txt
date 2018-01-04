@@ -21,7 +21,8 @@ declare @t_partno nvarchar(30)
 declare @t_cno nvarchar(max) = case when '#non'=[35] then '' else [35] end
 declare @taxtype nvarchar(10)
 declare @t_userno nvarchar(100)='[37]'
-declare @t_rank nvarchar(100)='[38]' 
+declare @t_rank nvarchar(100)='[38]'
+declare @t_addr2 nvarchar(100)
 -------------------------------------------------------------------------------------------------------
 set @t_bdate = case when '#non'=[4] then '' else [4] end
 set @t_edate = case when '#non'=[5] then char(255) else [5] end
@@ -41,6 +42,8 @@ set @t_showinvono = case when '#non' = [22] then 0 else [22] end
 set @vcctypea = case when '#non' = [20] then '' else [20] end
 set @t_partno = case when '#non' = [21] then '' else [21] end
 set @taxtype = case when '#non' = [36] then '' else [36] end
+set @t_addr2 = case when '#non'=[39] then '' else [39] end
+
 if(@t_project='VU')
 	set @qhref_acomp='_vu'
 --***********************************************************************************
@@ -92,6 +95,7 @@ insert into @result
 		  and (isnull(c.tggno,'') between @t_btggno and @t_etggno) and (len(@vcctypea)=0 or a.typea = @vcctypea) 
 		  and (len(@t_partno)=0 or s.partno=@t_partno)
 		  and (len(@taxtype)=0 or @taxtype=a.taxtype)
+		  and (len(@t_addr2)=0 or a.addr2 like '%'+@t_addr2+'%')
 	order by a.datea,gno,noa,noq
 	
 if(@t_rank<'8' and left(@t_userno,1)='B' and @t_project='FE')

@@ -1547,7 +1547,7 @@ z_uccfe1:--z_uccfe1
 	from #z_uccfe1 a
 	left join ucc b on a.productno=b.noa
 	left join store c on a.storeno=c.noa
-	
+	delete #z_uccfe1 where product LIKE '%費%' AND product NOT LIKE '%加工%'
 	-------------------------------------------------------------------------------------------
 	--2017/01/17 目前先將入庫商品單價從ucc撈出
 	if(@t_project='FE')
