@@ -167,10 +167,11 @@ z_workjp02:-- EXCEL用 ref z_workjp01 因為要印頁小計，改為一次只能
 		,spec b01
 		,num b02
 		
-		,case when len(isnull(imgdata,''))>0 then 
+		,'<span style="display:block'+char(59)+'width:120px'+char(59)+'height:30px'+char(59)+'">'+
+		+case when len(isnull(imgdata,''))>0 then 
 			'<img src="'+@t_path+'/htm/htm/'+noa+'-'+noq+'.jpg?'+replace(CONVERT(nvarchar,getdate(),120),' ','_')+'" style="width:88px'+char(59)+'height:29px'+char(59)+'"/>' 
-			else '<span style="display:block'+char(59)+'width:100%'+char(59)+'height:100%'+char(59)+'"></span>' end b03
-
+			else '' end +  '</span>' b03
+			
 		,lengthb b04
 		,'<a>'+dbo.getComma([mount],0)+'</a><a style="font-size: 8px'+char(59)+'">支</a>' b05
 		,dbo.getComma([weight],0) b06
