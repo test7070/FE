@@ -11,18 +11,49 @@ select custno from umms a where RIGHT(vccno,6)=LEFT(@t_bdate,6)
 group by custno
 
 declare @tmp table(
+	gno nvarchar(1), 
 	datea nvarchar(10),
 	noa nvarchar(50),
+	typea nvarchar(10),
+	paytype nvarchar(50),
 	money float,
+	total float,
+	tranmoney1 float,
+	tranmoney2 float,
+	tranmoney3 float,
+	spricemoney float,
+	wcost float,
+	inte float,
+	profit float,
 	salesno nvarchar(50),
 	sales nvarchar(50),
 	enda bit
 )
 insert @tmp
-select datea,noa,money,salesno,sales,case when isnull(b.custno,'')!='' then 1 else 0 end
-from vcc106 a left join @custno b on a.custno=b.custno
-where (datea between @t_bdate and @t_edate)
+select '9',a.datea,a.noa,a.typea,a.paytype,a.money,c.total,c.tranmoney,c.tranmoney2,c.tranmoney3
+,round(case when ISNULL(c.sprice2,0)>0 then c.sprice2 else c.sprice end*case when UPPER(c.unit)='KG' or len(ISNULL(c.unit,''))=0 then c.[weight] else c.mount end,0)
+,round(ISNULL(c.wcost,0)*case when UPPER(c.unit)='KG' or len(ISNULL(c.unit,''))=0 then c.[weight] else c.mount end,0)
+,0,0,salesno,sales
+,case when isnull(b.custno,'')!='' then 1 else 0 end
+from view_vcc a left join @custno b on a.custno=b.custno
+left join view_vccs c on a.accy=c.accy and a.noa=c.noa
+where (a.datea between @t_bdate and @t_edate)
 and (salesno=@t_sssno)
+and not exists(select * from view_workbs where a.noa=ordeno)
+
+update @tmp set inte = isnull(round(total
+		*case when patindex('%[0-9]%',ISNULL(paytype,''))>0 then CAST(substring(ISNULL(paytype,''),patindex('%[0-9]%',ISNULL(paytype,'')),len(ISNULL(paytype,''))+2-patindex('%[0-9]%',ISNULL(paytype,''))- patindex('%[0-9]%',reverse(ISNULL(paytype,'')))) as int) else 0 end
+		*0.0004*(case when typea='2' then -1 else 1 end),0),0)
+	
+update @tmp set profit = total-tranmoney1-tranmoney2-tranmoney3-spricemoney-wcost-inte
+
+insert @tmp(gno,datea,noa,money,profit,salesno,sales,enda)
+select '0',datea,noa,money,round(SUM(case when typea='1' then 1 else -1 end*isnull(profit,0))* 4.5/100,0)
+,salesno,sales,enda
+from @tmp
+group by datea,noa,money,salesno,sales,enda
+
+delete @tmp where gno='9'
 
 select * from @tmp
 order by datea,noa
