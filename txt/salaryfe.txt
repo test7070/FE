@@ -1,4 +1,4 @@
-﻿import:--salaryfe.txt import          salaryfe.aspx	業務
+﻿import:--salaryfe.txt import         salaryfe.aspx	業務
 	declare @t_mon nvarchar(20) = [1]
 	
 	declare @t_bmon nvarchar(20) = left(dbo.AD2ChineseEraName(dateadd(MM,-1, dbo.ChineseEraName2AD(@t_mon+'/01'))),6)
