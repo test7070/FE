@@ -50,15 +50,8 @@
             
             function sum() {
                 var t_money=0;
-                for (var j = 0; j < q_bbsCount; j++) { 
-                   switch ($('#cmbTypea').val()){
-                        case '1':
-                            $('#txtWidth_'+j).val(q_mul(q_div($('#txtPert').val(),100),$('#txtDime_'+j).val())); 
-                        default:
-                            $('#txtWidth_'+j).val(q_float('txtWidth_' + j)); 
-                            break;
-                   }   
-                   t_money=q_add(t_money, q_float('txtWidth_' + j));
+                for (var j = 0; j < q_bbsCount; j++) {
+                   t_money=q_add(t_money, q_float('txtWidth_' + j));   
                 }
                 $('#txtTotal').val(t_money);
             }
@@ -68,6 +61,7 @@
 				bbmMask = [['txtDatea', r_picd],['txtBdate', r_picd],['txtEdate', r_picd],['txtTime', r_picd]];
 				bbsMask = [['txtDatea', r_picd]];
 				q_mask(bbmMask);
+				document.title='共享業務獎金制度';
 				q_cmbParse("cmbTypea",'1@介紹,2@共享業務,3@居家業務,4@居家專職業務,5@在職專職業務');
 				q_cmbParse("cmbWorkno",'1@由公司報價,2@自主報價');
 				q_cmbParse("cmbWorktime",'@,1@是,2@否');
@@ -83,10 +77,11 @@
                         $('#lblBonus_st').text('抽傭金');
                     }else if($('#cmbMech').val()=='2'){
                         $('.isMech').show();
-                        $('#lblBonus_st').text('抽毛利');
+                        $('#lblBonus_st').text('抽毛利30%');
                     }else{
                         $('.isMech').hide();
                     }
+                    sum();
                 });
                 
                 $('#btnPrice').click(function() {
@@ -229,7 +224,8 @@
                         alert('請輸入日期。');
                         return;
                     }
-                    q_func('qtxt.query.workbfe_vcc', 'workbfe.txt,import,' + encodeURI(t_bdate) + ';' + encodeURI(t_edate)+ ';' + encodeURI(t_salesno));     
+                    q_func('qtxt.query.workbfe_vcc', 'workbfe.txt,import,' + encodeURI(t_bdate) + ';' + encodeURI(t_edate)+ ';' + encodeURI(t_salesno));
+                    
                 });
 			}
 
@@ -258,8 +254,44 @@
                     case 'qtxt.query.workbfe_vcc':
                         var as = _q_appendData("tmp0", "", true, true);
                         if (as[0] != undefined) {
-                            q_gridAddRow(bbsHtm, 'tbbs', 'txtDatea,txtDime,chkEnda,txtOrdeno'
-                            , as.length, as, 'datea,money,enda,noa', 'txtDatea,txtDime,txtOrdeno','');
+                            q_gridAddRow(bbsHtm, 'tbbs', 'txtDatea,txtDime,txtWidth,chkEnda,txtOrdeno'
+                            , as.length, as, 'datea,money,profit,enda,noa', 'txtDatea,txtDime,txtOrdeno','');
+                            for (var j = 0; j < q_bbsCount; j++) {
+                               var t_Width=0
+                               t_Width=$('#txtWidth_'+j).val();  
+                               switch ($('#cmbMech').val()){
+                                    case '2':
+                                        $('#txtWidth_'+j).val(q_mul(q_div($('#txtPert').val(),100),t_Width));
+                                        break;
+                                    case '3':
+                                        $('#txtWidth_'+j).val(round(t_Width*0.045*1.2,0));
+                                        break; 
+                                    case '4':
+                                        $('#txtWidth_'+j).val(round(t_Width*0.045*1.4,0));
+                                        break;
+                                    case '5':
+                                        $('#txtWidth_'+j).val(round(t_Width*0.045*1.6,0));
+                                        break;
+                                    case '6':
+                                        $('#txtWidth_'+j).val(round(t_Width*0.045*1.8,0));
+                                        break;
+                                    case '7':
+                                        $('#txtWidth_'+j).val(round(t_Width*0.045*2,0));
+                                        break;
+                                    case '8':
+                                        $('#txtWidth_'+j).val(round(t_Width*0.045,0));
+                                        break;
+                                    case '9':
+                                        $('#txtWidth_'+j).val(round(t_Width*0.045,0));
+                                        break;
+                                    case '10':
+                                        $('#txtWidth_'+j).val(round(t_Width*0.045,0));  
+                                        break; 
+                                    default:
+                                        $('#txtWidth_'+j).val(t_Width); 
+                                        break;
+                               }  
+                            }
                             sum();
                         } else {
                             alert('無資料!');
@@ -318,15 +350,13 @@
                       $('#cmbWorkano').val('1');
                       $('#cmbWorkbqno').val('1');
                       $('#cmbTeam').val('1');
-                }                  
+                }   
+                               
                 if (q_cur == 1)
                     $('#txtWorker').val(r_name);
                 else
                     $('#txtWorker2').val(r_name);
-              
-                sum();
-                      
-                
+                    
                 if (s1.length == 0 || s1 == "AUTO")
                      q_gtnoa(q_name, replaceAll(q_getPara('sys.key_workb') + (t_date.length == 0 ? q_date() : t_date), '/', ''));
                 else
@@ -359,12 +389,12 @@
 				$('#txt' + bbmKey[0].substr(0, 1).toUpperCase() + bbmKey[0].substr(1)).val(key_value);
 				_btnOk(key_value, bbmKey[0], bbsKey[1], '', 2);
 			}
-
 			function bbsAssign() {
 				for (var i = 0; i < q_bbsCount; i++) {
+				    var t_money=0
 					if (!$('#btnMinus_' + i).hasClass('isAssign')) {
 					   $('#txtWidth_' + i).change(function() {
-                            sum();
+                           sum();
                        });
                        
                        $('#txtOrdeno_'+i).bind('contextmenu',function(e) {
@@ -403,7 +433,7 @@
                     $('#lblBonus_st').text('抽傭金');
                 }else if($('#cmbMech').val()=='2'){
                     $('.isMech').show();
-                    $('#lblBonus_st').text('抽毛利');
+                    $('#lblBonus_st').text('抽毛利30%');
                 }else{
                     $('.isMech').hide();
                 }
@@ -654,7 +684,7 @@
                         <td class="td1"><span> </span><a id='lblMech_st' class="lbl">獎金制度類型</a></td>
                         <td class="td2" colspan="3"><select id="cmbMech"> </select></td>
                         <td class="td5 isMech"><span> </span><a id='lblBonus_st' class="lbl"> </a></td>
-                        <td class="td6 isMech"><input id="txtPert" type="text" class="txt c3"/> %</td>
+                        <td class="td6 isMech"><input id="txtPert" type="text" class="txt c1"/></td>
                     </tr>
                     <tr>
                         <td class="td1"><span> </span><a id='lblWorktime_st' class="lbl">兼職</a></td>
@@ -701,7 +731,7 @@
 						<input class="btn" id="btnPlus" type="button" value='+' style="font-weight: bold;" />
 					</td>
 					<td align="center" style="width:90px;"><a id='lbldatea_s'>日期</a></td>
-					<td align="center" style="width:90px;"><a id='lblDime_s'>交易金額</a></td>
+					<td align="center" style="width:90px;"><a id='lblDime_s'>交貨金額</a></td>
 					<td align="center" style="width:90px;"><a id='lblWidth_s'>獎金</a></td>
 					<td align="center" style="width:60px;"><a id='lblEnda_s'>交貨收款</a></td>
 					<td align="center" style="width:100px;"><a id='lblVccno_s'>出貨單號</a></td>

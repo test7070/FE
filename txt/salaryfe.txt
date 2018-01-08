@@ -1,4 +1,4 @@
-﻿import:--salaryfe.txt import          salaryfe.aspx	業務
+﻿import:--salaryfe.txt import         salaryfe.aspx	業務
 	declare @t_mon nvarchar(20) = [1]
 	
 	declare @t_bmon nvarchar(20) = left(dbo.AD2ChineseEraName(dateadd(MM,-1, dbo.ChineseEraName2AD(@t_mon+'/01'))),6)
@@ -90,8 +90,8 @@
 	and b.noa is not null
 	and isnull(a.salesno,'') like 'B%'
 	and len(ISNULL(c.outdate,''))=0
-	and c.partno='7'
-	
+	and c.partno='07'
+
 	update @tmpa set paytype = rtrim(ltrim(ISNULL(b.paytype,'')))
 	from @tmpa a
 	left join view_vcc b on a.accy=b.accy and a.vccno=b.noa
@@ -133,7 +133,7 @@
 	from @tmpa
 	group by salesno,sales
 	-------------------------------------------------------------------------------------------
-	/*
+		/*
 	7，收現獎金    估1500       ----依收款作業  (現金、匯款、支票兌現日 判斷)
 	(客戶不重複)
 	(當月15號前收現×150/家)
@@ -250,7 +250,7 @@
 	left join cust b on a.custno=b.noa
 	where left(a.datea,6) = @t_mon) a
 	group by sssno
-
+	
 	--成交 (即有訂單的)
 	declare @tmpi table(
 		sel int identity(1,1)
@@ -294,6 +294,7 @@
 		,n01 int --業績
 		,n02 int --毛利
 		,n03 int   --當月15號前收現×150/家
+		,n03a int  --當月15號前收款x50/家
 		,n04 int   --當月30號前收現×100/家	
 		,n05 int   --需拜訪客戶
 		,n06 int   --已拜訪客戶
@@ -328,7 +329,7 @@
 	select noa,namea,indate from sss where noa like 'B%' and len(ISNULL(outdate,''))=0
 
 	-- 本薪、全勤
-	update @tmp set m01=ISNULL(b.[money],0),m02=ISNULL(b.[bo_full],0)
+	update @tmp set m01=ISNULL(b.[money],16000),m02=ISNULL(b.[bo_full],0)
 	from @tmp a
 	outer apply(SELECT top 1 noa,[money],bo_full FROM saladjust where noa=a.sssno and LEFT(datea,6) <= @t_mon) b 
 	-- 業績、毛利
@@ -344,7 +345,9 @@
 	update @tmp set n04=ISNULL(b.n,0)
 	from @tmp a
 	left join @tmpf b on a.sssno=b.sssno and b.typea='30'
-	update @tmp set m07 = n03*150 + n04*100
+	
+	--早收獎金
+	update @tmp set m07 = n03*150 + n04*100,m08 = n03a*50
 	--拜訪客戶
 	/*
 	0~5萬          120家/月
@@ -358,7 +361,8 @@
 	50~100萬      免計全勤
 	100萬以上     免打卡
 	*/
-	update @tmp set n05=case when n01<=50000 then 120
+	update @tmp set n05=case 
+		when n01<=50000  then 120
 		when n01<=100000 then 100
 		when n01<=150000 then 80
 		when n01<=200000 then 60
@@ -368,6 +372,7 @@
 		when n01<=500000 then 0
 		when n01<=100000 then 0 
 		else  0 end
+		
 	update @tmp set n06=ISNULL(b.n,0)
 	from @tmp a
 	left join @tmpg b on a.sssno=b.sssno 
@@ -375,8 +380,7 @@
 	--【第２個月起，試用期間未達標必須扣保收薪資】
 	declare @date nvarchar(20) = dbo.AD2ChineseEraName(DATEADD(MM,-2, DATEADD(DD,-1, dateadd(MM,1,dbo.ChineseEraName2AD(@t_mon+'/01')))))
 	update @tmp set m12 = 1000 - case when n05>n06 then (n05-n06)*50 else 0 end
-	update @tmp set m12 = 0
-	where m12<0 and indate>@date
+	update @tmp set m12 = case when m12<0 then 0 else m12 end
 	-------------------------------------------------------------------------------------------------------
 	--遲到 1000, 30分鐘內扣100/次
 	--暫時先不判斷是不是30分鐘, 不確定出勤記錄表的格式
@@ -422,18 +426,19 @@
 	left join  @tmpi b on a.sssno=b.sssno 
 	--本月應增加件數 
 	update @tmp set b02 =
-		case when n02 < 10000 then 12
-			when n02 < 30000 then 9
-			when n02 < 50000 then 6
+		case 
+			when n02 < 10000  then 12
+			when n02 < 30000  then 9
+			when n02 < 50000  then 6
 			when n02 < 100000 then 4
 			when n02 < 150000 then 2
 			else 0 end
 	--下月應成交件數
 	update @tmp set b03 = isnull(b01,0) + isnull(b02,0)	
 
---select @t_lastdate
---select * from @tmp where len(isnull(indate,''))>0
---return
+	--select @t_lastdate
+	--select * from @tmp where len(isnull(indate,''))>0
+	--return
 
 	--毛利目標
 	update @tmp set c01=
@@ -452,7 +457,8 @@
 	update @tmp set c02= case when n02<c01 then floor(((c01-n02)/10000))*500 else 0 end
 	where DATEDIFF(MM,dbo.ChineseEraName2AD(indate),@t_lastdate)>=7
 	and  len(isnull(indate,''))>0
-
+	update @tmp set c02 = case when c02>=6000 then 6000 else c02 end --目標12萬，最多扣6000
+	
 	--update @tmp set n10=isnull(b.n,0)
 	--from @tmp a
 	--left join @tmph b on a.noa=b.sssno
@@ -468,19 +474,19 @@
 	--left join @tmpj b on a.noa=b.sssno 
 	--where b.mon = @t_mon
 			
-	update @tmp set m06 = ISNULL(b01,0)*100
-	update @tmp set m11 = ISNULL(a01,0)*25 - ISNULL(a02,0)*30
+	update @tmp set m06 = ISNULL(b01,0)*100	--成交獎金 (當月每家×100)
+	update @tmp set m11 = ISNULL(a01,0)*25 - ISNULL(a02,0)*30 --報價獎金 (每單×25)
 	update @tmp set m11 = case when m11<0 then 0 else m11 end
 	/*
 		五，每週應執行標準
 			每月        3天內應           下月應增加
 			毛利        報價案件          成交客戶數
 			1萬內→      6件                   12家
-			3萬內→      4件                    9家
-			5萬內→      3件                    6家
-			10萬內→    2件                   4家
-			15萬內→    1件                   2家
-			15萬以上→  0                      0
+			3萬內→      4件                   9家
+			5萬內→      3件                   6家
+			10萬內→     2件                   4家
+			15萬內→     1件                   2家
+			15萬以上→   0                     0
 
 			(報價3天為一期，可以累積計算)
 			【第３個月起，每月累積，每少報價案件扣100/件】
@@ -498,8 +504,7 @@
 		+ISNULL(m09,0)+ISNULL(m10,0)+ISNULL(m11,0)+ISNULL(m12,0)-(ISNULL(m13,0)+ISNULL(m14,0))
 	
 	select * from @tmp;
-
-
+	
 import3:--salaryfe.txt import3          salaryfe3.aspx	財會
 	declare @t_mon nvarchar(20) = [1]
 	
@@ -535,7 +540,7 @@ import3:--salaryfe.txt import3          salaryfe3.aspx	財會
 		,m08 float  --貸款獎金
 		,m08a float --信用貸款           1%	
 		,m08b float --票貼及應收帳款   0.6%
-        ,m08c float --不動產抵押   	   0.3%
+        	,m08c float --不動產抵押       0.3%
 
 		,m09 float  --計帳獎金
 		,m09a float --發票金額
