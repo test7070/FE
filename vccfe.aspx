@@ -832,6 +832,8 @@
 				var t_datea = $.trim($('#txtDatea').val());
 				var t_where='';
 				for(var i=0;i<q_bbsCount;i++){
+					if($('#txtProduct_'+i).val().indexOf('加工')>=0)
+						continue;
 					if($('#txtProduct_'+i).val().indexOf('費')>=0)
 						continue;
 					if($('#txtProduct_'+i).val().indexOf('租')>=0)
