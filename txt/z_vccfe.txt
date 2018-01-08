@@ -23,6 +23,8 @@ declare @taxtype nvarchar(10)
 declare @t_userno nvarchar(100)='[37]'
 declare @t_rank nvarchar(100)='[38]'
 declare @t_addr2 nvarchar(100)
+declare @t_bmon nvarchar(10)
+declare @t_emon nvarchar(10)
 -------------------------------------------------------------------------------------------------------
 set @t_bdate = case when '#non'=[4] then '' else [4] end
 set @t_edate = case when '#non'=[5] then char(255) else [5] end
@@ -42,7 +44,9 @@ set @t_showinvono = case when '#non' = [22] then 0 else [22] end
 set @vcctypea = case when '#non' = [20] then '' else [20] end
 set @t_partno = case when '#non' = [21] then '' else [21] end
 set @taxtype = case when '#non' = [36] then '' else [36] end
-set @t_addr2 = case when '#non'=[39] then '' else [39] end
+--set @t_addr2 = case when '#non'=[39] then '' else [39] end
+set @t_bmon = case when '#non' = [26] then '' else [26] end
+set @t_emon = case when '#non' = [27] then char(255) else [27] end
 
 if(@t_project='VU')
 	set @qhref_acomp='_vu'
@@ -95,7 +99,8 @@ insert into @result
 		  and (isnull(c.tggno,'') between @t_btggno and @t_etggno) and (len(@vcctypea)=0 or a.typea = @vcctypea) 
 		  and (len(@t_partno)=0 or s.partno=@t_partno)
 		  and (len(@taxtype)=0 or @taxtype=a.taxtype)
-		  and (len(@t_addr2)=0 or a.addr2 like '%'+@t_addr2+'%')
+		  --and (len(@t_addr2)=0 or a.addr2 like '%'+@t_addr2+'%')
+		  and (a.mon between @t_bmon and @t_emon)
 	order by a.datea,gno,noa,noq
 	
 if(@t_rank<'8' and left(@t_userno,1)='B' and @t_project='FE')
@@ -138,8 +143,8 @@ left join cust b on a.custno=b.noa
 
 select gno, noa, noq, typea, datea, LEFT(datea,6) xdatea, mon, custno, comp, productno, replace(xproduct,'~#$',char(39)) xproduct,unit,qhref
 	,dbo.getComma(lengthb,2)  lengthb
-	,dbo.getComma(mount,[23])  mount
-	,dbo.getComma(weight,[24])  weight
+	,dbo.getComma(mount,0)  mount
+	,dbo.getComma(weight,0)  weight
 	,dbo.getComma(price,[25])  price
 	,dbo.getComma(total,0)  total
 	,invono,idate
