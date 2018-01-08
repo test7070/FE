@@ -123,9 +123,9 @@ insert into @result(gno,datea,noa,mount,weight,price,total)
 		sum((case typea when '1' then total else (-1)*total end))
 	from @result group by datea
 	
-insert into @result(gno,datea,noa,mount,weight,price,total)
-	select '94',left(datea,6)+'z','ZZZZZZZZZZZZ',sum(mount),sum(weight),sum(price),sum(total)
-	from @result a where gno='93' group by left(datea,6)
+insert into @result(gno,noa,mount,weight,price,total)
+	select '94','ZZZZZZZZZZZZ',sum(mount),sum(weight),sum(price),sum(total)
+	from @result a where gno='93'
 --*************************************************************************	
 update @result set typea = (case typea when '1' then '出' else '退' end) where typea ='1' or typea = '2'
 update @result set gno='0' where gno='91'
@@ -140,6 +140,8 @@ where typea='退'
 update @result set comp=a.custno+' '+isnull(b.nick,'')
 from @result a
 left join cust b on a.custno=b.noa
+
+update @result set datea = (select MAX(datea) from @result) where gno='3'
 
 select gno, noa, noq, typea, datea, LEFT(datea,6) xdatea, mon, custno, comp, productno, replace(xproduct,'~#$',char(39)) xproduct,unit,qhref
 	,dbo.getComma(lengthb,2)  lengthb
