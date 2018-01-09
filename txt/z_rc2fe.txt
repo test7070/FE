@@ -73,7 +73,10 @@ where product=a.product and datea< a.datea
 group by product)b
 left join view_rc2s c on c.noa=b.noa and b.product = c.product
 update @tmp set memo = case when memo > price then ''
-			    when memo < price then '上次單價:'+memo+'(' + cast(round(((price-memo)/memo*100),0) as nvarchar)+'%)' end
+			    when memo < price 
+			    then 
+			    case when cast(memo as float)>0 then '上次單價:'+memo+'(' + cast(round(((price-memo)/memo*100),0) as nvarchar)+'%)' else '上次單價:0' end
+			    end
 
 select gno, noa, noq,typea, datea, LEFT(datea,6) xdatea, mon, tggno, nick comp, productno, product,unit,memo
 ,dbo.getComma(lengthb,2)  lengthb
