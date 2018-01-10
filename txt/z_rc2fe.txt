@@ -353,14 +353,14 @@ declare @t_bpro nvarchar(30)
 declare @t_epro nvarchar(30)
 declare @t_bdate nvarchar(10)
 declare @t_edate nvarchar(10)
-declare @bprice float
-declare @eprice float
+declare @price2 float
+declare @price3 float
 set @t_bpro = case when '#non'=[8] then '' else [8] end
 set @t_epro = case when '#non'=[9] then char(255) else [9] end
 set @t_bdate = case when '#non'=[12] then '' else [12] end
 set @t_edate = case when '#non'=[13] then char(255) else [13] end
-set @bprice = case when '#non'=[17] then 0.000 else cast([17] as float) end
-set @eprice = case when '#non'=[18] then 999.990 else cast([18] as float) end
+set @price2 = case when '#non'=[17] then '' else [17] end
+set @price3 = case when '#non'=[18] then -999.990 else cast([18] as float) end
 declare @tmp table(
 	gno nvarchar(3),
 	datea nvarchar(30),
@@ -371,15 +371,15 @@ declare @tmp table(
 	mount float,
 	weight float,
 	price float,
-	price2 nvarchar(30)
+	price2 nvarchar(30),
+	price3 float
 )
 insert into @tmp (gno,noa,datea,productno,product,unit,mount,weight,price)
 select '0',noa,datea,productno,product,unit,mount,weight,price
-from view_rc2s 
+from view_rc2s[1]
 where mount>0 and product!='' 
 and productno between @t_bpro and @t_epro 
 and datea between @t_bdate and @t_edate
-and price between @bprice and @eprice
 
 insert into @tmp (gno,product,mount)
 select '1',product,sum(mount)
@@ -387,19 +387,33 @@ from @tmp group by product
 
 update a set price2=c.price from @tmp a	--比前次單價
 outer apply (select max(noa) noa ,MAX(datea) datea,product from view_rc2s[1]
-where product=a.product and datea< a.datea
+where product = a.product and datea < a.datea
 group by product)b
 left join view_rc2s[1] c on c.noa=b.noa and b.product = c.product
-update @tmp set price2 = case when price2 > price 
+
+update @tmp set price3 = 
+				case 
+				when price2 > price 
 				then
-				case when cast(price2 as float)>0 then price2+'(' + cast(round(((price-price2)/price2*100),0) as nvarchar)+'%)' else '0' end
+				case when cast(price2 as float)>0 then round(((price-price2)/price2*100),0) else 0 end
+				
 			    when price2 < price 
 			    then 
-			    case when cast(price2 as float)>0 then price2+'(' + cast(round(((price-price2)/price2*100),0) as nvarchar)+'%)' else '0' end
+			    case when cast(price2 as float)>0 then round(((price-price2)/price2*100),0) else 0 end
 			    end
-
-
-select * from @tmp order by product,gno; 
+if([17]='1')
+begin
+select * from @tmp 
+where price = 0 and (price3 > @price3 or price3 is null)
+order by product,gno
+end
+else
+begin
+select * from @tmp 
+where (price3 > @price3)
+order by product,gno
+end
+;
 --***********************************************************************************
 z_rc2_vu1:--z_rc2_vu1
 declare @t_accy nvarchar(10)
