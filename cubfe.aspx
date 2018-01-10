@@ -2273,6 +2273,12 @@
 						}
 					}
 				}
+				
+				for (var i=0;i<t_same.length;i++){
+					//數量少的先裁剪
+					t_same[i].data.sort(function(a, b) {if(a.mount>b.mount) {return 1;} if (a.mount < b.mount) {return -1;} return 0;});
+				}
+				
 				//判斷領料裁剪出的數量是否符合裁剪單的資料
 				for (var j = 0; j < q_bbtCount; j++) {
 					if(!emp($('#txtProductno__'+j).val()) && !emp($('#txtProduct__'+j).val()) &&!emp($('#txtMemo2__'+j).val()) &&!emp($('#txtNor__'+j).val())){
@@ -2953,7 +2959,7 @@
 									var a_cutlengthbs=[];
 									var b_cutlengthbs=[];
 									for(var n=0;n<cutlengthb.length;n++){
-										if(clength%dec(cutlengthb[n])>0){
+										if(clength%dec(cutlengthb[n])>0 || t_sortlen>dec(cutlengthb[n])){
 											a_cutlengthbs.push(dec(cutlengthb[n]));
 										}else{
 											b_cutlengthbs.push(dec(cutlengthb[n]));
@@ -3068,7 +3074,7 @@
 										var a_cutlengthbs=[];
 										var b_cutlengthbs=[];
 										for(var n=0;n<cutlengthb.length;n++){
-											if(clength%dec(cutlengthb[n])>0){
+											if(clength%dec(cutlengthb[n])>0 || t_sortlen>dec(cutlengthb[n])){
 												a_cutlengthbs.push(dec(cutlengthb[n]));
 											}else{
 												b_cutlengthbs.push(dec(cutlengthb[n]));
@@ -3098,7 +3104,7 @@
 											var a_cutlengthbs=[];
 											var b_cutlengthbs=[];
 											for(var n=0;n<cutlengthb.length;n++){
-												if(clength%dec(cutlengthb[n])>0){
+												if(clength%dec(cutlengthb[n])>0 || t_sortlen>dec(cutlengthb[n])){
 													a_cutlengthbs.push(dec(cutlengthb[n]));
 												}else{
 													b_cutlengthbs.push(dec(cutlengthb[n]));
@@ -3211,7 +3217,7 @@
 												var a_cutlengthbs=[];
 												var b_cutlengthbs=[];
 												for(var n=0;n<cutlengthb.length;n++){
-													if(clength%dec(cutlengthb[n])>0){
+													if(clength%dec(cutlengthb[n])>0 || t_sortlen>dec(cutlengthb[n])){
 														a_cutlengthbs.push(dec(cutlengthb[n]));
 													}else{
 														b_cutlengthbs.push(dec(cutlengthb[n]));
@@ -3576,18 +3582,27 @@
 							//重新排序--------------------------------------------------
 							//讀取相同材質號數的長度
 							cutlengthb=[];
+							cutlengthballs=[];
+							maxcutlengthb='0';
+							maxcutlengthbs=[];
+							
+							var t_cutlengthb=[];
 							for (var j=0;j<t_same.length;j++){
 								var tspec2=t_same[j].spec;
 								var tsize2=t_same[j].size;
 								var tmount2=t_same[j].mount;
 								var lengthb2=dec(t_same[j].lengthb);
 								if(tspec1==tspec2 && tsize1==tsize2 && dec(tmount2)>0){
-									cutlengthb.push(lengthb2);
+									t_cutlengthb.push({
+										'lengthb':lengthb2,
+										'mount':tmount2
+									});
 								}
 							}
-							
-							//裁剪長度排序(最長,...,最短)
-							cutlengthb.sort(function(a, b) {if(a>b) {return -1;} if (a < b) {return 1;} return 0;});
+							t_cutlengthb.sort(function(a, b) {if(a.mount>b.mount) {return 1;} if (a.mount < b.mount) {return -1;} if(a.lengthb>b.lengthb) {return 1;} if (a.lengthb < b.lengthb) {return -1;} return 0;});
+							for (var j=0;j<t_cutlengthb.length;j++){
+								cutlengthb.push(t_cutlengthb[j].lengthb);
+							}
 							maxcutlengthb=cutlengthb[0];
 						}
 					}
