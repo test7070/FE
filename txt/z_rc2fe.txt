@@ -385,33 +385,29 @@ insert into @tmp (gno,product,mount)
 select '1',product,sum(mount)
 from @tmp group by product
 
-update a set price2=c.price from @tmp a	--比前次單價
+if(@price3!=0) --有輸入上次進價時再找上一次的單價
+begin
+update a set price2=c.price from @tmp a	--比前次單價 
 outer apply (select max(noa) noa ,MAX(datea) datea,product from view_rc2s[1]
-where product = a.product and datea < a.datea
-group by product)b
-left join view_rc2s[1] c on c.noa=b.noa and b.product = c.product
+where product = a.product and datea < a.datea 
+group by product)b 
+left join view_rc2s[1] c on c.noa=b.noa and b.product = c.product 
 
 update @tmp set price3 = 
-				case 
-				when price2 > price 
-				then
-				case when cast(price2 as float)>0 then round(((price-price2)/price2*100),0) else 0 end
-				
-			    when price2 < price 
-			    then 
-			    case when cast(price2 as float)>0 then round(((price-price2)/price2*100),0) else 0 end
-			    end
-if([17]='1')
-begin
-select * from @tmp 
-where price = 0 and (price3 > @price3 or price3 is null)
-order by product,gno
+case when cast(price2 as float)>0 then round(((price-price2)/price2*100),0) else 0 end 
 end
-else
-begin
+
+if(@price2='1') --單價選擇無單價
+begin 
 select * from @tmp 
-where (price3 > @price3)
+where (price = 0 and price3!=0) or (price=0 and price3 is null)
 order by product,gno
+end 
+else 
+begin 
+select * from @tmp 
+where (price3 > @price3 and price3!=0) or (price >= 0 and price3 is null)
+order by product,gno 
 end
 ;
 --***********************************************************************************
