@@ -229,7 +229,9 @@ z_quatfep01:--	z_quatfep01
 	insert into @tmp (gno,pno,quatno)select '6',6,@t_noa
 	insert into @tmp (gno,pno,quatno)select '7',7,@t_noa
 	insert into @tmp (gno,pno,quatno)select '8',8,@t_noa
-	insert into @tmp (gno,pno,quatno,worker)select '9',9,@t_noa,@worker
+	insert into @tmp (gno,pno,quatno)select '9',9,@t_noa
+	insert into @tmp (gno,pno,quatno)select '10',10,@t_noa
+	insert into @tmp (gno,pno,quatno,worker)select '11',11,@t_noa,@worker
 	--------------------------------------------------------------------
 	update @tmp set custno=isnull(b.custno,''),cust=isnull(b.comp,''),tel=b.tel,fax=b.fax
 		,addr=case when len(ISNULL(b.addr2,''))>0 then ISNULL(b.post2,'')+ISNULL(b.addr2,'') else ISNULL(b.post,'')+ISNULL(b.addr,'') end

@@ -1,4 +1,4 @@
-z_rc2fep1:--z_rc2fep1
+﻿z_rc2fep1:--z_rc2fep1
 declare @t_bxnoa nvarchar(20)
 declare @t_exnoa nvarchar(20)
 declare @t_showprice nvarchar(20)
@@ -162,7 +162,7 @@ declare @tmp table(
 	a_money float,
 	a_total float,
 	b_productno nvarchar(30),
-	b_products nvarchar(30),
+	b_products nvarchar(250),
 	b_unit nvarchar(15),
 	b_mount float,
 	b_weight float,

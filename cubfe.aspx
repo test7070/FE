@@ -159,6 +159,13 @@
 						t_where += " and (b.product like '%" + t_m1 + "%') ";
 					}
 					
+					//107/01/08
+					t_where+=" and b.mech1 not between '04' and '06A'";
+					t_where+=" and b.mech2 not between '04' and '06A'";
+					t_where+=" and b.mech3 not between '04' and '06A'";
+					t_where+=" and b.mech4 not between '04' and '06A'";
+					t_where+=" and b.mech5 not between '04' and '06A'";
+					
 					if(q_cur==1 || q_cur==2)
 						q_box("workjsfe_b.aspx?" + r_userno + ";" + r_name + ";" + q_time + ";" + t_where, 'workjsfe_b', "95%", "95%", q_getMsg('popOrde'));
 				});
@@ -184,6 +191,7 @@
 					getp1 (); //最長
 					getp2 (); //數量多
 					getp3 (); //最長 數量相同
+					getp4 (); //數量少
 					
 					//將板料寫回bbt
 					//先清空bbt
@@ -194,6 +202,7 @@
 					var p1c1=0,p1m1=0,pp1=$.extend(true,[], t_p1getucc);
 					var p2c1=0,p2m1=0,pp2=$.extend(true,[], t_p2getucc);
 					var p3c1=0,p3m1=0,pp3=$.extend(true,[], t_p3getucc);
+					var p4c1=0,p4m1=0,pp4=$.extend(true,[], t_p4getucc);
 					//pp1--------------------------------------------------------
 					for (var i = 0; i < pp1.length; i++) {
 						pp1[i].cutlen.sort(function(a, b) { if(dec(a) > dec(b)) {return 1;} if (dec(a) < dec(b)) {return -1;} return 0;})
@@ -334,35 +343,114 @@
 						}
 					}
 					p3m1=t_tpp.length;
+					//pp4--------------------------------------------------------
+					for (var i = 0; i < pp4.length; i++) {
+						pp4[i].cutlen.sort(function(a, b) { if(dec(a) > dec(b)) {return 1;} if (dec(a) < dec(b)) {return -1;} return 0;})
+						
+						var t_lens='',t_mounts=0,t_totallen=0;
+						for (var j = 0; j < pp4[i].cutlen.length; j++) {
+							if(pp4[i].cutlen[j].toString()!='' && pp4[i].cutlen[j].toString()!='0'){
+								if(t_lens!='' && t_lens!=pp4[i].cutlen[j]){
+									//非損耗
+									if(!(t_lens==pp4[i].wlengthb.toString() && (dec(t_lens)<=pp4[i].lengthb*dec($('#txtMo').val()/100) || dec(t_lens)<=dec($('#txtWaste').val())))){
+										if(t_lens==pp4[i].wlengthb.toString()){
+											pp4[i].wlengthb=0;
+										}else
+										t_totallen=q_add(t_totallen,q_mul(dec(t_lens),t_mounts));
+									}
+									t_mounts=0;
+								}
+								t_mounts=t_mounts+1;
+								t_lens=pp4[i].cutlen[j].toString();
+							}
+						}
+						//含最後一筆
+						if(dec(t_lens)>0){
+							if(!(t_lens==pp4[i].wlengthb.toString() && (dec(t_lens)<=pp4[i].lengthb*dec($('#txtMo').val()/100) || dec(t_lens)<=dec($('#txtWaste').val())))){
+								if(t_lens==pp4[i].wlengthb.toString()){
+									pp4[i].wlengthb=0;
+								}
+								t_totallen=q_add(t_totallen,q_mul(dec(t_lens),t_mounts));
+							}
+						}
+					}
+					
+					var t_tpp=[];
+					for (var i = 0; i < pp4.length; i++) {
+						p4c1=q_add(dec(p4c1),dec(pp4[i].wlengthb));
+						var t_j=-1;
+						for(var j=0;j<t_tpp.length;j++){
+							if(t_tpp[j]==pp4[i].cutlen.toString()){
+								t_j=j
+								break;
+							}
+						}
+						if(t_j==-1){
+							t_tpp.push(pp4[i].cutlen.toString());
+						}
+					}
+					p4m1=t_tpp.length;
 					//--------------------------------------------------------
 					//t_p1getucc,t_p2getucc
 					var getucc=[];
 					if($('#cmbProcess').val()=='1'){//最低損耗
 						if(p1c1<=p2c1){
 							if(p1c1<=p3c1){
-								getucc=$.extend(true,[], t_p1getucc);
+								if(p1c1<=p4c1){
+									getucc=$.extend(true,[], t_p1getucc);
+								}else{
+									getucc=$.extend(true,[], t_p4getucc);
+								}
 							}else{
-								getucc=$.extend(true,[], t_p3getucc);
+								if(p3c3<=p4c1){
+									getucc=$.extend(true,[], t_p3getucc);
+								}else{
+									getucc=$.extend(true,[], t_p4getucc);
+								}
 							}
 						}else{
 							if(p2c1<=p3c1){
-								getucc=$.extend(true,[], t_p2getucc);
+								if(p2c1<=p4c1){
+									getucc=$.extend(true,[], t_p2getucc);
+								}else{
+									getucc=$.extend(true,[], t_p4getucc);
+								}
 							}else{
-								getucc=$.extend(true,[], t_p3getucc);
+								if(p3c3<=p4c1){
+									getucc=$.extend(true,[], t_p3getucc);
+								}else{
+									getucc=$.extend(true,[], t_p4getucc);
+								}
 							}
 						}
 					}else{//最低換料
 						if(p1m1<=p2m1){
 							if(p1m1<=p3m1){
-								getucc=$.extend(true,[], t_p1getucc);
+								if(p1m1<=p4m1){
+									getucc=$.extend(true,[], t_p1getucc);
+								}else{
+									getucc=$.extend(true,[], t_p4getucc);
+								}
 							}else{
-								getucc=$.extend(true,[], t_p3getucc);
+								if(p3m1<=p4m1){
+									getucc=$.extend(true,[], t_p3getucc);
+								}else{
+									getucc=$.extend(true,[], t_p4getucc);
+								}
 							}
 						}else{
 							if(p2m1<=p3m1){
-								getucc=$.extend(true,[], t_p2getucc);
+								if(p2m1<=p4m1){
+									getucc=$.extend(true,[], t_p2getucc);
+								}else{
+									getucc=$.extend(true,[], t_p4getucc);
+								}
 							}else{
-								getucc=$.extend(true,[], t_p3getucc);
+								if(p3m1<=p4m1){
+									getucc=$.extend(true,[], t_p3getucc);
+								}else{
+									getucc=$.extend(true,[], t_p4getucc);
+								}
 							}
 						}
 					}
@@ -2185,6 +2273,12 @@
 						}
 					}
 				}
+				
+				for (var i=0;i<t_same.length;i++){
+					//數量少的先裁剪
+					t_same[i].data.sort(function(a, b) {if(a.mount>b.mount) {return 1;} if (a.mount < b.mount) {return -1;} return 0;});
+				}
+				
 				//判斷領料裁剪出的數量是否符合裁剪單的資料
 				for (var j = 0; j < q_bbtCount; j++) {
 					if(!emp($('#txtProductno__'+j).val()) && !emp($('#txtProduct__'+j).val()) &&!emp($('#txtMemo2__'+j).val()) &&!emp($('#txtNor__'+j).val())){
@@ -2685,7 +2779,7 @@
 				}
 			}
 			
-			//106/11/15 最長 與 最短且相同數量配對
+			//107/01/08 數量少
 			function getp4 (){
 				var t_err='';
 				//---------------------------------------------------------------
@@ -2824,19 +2918,29 @@
 						
 						//讀取相同材質號數的長度
 						cutlengthb=[];
+						cutlengthballs=[];
+						maxcutlengthb='0';
+						maxcutlengthbs=[];
+						
+						var t_cutlengthb=[];
 						for (var j=0;j<t_same.length;j++){
 							var tspec2=t_same[j].spec;
 							var tsize2=t_same[j].size;
 							var tmount2=t_same[j].mount;
 							var lengthb2=dec(t_same[j].lengthb);
 							if(tspec1==tspec2 && tsize1==tsize2 && dec(tmount2)>0){
-								cutlengthb.push(lengthb2);
+								t_cutlengthb.push({
+									'lengthb':lengthb2,
+									'mount':tmount2
+								});
 							}
 						}
-						
-						//裁剪長度排序(最長,...,最短)
-						cutlengthb.sort(function(a, b) {if(a>b) {return -1;} if (a < b) {return 1;} return 0;});
+						t_cutlengthb.sort(function(a, b) {if(a.mount>b.mount) {return 1;} if (a.mount < b.mount) {return -1;} if(a.lengthb>b.lengthb) {return 1;} if (a.lengthb < b.lengthb) {return -1;} return 0;});
+						for (var j=0;j<t_cutlengthb.length;j++){
+							cutlengthb.push(t_cutlengthb[j].lengthb);
+						}
 						maxcutlengthb=cutlengthb[0];
+						//----------------------------------------------------------------------
 						
 						//裁切組合
 						var t_cups=[];
@@ -2850,68 +2954,22 @@
 								var clength=(dec(t_cutsheet[k])*100); //原單位M
 								if(sheetlength.indexOf(t_cutsheet[k])>-1){//要使用板料=設定中可用的裁剪板料
 									bcount++;
-									var cutlengthbs=[];
+									
+									//cutlengthbs=$.extend(true,[], cutlengthb);
 									var a_cutlengthbs=[];
 									var b_cutlengthbs=[];
-									var c_cutlengthbs=[];
-									var d_cutlengthbs=[];
-									
-									var t_maxlenmount=0;
-									for (var j=0;j<t_same.length;j++){
-										var tspec2=t_same[j].spec;
-										var tsize2=t_same[j].size;
-										var tmount2=t_same[j].mount;
-										var lengthb2=dec(t_same[j].lengthb);
-										if(tspec1==tspec2 && tsize1==tsize2 && dec(maxcutlengthb)==lengthb2 && dec(tmount2)>0){
-											for(var l=0;t_same[j].data.length;l++){
-												if(dec(t_same[j].data[l].mount)>0){
-													t_maxlenmount=dec(t_same[j].data[l].mount);
-													break;
-												}	
-											}
-											break;
-										}
-									}
-									
-									//最短裁剪長度限制
 									for(var n=0;n<cutlengthb.length;n++){
-										if(dec(cutlengthb[n])!=dec(maxcutlengthb)){
-											for (var j=0;j<t_same.length;j++){
-												var tspec2=t_same[j].spec;
-												var tsize2=t_same[j].size;
-												var tmount2=t_same[j].mount;
-												var lengthb2=dec(t_same[j].lengthb);
-												if(tspec1==tspec2 && tsize1==tsize2 && dec(cutlengthb[n])==lengthb2 && dec(tmount2)>0){
-													var ttt_mount=0;
-													for(var l=0;t_same[j].data.length;l++){
-														if(dec(t_same[j].data[l].mount)>0){
-															ttt_mount=dec(t_same[j].data[l].mount);
-															break;
-														}	
-													}
-													
-													if(t_maxlenmount==ttt_mount){
-														a_cutlengthbs.push(dec(cutlengthb[n]));
-													}else if (t_maxlenmount<ttt_mount && ttt_mount % t_maxlenmount ==0 ){ // 倍數
-														d_cutlengthbs.push(dec(cutlengthb[n]));
-													}else if (t_maxlenmount<ttt_mount){
-														b_cutlengthbs.push(dec(cutlengthb[n]));
-													}else{
-														c_cutlengthbs.push(dec(cutlengthb[n]));
-													}
-													
-													break;
-												}
-											}
+										if(clength%dec(cutlengthb[n])>0 || t_sortlen>dec(cutlengthb[n])){
+											a_cutlengthbs.push(dec(cutlengthb[n]));
+										}else{
+											b_cutlengthbs.push(dec(cutlengthb[n]));
 										}
 									}
 									
-									rep='';
-									cutlengthbs=$.extend(true,[], a_cutlengthbs);//數量相同
+									cutlengthbs=$.extend(true,[], a_cutlengthbs);
+									//cutlengthbs=cutlengthbs.concat(b_cutlengthbs);
 									//cutlengthbs=cutlengthbs.concat([dec(maxcutlengthb)]);
-									cutlengthbs=cutlengthbs.concat(d_cutlengthbs); //數量多且倍數
-									cutlengthbs=cutlengthbs.concat(b_cutlengthbs); //數量多
-									//cutlengthbs=cutlengthbs.concat(c_cutlengthbs); //數量少
+									rep='';
 									
 									t_cupsp=false;
 									var t_cup=getmlength2(clength,clength,maxcutlengthb,cutlengthbs,'',[],t_same,tspec1,tsize1);
@@ -3006,11 +3064,27 @@
 									//--------------------------------------
 									if(t_cup.length==0){
 										rep='';
-										cutlengthbs=$.extend(true,[], a_cutlengthbs);//數量相同
-										cutlengthbs=cutlengthbs.concat(d_cutlengthbs);//數量多且倍數
-										cutlengthbs=cutlengthbs.concat(b_cutlengthbs);//數量多
-										cutlengthbs=cutlengthbs.concat(c_cutlengthbs);//數量少
+										if(b_cutlengthbs.indexOf(maxcutlengthb)>-1){
+											cutlengthbs=cutlengthbs=$.extend(true,[], b_cutlengthbs);
+										}
+										
+										t_cup=getmlength(clength,clength,maxcutlengthb,cutlengthbs,'',[],[],tspec1,tsize1);
+									}
+									if(t_cup.length==0){
+										var a_cutlengthbs=[];
+										var b_cutlengthbs=[];
+										for(var n=0;n<cutlengthb.length;n++){
+											if(clength%dec(cutlengthb[n])>0 || t_sortlen>dec(cutlengthb[n])){
+												a_cutlengthbs.push(dec(cutlengthb[n]));
+											}else{
+												b_cutlengthbs.push(dec(cutlengthb[n]));
+											}
+										}
+										
+										cutlengthbs=$.extend(true,[], a_cutlengthbs);
+										cutlengthbs=cutlengthbs.concat(b_cutlengthbs);
 										cutlengthbs=cutlengthbs.concat([dec(maxcutlengthb)]);
+										rep='';
 										t_cup=getmlength(clength,clength,maxcutlengthb,cutlengthbs,'',[],t_same,tspec1,tsize1);
 									}else{
 										t_cupsp=true;
@@ -3025,69 +3099,23 @@
 										clength=(dec(t_cutsheet[k])*100)+t_level; //原單位M
 										if(sheetlength.indexOf(t_cutsheet[k])>-1){//要使用板料=設定中可用的裁剪板料
 											bcount++;
-											var cutlengthbs=[];
+											//cutlengthbs=$.extend(true,[], cutlengthb);
+											
 											var a_cutlengthbs=[];
 											var b_cutlengthbs=[];
-											var c_cutlengthbs=[];
-											var d_cutlengthbs=[];
-											
-											var t_maxlenmount=0;
-											for (var j=0;j<t_same.length;j++){
-												var tspec2=t_same[j].spec;
-												var tsize2=t_same[j].size;
-												var tmount2=t_same[j].mount;
-												var lengthb2=dec(t_same[j].lengthb);
-												if(tspec1==tspec2 && tsize1==tsize2 && dec(maxcutlengthb)==lengthb2 && dec(tmount2)>0){
-													for(var l=0;t_same[j].data.length;l++){
-														if(dec(t_same[j].data[l].mount)>0){
-															t_maxlenmount=dec(t_same[j].data[l].mount);
-															break;
-														}	
-													}
-													break;
-												}
-											}
-											
-											//最短裁剪長度限制
 											for(var n=0;n<cutlengthb.length;n++){
-												if(dec(cutlengthb[n])!=dec(maxcutlengthb)){
-													for (var j=0;j<t_same.length;j++){
-														var tspec2=t_same[j].spec;
-														var tsize2=t_same[j].size;
-														var tmount2=t_same[j].mount;
-														var lengthb2=dec(t_same[j].lengthb);
-														if(tspec1==tspec2 && tsize1==tsize2 && dec(cutlengthb[n])==lengthb2 && dec(tmount2)>0){
-															var ttt_mount=0;
-															for(var l=0;t_same[j].data.length;l++){
-																if(dec(t_same[j].data[l].mount)>0){
-																	ttt_mount=dec(t_same[j].data[l].mount);
-																	break;
-																}	
-															}
-															
-															if(t_maxlenmount==ttt_mount){
-																a_cutlengthbs.push(dec(cutlengthb[n]));
-															}else if (t_maxlenmount<ttt_mount && ttt_mount % t_maxlenmount ==0 ){ // 倍數
-																d_cutlengthbs.push(dec(cutlengthb[n]));
-															}else if (t_maxlenmount<ttt_mount){
-																b_cutlengthbs.push(dec(cutlengthb[n]));
-															}else{
-																c_cutlengthbs.push(dec(cutlengthb[n]));
-															}
-															
-															break;
-														}
-													}
+												if(clength%dec(cutlengthb[n])>0 || t_sortlen>dec(cutlengthb[n])){
+													a_cutlengthbs.push(dec(cutlengthb[n]));
+												}else{
+													b_cutlengthbs.push(dec(cutlengthb[n]));
 												}
 											}
+											
+											cutlengthbs=$.extend(true,[], a_cutlengthbs);
+											//cutlengthbs=cutlengthbs.concat(b_cutlengthbs);
+											//cutlengthbs=cutlengthbs.concat([dec(maxcutlengthb)]);
 											
 											rep='';
-											cutlengthbs=$.extend(true,[], a_cutlengthbs);//數量相同
-											//cutlengthbs=cutlengthbs.concat([dec(maxcutlengthb)]);
-											cutlengthbs=cutlengthbs.concat(d_cutlengthbs);//數量多且倍數
-											cutlengthbs=cutlengthbs.concat(b_cutlengthbs);//數量多
-											//cutlengthbs=cutlengthbs.concat(c_cutlengthbs);//數量少
-											
 											var t_cup=getmlength2(clength,clength,maxcutlengthb,cutlengthbs,'',[],t_same,tspec1,tsize1);
 											//---------------------------------------
 											//取得所需數量
@@ -3178,14 +3206,29 @@
 											}
 											
 											//--------------------------------------
-											
 											if(t_cup.length==0 && !t_cupsp){
 												rep='';
-												cutlengthbs=$.extend(true,[], a_cutlengthbs);//數量相同
+												if(b_cutlengthbs.indexOf(maxcutlengthb)>-1){
+													cutlengthbs=cutlengthbs=$.extend(true,[], b_cutlengthbs);
+												}
+												t_cup=getmlength(clength,clength,maxcutlengthb,cutlengthbs,'',[],[],tspec1,tsize1);
+											}
+											if(t_cup.length==0 && !t_cupsp){
+												var a_cutlengthbs=[];
+												var b_cutlengthbs=[];
+												for(var n=0;n<cutlengthb.length;n++){
+													if(clength%dec(cutlengthb[n])>0 || t_sortlen>dec(cutlengthb[n])){
+														a_cutlengthbs.push(dec(cutlengthb[n]));
+													}else{
+														b_cutlengthbs.push(dec(cutlengthb[n]));
+													}
+												}
+												
+												cutlengthbs=$.extend(true,[], a_cutlengthbs);
+												cutlengthbs=cutlengthbs.concat(b_cutlengthbs);
 												cutlengthbs=cutlengthbs.concat([dec(maxcutlengthb)]);
-												cutlengthbs=cutlengthbs.concat(d_cutlengthbs);//數量多且倍數
-												cutlengthbs=cutlengthbs.concat(b_cutlengthbs);//數量多
-												cutlengthbs=cutlengthbs.concat(c_cutlengthbs);//數量少
+												
+												rep='';
 												var t_cup=getmlength(clength,clength,maxcutlengthb,cutlengthbs,'',[],t_same,tspec1,tsize1);
 											}
 											t_cup.sort(function(a, b) { if(a.wrate > b.wrate) {return 1;} if (a.wrate < b.wrate) {return -1;}if(a.cutlength.split(',').length>b.cutlength.split(',').length) {return 1;}if(a.cutlength.split(',').length<b.cutlength.split(',').length) {return -1;}return 0;});
@@ -3539,18 +3582,27 @@
 							//重新排序--------------------------------------------------
 							//讀取相同材質號數的長度
 							cutlengthb=[];
+							cutlengthballs=[];
+							maxcutlengthb='0';
+							maxcutlengthbs=[];
+							
+							var t_cutlengthb=[];
 							for (var j=0;j<t_same.length;j++){
 								var tspec2=t_same[j].spec;
 								var tsize2=t_same[j].size;
 								var tmount2=t_same[j].mount;
 								var lengthb2=dec(t_same[j].lengthb);
 								if(tspec1==tspec2 && tsize1==tsize2 && dec(tmount2)>0){
-									cutlengthb.push(lengthb2);
+									t_cutlengthb.push({
+										'lengthb':lengthb2,
+										'mount':tmount2
+									});
 								}
 							}
-							
-							//裁剪長度排序(最長,...,最短)
-							cutlengthb.sort(function(a, b) {if(a>b) {return -1;} if (a < b) {return 1;} return 0;});
+							t_cutlengthb.sort(function(a, b) {if(a.mount>b.mount) {return 1;} if (a.mount < b.mount) {return -1;} if(a.lengthb>b.lengthb) {return 1;} if (a.lengthb < b.lengthb) {return -1;} return 0;});
+							for (var j=0;j<t_cutlengthb.length;j++){
+								cutlengthb.push(t_cutlengthb[j].lengthb);
+							}
 							maxcutlengthb=cutlengthb[0];
 						}
 					}
