@@ -158,13 +158,15 @@
 					if(t_m1.length>0){
 						t_where += " and (b.product like '%" + t_m1 + "%') ";
 					}
+					//107/01/15
+					t_where+=" and isnull(b.mech1,'')='"+t_mech+"'";
 					
 					//107/01/08
-					t_where+" and b.mech1 not between '04' and '06A'";
-					t_where+" and b.mech2 not between '04' and '06A'";
-					t_where+" and b.mech3 not between '04' and '06A'";
-					t_where+" and b.mech4 not between '04' and '06A'";
-					t_where+" and b.mech5 not between '04' and '06A'";
+					//t_where+=" and b.mech1 not between '04' and '06A'";
+					//t_where+=" and b.mech2 not between '04' and '06A'";
+					//t_where+=" and b.mech3 not between '04' and '06A'";
+					//t_where+=" and b.mech4 not between '04' and '06A'";
+					//t_where+=" and b.mech5 not between '04' and '06A'";
 					
 					if(q_cur==1 || q_cur==2)
 						q_box("workjsfe_b.aspx?" + r_userno + ";" + r_name + ";" + q_time + ";" + t_where, 'workjsfe_b', "95%", "95%", q_getMsg('popOrde'));
