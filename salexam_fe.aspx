@@ -96,16 +96,47 @@
 							$('#btnPlus').click();
 						
 						for(var i=0;i<as.length;i++){
-							for(var j=0;j<a.length;j++){
-								if(as[i].noa == a[j].noa){
-									$('#txtPart_'+i).val(a[j].description);
-									break;
-								}
-							}
 							$('#txtJobno_'+i).val(as[i].noa);
 							$('#txtJob_'+i).val(as[i].noq);
 							$('#txtNamea_'+i).val(as[i].description);
 							$('#txtWorkdegree_'+i).val(as[i].weight);
+							var t_typea = $.trim($('#txtTypea').val());
+							if(t_typea=='內勤'){
+								if(as[i].noq>=0)
+									$('#txtPart_'+i).val('公司管理系統操作及執行');
+								if(as[i].noq>28)
+									$('#txtPart_'+i).val('電腦技能');
+								if(as[i].noq>34)
+									$('#txtPart_'+i).val('相關專業');
+								if(as[i].noq>39)
+									$('#txtPart_'+i).val('公司產品銷售專業知識、尺寸、規格、廠商、化學成份、物理特性、用途');
+								if(as[i].noq>122)
+									$('#txtPart_'+i).val('學歷');
+								if(as[i].noq>128)
+									$('#txtPart_'+i).val('證照');
+								if(as[i].noq>138)
+									$('#txtPart_'+i).val('語文能力');
+								if(as[i].noq>144)
+									$('#txtPart_'+i).val('工作表現');
+							}
+							if(t_typea=='廠務'){
+								if(as[i].noq>=0)
+									$('#txtPart_'+i).val('保養及修護');
+								if(as[i].noq>17)
+									$('#txtPart_'+i).val('機具及車輛操作');
+								if(as[i].noq>33)
+									$('#txtPart_'+i).val('職能經驗');
+								if(as[i].noq>45)
+									$('#txtPart_'+i).val('工作知識');
+								if(as[i].noq>70)
+									$('#txtPart_'+i).val('學歷');
+								if(as[i].noq>76)
+									$('#txtPart_'+i).val('專業');
+								if(as[i].noq>86)
+									$('#txtPart_'+i).val('證照');
+								if(as[i].noq>95)
+									$('#txtPart_'+i).val('工作態度');
+							}
 						}
 						sum();
 						//console.log(a);
