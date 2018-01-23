@@ -78,7 +78,7 @@
 				q_cmbParse("cmbMechno", "01@剪台,02@火切,12@D10盤圓,13@D13盤圓,20@續接裁剪");
 				q_cmbParse("cmbProcess", "2@最少排刀,1@最低損耗");
 				
-				document.title='鋼筋裁剪單 1.1';
+				document.title='鋼筋裁剪單';
 				q_gt('add5', "where=^^1=1^^" , 0, 0, 0, "getadd5",r_accy,1); //號數
 				var as = _q_appendData("add5", "", true);
 				as.sort(function(a, b){if (dec(a.typea) > dec(b.typea)) {return 1;}if (dec(a.typea) < dec(b.typea)) {return -1;}});
@@ -2276,10 +2276,10 @@
 					}
 				}
 				
-				for (var i=0;i<t_same.length;i++){
+				/*for (var i=0;i<t_same.length;i++){
 					//數量少的先裁剪
 					t_same[i].data.sort(function(a, b) {if(a.mount>b.mount) {return 1;} if (a.mount < b.mount) {return -1;} return 0;});
-				}
+				}*/
 				
 				//判斷領料裁剪出的數量是否符合裁剪單的資料
 				for (var j = 0; j < q_bbtCount; j++) {
@@ -2291,23 +2291,26 @@
 						var tsize=tproduct.split(' ')[1].split('*')[0];
 						var tlength=dec(tproduct.split('*')[1])*100;
 						var t_memo2=replaceAll($('#txtMemo2__'+j).val().substr(0,$('#txtMemo2__'+j).val().indexOf('=')),'(入庫)','').split('+');
-						var t_nor=','+$('#txtNor__'+j).val()+',';
+						var t_nor=$('#txtNor__'+j).val().split(','); //107/01/23 按順項次扣料必免提前扣料
 						var t_lengthc=$('#txtLengthc__'+j).val();
 						var t_werr=false;
 						for(var k=0;k<t_memo2.length;k++){
 							var clength=dec(t_memo2[k].split('*')[0]);
 							var cmount=q_mul(dec(t_memo2[k].split('*')[1]),tmount);
-							for (var i=0;i<t_same.length;i++){
-								for (var n=0;n<t_same[i].data.length;n++){
-									if(t_same[i].spec==tspec && t_same[i].size==tsize && (t_same[i].lengthb==clength || (dec(t_same[i].lengthb)>=dec(clength) && dec(t_same[i].lengthb)-dec(t_same[i].data[n].tw03)<=dec(clength)))){
-										var t_ccmount=0;
-										if(t_nor.indexOf(','+t_same[i].data[n].nor.toString()+',')>-1 && cmount>0){
+							for(var o=0;o<t_nor.length;o++){
+								for (var i=0;i<t_same.length;i++){
+									for (var n=0;n<t_same[i].data.length;n++){
+										if(t_same[i].spec==tspec && t_same[i].size==tsize 
+											&& (t_same[i].lengthb==clength || (dec(t_same[i].lengthb)>=dec(clength) && dec(t_same[i].lengthb)-dec(t_same[i].data[n].tw03)<=dec(clength)))
+											&& t_nor[o]==t_same[i].data[n].nor.toString() && cmount>0
+										){
+											var t_ccmount=0;
 											if(((t_lengthc>twaste && twaste>0) 
 											|| (t_lengthc>tmo*tlength && tmo>0)) && !t_werr){
 												t_err=t_err+'領料 第'+(j+1)+'項 裁剪組料損耗('+t_lengthc+') 超出訂單可損耗長度!! \n';
 												t_werr=true;
 											}
-											
+												
 											if(t_same[i].data[n].mount>=cmount){
 												t_ccmount=cmount;
 												t_same[i].data[n].mount=t_same[i].data[n].mount-cmount;
