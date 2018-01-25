@@ -119,7 +119,7 @@
                 
                 if(q_cur==1){
                 	t_where = "where=^^ noa='" + t_noa + "'^^";
-					q_gt('salexambase', t_where, 0, 0, 0, "noa_change", r_accy);	
+					q_gt('salexambase', t_where, 0, 0, 0, "noa_btnOk", r_accy);	
                 }else{
                 	wrServer(t_noa);
                 }
