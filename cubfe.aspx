@@ -69,7 +69,8 @@
 				
 				$('#txtC1').val(t_c1);
 			}
-
+			
+			var safeas=[];//安全庫存量
 			function mainPost() {
 				q_getFormat();
 				bbmMask = [['txtDatea', r_picd], ['txtBdate', r_picd], ['txtEdate', r_picd]];
@@ -190,10 +191,81 @@
 					//根據標籤拆或不同品項 裁剪內容拆分
 					//---------------------------------------------------------------
 					Lock(1);
+					//107/01/26-抓取安全存量-------------------------------------
+					safeas=[];
+					var t_specsize=[];
+					var t_cutsheet=$('#combStatus').val();//可裁剪的板料長度
+					var maxcutsheet=0;//最大板料長度
+					if($('#combStatus').find("option:selected").text().length==0){
+						t_cutsheet='12';
+						t_cutsheet=t_cutsheet.split(',');
+					}
+					for (var i = 0; i < t_cutsheet.length; i++) {
+						if(maxcutsheet<dec(t_cutsheet[i])*100){
+							maxcutsheet=dec(t_cutsheet[i])*100;
+						}
+					}
+					for (var i = 0; i < q_bbsCount; i++) {
+						if(!emp($('#txtProductno_'+i).val()) && !emp($('#txtProduct_'+i).val()) 
+						&& ($('#txtProduct_'+i).val().indexOf('鋼筋')>-1 || $('#txtProduct_'+i).val().indexOf('螺栓')>-1)
+						&& dec($('#txtLengthb_'+i).val())<=maxcutsheet){
+							var tproduct=$('#txtProduct_'+i).val();
+							//材質號數長度
+							var tspec='';
+							var tsize='';
+							if(tproduct.indexOf('螺栓')>-1){
+								tspec='SD420W';
+								tsize=replaceAll(replaceAll(tproduct.split('#')[0]+'#','基礎螺栓',''),'抗震專利','');
+							}else{ //鋼筋
+								tspec=tproduct.substr(tproduct.indexOf('S'),tproduct.indexOf(' ')-tproduct.indexOf('S'));
+								tsize=tproduct.split(' ')[1].split('*')[0];
+							}
+							
+							var t_j=-1;
+							for (var j=0;j<t_specsize.length;j++){
+								if(t_specsize[j].spec==tspec && t_specsize[j].size==tsize){
+									t_j=j;
+									break;
+								}
+							}
+							
+							if(t_j<0){
+								t_specsize.push({
+									'spec':tspec,
+									'size':tsize
+								});
+							}
+							
+						}
+					}
+					
+					for (var i=0;i<t_specsize.length;i++){
+						var tspec1=t_specsize[i].spec;
+						var tsize1=t_specsize[i].size;
+						q_func('qtxt.query.safemountfe', 'cub.txt,safemountfe,' + encodeURI(q_date())+';'+encodeURI(tspec1+' ')+';'+encodeURI(tsize1),r_accy,1);
+						var as = _q_appendData("tmp0", "", true, true);
+						if (as[0] != undefined) {
+							for (var j=0;j<as.length;j++){
+								var tlen=dec(replaceAll(as[j].product.split('#*')[1],'M',''))*100;
+								as[j].lengthb=tlen;
+								as[j].spec=tspec1;
+								as[j].size=tsize1;
+							}
+							
+							safeas=safeas.concat(as);
+						}
+					}
+					//---------------------------------------------------
+					
+					
 					getp1 (); //最長
+					console.log('getp1');
 					getp2 (); //數量多
+					console.log('getp2');
 					getp3 (); //最長 數量相同
+					console.log('getp3');
 					getp4 (); //數量少
+					console.log('getp4');
 					
 					//將板料寫回bbt
 					//先清空bbt
@@ -698,6 +770,16 @@
 					t_same[i].maxmount=round(t_same[i].mount*(t_m9/100),0);
 				}
 				
+				//107/01/26加入安全存量
+				for (var i=0;i<safeas.length;i++){
+					for (var j=0;j<t_same.length;j++){
+						if(safeas[i].spec==t_same[j].spec && safeas[i].size==t_same[j].size && safeas[i].lengthb==t_same[j].lengthb){
+							var t_mount=dec(safeas[i].safemount)-dec(safeas[i].mount);
+							t_same[j].maxmount=q_add(dec(t_same[j].maxmount),t_mount);
+						}
+					}
+				}
+				
 				var getucc=[];
 									
 				//推算選料
@@ -966,10 +1048,10 @@
 								if(a.wrate < b.wrate) {return -1;}
 								/*if(lengthmount(a.cutlength,t_same,maxcutlengthbs)>lengthmount(b.cutlength,t_same,maxcutlengthbs)){return -1;}
 								if(lengthmount(a.cutlength,t_same,maxcutlengthbs)<lengthmount(b.cutlength,t_same,maxcutlengthbs)){return 1;}*/
-								if(dec(a.olength.toString().substr(0,a.olength.toString().length-2)+'00') > dec(b.olength.toString().substr(0,b.olength.toString().length-1)+'00')) {return -2;}
-								if(dec(a.olength.toString().substr(0,a.olength.toString().length-2)+'00') < dec(b.olength.toString().substr(0,b.olength.toString().length-1)+'00')) {return 2;}
-								if(a.olength > b.olength) {return -1;} 
-								if(a.olength < b.olength) {return 1;}
+								if(dec(a.olength.toString().substr(0,a.olength.toString().length-2)+'00') > dec(b.olength.toString().substr(0,b.olength.toString().length-2)+'00')) {return -1;}
+								if(dec(a.olength.toString().substr(0,a.olength.toString().length-2)+'00') < dec(b.olength.toString().substr(0,b.olength.toString().length-2)+'00')) {return 1;}
+								if(a.olength > b.olength) {return 1;} 
+								if(a.olength < b.olength) {return -1;}
 								if(lengthgroup(a.cutlength)>lengthgroup(b.cutlength)){return 1;}
 								if(lengthgroup(a.cutlength)<lengthgroup(b.cutlength)){return -1;} 
 								if(a.cutlength.split(',').length>b.cutlength.split(',').length) {return 1;}
@@ -1274,6 +1356,16 @@
 					t_m9=0;
 				for (var i=0;i<t_same.length;i++){
 					t_same[i].maxmount=round(t_same[i].mount*(t_m9/100),0);
+				}
+				
+				//107/01/26加入安全存量
+				for (var i=0;i<safeas.length;i++){
+					for (var j=0;j<t_same.length;j++){
+						if(safeas[i].spec==t_same[j].spec && safeas[i].size==t_same[j].size && safeas[i].lengthb==t_same[j].lengthb){
+							var t_mount=dec(safeas[i].safemount)-dec(safeas[i].mount);
+							t_same[j].maxmount=q_add(dec(t_same[j].maxmount),t_mount);
+						}
+					}
 				}
 				
 				var getucc=[];
@@ -2873,6 +2965,16 @@
 					t_same[i].maxmount=round(t_same[i].mount*(t_m9/100),0);
 				}
 				
+				//107/01/26加入安全存量
+				for (var i=0;i<safeas.length;i++){
+					for (var j=0;j<t_same.length;j++){
+						if(safeas[i].spec==t_same[j].spec && safeas[i].size==t_same[j].size && safeas[i].lengthb==t_same[j].lengthb){
+							var t_mount=dec(safeas[i].safemount)-dec(safeas[i].mount);
+							t_same[j].maxmount=q_add(dec(t_same[j].maxmount),t_mount);
+						}
+					}
+				}
+				
 				var getucc=[];
 									
 				//推算選料
@@ -3705,6 +3807,16 @@
 					t_m9=0;
 				for (var i=0;i<t_same.length;i++){
 					t_same[i].maxmount=round(t_same[i].mount*(t_m9/100),0);
+				}
+				
+				//107/01/26加入安全存量
+				for (var i=0;i<safeas.length;i++){
+					for (var j=0;j<t_same.length;j++){
+						if(safeas[i].spec==t_same[j].spec && safeas[i].size==t_same[j].size && safeas[i].lengthb==t_same[j].lengthb){
+							var t_mount=dec(safeas[i].safemount)-dec(safeas[i].mount);
+							t_same[j].maxmount=q_add(dec(t_same[j].maxmount),t_mount);
+						}
+					}
 				}
 				
 				var getucc=[];
