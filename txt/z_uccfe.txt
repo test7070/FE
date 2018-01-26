@@ -52,6 +52,8 @@ where (a.datea between @t_bdate and @t_edate)and
 	  (b.productno between @t_bproductno and @t_eproductno)and
 	  (CHARINDEX('1',@t_sel)=0 or a.typea='2')and
 	  (b.lengthb=0)
+---有需要再開放
+----delete @tmp where product LIKE '%費%' AND product NOT LIKE '%加工%'  
 
 --取收款方式天數(供算利息)
 declare @noa nvarchar(30)
@@ -975,6 +977,8 @@ z_uccfe3:--z_uccfe3
 		from #z_uccfe3 a left join ucc b on a.productno = b.noa order by productno,recno
 		
 		update @tmp set gno=CAST(CAST(gno as int )+6 as nvarchar(10))
+		---有需要再開放
+		----delete @tmp where product LIKE '%費%' AND product NOT LIKE '%加工%'  
 		
 		--插入表頭分頁
 		insert @tmp(gno,pp,qq,storeno,recno,pno)
@@ -1629,6 +1633,9 @@ z_uccfe1:--z_uccfe1
 			case when a.gno ='3' then 999999 else a.grecno end ,a.recno,a.storeno,a.store,a.productno,a.product,a.unit,a.mount,a.[weight],
 			a.price,a.[money],CEILING(a.mount/NULLIF(b.stdmount,0)) carton,a.typea
 		from #z_uccfe1 a left join ucc b on a.productno = b.noa order by productno,recno	
+		---有需要再開放
+		----delete @tmp where product LIKE '%費%' AND product NOT LIKE '%加工%'  
+		
 		update @tmp
 		set carton=(select SUM(isnull(carton,0)) from @tmp where gno in ('2','4')) where gno='8'
 	end

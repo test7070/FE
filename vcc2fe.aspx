@@ -280,7 +280,6 @@
                     $('#div_stk').toggle();
                 });
 
-                    
                 $( '<input type="button" id="btnGweight" value="實際重" />' ).insertBefore( "#q_acDiv" );
                 $("#btnGweight").click(function(e){
                 	$('.isGweight').toggle();
