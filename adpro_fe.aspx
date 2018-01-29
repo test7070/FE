@@ -17,7 +17,7 @@
 			}
 
 			var q_name = "adpro";
-			var q_readonly = ['txtNoa','txtWeight'];
+			var q_readonly = ['txtProduct'];
 			var bbmNum = [];
 			var bbmMask = [];
 			q_sqlCount = 6;
@@ -27,7 +27,9 @@
 			brwKey = 'noa';
 			brwCount2 = 20;
 			q_desc = 1;
-			aPop = new Array();
+			aPop = new Array(
+				['txtNoa', '', 'ucc', 'noa,product', 'txtNoa,txtProduct', 'ucc_b.aspx']
+			);
 
 			$(document).ready(function() {
 				bbmKey = ['noa'];
@@ -48,40 +50,19 @@
 			function mainPost() {
 				bbmMask = [];
 				q_mask(bbmMask);
-				bbmNum = [['txtWidth', 15, q_getPara('vcc.weightPrecision'), 1],['txtDime', 15, q_getPara('vcc.weightPrecision'), 1],['txtWeight', 15, q_getPara('vcc.weightPrecision'), 1]];
-				document.title='鋼筋存量設定';
-				q_gt('add5', "where=^^1=1^^" , 0, 0, 0, "getadd5",r_accy,1); //號數
-				var as = _q_appendData("add5", "", true);
-				as.sort(function(a, b){if (a.typea > b.typea) {return 1;}if (a.typea < b.typea) {return -1;}});
-				var t_item = " @ ";
-				if (as[0] != undefined) {
-					for ( i = 0; i < as.length; i++) {
-						t_item = t_item + (t_item.length > 0 ? ',' : '') + as[i].typea + '@' + as[i].typea;
-					}
-				}
-				q_cmbParse("cmbStyle", t_item);
+				bbmNum = [['txtDiffprice', 3, 0, 1],['txtExprice', 1, 0, 1],['txtExreprice', 1, 0, 1]];
+				document.title='安全庫存增加模式作業';
 				
-				q_gt('addrcase', "where=^^1=1^^", 0, 0, 0, "getaddrcase",r_accy,1); //材質
-				var as = _q_appendData("addrcase", "", true);
-				as.sort(function(a, b){if (a.addr > b.addr) {return 1;}if (a.addr < b.addr) {return -1;}});
-				t_item = " @ ";
-				if (as[0] != undefined) {
-					for ( i = 0; i < as.length; i++) {
-						t_item = t_item + (t_item.length > 0 ? ',' : '') + as[i].addr + '@' + as[i].addr;
+				$('#txtExprice').change(function() {
+					if($(this).val()!='1'){
+						$(this).val(0);
 					}
-				}
-				q_cmbParse("cmbMon", t_item);
-				q_gt('adsize', "where=^^1=1 and mon!='' ^^", 0, 0, 0, "getadsize",r_accy,1); //長度
-				var as = _q_appendData("adsize", "", true);
-				as.sort(function(a, b){if (a.mon > b.mon) {return 1;}if (a.mon < b.mon) {return -1;}});
-				t_item = " @ ";
-				if (as[0] != undefined) {
-					for ( i = 0; i < as.length; i++) {
-						t_item = t_item + (t_item.length > 0 ? ',' : '') + as[i].mon + '@' + as[i].mon;
+				});
+				$('#txtExreprice').change(function() {
+					if($(this).val()!='1'){
+						$(this).val(0);
 					}
-				}
-				q_cmbParse("cmbMemo1", t_item);
-				
+				});
 			}
 			
 			function q_boxClose(s2) {
@@ -98,15 +79,12 @@
 					case 'check_btnOk':
 						var as = _q_appendData("adpro", "", true);
                         if (as[0] != undefined) {
-                            alert('號數:'+as[0].style+' 材質:'+as[0].mon+' 長度:'+as[0].memo1+' 已存在!!');
+                            alert('物品編號【'+as[0].noa+'】已存在!!');
                             Unlock();
                             return;
                         } else {
                             var s1 = $('#txt' + bbmKey[0].substr(0, 1).toUpperCase() + bbmKey[0].substr(1)).val();
-							if (s1.length == 0 || s1 == "AUTO")
-								q_gtnoa(q_name, replaceAll(q_date(), '/', ''));
-							else
-								wrServer(s1);
+							wrServer(s1);
                         }
 						break;
 					case q_name:
@@ -119,13 +97,12 @@
 			function _btnSeek() {
 				if (q_cur > 0 && q_cur < 4)
 					return;
-				q_box('adpro_fe_s.aspx', q_name + '_s', "500px", "450px", q_getMsg("popSeek"));
+				q_box('adpro_fe_s.aspx', q_name + '_s', "500px", "250px", q_getMsg("popSeek"));
 			}
 
 			function btnIns() {
 				_btnIns();
-				$('#txtNoa').val('AUTO');
-				$('#cmbStyle').focus();
+				$('#txtDiffprice').val('10');
 			}
 
 			function btnModi() {
@@ -133,7 +110,6 @@
 					return;
 				_btnModi();
 				$('#txtNoa').attr('disabled', 'disabled')
-				$('#cmbStyle').focus();
 			}
 
 			function btnPrint() {
@@ -148,11 +124,20 @@
 			}
 
 			function btnOk() {
+				var t_err = q_chkEmpField([['txtNoa', '物品編號']]);
+				if (t_err.length > 0) {
+					alert(t_err);
+					return;
+				}
+				
 				Lock();
-				
-				
-				t_where = "where=^^ style='" + $('#cmbStyle').val() + "' and mon='" + $('#cmbMon').val() + "' and memo1='" + $('#cmbMemo1').val() + "' and noa!='"+$('#txtNoa').val()+"' ^^";
-				q_gt('adpro', t_where, 0, 0, 0, "check_btnOk", r_accy);
+				var s1 = $('#txt' + bbmKey[0].substr(0, 1).toUpperCase() + bbmKey[0].substr(1)).val();
+				if(q_cur==1){
+					t_where = "where=^^ noa='" + $('#txtNoa').val() + "' ^^";
+					q_gt('adpro', t_where, 0, 0, 0, "check_btnOk", r_accy);
+				}else{
+					wrServer(s1);
+				}
 			}
 
 			function wrServer(key_value) {
@@ -168,15 +153,6 @@
 
 			function refresh(recno) {
 				_refresh(recno);
-				$('#vewStyle').text('號數');
-				$('#vewMon').text('材質');
-				$('#vewMemo1').text('長度');
-				$('#lblStyle').text('號數');
-				$('#lblMon').text('材質');
-				$('#lblMemo1').text('長度');
-				$('#lblWidth').text('安全庫存量');
-				$('#lblDime').text('螢幕顯示量');
-				$('#lblWeight').text('庫存量');
 			}
 
 			function readonly(t_para, empty) {
@@ -365,15 +341,13 @@
 				<table class="tview" id="tview">
 					<tr>
 						<td align="center" style="width:20px; color:black;"><a id='vewChk'> </a></td>
-						<td align="center" style="width:150px; color:black;"><a id='vewStyle'> </a></td>
-						<td align="center" style="width:160px; color:black;"><a id='vewMon'> </a></td>
-						<td align="center" style="width:180px; color:black;"><a id='vewMemo1'> </a></td>
+						<td align="center" style="width:150px; color:black;"><a id='vewNoafe'>物品編號</a></td>
+						<td align="center" style="width:160px; color:black;"><a id='vewProductfe'>物品名稱</a></td>
 					</tr>
 					<tr>
 						<td ><input id="chkBrow.*" type="checkbox" style=' '/></td>
-						<td id='style' style="text-align: center;">~style</td>
-						<td id='mon' style="text-align: center;">~mon</td>
-						<td id='memo1' style="text-align: center;">~memo1</td>
+						<td id='noa' style="text-align: center;">~noa</td>
+						<td id='product' style="text-align: center;">~product</td>
 					</tr>
 				</table>
 			</div>
@@ -383,34 +357,26 @@
 						<td> </td>
 						<td> </td>
 						<td> </td>
+						<td> </td>
 						<td class="tdZ"> </td>
 					</tr>
 					<tr>
-						<td><span> </span><a id='lblStyle' class="lbl"> </a></td>
-						<td>
-							<select id='cmbStyle'> </select>
-							<input id="txtNoa"  type="text" class="txt c1" style="display: none;" />
-						</td>
+						<td><span> </span><a id='lblNoa_fe' class="lbl">物品編號</a></td>
+						<td><input id="txtNoa" type="text" class="txt c1" /></td>
 					</tr>
 					<tr>
-						<td><span> </span><a id='lblMon' class="lbl"> </a></td>
-						<td><select id='cmbMon'> </select></td>
+						<td><span> </span><a id='lblProduct_fe' class="lbl">物品名稱</a></td>
+						<td colspan="3"><input id="txtProduct" type="text" class="txt c1" /></td>
 					</tr>
 					<tr>
-						<td><span> </span><a id='lblMemo1' class="lbl"> </a></td>
-						<td><select id='cmbMemo1'> </select></td>
+						<td><span> </span><a id='lblDiffprice_fe' class="lbl">增加比例</a></td>
+						<td><input id="txtDiffprice" type="text" class="txt num c1" style="width: 75%;"/><a class="lbl">%</a></td>
 					</tr>
 					<tr>
-						<td><span> </span><a id='lblWidth' class="lbl"> </a></td>
-						<td><input id="txtWidth"  type="text" class="txt num c1" /></td>
-					</tr>
-					<tr>
-						<td><span> </span><a id='lblDime' class="lbl"> </a></td>
-						<td><input id="txtDime"  type="text" class="txt num c1" /></td>
-					</tr>
-					<tr>
-						<td><span> </span><a id='lblWeight' class="lbl"> </a></td>
-						<td><input id="txtWeight"  type="text" class="txt num c1" /></td>
+						<td><span> </span><a id='lblExprice_fe' class="lbl">第一次增量</a></td>
+						<td><input id="txtExprice" type="text" class="txt num c1" style="width: 20px;" /></td>
+						<td><span> </span><a id='lblExreprice_fe' class="lbl">第二次增量</a></td>
+						<td><input id="txtExreprice" type="text" class="txt num c1" style="width: 20px;" /></td>
 					</tr>
 					
 				</table>
