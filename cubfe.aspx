@@ -125,7 +125,7 @@
 				if (as[0] != undefined) {
 					for (var j=0;j<as.length;j++){
 						var tproduct=as[j].product;
-						var tlen=dec(replaceAll(tproduct.split('#*')[1],'M',''))*100;
+						var tlen=round(dec(replaceAll(tproduct.split('#*')[1],'M',''))*100,0);
 						var tspec='';
 						var tsize='';
 						if(tproduct.indexOf('螺栓')>-1){
@@ -135,14 +135,20 @@
 							tspec=tproduct.substr(tproduct.indexOf('S'),tproduct.indexOf(' ')-tproduct.indexOf('S'));
 							tsize=tproduct.split(' ')[1].split('*')[0];
 						}
-						var tmount=as[j].mount;
-						var tsafe=as[j].safemount;
+						var tmount=round(as[j].mount,0);
+						var tsafe=round(as[j].safemount,0);
 						
 						t_htmlsafe+="<tr><td>"+tspec+"</td><td>"+tsize+"</td><td>"+tlen+"</td><td style='text-align: right;'>"+tmount+"</td><td style='text-align: right;'>"+tsafe+"</td></tr>";
 					}
 				}
-				if(as.length>0)
+				if(as.length>0){
 					$('#tstksafe').html(t_htmlsafe);
+					$('#btnSafefe').show();
+				}
+					
+				$('#btnSafefe').click(function() {
+					$('#dstksafe').toggle();
+				});
 				
 				$('#btnWorkjImport').click(function() {
 					var t_workjno=$('#textWorkjno').val();
@@ -589,6 +595,18 @@
 						$('#btnPlut').click()
 					}
 					
+					//取最小定尺尺寸
+					var t_stlen=50;
+					if(getucc[0]!= undefined){
+						q_gt('adknife', "where=^^ style='"+getucc[0].size+"'^^", 0, 0, 0, "getadknife",r_accy,1);
+						var as = _q_appendData("adknife", "", true);
+						if(as[0]!= undefined){
+							if(as[0].memo.length>0){
+								t_stlen=dec(replaceAll(as[0].memo.split('/'),'cm',''));
+							}
+						}
+					}
+					
 					var t_n=0,as_where=[];
 					for (var i = 0; i < getucc.length; i++) {
 						var t_weight=0;
@@ -618,7 +636,7 @@
 							if(getucc[i].cutlen[j].toString()!='' && getucc[i].cutlen[j].toString()!='0'){
 								if(t_lens!='' && t_lens!=getucc[i].cutlen[j]){
 									//非損耗
-									if(!(t_lens==getucc[i].wlengthb.toString() && (dec(t_lens)<=getucc[i].lengthb*dec($('#txtMo').val()/100) || dec(t_lens)<=dec($('#txtWaste').val()))) && dec(t_lens)>=50){
+									if(!(t_lens==getucc[i].wlengthb.toString() && (dec(t_lens)<=getucc[i].lengthb*dec($('#txtMo').val()/100) || dec(t_lens)<=dec($('#txtWaste').val()))) && dec(t_lens)>=t_stlen){
 										if(t_lens==getucc[i].wlengthb.toString()){
 											t_memo2=t_memo2+(t_memo2.length>0?'+':'')+t_lens+'*'+t_mounts+"(入庫)";
 											getucc[i].wlengthb=0;
@@ -634,7 +652,7 @@
 						}
 						//含最後一筆
 						if(dec(t_lens)>0){
-							if(!(t_lens==getucc[i].wlengthb.toString() && (dec(t_lens)<=getucc[i].lengthb*dec($('#txtMo').val()/100) || dec(t_lens)<=dec($('#txtWaste').val()))) && dec(t_lens)>=50){
+							if(!(t_lens==getucc[i].wlengthb.toString() && (dec(t_lens)<=getucc[i].lengthb*dec($('#txtMo').val()/100) || dec(t_lens)<=dec($('#txtWaste').val()))) && dec(t_lens)>=t_stlen){
 								if(t_lens==getucc[i].wlengthb.toString()){
 									t_memo2=t_memo2+(t_memo2.length>0?'+':'')+t_lens+'*'+t_mounts+"(入庫)";
 									getucc[i].wlengthb=0;
@@ -6589,12 +6607,12 @@
 						<td><input id="txtWorker2" type="text" class="txt c1"/></td>
 						<td> </td>
 						<td class="cut"> </td>
-						<td class="cut"> </td>
+						<td class="cut"><input id="btnSafefe" type="button" value="低於安全存量" style="display: none;" ></td>
 						<td class="cut"> </td>
 					</tr>
 				</table>
 			</div>
-			<div id="dstksafe" style="float: left;">
+			<div id="dstksafe" style="float: left;display: none;">
 				<table id="tstksafe" border="1" style="background: aliceblue;text-align: center;">
 				</table>
 			</div>
