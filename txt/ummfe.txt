@@ -122,7 +122,8 @@ check:--check
 	
 	if exists(select * from [sign] where zno=@t_guid and LTRIM(RTRIM(isnull(enda,'')))='Y')
 	begin
-		select 1 val,'已簽核' msg
+		select top 1 2 val,memochecker msg from [sign] where zno=@t_guid and LTRIM(RTRIM(isnull(enda,'')))='Y' 
+		order by datea desc,timea desc
 		return
 	end
 	else if exists(select * from [sign] where zno=@t_guid  and LTRIM(RTRIM(isnull(enda,'')))!='Y')
