@@ -681,17 +681,31 @@
                 	case 'qtxt.query.ummfe':
                 		var as = _q_appendData("tmp0", "", true);
                         if (as[0] != undefined) {
-                        	if(as[0].val==1){
-                        		var t_noa = trim($('#txtNoa').val());
-				                var t_date = trim($('#txtDatea').val());
-				                if (t_noa.length == 0 || t_noa == "AUTO")
-				                    q_gtnoa(q_name, replaceAll(q_getPara('sys.key_umm') + (t_date.length == 0 ? q_date() : t_date), '/', ''));
-				                else
-				                    wrServer(t_noa);
-                        	}else{
-                        		alert(as[0].msg);
-                        		Unlock(1);
-                        		return;
+                        	switch(as[0].val){
+                        		case '1':
+                        			var t_noa = trim($('#txtNoa').val());
+					                var t_date = trim($('#txtDatea').val());
+					                if (t_noa.length == 0 || t_noa == "AUTO")
+					                    q_gtnoa(q_name, replaceAll(q_getPara('sys.key_umm') + (t_date.length == 0 ? q_date() : t_date), '/', ''));
+					                else
+					                    wrServer(t_noa);
+                        			break;
+                        		case '2':
+                        			var t_memo = $.trim($('#txtMemo').val());
+	                        		t_memo += (t_memo.length>0?'\n':'') + as[0].msg;
+	                        		$('#txtMemo').val(t_memo);
+	                        		var t_noa = trim($('#txtNoa').val());
+					                var t_date = trim($('#txtDatea').val());
+					                if (t_noa.length == 0 || t_noa == "AUTO")
+					                    q_gtnoa(q_name, replaceAll(q_getPara('sys.key_umm') + (t_date.length == 0 ? q_date() : t_date), '/', ''));
+					                else
+					                    wrServer(t_noa);
+                        			break;
+                        		default:
+                        			alert(as[0].msg);
+                        			Unlock(1);
+                        			return;
+                        			break;
                         	}
                         }else{
                     		alert('檢查異常，無法儲存。');
