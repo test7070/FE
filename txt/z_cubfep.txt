@@ -469,6 +469,7 @@ declare @tmp table(
 	productno nvarchar(100),
 	product nvarchar(100),
 	mount float,
+	weight float,
 	memo1 nvarchar(max),
 	memo2 nvarchar(max),
 	worker nvarchar(max)
@@ -478,7 +479,7 @@ if(@t_show='0')
 begin
 	insert @tmp
 	select '2',a.noa,MIN(noq),''
-	,b.productno,b.product,sum(b.gmount)
+	,b.productno,b.product,sum(b.gmount),sum(b.gweight)
 	,stuff((select ','+replace(memo,'chr(10)',',') from view_cubt 
 	where noa=a.noa and productno=b.productno and comp=b.comp and memo2=b.memo2 
 	FOR XML PATH('')),1,1,'')
@@ -492,7 +493,7 @@ end
 else
 begin
 	insert @tmp
-	select '4',a.noa,b.noq,'',b.productno,b.product,b.gmount
+	select '4',a.noa,b.noq,'',b.productno,b.product,b.gmount,b.gweight
 	,replace(b.memo,'chr(10)',','),b.memo2,a.worker
 	from  view_cubt b left join view_cub a on a.noa=b.noa
 	where (a.datea between @t_bdate and @t_edate)
@@ -552,11 +553,16 @@ end
 close cursor_table 
 deallocate cursor_table
 
+insert @tmp(gno,noa,noq,productno,worker,comp,weight)
+select '5',noa,CHAR(255),CHAR(255),worker,comp,SUM(weight)
+from @tmp
+group by noa,worker,comp
+
 if(@t_show='0')
 begin
 	insert @tmp(gno,noa,productno,product,worker,comp)
 	select '1',noa,productno,product,worker,comp
-	from @tmp
+	from @tmp where gno!='5'
 	group by noa,productno,product,worker,comp
 	
 	select 
@@ -568,7 +574,7 @@ else
 begin
 	insert @tmp(gno,noa,worker,comp)
 	select '3',noa,worker,comp
-	from @tmp
+	from @tmp where gno!='5'
 	group by noa,worker,comp
 	
 	select 
