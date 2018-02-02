@@ -15,7 +15,8 @@
         <script type="text/javascript">
             var q_name = "ordefe_s";
             aPop = new Array(['txtCustno', 'lblCustno', 'cust', 'noa,nick', 'txtCustno,txtComp', 'cust_b.aspx'],
-                             ['txtWorkerno', 'lblWorker', 'sss', 'noa,namea', 'txtWorkerno,txtWorker', 'sss_b.aspx']);
+                             ['txtWorkerno', 'lblWorker', 'sss', 'noa,namea', 'txtWorkerno,txtWorker', 'sss_b.aspx'],
+                             ['txtWorker', 'lblWorker', 'sss', 'namea', 'txtWorker', 'sss_b.aspx']);
             $(document).ready(function() {
                 main();
             });
@@ -117,7 +118,7 @@
                     <td class='seek' style="width:20%;"><a id='lblWorker'>操 作 員</a></td>
                     <td>
                         <input class="txt" id="txtWorkerno" type="text" style="width:85px; font-size:medium;" placeholder="操作員編號"/>
-                        <input class="txt" id="txtWorker" type="text" style="width:125px; font-size:medium;" readonly placeholder="操作員-AUTO"/>
+                        <input class="txt" id="txtWorker" type="text" style="width:125px; font-size:medium;" placeholder="操作員-AUTO"/>
                     </td>
                 </tr>
             </table>
