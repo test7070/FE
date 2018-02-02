@@ -1,4 +1,4 @@
-﻿<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
 <html xmlns="http://www.w3.org/1999/xhtml">
     <head>
         <title> </title>
@@ -14,8 +14,8 @@
         <script src="css/jquery/ui/jquery.ui.datepicker_tw.js"> </script>
         <script type="text/javascript">
             var q_name = "ordefe_s";
-            aPop = new Array(['txtCustno', 'lblCustno', 'cust', 'noa,nick', 'txtCustno', 'cust_b.aspx'],
-                             ['txtWorker', 'lblWorker', 'sss', 'noa,namea', 'txtWorker', 'sss_b.aspx']);
+            aPop = new Array(['txtCustno', 'lblCustno', 'cust', 'noa,nick', 'txtCustno,txtComp', 'cust_b.aspx'],
+                             ['txtWorkerno', 'lblWorker', 'sss', 'noa,namea', 'txtWorkerno,txtWorker', 'sss_b.aspx']);
             $(document).ready(function() {
                 main();
             });
@@ -44,17 +44,21 @@
                 t_edate = $('#txtEdate').val();
                 t_noa = $.trim($('#txtNoa').val());
                 t_custno = $.trim($('#txtCustno').val());
+                t_workerno = $.trim($('#txtWorkerno').val());
+                t_worker = $.trim($('#txtWorker').val());
                 t_comp = $.trim($('#txtComp').val());            
                 t_contract = $.trim($('#txtContract').val());
-                
-                    
+
                 var t_where = " 1=1 " 
                 + q_sqlPara2("noa", t_noa) 
                 + q_sqlPara2("datea", t_bdate, t_edate)    
                 + q_sqlPara2("odate", t_bodate, t_eodate)              
                 + q_sqlPara2("custno", t_custno);
+                + q_sqlPara2("worker", t_worker);
                 if (t_comp.length>0)
                     t_where += " and (charindex('" + t_comp + "',comp)>0 or charindex('" + t_comp + "',nick)>0)";
+                if(t_worker.length>0)
+                    t_where += " and charindex('" + t_worker + "',worker)>0";
                 if(t_contract.length>0)
                     t_where += " and charindex('" + t_contract + "',contract)>0";
                 t_where = ' where=^^' + t_where + '^^ ';
@@ -86,38 +90,35 @@
                     </td>
                 </tr>
                 <tr class='seek_tr'>
-                    <td   style="width:35%;" ><a id='lblDatea'>交貨日期</a></td>
-                    <td style="width:65%;  ">
-                    <input class="txt" id="txtBdate" type="text" style="width:90px; font-size:medium;" />
-                    <span style="display:inline-block; vertical-align:middle">&sim;</span>
-                    <input class="txt" id="txtEdate" type="text" style="width:93px; font-size:medium;" />
+                    <td style="width:35%;" ><a id='lblDatea'>交貨日期</a></td>
+                    <td style="width:65%;">
+                        <input class="txt" id="txtBdate" type="text" style="width:90px; font-size:medium;" />
+                        <span style="display:inline-block; vertical-align:middle">&sim;</span>
+                        <input class="txt" id="txtEdate" type="text" style="width:93px; font-size:medium;" />
                     </td>
                 </tr>
                 <tr class='seek_tr'>
-                    <td class='seek'  style="width:20%;"><a id='lblNoa'>訂單編號</a></td>
+                    <td class='seek' style="width:20%;"><a id='lblNoa'>訂單編號</a></td>
+                    <td><input class="txt" id="txtNoa" type="text" style="width:215px; font-size:medium;"/></td>
+                </tr>
+                <tr class='seek_tr'>
+                    <td class='seek' style="width:20%;"><a id='lblCustno'>客戶編號</a></td>
+                    <td><input class="txt" id="txtCustno" type="text" style="width:215px; font-size:medium;"/></td>
+                </tr>
+                <tr class='seek_tr'>
+                    <td class='seek' style="width:20%;"><a id='lblComp'>客戶名稱</a></td>
+                    <td><input class="txt" id="txtComp" type="text" style="width:215px; font-size:medium;"/></td>
+                </tr>
+                <tr class='seek_tr'>
+                    <td class='seek' style="width:20%;"><a id='lblContract'>合約號碼</a></td>
+                    <td><input class="txt" id="txtContract" type="text" style="width:215px; font-size:medium;"/></td>
+                </tr>
+                <tr class='seek_tr'>
+                    <td class='seek' style="width:20%;"><a id='lblWorker'>操 作 員</a></td>
                     <td>
-                    <input class="txt" id="txtNoa" type="text" style="width:215px; font-size:medium;" />
+                        <input class="txt" id="txtWorkerno" type="text" style="width:85px; font-size:medium;" placeholder="操作員編號"/>
+                        <input class="txt" id="txtWorker" type="text" style="width:125px; font-size:medium;" readonly placeholder="操作員-AUTO"/>
                     </td>
-                </tr>
-                <tr class='seek_tr'>
-                    <td class='seek'  style="width:20%;"><a id='lblCustno'>客戶編號</a></td>
-                    <td>
-                    <input class="txt" id="txtCustno" type="text" style="width:215px; font-size:medium;" />
-                    </td>
-                </tr>
-                <tr class='seek_tr'>
-                    <td class='seek'  style="width:20%;"><a id='lblComp'>客戶名稱</a></td>
-                    <td>
-                    <input class="txt" id="txtComp" type="text" style="width:215px; font-size:medium;" />
-                    </td>
-                </tr>
-                <tr class='seek_tr'>
-                    <td class='seek'  style="width:20%;"><a id='lblContract'>合約號碼</a></td>
-                    <td><input class="txt" id="txtContract" type="text" style="width:215px; font-size:medium;" /></td>
-                </tr>
-                <tr class='seek_tr'>
-                    <td class='seek' style="width:20%;"><a id='lblWorker'>操 作 者</a></td>
-                    <td><input class="txt" id="txtWorker" type="text" style="width:215px; font-size:medium;" /></td>
                 </tr>
             </table>
             <!--#include file="../inc/seek_ctrl.inc"-->
