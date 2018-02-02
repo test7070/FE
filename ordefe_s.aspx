@@ -14,7 +14,8 @@
         <script src="css/jquery/ui/jquery.ui.datepicker_tw.js"> </script>
         <script type="text/javascript">
             var q_name = "ordefe_s";
-            aPop = new Array(['txtCustno', 'lblCustno', 'cust', 'noa,nick', 'txtCustno', 'cust_b.aspx']);
+            aPop = new Array(['txtCustno', 'lblCustno', 'cust', 'noa,nick', 'txtCustno', 'cust_b.aspx'],
+                             ['txtWorker', 'lblWorker', 'sss', 'noa,namea', 'txtWorker', 'sss_b.aspx']);
             $(document).ready(function() {
                 main();
             });
@@ -112,9 +113,11 @@
                 </tr>
                 <tr class='seek_tr'>
                     <td class='seek'  style="width:20%;"><a id='lblContract'>合約號碼</a></td>
-                    <td>
-                    <input class="txt" id="txtContract" type="text" style="width:215px; font-size:medium;" />
-                    </td>
+                    <td><input class="txt" id="txtContract" type="text" style="width:215px; font-size:medium;" /></td>
+                </tr>
+                <tr class='seek_tr'>
+                    <td class='seek' style="width:20%;"><a id='lblWorker'>操 作 者</a></td>
+                    <td><input class="txt" id="txtWorker" type="text" style="width:215px; font-size:medium;" /></td>
                 </tr>
             </table>
             <!--#include file="../inc/seek_ctrl.inc"-->
