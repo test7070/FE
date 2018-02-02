@@ -1,7 +1,7 @@
 <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
 <html xmlns="http://www.w3.org/1999/xhtml">
 	<head>
-		<title></title>
+		<title> </title>
 		<script src="../script/jquery.min.js" type="text/javascript"></script>
 		<script src="../script/qj2.js" type="text/javascript"></script>
 		<script src='qset.js' type="text/javascript"></script>
@@ -69,7 +69,8 @@
 				$('#btnCubsin').click(function() {
 					if(q_cur==1 || q_cur==2){
 						for (var j = 0; j < q_bbsCount; j++) {
-							$('#btnMinus_'+j).click();
+							if(emp($('#txtSource_'+j).val()))
+								$('#btnMinus_'+j).click();
 						}
 						for (var j = 0; j < cubBBsArray.length; j++) {
 							cubBBsArray[j].datea=q_date();
@@ -77,7 +78,7 @@
 						q_gridAddRow(bbsHtm, 'tbbs'
 						, 'txtOrdeno,txtNo2,txtCustno,txtComp,txtDatea,txtProductno,txtProduct,txtLengthb,txtMount,txtWeight,txtMemo'
 						, cubBBsArray.length, cubBBsArray
-						, 'ordeno,no2,custno,comp,datea,productno,product,lengthb,mount,weight,memo', 'txtOrdeno,txtProductno');
+						, 'ordeno,no2,custno,comp,datea,productno,product,lengthb,mount,weight,memo', 'txtOrdeno,txtProductno,txtMount');
 					}
 				});
 			}
@@ -101,6 +102,10 @@
 							
 						});
 					}
+					
+					$('#txtProduct_'+j).attr('disabled', 'disabled');
+					$('#txtProduct_'+j).css('background','rgb(237, 237, 238)');
+					$('#txtProduct_'+j).css('color','green');
 				}
 			}
 
@@ -391,6 +396,7 @@
 					<td>
 						<input type="text" id="txtMemo.*" class="txt c1"/>
 						<input type="text" id="txtWorker.*" style="display:none;"/>
+						<input type="hidden" id="txtSource.*"/>
 					</td>
 				</tr>
 			</table>
