@@ -1,3 +1,11 @@
+USE [ST]
+GO
+/****** Object:  UserDefinedFunction [dbo].[vcc_orde_fe]    Script Date: 02/02/2018 09:19:48 ******/
+SET ANSI_NULLS ON
+GO
+SET QUOTED_IDENTIFIER ON
+GO
+
 
 ALTER  function [dbo].[vcc_orde_fe](@t_custno nvarchar(max),@t_vccno nvarchar(max), @para nvarchar(max))
 returns @tmp table(
@@ -18,12 +26,73 @@ returns @tmp table(
 	,price float
 	,emount float
 	,eweight float
+	,enda bit
 ) as
+
+begin
+	insert into @tmp(accy,ordeno,no2,custno,cust,nick,odate,datea,productno,
+					 product,unit,[mount],[weight],price,emount,eweight,enda)
+	select a.accy,a.noa,a.no2,b.custno,isnull(b.comp,''),isnull(b.nick,''),b.odate,a.datea,
+		   a.productno,a.product,a.unit, a.mount,a.[weight],a.price
+		,ISNULL(a.mount,0)-ISNULL(c.mount,0)
+		,ISNULL(a.[weight],0)-ISNULL(c.[weight],0),a.enda
+	from view_ordes a
+	left join view_orde b on a.accy=b.accy and a.noa=b.noa
+	left join (select ordeno,no2, SUM(ISNULL(mount,0)) mount,SUM(ISNULL([weight],0)) [weight] 
+		from view_vccs where noa!=@t_vccno and len(isnull(ordeno,''))>0
+		group by ordeno,no2) c on a.noa=c.ordeno and a.no2=c.no2	
+	where b.noa is not null
+	and isnull(a.cancel,0)=0
+	and isnull(b.cancel,0)=0
+	and ISNULL(b.custno,0)=@t_custno
+	and ISNULL(a.enda,0)=0
+	--該出貨單有出的訂單不用判斷是否結案
+	--and (exists(select noa from view_vccs where noa=@t_vccno and ordeno=a.noa and no2=a.no2)
+		--or (ISNULL(b.enda,0)=0 and ISNULL(a.enda,0)=0))
+	--但數量、重量仍須判斷
+	--and ISNULL(a.mount,0)-ISNULL(c.mount,0)>0
+	--and ISNULL(a.[weight],0)-ISNULL(c.[weight],0)>0
+	order by a.odate desc,a.noa,a.no2
+	
+	update @tmp set sel=case when b.noa is not null then 1 else 0 end from @tmp a
+	left join view_vccs b on b.noa=@t_vccno and a.ordeno=b.ordeno and a.no2=b.no2
+	
+	update @tmp set nick=b.nick from @tmp a
+	left join cust b on a.custno=b.noa
+	where len(a.nick)=0
+	
+	return
+end		
+--============================================================================================================================================================================================================================
+
+/*
+
+----原程式碼
+ALTER  function [dbo].[vcc_orde_fe](@t_custno nvarchar(max),@t_vccno nvarchar(max), @para nvarchar(max))
+returns @tmp table(
+	sel bit
+	,accy nvarchar(20)
+	,ordeno nvarchar(20)
+	,no2 nvarchar(10)
+	,custno nvarchar(20)
+	,cust nvarchar(50)
+	,nick nvarchar(20)
+	,odate nvarchar(20)
+	,datea nvarchar(20)
+	,productno nvarchar(50)
+	,product nvarchar(100)
+	,unit nvarchar(20)
+	,mount float
+	,[weight] float
+	,price float
+	,emount float
+	,eweight float
+	
+) as
+
 begin
 	insert into @tmp(accy,ordeno,no2,custno,cust,nick,odate,datea
-		,productno,product,unit,[mount],[weight],price
-		,emount
-		,eweight)
+		,productno,product,unit,[mount],[weight],price,emount,eweight)
 	select a.accy,a.noa,a.no2,b.custno,isnull(b.comp,''),isnull(b.nick,''),b.odate,a.datea
 		,a.productno,a.product,a.unit, a.mount,a.[weight],a.price
 		,ISNULL(a.mount,0)-ISNULL(c.mount,0)
@@ -45,16 +114,19 @@ begin
 	and ISNULL(a.[weight],0)-ISNULL(c.[weight],0)>0
 	order by a.odate desc,a.noa,a.no2
 	
-	update @tmp set sel=case when b.noa is not null then 1 else 0 end
-	from @tmp a
+	update @tmp set sel=case when b.noa is not null then 1 else 0 end from @tmp a
 	left join view_vccs b on b.noa=@t_vccno and a.ordeno=b.ordeno and a.no2=b.no2
 	
-	update @tmp set nick=b.nick
-	from @tmp a
+	update @tmp set nick=b.nick from @tmp a
 	left join cust b on a.custno=b.noa
 	where len(a.nick)=0
 	
 	return
 end	
+
+*/
+
+
+
 
 
