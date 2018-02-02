@@ -84,17 +84,17 @@
                 <tr class='seek_tr'>
                     <td   style="width:35%;" ><a id='lblOdate'>訂單日期</a></td>
                     <td style="width:65%;  ">
-                    <input class="txt" id="txtBodate" type="text" style="width:90px; font-size:medium;" />
+                    <input class="txt" id="txtBodate" type="text" style="width:90px; font-size:medium;"/>
                     <span style="display:inline-block; vertical-align:middle">&sim;</span>
-                    <input class="txt" id="txtEodate" type="text" style="width:93px; font-size:medium;" />
+                    <input class="txt" id="txtEodate" type="text" style="width:93px; font-size:medium;"/>
                     </td>
                 </tr>
                 <tr class='seek_tr'>
-                    <td style="width:35%;" ><a id='lblDatea'>交貨日期</a></td>
+                    <td style="width:35%;"><a id='lblDatea'>交貨日期</a></td>
                     <td style="width:65%;">
-                        <input class="txt" id="txtBdate" type="text" style="width:90px; font-size:medium;" />
+                        <input class="txt" id="txtBdate" type="text" style="width:90px; font-size:medium;"/>
                         <span style="display:inline-block; vertical-align:middle">&sim;</span>
-                        <input class="txt" id="txtEdate" type="text" style="width:93px; font-size:medium;" />
+                        <input class="txt" id="txtEdate" type="text" style="width:93px; font-size:medium;"/>
                     </td>
                 </tr>
                 <tr class='seek_tr'>
