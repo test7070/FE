@@ -8,7 +8,7 @@
 	declare @t_date nvarchar(max) = [7]
 	declare @t_mon nvarchar(max) = [8]
 	declare @t_item nvarchar(max) = [9]
-	
+
 	declare @t_rank int = 0
 	declare @t_user nvarchar(20) = ''
 	select @t_rank=[RANK],@t_user=namea from nhpe where noa=@t_userno
