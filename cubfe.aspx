@@ -78,7 +78,19 @@
 				bbmMask = [['txtDatea', r_picd], ['txtBdate', r_picd], ['txtEdate', r_picd]];
 				bbsMask = [['txtDate2', r_picd], ['txtDatea', r_picd]];
 				q_mask(bbmMask);
-				q_cmbParse("cmbMechno", "01@剪台,02@火切,12@D10盤圓,13@D13盤圓,20@續接裁剪");
+				
+				q_gt('mech', "where=^^1=1^^" , 0, 0, 0, "getmech",r_accy,1); //號數
+				var as = _q_appendData("mech", "", true);
+				var t_item = "";
+				if (as[0] != undefined) {
+					for ( i = 0; i < as.length; i++) {
+						t_item = t_item + (t_item.length > 0 ? ',' : '') + as[i].noa + '@' + as[i].mech;
+					}
+				}
+				if(t_item.length>0)
+					q_cmbParse("cmbMechno", t_item);
+				else
+					q_cmbParse("cmbMechno", "01@剪台,02@火切,12@D10盤圓,13@D13盤圓,20@續接裁剪");
 				q_cmbParse("cmbProcess", "2@最少排刀,1@最低損耗");
 				
 				document.title='鋼筋裁剪單';
@@ -287,6 +299,11 @@
 								as[j].lengthb=tlen;
 								as[j].spec=tspec1;
 								as[j].size=tsize1;
+								
+								if(dec(as[j].addsafe)==0){
+									as.splice(j, 1);
+									j--;
+								}
 							}
 							
 							safeas=safeas.concat(as);
@@ -860,11 +877,11 @@
 					t_same[i].maxmount=round(t_same[i].mount*(t_m9/100),0);
 				}
 				
-				//107/01/26加入可補足安全存量(非領用)
+				//107/01/26加入可補足安全存量(非領用) //107/02/06 取消增量模式
 				for (var i=0;i<safeas.length;i++){
 					for (var j=0;j<t_same.length;j++){
 						if(safeas[i].spec==t_same[j].spec && safeas[i].size==t_same[j].size && safeas[i].lengthb==t_same[j].lengthb){
-							var t_mount=dec(safeas[i].addsafe)-dec(safeas[i].mount);
+							var t_mount=dec(safeas[i].addsafe);//-dec(safeas[i].mount);
 							t_same[j].maxmount=q_add(dec(t_same[j].maxmount),t_mount);
 						}
 					}
@@ -914,7 +931,7 @@
 											t_smount=t_smount-t_same[j].data[k].mount;
 											t_same[j].mount=t_same[j].mount-t_same[j].data[k].mount
 											t_same[j].data[k].mount=0;
-											t_same[j].data[k].splice(k, 1);
+											t_same[j].data.splice(k, 1);
 											k--;
 										}else{
 											t_noras.push({
@@ -1448,11 +1465,14 @@
 													}
 												}
 												
-												/*if(dec(tt_same[n].mount)+dec(tt_same[n].maxmount)<=0){
-													tt_zero=true;
-												}
-												if(dec(tt_same[n].mount)<=0 && dec(tt_same[n].maxmount)>0){
-													usemax++;
+												//107/02/06 依據台料 判斷是否受項次限制
+												/*if(!$('#chkCancel').prop('checked')){
+													if(dec(tt_same[n].mount)+dec(tt_same[n].maxmount)<=0){
+														tt_zero=true;
+													}
+													if(dec(tt_same[n].mount)<=0 && dec(tt_same[n].maxmount)>0){
+														usemax++;
+													}
 												}*/
 												
 												break;
@@ -1742,11 +1762,11 @@
 					t_same[i].maxmount=round(t_same[i].mount*(t_m9/100),0);
 				}
 				
-				//107/01/26加入可補足安全存量(非領用)
+				//107/01/26加入可補足安全存量(非領用) //107/02/06 取消增量模式
 				for (var i=0;i<safeas.length;i++){
 					for (var j=0;j<t_same.length;j++){
 						if(safeas[i].spec==t_same[j].spec && safeas[i].size==t_same[j].size && safeas[i].lengthb==t_same[j].lengthb){
-							var t_mount=dec(safeas[i].safemount)-dec(safeas[i].mount);
+							var t_mount=dec(safeas[i].addsafe);//-dec(safeas[i].mount);
 							t_same[j].maxmount=q_add(dec(t_same[j].maxmount),t_mount);
 						}
 					}
@@ -1796,7 +1816,7 @@
 											t_smount=t_smount-t_same[j].data[k].mount;
 											t_same[j].mount=t_same[j].mount-t_same[j].data[k].mount
 											t_same[j].data[k].mount=0;
-											t_same[j].data[k].splice(k, 1);
+											t_same[j].data.splice(k, 1);
 											k--;
 										}else{
 											t_noras.push({
@@ -2340,11 +2360,14 @@
 													}
 												}
 												
-												/*if(dec(tt_same[n].mount)+dec(tt_same[n].maxmount)<=0){
-													tt_zero=true;
-												}
-												if(dec(tt_same[n].mount)<=0 && dec(tt_same[n].maxmount)>0){
-													usemax++;
+												//107/02/06 依據台料 判斷是否受項次限制
+												/*if(!$('#chkCancel').prop('checked')){
+													if(dec(tt_same[n].mount)+dec(tt_same[n].maxmount)<=0){
+														tt_zero=true;
+													}
+													if(dec(tt_same[n].mount)<=0 && dec(tt_same[n].maxmount)>0){
+														usemax++;
+													}
 												}*/
 												
 												break;
@@ -2956,7 +2979,8 @@
 				if (!(q_cur == 1 || q_cur == 2))
 					return false;
 				
-				q_func('qtxt.query.upadpro', 'cub.txt,upadpro,' + encodeURI(q_date())+';'+encodeURI('#non')+';'+encodeURI('#non'),r_accy,1);
+				//107/02/06 關閉增量模式
+				//q_func('qtxt.query.upadprofe', 'cub.txt,upadprofe,' + encodeURI(q_date())+';'+encodeURI('#non')+';'+encodeURI('#non'),r_accy,1);
 				if(!emp($('#txtNoa').val())){
 					q_func('qtxt.query.autocubufe', 'cub.txt,autocubufe,' + encodeURI($('#txtNoa').val())+';'+encodeURI(q_date()),r_accy,1);
 				}
@@ -3788,11 +3812,11 @@
 					t_same[i].maxmount=round(t_same[i].mount*(t_m9/100),0);
 				}
 				
-				//107/01/26加入可補足安全存量(非領用)
+				//107/01/26加入可補足安全存量(非領用) //107/02/06 取消增量模式
 				for (var i=0;i<safeas.length;i++){
 					for (var j=0;j<t_same.length;j++){
 						if(safeas[i].spec==t_same[j].spec && safeas[i].size==t_same[j].size && safeas[i].lengthb==t_same[j].lengthb){
-							var t_mount=dec(safeas[i].safemount)-dec(safeas[i].mount);
+							var t_mount=dec(safeas[i].addsafe);//-dec(safeas[i].mount);
 							t_same[j].maxmount=q_add(dec(t_same[j].maxmount),t_mount);
 						}
 					}
@@ -3842,7 +3866,7 @@
 											t_smount=t_smount-t_same[j].data[k].mount;
 											t_same[j].mount=t_same[j].mount-t_same[j].data[k].mount
 											t_same[j].data[k].mount=0;
-											t_same[j].data[k].splice(k, 1);
+											t_same[j].data.splice(k, 1);
 											k--;
 										}else{
 											t_noras.push({
@@ -4602,11 +4626,14 @@
 													}
 												}
 												
-												/*if(dec(tt_same[n].mount)+dec(tt_same[n].maxmount)<=0){
-													tt_zero=true;
-												}
-												if(dec(tt_same[n].mount)<=0 && dec(tt_same[n].maxmount)>0){
-													usemax++;
+												//107/02/06 依據台料 判斷是否受項次限制
+												/*if(!$('#chkCancel').prop('checked')){
+													if(dec(tt_same[n].mount)+dec(tt_same[n].maxmount)<=0){
+														tt_zero=true;
+													}
+													if(dec(tt_same[n].mount)<=0 && dec(tt_same[n].maxmount)>0){
+														usemax++;
+													}
 												}*/
 												
 												break;
@@ -4889,11 +4916,11 @@
 					t_same[i].maxmount=round(t_same[i].mount*(t_m9/100),0);
 				}
 				
-				//107/01/26加入可補足安全存量(非領用)
+				//107/01/26加入可補足安全存量(非領用) //107/02/06 取消增量模式
 				for (var i=0;i<safeas.length;i++){
 					for (var j=0;j<t_same.length;j++){
 						if(safeas[i].spec==t_same[j].spec && safeas[i].size==t_same[j].size && safeas[i].lengthb==t_same[j].lengthb){
-							var t_mount=dec(safeas[i].safemount)-dec(safeas[i].mount);
+							var t_mount=dec(safeas[i].addsafe);//-dec(safeas[i].mount);
 							t_same[j].maxmount=q_add(dec(t_same[j].maxmount),t_mount);
 						}
 					}
@@ -4943,7 +4970,7 @@
 											t_smount=t_smount-t_same[j].data[k].mount;
 											t_same[j].mount=t_same[j].mount-t_same[j].data[k].mount
 											t_same[j].data[k].mount=0;
-											t_same[j].data[k].splice(k, 1);
+											t_same[j].data.splice(k, 1);
 											k--;
 										}else{
 											t_noras.push({
@@ -6733,11 +6760,14 @@
 													}
 												}
 												
-												/*if(dec(tt_same[n].mount)+dec(tt_same[n].maxmount)<=0){
-													tt_zero=true;
-												}
-												if(dec(tt_same[n].mount)<=0 && dec(tt_same[n].maxmount)>0){
-													usemax++;
+												//107/02/06 依據台料 判斷是否受項次限制
+												/*if(!$('#chkCancel').prop('checked')){
+													if(dec(tt_same[n].mount)+dec(tt_same[n].maxmount)<=0){
+														tt_zero=true;
+													}
+													if(dec(tt_same[n].mount)<=0 && dec(tt_same[n].maxmount)>0){
+														usemax++;
+													}
 												}*/
 												
 												break;
@@ -7271,7 +7301,10 @@
 						<td> </td>-->
 						<td><span> </span><a id="lblWaste" class="lbl" > </a></td>
 						<td><input id="txtWaste" type="text" class="txt num c1"/></td>
-						<td> </td>
+						<td>
+							<span style="float: left;margin-left: 3px;display: none;"> </span><a id="lblCancel_fe" class="lbl" style="float: left;display: none;">台料</a>
+							<input id="chkCancel" type="checkbox" style="display: none;">
+						</td>
 						<td><input type="button" id="btnCubu" style="width:120px;text-align: left;"/></td>
 						<td> </td>
 						<td class="cut"><a style="margin-left: 50px;">1.5M內</a></td>
@@ -7281,7 +7314,7 @@
 					<tr>
 						<td><span> </span><a id="lblMo" class="lbl" > </a></td>
 						<td><input id="txtMo" type="text" class="txt num c1"/></td>
-						<td><span> </span><a id="lblM9" class="lbl" >可容許多入庫%</a></td>
+						<td><span> </span><a id="lblM9" class="lbl" >可容許多出貨%</a></td>
 						<td><input id="txtM9" type="text" class="txt num c1"/></td>
 						<td> </td>
 						<td class="cut"><a style="margin-left: 50px;">1.5~8M</a></td>
