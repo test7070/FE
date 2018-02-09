@@ -35,11 +35,13 @@
                 q_mask(bbmMask);
                 $('#txtBdate').datepicker();
                 $('#txtEdate').datepicker();
-
+				
+				q_cmbParse("cmbTypea", '@全部,'+q_getPara('rc2.typea'));
                 $('#txtNoa').focus();
             }
 
             function q_seekStr() {///  搜尋按下時，執行
+            	t_typea = $('#cmbTypea').val();
                 t_cno = $('#txtCno').val();
                 t_noa = $('#txtNoa').val();
                 t_bdate = $('#txtBdate').val();
@@ -50,6 +52,7 @@
 				//廠商名稱、電話、發票號碼、備註、傳票號碼
 
                 var t_where = " 1=1 " 
+                	+ q_sqlPara2("typea", t_typea)
                 	+ q_sqlPara2("noa", t_noa) 
                 	+ q_sqlPara2("cno", t_cno) 
                 	+ q_sqlPara2("datea", t_bdate, t_edate) 
@@ -83,6 +86,10 @@
 	<body>
 		<div style='width:400px; text-align:center;padding:15px;' >
 			<table id="seek"  border="1"   cellpadding='3' cellspacing='2' style='width:100%;' >
+				<tr class='seek_tr'>
+	                <td class='seek'  style="width:20%;"><a id='lblTypea'>貨單</a></td>
+	                <td><select id="cmbTypea" class="txt c1" style="font-size:medium;"> </select></td>
+	             </tr>
 				<tr class='seek_tr'>
 					<td class='seek'  style="width:20%;"><a id='lblAcomp'></a></td>
 					<td>
