@@ -132,7 +132,6 @@
 			function _btnSeek() {
 				if (q_cur > 0 && q_cur < 4)
 					return;
-
 				q_box('uccefe_s.aspx', q_name + '_s', "500px", "310px", q_getMsg("popSeek"));
 			}
 
@@ -153,24 +152,42 @@
                         var n = $(this).attr('id').replace(/^(.*)_(\d+)$/,'$2');
                         $('#btnStore_' + n).click();
                     });
-                    
                     $('#txtProductno_' + j).change(function() {
                         var n = $(this).attr('id').replace(/^(.*)_(\d+)$/,'$2');
-                        getWeight(n);
+						getMount(n);
                     });
 
-					$('#txtMount_' + j).change(function() {
-						var n = $(this).attr('id').replace(/^(.*)_(\d+)$/,'$2');
-						var t_productno = $.trim($('#txtProductno_'+n).val());
-                        if(t_productno.length>0)
-                            q_gt('ucc', "where=^^ noa='"+t_productno+"'^^", 0, 0, 0, 'getWeight_'+n,r_accy,1);
-                            var as = _q_appendData("ucc", "", true);
-                            if(as[0]!=undefined){
-                                var t_mount = q_float('txtMount_'+n);
-                                var t_weight = as[0].uweight;
-                                $('#txtWeight_'+n).val(round(q_mul(t_weight,t_mount),2));
-                            }
-					});
+					
+					
+					if ($('#txtUnit_'+n).val('KG')){
+						$('#txtWeight_' + j).change(function() {
+							var n = $(this).attr('id').replace(/^(.*)_(\d+)$/,'$2');
+							var t_productno = $.trim($('#txtProductno_'+n).val());
+							var t_Weighta = q_float('txtWeight_' + n);
+							if(t_productno.length>0)
+								q_gt('ucc', "where=^^ noa='"+t_productno+"'^^", 0, 0, 0, 'getMount_'+n,r_accy,1);
+								var as = _q_appendData("ucc", "", true);
+								if(as[0]!=undefined){
+									var t_mount = q_float('txtWeight_'+n);
+									var t_weight = as[0].uweight;
+									$('#txtMount_'+n).val(round(parseFloat(t_Weighta),2));
+								}
+						});
+					}else{
+						$('#txtMount_' + j).change(function() {
+							var n = $(this).attr('id').replace(/^(.*)_(\d+)$/,'$2');
+							var t_productno = $.trim($('#txtProductno_'+n).val());
+							if(t_productno.length>0)
+								q_gt('ucc', "where=^^ noa='"+t_productno+"'^^", 0, 0, 0, 'getWeight_'+n,r_accy,1);
+								var as = _q_appendData("ucc", "", true);
+								if(as[0]!=undefined){
+										var t_mount = q_float('txtMount_'+n);
+										var t_weight = as[0].uweight;
+										$('#txtWeight_'+n).val(round(q_mul(t_weight,t_mount),2));
+								}
+						});
+					}
+					
 				}
 				_bbsAssign();
 				if (q_getPara('sys.project').toUpperCase()!='FE'){
@@ -180,18 +197,17 @@
 				}
 			}
 			
-            function getWeight(n){
+            function getMount(n){
                 var t_productno = $.trim($('#txtProductno_'+n).val());
                 if(t_productno.length>0)
-                    q_gt('ucc', "where=^^ noa='"+t_productno+"'^^", 0, 0, 0, 'getWeight_'+n,r_accy,1);
+                    q_gt('ucc', "where=^^ noa='"+t_productno+"'^^", 0, 0, 0, 'getMount_'+n,r_accy,1);
                     var as = _q_appendData("ucc", "", true);
                     if(as[0]!=undefined){
-                         var t_mount = q_float('txtMount_'+n);
-                         var t_weight = as[0].uweight;
-                         $('#txtWeight_'+n).val(round(q_mul(t_weight,t_mount),2));
+                         var t_weight = q_float('txtWeight_'+n);
+                         $('#txtMount_'+n).val(t_weight,2);
                     }
             }
-            
+			
 			function btnIns() {
 				_btnIns();
 				$('#txtNoa').val('AUTO');

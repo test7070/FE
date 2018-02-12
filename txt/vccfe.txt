@@ -398,6 +398,7 @@ vcc_tranmoney:--vccfe.txt	 vcc_tranmoney  基價和運費
 	-- 鉅昕  基價是以 orde.odate 來判斷,不是出貨單日期
 	-- 105/04/30以前維持依出貨單日期
 	-- 105/05/01以後以 orde.odate
+	
 	update #vcc_tranmoney set odate = case when a.datea>='105/05/01' then isnull(b.odate,'') else a.datea end
 	from #vcc_tranmoney a
 	left join view_orde b on a.ordeno=b.noa

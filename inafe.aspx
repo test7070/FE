@@ -139,7 +139,6 @@
             	}else{
             		n--;
             		btnOk_sum(n);
-            		
             		/*t_productno = $.trim($('#txtProductno_'+n).val());
                     t_mount = q_float('txtMount_' + n);
                     if(t_productno.length>0 && t_mount!=0){
@@ -178,7 +177,38 @@
 							var n = $(this).attr('id').replace(/^(.*)_(\d+)$/,'$2');
 							$('#btnMechno_'+n).click();
 						});
-						$('#txtMount_' + j).change(function() {
+						
+						if ($('#txtUnit_'+j).val('KG')){
+								$('#txtWeight_' + j).change(function() {
+									if (q_cur == 1 || q_cur == 2){
+										var n = $(this).attr('id').replace(/^(.*)_(\d+)$/,'$2');
+										var t_productno = $.trim($('#txtProductno_'+n).val());
+										var t_Weighta = q_float('txtWeight_' + n);
+										if(t_productno.length>0 && t_weight!=0){
+											q_gt('ucc', "where=^^ noa='"+t_productno+"'^^", 0, 0, 0, 'getMount_'+n,r_accy,1);
+											var as = _q_appendData("ucc", "", true);
+												if(as[0]!=undefined){
+													var t_mount = q_float('txtWeight_'+n);
+													var t_weight = as[0].uweight;
+													//$('#txtMount_'+n).val(round(parseFloat(t_Weighta)/(t_weight),2));
+													$('#txtMount_'+n).val(round(parseFloat(t_Weighta),2));
+												}
+										}
+									}
+								});
+						}else{
+							$('#txtMount_' + j).change(function() {
+								if (q_cur == 1 || q_cur == 2){
+									var n = $(this).attr('id').replace(/^(.*)_(\d+)$/,'$2');
+									var t_productno = $.trim($('#txtProductno_'+n).val());
+									var t_mount = q_float('txtMount_' + n);
+									if(t_productno.length>0 && t_mount!=0){
+										q_gt('ucc', "where=^^noa='"+t_productno+"'^^", 0, 0, 0,JSON.stringify({action:"getWeight",n:n,mount:t_mount}));	
+									}
+								}
+							});
+						}
+						/*$('#txtMount_' + j).change(function() {
 							if (q_cur == 1 || q_cur == 2){
                             	var n = $(this).attr('id').replace(/^(.*)_(\d+)$/,'$2');
                             	t_productno = $.trim($('#txtProductno_'+n).val());
@@ -190,7 +220,7 @@
 						});
 						$('#txtWeight_' + j).change(function() {
 							sum();
-						});
+						});*/
 					}
 				}
 				_bbsAssign();
