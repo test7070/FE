@@ -39,7 +39,7 @@ select a.noa,b.noq,b.productno,b.product
 ,SUBSTRING(b.product,CHARINDEX('SD',b.product),CHARINDEX(' ',b.product)-CHARINDEX('SD',b.product)) spec
 ,SUBSTRING(b.product,CHARINDEX(' ',b.product)+1,CHARINDEX('#',b.product)-CHARINDEX(' ',b.product))size
 ,cast(SUBSTRING(b.product,CHARINDEX('*',b.product)+1,CHARINDEX('M',b.product)-CHARINDEX('*',b.product)-1) as float)lengthb
-,b.gmount,0,0,0,0,0,0,0,replace(substring(b.memo2,0,CHARINDEX('=',b.memo2)),'(入庫)','')
+,b.radius,0,0,0,0,0,0,0,replace(substring(b.memo2,0,CHARINDEX('=',b.memo2)),'(入庫)','')
 from view_cub a left join view_cubt b on a.noa=b.noa
 where a.noa between @t_bnoa and @t_enoa
 and a.datea between @t_bdate and @t_edate
@@ -479,7 +479,7 @@ if(@t_show='0')
 begin
 	insert @tmp
 	select '2',a.noa,MIN(noq),''
-	,b.productno,b.product,sum(b.gmount),sum(b.gweight)
+	,b.productno,b.product,sum(b.radius),sum(b.gweight)
 	,stuff((select ','+replace(memo,'chr(10)',',') from view_cubt 
 	where noa=a.noa and productno=b.productno and comp=b.comp and memo2=b.memo2 
 	FOR XML PATH('')),1,1,'')
@@ -493,7 +493,7 @@ end
 else
 begin
 	insert @tmp
-	select '4',a.noa,b.noq,'',b.productno,b.product,b.gmount,b.gweight
+	select '4',a.noa,b.noq,'',b.productno,b.product,b.radius,b.gweight
 	,replace(b.memo,'chr(10)',','),b.memo2,a.worker
 	from  view_cubt b left join view_cub a on a.noa=b.noa
 	where (a.datea between @t_bdate and @t_edate)
@@ -610,7 +610,7 @@ declare @tmp table(
 )
 insert @tmp
 select '0',noa,noq,datea,case when len(no2)>0 then ordeno+'-'+no2 else ordeno end
-,custno,comp,storeno,store,productno,product,lengthb,mount,weight,memo
+,custno,comp,storeno,store,productno,product,lengthb,radius,weight,memo
 from view_cubu where noa between @t_bnoa and @t_enoa
 
 insert @tmp (gno,noa,mount,weight)

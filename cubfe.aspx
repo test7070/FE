@@ -23,7 +23,7 @@
 			var bbmNum = [['txtM2',10,0,1],['txtM3',10,0,1],['txtM4',10,0,1],['txtM5',10,0,1],['txtM6',10,0,1],['txtM7',10,0,1],['txtM8',10,0,1]
 			,['txtBdime',10,0,1],['txtEdime',10,0,1],['txtOdime',10,0,1],['txtC1',15,0,1],['txtWaste',15,0,1],['txtMo',15,1,1],['txtLevel',2,0,1],['txtIdime',10,0,1]];
 			var bbsNum = [['txtMount',15,0,1],['txtWeight',15,2,1],['txtLengthb',10,0,1],['txtW01',10,2,1],['txtW02',10,2,1],['txtW03',10,0,1]];//,['txtW04',10,2,1]
-			var bbtNum = [['txtGmount',10,0,1],['txtGweight',10,2,1],['txtLengthc',10,0,1]];
+			var bbtNum = [['txtRadius',10,0,1],['txtGmount',10,0,1],['txtGweight',10,2,1],['txtLengthc',10,0,1]];
 			var bbmMask = [];
 			var bbsMask = [];
 			var bbtMask = [];
@@ -63,7 +63,7 @@
 				var t_c1=0;
 				for (var j = 0; j < q_bbtCount; j++) {
 					var t_lengthc = dec($('#txtLengthc__' + j).val());
-					var t_gmount = dec($('#txtGmount__' + j).val());
+					var t_gmount = dec($('#txtRadius__' + j).val());
 					t_c1=q_add(t_c1,q_mul(t_lengthc,t_gmount));
 				}
 				
@@ -321,19 +321,28 @@
 									as[j].spec=tspec1;
 									as[j].size=tsize1;
 									
-									if(dec(as[j].safemount)==0){
-										as.splice(j, 1);
-										j--;
-									}else{
-										var tsmount=round(dec(as[j].safemount)*dec($('#txtIdime').val())/100,0);
-										//庫存量-安全庫存量>安全%量 || 無訂單尚未裁剪
-										if(as[j].mount-dec(as[j].safemount)>=tsmount || dec(as[j].notv)==0){
-											as[j].smount=tsmount;
+									if(tsize1=='3#' || tsize1=='4#' || tsize1=='5#'){ //用安全庫存
+										if(dec(as[j].safemount)==0){
+											as.splice(j, 1);
+											j--;
 										}else{
-											as[j].smount=round(as[j].mount-dec(as[j].safemount),0);
+											var tsmount=round(dec(as[j].safemount)*dec($('#txtIdime').val())/100,0);
+											//庫存量-安全庫存量>安全%量 || 無訂單尚未裁剪
+											if(as[j].mount-dec(as[j].safemount)>=tsmount || dec(as[j].notv)==0){
+												as[j].smount=tsmount;
+											}else{
+												as[j].smount=round(as[j].mount-dec(as[j].safemount),0);
+											}
+										}
+									}else{ //直接使用庫存
+										if(dec(as[j].mount)==0){
+											as.splice(j, 1);
+											j--;
+										}else{
+											var tsmount=round(dec(as[j].mount)*dec($('#txtIdime').val())/100,0);
+											as[j].smount=tsmount;
 										}
 									}
-									
 								}
 								
 								safehas=safehas.concat(as);
@@ -710,7 +719,8 @@
 							$('#txtProductno__'+t_n).val(as_where[txn].noa);
 							$('#txtProduct__'+t_n).val(as_where[txn].product);
 							$('#txtUnit__'+t_n).val(as_where[txn].unit);
-							$('#txtGmount__'+t_n).val(getucc[i].mount);
+							$('#txtRadius__'+t_n).val(getucc[i].mount);
+							$('#txtGmount__'+t_n).val(round(getucc[i].mount*t_weight*getucc[i].lengthb/100,0));
 							$('#txtGweight__'+t_n).val(round(getucc[i].mount*t_weight*getucc[i].lengthb/100,0));
 							$('#txtNor__'+t_n).val(getucc[i].nor);
 							$('#txtMemo2__'+t_n).val(t_memo2);
@@ -729,7 +739,8 @@
 								$('#txtProductno__'+t_n).val(as[0].noa);
 								$('#txtProduct__'+t_n).val(as[0].product);
 								$('#txtUnit__'+t_n).val(as[0].unit);
-								$('#txtGmount__'+t_n).val(getucc[i].mount);
+								$('#txtRadius__'+t_n).val(getucc[i].mount);
+								$('#txtGmount__'+t_n).val(round(getucc[i].mount*t_weight*getucc[i].lengthb/100,0));
 								$('#txtGweight__'+t_n).val(round(getucc[i].mount*t_weight*getucc[i].lengthb/100,0));
 								$('#txtNor__'+t_n).val(getucc[i].nor);
 								$('#txtMemo2__'+t_n).val(t_memo2);
@@ -753,8 +764,9 @@
 								$('#txtProductno__'+t_n).val('');
 								$('#txtProduct__'+t_n).val('鋼筋熱軋'+getucc[i].spec+' '+getucc[i].size+'*'+(getucc[i].lengthb/100).toString()+'M');
 								$('#txtUnit__'+t_n).val('KG');
-								$('#txtGmount__'+t_n).val(getucc[i].mount);
-								$('#txtGweight__'+t_n).val(round(getucc[i].mount*t_weight*getucc[i].lengthb/100,2));
+								$('#txtRadius__'+t_n).val(getucc[i].mount);
+								$('#txtGmount__'+t_n).val(round(getucc[i].mount*t_weight*getucc[i].lengthb/100,0));
+								$('#txtGweight__'+t_n).val(round(getucc[i].mount*t_weight*getucc[i].lengthb/100,0));
 								$('#txtNor__'+t_n).val(getucc[i].nor);
 								$('#txtMemo2__'+t_n).val(t_memo2);
 								if(getucc[i].size=='3#' || getucc[i].size=='4#' || getucc[i].size=='5#'){
@@ -2460,7 +2472,7 @@
 													cutlengthbs=cutlengthbs.concat([dec(maxcutlengthb)]);
 													rep='';
 													t_cupsp=false;
-													var t_cup=getmlength2(clength,clength,maxcutlengthb,cutlengthbs,'',[],t_same,tspec1,tsize1);
+													var t_cup=getmlength2(clength,clength,maxcutlengthb,cutlengthbs,'',[],t_same,tspec1,tsize1,[]);
 													if(t_cup.length==0){
 														rep='';
 														t_cup=getmlength(clength,clength,maxcutlengthb,cutlengthbs,'',[],t_same,tspec1,tsize1,t_sortlen,t_safelen,t_stlen);
@@ -2537,7 +2549,7 @@
 															cutlengthbs=cutlengthbs.concat(b_cutlengthbs);
 															cutlengthbs=cutlengthbs.concat([dec(maxcutlengthb)]);
 															rep='';
-															var t_cup=getmlength2(clength,clength,maxcutlengthb,cutlengthbs,'',[],t_same,tspec1,tsize1);
+															var t_cup=getmlength2(clength,clength,maxcutlengthb,cutlengthbs,'',[],t_same,tspec1,tsize1,[]);
 															if(t_cup.length==0 && !t_cupsp){
 																rep='';
 																t_cup=getmlength(clength,clength,maxcutlengthb,cutlengthbs,'',[],t_same,tspec1,tsize1,t_sortlen,t_safelen,t_stlen);
@@ -4089,7 +4101,7 @@
 				for (var j = 0; j < q_bbtCount; j++) {
 					if(!emp($('#txtProductno__'+j).val()) && !emp($('#txtProduct__'+j).val()) &&!emp($('#txtMemo2__'+j).val()) &&!emp($('#txtNor__'+j).val())){
 						var tproduct=$('#txtProduct__'+j).val();
-						var tmount=dec($('#txtGmount__'+j).val());//領料數量
+						var tmount=dec($('#txtRadius__'+j).val());//領料數量
 						//材質號數長度
 						var tspec=tproduct.substr(tproduct.indexOf('S'),tproduct.indexOf(' ')-tproduct.indexOf('S'))
 						var tsize=tproduct.split(' ')[1].split('*')[0];
@@ -4207,7 +4219,7 @@
 				for (var j = 0; j < q_bbtCount; j++) {
 					if(!emp($('#txtProductno__'+j).val()) && !emp($('#txtProduct__'+j).val()) &&!emp($('#txtMemo2__'+j).val()) &&!emp($('#txtNor__'+j).val())){
 						var tproduct=$('#txtProduct__'+j).val();
-						var tmount=dec($('#txtGmount__'+j).val());//領料數量
+						var tmount=dec($('#txtRadius__'+j).val());//領料數量
 						//材質號數長度
 						var tspec=tproduct.substr(tproduct.indexOf('S'),tproduct.indexOf(' ')-tproduct.indexOf('S'));
 						var tsize=tproduct.split(' ')[1].split('*')[0];
@@ -4412,7 +4424,7 @@
 				for (var i = 0; i < q_bbtCount; i++) {
 					$('#lblNo__' + i).text(i + 1);
 					if (!$('#btnMinut__' + i).hasClass('isAssign')) {
-						$('#txtGmount__'+i).change(function() {
+						$('#txtRadius__'+i).change(function() {
 							sum();
 						});
 						$('#txtLengthc__'+i).change(function() {
@@ -4449,7 +4461,7 @@
 							for (var j = 0; j < cutmerge.length; j++) {
 								if($('#txtMemo2__'+i).val()==cutmerge[j].memo2 && $('#txtProduct__'+i).val()==cutmerge[j].product){
 									t_n=j;
-									cutmerge[j].mount=q_add(dec(cutmerge[j].mount),dec($('#txtGmount__'+i).val()));
+									cutmerge[j].mount=q_add(dec(cutmerge[j].mount),dec($('#txtRadius__'+i).val()));
 									cutmerge[j].weight=q_add(dec(cutmerge[j].weight),dec($('#txtGweight__'+i).val()));
 									cutmerge[j].nor=cutmerge[j].nor+'#'+$('#txtNor__'+i).val();
 									break;
@@ -4459,7 +4471,7 @@
 								cutmerge.push({
 									product:$('#txtProduct__'+i).val(),
 									memo2:$('#txtMemo2__'+i).val(),
-									mount:$('#txtGmount__'+i).val(),
+									mount:$('#txtRadius__'+i).val(),
 									weight:$('#txtGweight__'+i).val(),
 									nor:$('#txtNor__'+i).val()
 								})
@@ -4526,7 +4538,7 @@
 					for (var j = 0; j < q_bbtCount; j++) {
 						if(!emp($('#txtProduct__'+j).val()) &&!emp($('#txtMemo2__'+j).val()) &&!emp($('#txtNor__'+j).val())){ //!emp($('#txtProductno__'+j).val()) &&
 							var tproduct=$('#txtProduct__'+j).val();
-							var tmount=dec($('#txtGmount__'+j).val());//領料數量
+							var tmount=dec($('#txtRadius__'+j).val());//領料數量
 							//材質號數長度
 							var tspec=tproduct.substr(tproduct.indexOf('S'),tproduct.indexOf(' ')-tproduct.indexOf('S'));
 							var tsize=tproduct.split(' ')[1].split('*')[0];
@@ -5091,7 +5103,7 @@
 													rep='';
 													
 													t_cupsp=false;
-													var t_cup=getmlength2(clength,clength,maxcutlengthb,cutlengthbs,'',[],t_same,tspec1,tsize1);
+													var t_cup=getmlength2(clength,clength,maxcutlengthb,cutlengthbs,'',[],t_same,tspec1,tsize1,[]);
 													//---------------------------------------
 													//取得所需數量
 													var tt_same=[];
@@ -5274,7 +5286,7 @@
 															//cutlengthbs=cutlengthbs.concat([dec(maxcutlengthb)]);
 															
 															rep='';
-															var t_cup=getmlength2(clength,clength,maxcutlengthb,cutlengthbs,'',[],t_same,tspec1,tsize1);
+															var t_cup=getmlength2(clength,clength,maxcutlengthb,cutlengthbs,'',[],t_same,tspec1,tsize1,[]);
 															//---------------------------------------
 															//取得所需數量
 															var tt_same=[];
@@ -6658,14 +6670,6 @@
 													rep='';
 													
 													t_cupsp=false;
-													//S1 數量相同
-													cutlengthbs=$.extend(true,[], a_cutlengthbs);
-													cutlengthbs.sort(function(a, b) {if(a>b) {return -1;} if (a < b) {return 1;} return 0;});//長>短
-													var tmp2=$.extend(true,[], b_cutlengthbs);
-													tmp2.sort(function(a, b) {if(a>b) {return -1;} if (a < b) {return 1;} return 0;});//長>短
-													cutlengthbs=cutlengthbs=cutlengthbs.concat(tmp2);
-													var t_cup=getmlength2(clength,clength,maxcutlengthb,cutlengthbs,'',[],t_same,tspec1,tsize1);
-													
 													//---------------------------------------
 													//取得所需數量
 													var tt_same=[],tmp_same=[];
@@ -6689,7 +6693,17 @@
 														}
 													}
 													
+													var t_level=dec($('#txtLevel').val());
 													tmp_same=$.extend(true,[], tt_same);
+													//---------------------------------------
+													//S0 數量相同 至少要有一個長度數量相同
+													cutlengthbs=$.extend(true,[], a_cutlengthbs);
+													cutlengthbs.sort(function(a, b) {if(a>b) {return -1;} if (a < b) {return 1;} return 0;});//長>短
+													var tmp2=$.extend(true,[], b_cutlengthbs);
+													tmp2.sort(function(a, b) {if(a>b) {return -1;} if (a < b) {return 1;} return 0;});//長>短
+													cutlengthbs=cutlengthbs=cutlengthbs.concat(tmp2);
+													rep='';
+													var t_cup=getmlength2(clength,clength,maxcutlengthb,cutlengthbs,'',[],t_same,tspec1,tsize1,a_cutlengthbs);
 													
 													//調整最後剩餘數量是否符合最低損耗率
 													for(var f=0;f<t_cup.length;f++){
@@ -6819,9 +6833,412 @@
 															}
 														}
 													}
-													
+													if(t_cup.length==0 && t_level>0){
+														rep='';
+														t_cup=getmlength2(q_add(clength,t_level),q_add(clength,t_level),maxcutlengthb,cutlengthbs,'',[],t_same,tspec1,tsize1,a_cutlengthbs);
+														//調整最後剩餘數量是否符合最低損耗率
+														for(var f=0;f<t_cup.length;f++){
+															tt_same=$.extend(true,[], tmp_same);
+															var cupcutlength=t_cup[f].cutlength.split('#')[0].split(',');//切割長度
+															var cupcutwlength=t_cup[f].cutlength.split('#')[1].split(',');//損耗長度
+															var cupolength=t_cup[f].olength;//裁剪的板料長度
+															
+															var cuttmp=[];//組合數量
+															for (var m=0;m<cupcutlength.length;m++){//裁切數量
+																var x_n=-1;
+																for (var n=0;n<cuttmp.length;n++){
+																	if(cuttmp[n].lengthb==dec(cupcutlength[m])){
+																		cuttmp[n].mount=cuttmp[n].mount+1;
+																		x_n=n;
+																		break;	
+																	}
+																}
+																if(x_n==-1){
+																	cuttmp.push({
+																		'lengthb':dec(cupcutlength[m]),
+																		'mount':1
+																	});
+																}
+															}
+															var t_wlength=dec(cupolength);
+															/*if(t_wlength.toString().slice(-1)=='5'){
+																t_wlength=dec(t_wlength.toString().substr(0,t_wlength.toString().length-1)+'0');
+															}*/
+															
+															var t_cutlength='';
+															for (var m=0;m<cuttmp.length;m++){
+																for (var n=0;n<tt_same.length;n++){
+																	if(dec(cuttmp[m].mount)>0 && dec(cuttmp[m].lengthb)<=dec(tt_same[n].lengthb) && dec(cuttmp[m].lengthb)>=(dec(tt_same[n].lengthb)-dec(tt_same[n].tw03))){
+																		if(dec(cuttmp[m].mount)>dec(tt_same[n].mount)+dec(tt_same[n].maxmount)){
+																			t_wlength=q_sub(t_wlength,q_mul(dec(cuttmp[m].lengthb),dec(tt_same[n].mount)+dec(tt_same[n].maxmount)));
+																			var ttt_mount=dec(tt_same[n].mount)+dec(tt_same[n].maxmount);
+																			while(ttt_mount>0){
+																				t_cutlength=t_cutlength+(t_cutlength.length>0?',':'')+cuttmp[m].lengthb;
+																				ttt_mount--;
+																				cuttmp[m].mount=dec(cuttmp[m].mount)-1;
+																				tt_same[n].mount=dec(tt_same[n].mount)-1;
+																			}
+																		}else{
+																			t_wlength=q_sub(t_wlength,q_mul(dec(cuttmp[m].lengthb),cuttmp[m].mount));
+																			var ttt_mount=cuttmp[m].mount;
+																			while(ttt_mount>0){
+																				t_cutlength=t_cutlength+(t_cutlength.length>0?',':'')+cuttmp[m].lengthb;
+																				ttt_mount--;
+																				cuttmp[m].mount=dec(cuttmp[m].mount)-1;
+																				tt_same[n].mount=dec(tt_same[n].mount)-1;
+																			}
+																		}
+																		//106/09/14 不受項次限制
+																		//break;
+																	}
+																}
+															}
+															if(t_wlength<0)
+																t_wlength=0;
+															t_cup[f].wlenhth=t_wlength;
+															t_cup[f].wrate=t_wlength/dec(cupolength);
+															t_cup[f].cutlength=t_cutlength+'#'+t_wlength;
+															if(t_cup[f].wrate>0){
+																t_cup.splice(f,1)
+																f--;
+															}else{
+																//做兩支以上
+																var cuttmp=[];//組合數量
+																for (var m=0;m<cupcutlength.length;m++){//裁切數量
+																	var x_n=-1;
+																	for (var n=0;n<cuttmp.length;n++){
+																		if(cuttmp[n].lengthb==dec(cupcutlength[m])){
+																			cuttmp[n].mount=cuttmp[n].mount+1;
+																			x_n=n;
+																			break;	
+																		}
+																	}
+																	if(x_n==-1){
+																		cuttmp.push({
+																			'lengthb':dec(cupcutlength[m]),
+																			'mount':1
+																		});
+																	}
+																}
+																var t_wlength=dec(cupolength);
+																/*if(t_wlength.toString().slice(-1)=='5'){
+																	t_wlength=dec(t_wlength.toString().substr(0,t_wlength.toString().length-1)+'0');
+																}*/
+																
+																var t_cutlength='';
+																for (var m=0;m<cuttmp.length;m++){
+																	for (var n=0;n<tt_same.length;n++){
+																		if(dec(cuttmp[m].mount)>0 && dec(cuttmp[m].lengthb)<=dec(tt_same[n].lengthb) && dec(cuttmp[m].lengthb)>=(dec(tt_same[n].lengthb)-dec(tt_same[n].tw03))){
+																			if(dec(cuttmp[m].mount)>dec(tt_same[n].mount)+dec(tt_same[n].maxmount)){
+																				t_wlength=q_sub(t_wlength,q_mul(dec(cuttmp[m].lengthb),dec(tt_same[n].mount)+dec(tt_same[n].maxmount)));
+																				var ttt_mount=dec(tt_same[n].mount)+dec(tt_same[n].maxmount);
+																				while(ttt_mount>0){
+																					t_cutlength=t_cutlength+(t_cutlength.length>0?',':'')+cuttmp[m].lengthb;
+																					ttt_mount--;
+																					cuttmp[m].mount=dec(cuttmp[m].mount)-1;
+																					tt_same[n].mount=dec(tt_same[n].mount)-1;
+																				}
+																			}else{
+																				t_wlength=q_sub(t_wlength,q_mul(dec(cuttmp[m].lengthb),cuttmp[m].mount));
+																				var ttt_mount=cuttmp[m].mount;
+																				while(ttt_mount>0){
+																					t_cutlength=t_cutlength+(t_cutlength.length>0?',':'')+cuttmp[m].lengthb;
+																					ttt_mount--;
+																					cuttmp[m].mount=dec(cuttmp[m].mount)-1;
+																					tt_same[n].mount=dec(tt_same[n].mount)-1;
+																				}
+																			}
+																			//106/09/14 不受項次限制
+																			//break;
+																		}
+																	}
+																}
+																if(t_wlength<0)
+																	t_wlength=0;
+																//t_cup[f].wlenhth=t_wlength;
+																t_cup[f].wrate=t_wlength/dec(cupolength);
+																//t_cup[f].cutlength=t_cutlength+'#'+t_wlength;
+																if(t_cup[f].wrate>0){
+																	t_cup.splice(f,1)
+																	f--;
+																}
+															}
+														}
+													}
+													//---------------------------------------
+													//S1 數量相同,數量比第一個大
+													if(t_cup.length==0){
+														cutlengthbs=$.extend(true,[], a_cutlengthbs);
+														cutlengthbs.sort(function(a, b) {if(a>b) {return -1;} if (a < b) {return 1;} return 0;});//長>短
+														var tmp2=$.extend(true,[], b_cutlengthbs);
+														tmp2.sort(function(a, b) {if(a>b) {return -1;} if (a < b) {return 1;} return 0;});//長>短
+														cutlengthbs=cutlengthbs=cutlengthbs.concat(tmp2);
+														rep='';
+														var t_cup=getmlength2(clength,clength,maxcutlengthb,cutlengthbs,'',[],t_same,tspec1,tsize1,[]);
+														
+														//調整最後剩餘數量是否符合最低損耗率
+														for(var f=0;f<t_cup.length;f++){
+															tt_same=$.extend(true,[], tmp_same);
+															var cupcutlength=t_cup[f].cutlength.split('#')[0].split(',');//切割長度
+															var cupcutwlength=t_cup[f].cutlength.split('#')[1].split(',');//損耗長度
+															var cupolength=t_cup[f].olength;//裁剪的板料長度
+															
+															var cuttmp=[];//組合數量
+															for (var m=0;m<cupcutlength.length;m++){//裁切數量
+																var x_n=-1;
+																for (var n=0;n<cuttmp.length;n++){
+																	if(cuttmp[n].lengthb==dec(cupcutlength[m])){
+																		cuttmp[n].mount=cuttmp[n].mount+1;
+																		x_n=n;
+																		break;	
+																	}
+																}
+																if(x_n==-1){
+																	cuttmp.push({
+																		'lengthb':dec(cupcutlength[m]),
+																		'mount':1
+																	});
+																}
+															}
+															var t_wlength=dec(cupolength);
+															/*if(t_wlength.toString().slice(-1)=='5'){
+																t_wlength=dec(t_wlength.toString().substr(0,t_wlength.toString().length-1)+'0');
+															}*/
+															
+															var t_cutlength='';
+															for (var m=0;m<cuttmp.length;m++){
+																for (var n=0;n<tt_same.length;n++){
+																	if(dec(cuttmp[m].mount)>0 && dec(cuttmp[m].lengthb)<=dec(tt_same[n].lengthb) && dec(cuttmp[m].lengthb)>=(dec(tt_same[n].lengthb)-dec(tt_same[n].tw03))){
+																		if(dec(cuttmp[m].mount)>dec(tt_same[n].mount)+dec(tt_same[n].maxmount)){
+																			t_wlength=q_sub(t_wlength,q_mul(dec(cuttmp[m].lengthb),dec(tt_same[n].mount)+dec(tt_same[n].maxmount)));
+																			var ttt_mount=dec(tt_same[n].mount)+dec(tt_same[n].maxmount);
+																			while(ttt_mount>0){
+																				t_cutlength=t_cutlength+(t_cutlength.length>0?',':'')+cuttmp[m].lengthb;
+																				ttt_mount--;
+																				cuttmp[m].mount=dec(cuttmp[m].mount)-1;
+																				tt_same[n].mount=dec(tt_same[n].mount)-1;
+																			}
+																		}else{
+																			t_wlength=q_sub(t_wlength,q_mul(dec(cuttmp[m].lengthb),cuttmp[m].mount));
+																			var ttt_mount=cuttmp[m].mount;
+																			while(ttt_mount>0){
+																				t_cutlength=t_cutlength+(t_cutlength.length>0?',':'')+cuttmp[m].lengthb;
+																				ttt_mount--;
+																				cuttmp[m].mount=dec(cuttmp[m].mount)-1;
+																				tt_same[n].mount=dec(tt_same[n].mount)-1;
+																			}
+																		}
+																		//106/09/14 不受項次限制
+																		//break;
+																	}
+																}
+															}
+															if(t_wlength<0)
+																t_wlength=0;
+															t_cup[f].wlenhth=t_wlength;
+															t_cup[f].wrate=t_wlength/dec(cupolength);
+															t_cup[f].cutlength=t_cutlength+'#'+t_wlength;
+															if(t_cup[f].wrate>0){
+																t_cup.splice(f,1)
+																f--;
+															}else{
+																//做兩支以上
+																var cuttmp=[];//組合數量
+																for (var m=0;m<cupcutlength.length;m++){//裁切數量
+																	var x_n=-1;
+																	for (var n=0;n<cuttmp.length;n++){
+																		if(cuttmp[n].lengthb==dec(cupcutlength[m])){
+																			cuttmp[n].mount=cuttmp[n].mount+1;
+																			x_n=n;
+																			break;	
+																		}
+																	}
+																	if(x_n==-1){
+																		cuttmp.push({
+																			'lengthb':dec(cupcutlength[m]),
+																			'mount':1
+																		});
+																	}
+																}
+																var t_wlength=dec(cupolength);
+																/*if(t_wlength.toString().slice(-1)=='5'){
+																	t_wlength=dec(t_wlength.toString().substr(0,t_wlength.toString().length-1)+'0');
+																}*/
+																
+																var t_cutlength='';
+																for (var m=0;m<cuttmp.length;m++){
+																	for (var n=0;n<tt_same.length;n++){
+																		if(dec(cuttmp[m].mount)>0 && dec(cuttmp[m].lengthb)<=dec(tt_same[n].lengthb) && dec(cuttmp[m].lengthb)>=(dec(tt_same[n].lengthb)-dec(tt_same[n].tw03))){
+																			if(dec(cuttmp[m].mount)>dec(tt_same[n].mount)+dec(tt_same[n].maxmount)){
+																				t_wlength=q_sub(t_wlength,q_mul(dec(cuttmp[m].lengthb),dec(tt_same[n].mount)+dec(tt_same[n].maxmount)));
+																				var ttt_mount=dec(tt_same[n].mount)+dec(tt_same[n].maxmount);
+																				while(ttt_mount>0){
+																					t_cutlength=t_cutlength+(t_cutlength.length>0?',':'')+cuttmp[m].lengthb;
+																					ttt_mount--;
+																					cuttmp[m].mount=dec(cuttmp[m].mount)-1;
+																					tt_same[n].mount=dec(tt_same[n].mount)-1;
+																				}
+																			}else{
+																				t_wlength=q_sub(t_wlength,q_mul(dec(cuttmp[m].lengthb),cuttmp[m].mount));
+																				var ttt_mount=cuttmp[m].mount;
+																				while(ttt_mount>0){
+																					t_cutlength=t_cutlength+(t_cutlength.length>0?',':'')+cuttmp[m].lengthb;
+																					ttt_mount--;
+																					cuttmp[m].mount=dec(cuttmp[m].mount)-1;
+																					tt_same[n].mount=dec(tt_same[n].mount)-1;
+																				}
+																			}
+																			//106/09/14 不受項次限制
+																			//break;
+																		}
+																	}
+																}
+																if(t_wlength<0)
+																	t_wlength=0;
+																//t_cup[f].wlenhth=t_wlength;
+																t_cup[f].wrate=t_wlength/dec(cupolength);
+																//t_cup[f].cutlength=t_cutlength+'#'+t_wlength;
+																if(t_cup[f].wrate>0){
+																	t_cup.splice(f,1)
+																	f--;
+																}
+															}
+														}
+													}
+													if(t_cup.length==0 && t_level>0){
+														rep='';
+														var t_cup=getmlength2(q_add(clength,t_level),q_add(clength,t_level),maxcutlengthb,cutlengthbs,'',[],t_same,tspec1,tsize1,[]);
+														
+														//調整最後剩餘數量是否符合最低損耗率
+														for(var f=0;f<t_cup.length;f++){
+															tt_same=$.extend(true,[], tmp_same);
+															var cupcutlength=t_cup[f].cutlength.split('#')[0].split(',');//切割長度
+															var cupcutwlength=t_cup[f].cutlength.split('#')[1].split(',');//損耗長度
+															var cupolength=t_cup[f].olength;//裁剪的板料長度
+															
+															var cuttmp=[];//組合數量
+															for (var m=0;m<cupcutlength.length;m++){//裁切數量
+																var x_n=-1;
+																for (var n=0;n<cuttmp.length;n++){
+																	if(cuttmp[n].lengthb==dec(cupcutlength[m])){
+																		cuttmp[n].mount=cuttmp[n].mount+1;
+																		x_n=n;
+																		break;	
+																	}
+																}
+																if(x_n==-1){
+																	cuttmp.push({
+																		'lengthb':dec(cupcutlength[m]),
+																		'mount':1
+																	});
+																}
+															}
+															var t_wlength=dec(cupolength);
+															/*if(t_wlength.toString().slice(-1)=='5'){
+																t_wlength=dec(t_wlength.toString().substr(0,t_wlength.toString().length-1)+'0');
+															}*/
+															
+															var t_cutlength='';
+															for (var m=0;m<cuttmp.length;m++){
+																for (var n=0;n<tt_same.length;n++){
+																	if(dec(cuttmp[m].mount)>0 && dec(cuttmp[m].lengthb)<=dec(tt_same[n].lengthb) && dec(cuttmp[m].lengthb)>=(dec(tt_same[n].lengthb)-dec(tt_same[n].tw03))){
+																		if(dec(cuttmp[m].mount)>dec(tt_same[n].mount)+dec(tt_same[n].maxmount)){
+																			t_wlength=q_sub(t_wlength,q_mul(dec(cuttmp[m].lengthb),dec(tt_same[n].mount)+dec(tt_same[n].maxmount)));
+																			var ttt_mount=dec(tt_same[n].mount)+dec(tt_same[n].maxmount);
+																			while(ttt_mount>0){
+																				t_cutlength=t_cutlength+(t_cutlength.length>0?',':'')+cuttmp[m].lengthb;
+																				ttt_mount--;
+																				cuttmp[m].mount=dec(cuttmp[m].mount)-1;
+																				tt_same[n].mount=dec(tt_same[n].mount)-1;
+																			}
+																		}else{
+																			t_wlength=q_sub(t_wlength,q_mul(dec(cuttmp[m].lengthb),cuttmp[m].mount));
+																			var ttt_mount=cuttmp[m].mount;
+																			while(ttt_mount>0){
+																				t_cutlength=t_cutlength+(t_cutlength.length>0?',':'')+cuttmp[m].lengthb;
+																				ttt_mount--;
+																				cuttmp[m].mount=dec(cuttmp[m].mount)-1;
+																				tt_same[n].mount=dec(tt_same[n].mount)-1;
+																			}
+																		}
+																		//106/09/14 不受項次限制
+																		//break;
+																	}
+																}
+															}
+															if(t_wlength<0)
+																t_wlength=0;
+															t_cup[f].wlenhth=t_wlength;
+															t_cup[f].wrate=t_wlength/dec(cupolength);
+															t_cup[f].cutlength=t_cutlength+'#'+t_wlength;
+															if(t_cup[f].wrate>0){
+																t_cup.splice(f,1)
+																f--;
+															}else{
+																//做兩支以上
+																var cuttmp=[];//組合數量
+																for (var m=0;m<cupcutlength.length;m++){//裁切數量
+																	var x_n=-1;
+																	for (var n=0;n<cuttmp.length;n++){
+																		if(cuttmp[n].lengthb==dec(cupcutlength[m])){
+																			cuttmp[n].mount=cuttmp[n].mount+1;
+																			x_n=n;
+																			break;	
+																		}
+																	}
+																	if(x_n==-1){
+																		cuttmp.push({
+																			'lengthb':dec(cupcutlength[m]),
+																			'mount':1
+																		});
+																	}
+																}
+																var t_wlength=dec(cupolength);
+																/*if(t_wlength.toString().slice(-1)=='5'){
+																	t_wlength=dec(t_wlength.toString().substr(0,t_wlength.toString().length-1)+'0');
+																}*/
+																
+																var t_cutlength='';
+																for (var m=0;m<cuttmp.length;m++){
+																	for (var n=0;n<tt_same.length;n++){
+																		if(dec(cuttmp[m].mount)>0 && dec(cuttmp[m].lengthb)<=dec(tt_same[n].lengthb) && dec(cuttmp[m].lengthb)>=(dec(tt_same[n].lengthb)-dec(tt_same[n].tw03))){
+																			if(dec(cuttmp[m].mount)>dec(tt_same[n].mount)+dec(tt_same[n].maxmount)){
+																				t_wlength=q_sub(t_wlength,q_mul(dec(cuttmp[m].lengthb),dec(tt_same[n].mount)+dec(tt_same[n].maxmount)));
+																				var ttt_mount=dec(tt_same[n].mount)+dec(tt_same[n].maxmount);
+																				while(ttt_mount>0){
+																					t_cutlength=t_cutlength+(t_cutlength.length>0?',':'')+cuttmp[m].lengthb;
+																					ttt_mount--;
+																					cuttmp[m].mount=dec(cuttmp[m].mount)-1;
+																					tt_same[n].mount=dec(tt_same[n].mount)-1;
+																				}
+																			}else{
+																				t_wlength=q_sub(t_wlength,q_mul(dec(cuttmp[m].lengthb),cuttmp[m].mount));
+																				var ttt_mount=cuttmp[m].mount;
+																				while(ttt_mount>0){
+																					t_cutlength=t_cutlength+(t_cutlength.length>0?',':'')+cuttmp[m].lengthb;
+																					ttt_mount--;
+																					cuttmp[m].mount=dec(cuttmp[m].mount)-1;
+																					tt_same[n].mount=dec(tt_same[n].mount)-1;
+																				}
+																			}
+																			//106/09/14 不受項次限制
+																			//break;
+																		}
+																	}
+																}
+																if(t_wlength<0)
+																	t_wlength=0;
+																//t_cup[f].wlenhth=t_wlength;
+																t_cup[f].wrate=t_wlength/dec(cupolength);
+																//t_cup[f].cutlength=t_cutlength+'#'+t_wlength;
+																if(t_cup[f].wrate>0){
+																	t_cup.splice(f,1)
+																	f--;
+																}
+															}
+														}
+													}
 													//--------------------------------------
-													
 													//S2 長度小的數量要比長度大的數量大 之後取長度次長的不管數量
 													if(t_cup.length==0){
 														var tmp=$.extend(true,[], a_cutlengthbs);
@@ -6832,102 +7249,16 @@
 														tmp.sort(function(a, b) {if(a>b) {return -1;} if (a < b) {return 1;} return 0;});//長>短
 														cutlengthbs=cutlengthbs.concat(tmp);
 														cutlengthbs=cutlengthbs.concat(e_cutlengthbs);
-														
-														t_cup=getmlength2(clength,clength,maxcutlengthb,cutlengthbs,'',[],t_same,tspec1,tsize1);
-													}else{
-														t_cupsp=true;
-													}
-													
-													//---------------------------------------
-													//取得所需數量
-													var tt_same=[],tmp_same=[];
-													for(var n=0;n<t_same.length;n++){
-														var tspec2=t_same[n].spec;
-														var tsize2=t_same[n].size;
-														var lengthb2=t_same[n].lengthb;
-														var tdata2=t_same[n].data;
-														if(tspec1==tspec2 && tsize1==tsize2){
-															for(var m=0;m<tdata2.length;m++){
-																if(dec(tdata2[m].mount)>0){
-																	tt_same.push({
-																		'maxmount':tdata2[m].maxmount,
-																		'lengthb':lengthb2,
-																		'mount':tdata2[m].mount,
-																		'nor':tdata2[m].nor,
-																		'tw03':tdata2[m].tw03
-																	});
-																}
-															}
-														}
-													}
-													tmp_same=$.extend(true,[], tt_same);
-													//調整最後剩餘數量是否符合最低損耗率
-													for(var f=0;f<t_cup.length;f++){
-														tt_same=$.extend(true,[], tmp_same);
-														var cupcutlength=t_cup[f].cutlength.split('#')[0].split(',');//切割長度
-														var cupcutwlength=t_cup[f].cutlength.split('#')[1].split(',');//損耗長度
-														var cupolength=t_cup[f].olength;//裁剪的板料長度
-														
-														var cuttmp=[];//組合數量
-														for (var m=0;m<cupcutlength.length;m++){//裁切數量
-															var x_n=-1;
-															for (var n=0;n<cuttmp.length;n++){
-																if(cuttmp[n].lengthb==dec(cupcutlength[m])){
-																	cuttmp[n].mount=cuttmp[n].mount+1;
-																	x_n=n;
-																	break;	
-																}
-															}
-															if(x_n==-1){
-																cuttmp.push({
-																	'lengthb':dec(cupcutlength[m]),
-																	'mount':1
-																});
-															}
-														}
-														var t_wlength=dec(cupolength);
-														/*if(t_wlength.toString().slice(-1)=='5'){
-															t_wlength=dec(t_wlength.toString().substr(0,t_wlength.toString().length-1)+'0');
-														}*/
-														
-														var t_cutlength='';
-														for (var m=0;m<cuttmp.length;m++){
-															for (var n=0;n<tt_same.length;n++){
-																if(dec(cuttmp[m].mount)>0 && dec(cuttmp[m].lengthb)<=dec(tt_same[n].lengthb) && dec(cuttmp[m].lengthb)>=(dec(tt_same[n].lengthb)-dec(tt_same[n].tw03))){
-																	if(dec(cuttmp[m].mount)>dec(tt_same[n].mount)+dec(tt_same[n].maxmount)){
-																		t_wlength=q_sub(t_wlength,q_mul(dec(cuttmp[m].lengthb),dec(tt_same[n].mount)+dec(tt_same[n].maxmount)));
-																		var ttt_mount=dec(tt_same[n].mount)+dec(tt_same[n].maxmount);
-																		while(ttt_mount>0){
-																			t_cutlength=t_cutlength+(t_cutlength.length>0?',':'')+cuttmp[m].lengthb;
-																			ttt_mount--;
-																			cuttmp[m].mount=dec(cuttmp[m].mount)-1;
-																			tt_same[n].mount=dec(tt_same[n].mount)-1;
-																		}
-																	}else{
-																		t_wlength=q_sub(t_wlength,q_mul(dec(cuttmp[m].lengthb),cuttmp[m].mount));
-																		var ttt_mount=cuttmp[m].mount;
-																		while(ttt_mount>0){
-																			t_cutlength=t_cutlength+(t_cutlength.length>0?',':'')+cuttmp[m].lengthb;
-																			ttt_mount--;
-																			cuttmp[m].mount=dec(cuttmp[m].mount)-1;
-																			tt_same[n].mount=dec(tt_same[n].mount)-1;
-																		}
-																	}
-																	//106/09/14 不受項次限制
-																	//break;
-																}
-															}
-														}
-														if(t_wlength<0)
-															t_wlength=0;
-														t_cup[f].wlenhth=t_wlength;
-														t_cup[f].wrate=t_wlength/dec(cupolength);
-														t_cup[f].cutlength=t_cutlength+'#'+t_wlength;
-														if(t_cup[f].wrate>0){
-															t_cup.splice(f,1)
-															f--;
-														}else{
-															//做兩支以上
+														rep='';
+														t_cup=getmlength2(clength,clength,maxcutlengthb,cutlengthbs,'',[],t_same,tspec1,tsize1,[]);
+														//---------------------------------------
+														//調整最後剩餘數量是否符合最低損耗率
+														for(var f=0;f<t_cup.length;f++){
+															tt_same=$.extend(true,[], tmp_same);
+															var cupcutlength=t_cup[f].cutlength.split('#')[0].split(',');//切割長度
+															var cupcutwlength=t_cup[f].cutlength.split('#')[1].split(',');//損耗長度
+															var cupolength=t_cup[f].olength;//裁剪的板料長度
+															
 															var cuttmp=[];//組合數量
 															for (var m=0;m<cupcutlength.length;m++){//裁切數量
 																var x_n=-1;
@@ -6980,20 +7311,211 @@
 															}
 															if(t_wlength<0)
 																t_wlength=0;
-															//t_cup[f].wlenhth=t_wlength;
+															t_cup[f].wlenhth=t_wlength;
 															t_cup[f].wrate=t_wlength/dec(cupolength);
-															//t_cup[f].cutlength=t_cutlength+'#'+t_wlength;
+															t_cup[f].cutlength=t_cutlength+'#'+t_wlength;
 															if(t_cup[f].wrate>0){
 																t_cup.splice(f,1)
 																f--;
+															}else{
+																//做兩支以上
+																var cuttmp=[];//組合數量
+																for (var m=0;m<cupcutlength.length;m++){//裁切數量
+																	var x_n=-1;
+																	for (var n=0;n<cuttmp.length;n++){
+																		if(cuttmp[n].lengthb==dec(cupcutlength[m])){
+																			cuttmp[n].mount=cuttmp[n].mount+1;
+																			x_n=n;
+																			break;	
+																		}
+																	}
+																	if(x_n==-1){
+																		cuttmp.push({
+																			'lengthb':dec(cupcutlength[m]),
+																			'mount':1
+																		});
+																	}
+																}
+																var t_wlength=dec(cupolength);
+																/*if(t_wlength.toString().slice(-1)=='5'){
+																	t_wlength=dec(t_wlength.toString().substr(0,t_wlength.toString().length-1)+'0');
+																}*/
+																
+																var t_cutlength='';
+																for (var m=0;m<cuttmp.length;m++){
+																	for (var n=0;n<tt_same.length;n++){
+																		if(dec(cuttmp[m].mount)>0 && dec(cuttmp[m].lengthb)<=dec(tt_same[n].lengthb) && dec(cuttmp[m].lengthb)>=(dec(tt_same[n].lengthb)-dec(tt_same[n].tw03))){
+																			if(dec(cuttmp[m].mount)>dec(tt_same[n].mount)+dec(tt_same[n].maxmount)){
+																				t_wlength=q_sub(t_wlength,q_mul(dec(cuttmp[m].lengthb),dec(tt_same[n].mount)+dec(tt_same[n].maxmount)));
+																				var ttt_mount=dec(tt_same[n].mount)+dec(tt_same[n].maxmount);
+																				while(ttt_mount>0){
+																					t_cutlength=t_cutlength+(t_cutlength.length>0?',':'')+cuttmp[m].lengthb;
+																					ttt_mount--;
+																					cuttmp[m].mount=dec(cuttmp[m].mount)-1;
+																					tt_same[n].mount=dec(tt_same[n].mount)-1;
+																				}
+																			}else{
+																				t_wlength=q_sub(t_wlength,q_mul(dec(cuttmp[m].lengthb),cuttmp[m].mount));
+																				var ttt_mount=cuttmp[m].mount;
+																				while(ttt_mount>0){
+																					t_cutlength=t_cutlength+(t_cutlength.length>0?',':'')+cuttmp[m].lengthb;
+																					ttt_mount--;
+																					cuttmp[m].mount=dec(cuttmp[m].mount)-1;
+																					tt_same[n].mount=dec(tt_same[n].mount)-1;
+																				}
+																			}
+																			//106/09/14 不受項次限制
+																			//break;
+																		}
+																	}
+																}
+																if(t_wlength<0)
+																	t_wlength=0;
+																//t_cup[f].wlenhth=t_wlength;
+																t_cup[f].wrate=t_wlength/dec(cupolength);
+																//t_cup[f].cutlength=t_cutlength+'#'+t_wlength;
+																if(t_cup[f].wrate>0){
+																	t_cup.splice(f,1)
+																	f--;
+																}
 															}
 														}
 													}
-													
+													if(t_cup.length==0 && t_level>0){
+														rep='';
+														t_cup=getmlength2(q_add(clength,t_level),q_add(clength,t_level),maxcutlengthb,cutlengthbs,'',[],t_same,tspec1,tsize1,[]);
+														//---------------------------------------
+														//調整最後剩餘數量是否符合最低損耗率
+														for(var f=0;f<t_cup.length;f++){
+															tt_same=$.extend(true,[], tmp_same);
+															var cupcutlength=t_cup[f].cutlength.split('#')[0].split(',');//切割長度
+															var cupcutwlength=t_cup[f].cutlength.split('#')[1].split(',');//損耗長度
+															var cupolength=t_cup[f].olength;//裁剪的板料長度
+															
+															var cuttmp=[];//組合數量
+															for (var m=0;m<cupcutlength.length;m++){//裁切數量
+																var x_n=-1;
+																for (var n=0;n<cuttmp.length;n++){
+																	if(cuttmp[n].lengthb==dec(cupcutlength[m])){
+																		cuttmp[n].mount=cuttmp[n].mount+1;
+																		x_n=n;
+																		break;	
+																	}
+																}
+																if(x_n==-1){
+																	cuttmp.push({
+																		'lengthb':dec(cupcutlength[m]),
+																		'mount':1
+																	});
+																}
+															}
+															var t_wlength=dec(cupolength);
+															/*if(t_wlength.toString().slice(-1)=='5'){
+																t_wlength=dec(t_wlength.toString().substr(0,t_wlength.toString().length-1)+'0');
+															}*/
+															
+															var t_cutlength='';
+															for (var m=0;m<cuttmp.length;m++){
+																for (var n=0;n<tt_same.length;n++){
+																	if(dec(cuttmp[m].mount)>0 && dec(cuttmp[m].lengthb)<=dec(tt_same[n].lengthb) && dec(cuttmp[m].lengthb)>=(dec(tt_same[n].lengthb)-dec(tt_same[n].tw03))){
+																		if(dec(cuttmp[m].mount)>dec(tt_same[n].mount)+dec(tt_same[n].maxmount)){
+																			t_wlength=q_sub(t_wlength,q_mul(dec(cuttmp[m].lengthb),dec(tt_same[n].mount)+dec(tt_same[n].maxmount)));
+																			var ttt_mount=dec(tt_same[n].mount)+dec(tt_same[n].maxmount);
+																			while(ttt_mount>0){
+																				t_cutlength=t_cutlength+(t_cutlength.length>0?',':'')+cuttmp[m].lengthb;
+																				ttt_mount--;
+																				cuttmp[m].mount=dec(cuttmp[m].mount)-1;
+																				tt_same[n].mount=dec(tt_same[n].mount)-1;
+																			}
+																		}else{
+																			t_wlength=q_sub(t_wlength,q_mul(dec(cuttmp[m].lengthb),cuttmp[m].mount));
+																			var ttt_mount=cuttmp[m].mount;
+																			while(ttt_mount>0){
+																				t_cutlength=t_cutlength+(t_cutlength.length>0?',':'')+cuttmp[m].lengthb;
+																				ttt_mount--;
+																				cuttmp[m].mount=dec(cuttmp[m].mount)-1;
+																				tt_same[n].mount=dec(tt_same[n].mount)-1;
+																			}
+																		}
+																		//106/09/14 不受項次限制
+																		//break;
+																	}
+																}
+															}
+															if(t_wlength<0)
+																t_wlength=0;
+															t_cup[f].wlenhth=t_wlength;
+															t_cup[f].wrate=t_wlength/dec(cupolength);
+															t_cup[f].cutlength=t_cutlength+'#'+t_wlength;
+															if(t_cup[f].wrate>0){
+																t_cup.splice(f,1)
+																f--;
+															}else{
+																//做兩支以上
+																var cuttmp=[];//組合數量
+																for (var m=0;m<cupcutlength.length;m++){//裁切數量
+																	var x_n=-1;
+																	for (var n=0;n<cuttmp.length;n++){
+																		if(cuttmp[n].lengthb==dec(cupcutlength[m])){
+																			cuttmp[n].mount=cuttmp[n].mount+1;
+																			x_n=n;
+																			break;	
+																		}
+																	}
+																	if(x_n==-1){
+																		cuttmp.push({
+																			'lengthb':dec(cupcutlength[m]),
+																			'mount':1
+																		});
+																	}
+																}
+																var t_wlength=dec(cupolength);
+																/*if(t_wlength.toString().slice(-1)=='5'){
+																	t_wlength=dec(t_wlength.toString().substr(0,t_wlength.toString().length-1)+'0');
+																}*/
+																
+																var t_cutlength='';
+																for (var m=0;m<cuttmp.length;m++){
+																	for (var n=0;n<tt_same.length;n++){
+																		if(dec(cuttmp[m].mount)>0 && dec(cuttmp[m].lengthb)<=dec(tt_same[n].lengthb) && dec(cuttmp[m].lengthb)>=(dec(tt_same[n].lengthb)-dec(tt_same[n].tw03))){
+																			if(dec(cuttmp[m].mount)>dec(tt_same[n].mount)+dec(tt_same[n].maxmount)){
+																				t_wlength=q_sub(t_wlength,q_mul(dec(cuttmp[m].lengthb),dec(tt_same[n].mount)+dec(tt_same[n].maxmount)));
+																				var ttt_mount=dec(tt_same[n].mount)+dec(tt_same[n].maxmount);
+																				while(ttt_mount>0){
+																					t_cutlength=t_cutlength+(t_cutlength.length>0?',':'')+cuttmp[m].lengthb;
+																					ttt_mount--;
+																					cuttmp[m].mount=dec(cuttmp[m].mount)-1;
+																					tt_same[n].mount=dec(tt_same[n].mount)-1;
+																				}
+																			}else{
+																				t_wlength=q_sub(t_wlength,q_mul(dec(cuttmp[m].lengthb),cuttmp[m].mount));
+																				var ttt_mount=cuttmp[m].mount;
+																				while(ttt_mount>0){
+																					t_cutlength=t_cutlength+(t_cutlength.length>0?',':'')+cuttmp[m].lengthb;
+																					ttt_mount--;
+																					cuttmp[m].mount=dec(cuttmp[m].mount)-1;
+																					tt_same[n].mount=dec(tt_same[n].mount)-1;
+																				}
+																			}
+																			//106/09/14 不受項次限制
+																			//break;
+																		}
+																	}
+																}
+																if(t_wlength<0)
+																	t_wlength=0;
+																//t_cup[f].wlenhth=t_wlength;
+																t_cup[f].wrate=t_wlength/dec(cupolength);
+																//t_cup[f].cutlength=t_cutlength+'#'+t_wlength;
+																if(t_cup[f].wrate>0){
+																	t_cup.splice(f,1)
+																	f--;
+																}
+															}
+														}
+													}
 													//--------------------------------------
-													
 													//沒有其他組合選自己或更少的數量
-													
 													if(t_cup.length==0){
 														rep='';
 														//cutlengthbs=$.extend(true,[], b_cutlengthbs);//數量多
@@ -7001,100 +7523,15 @@
 														cutlengthbs=cutlengthbs.concat(c_cutlengthbs);//數量少
 														cutlengthbs=cutlengthbs.concat(d_cutlengthbs);//長度短 且數量少
 														t_cup=getmlength(clength,clength,maxcutlengthb,cutlengthbs,'',[],t_same,tspec1,tsize1,t_sortlen,t_safelen,t_stlen);
-													}else{
-														t_cupsp=true;
-													}
-													
-													//---------------------------------------
-													//取得所需數量
-													var tt_same=[],tmp_same=[];
-													for(var n=0;n<t_same.length;n++){
-														var tspec2=t_same[n].spec;
-														var tsize2=t_same[n].size;
-														var lengthb2=t_same[n].lengthb;
-														var tdata2=t_same[n].data;
-														if(tspec1==tspec2 && tsize1==tsize2){
-															for(var m=0;m<tdata2.length;m++){
-																if(dec(tdata2[m].mount)>0){
-																	tt_same.push({
-																		'maxmount':tdata2[m].maxmount,
-																		'lengthb':lengthb2,
-																		'mount':tdata2[m].mount,
-																		'nor':tdata2[m].nor,
-																		'tw03':tdata2[m].tw03
-																	});
-																}
-															}
-														}
-													}
-													tmp_same=$.extend(true,[], tt_same);
-													//調整最後剩餘數量是否符合最低損耗率
-													for(var f=0;f<t_cup.length;f++){
-														tt_same=$.extend(true,[], tmp_same);
-														var cupcutlength=t_cup[f].cutlength.split('#')[0].split(',');//切割長度
-														var cupcutwlength=t_cup[f].cutlength.split('#')[1].split(',');//損耗長度
-														var cupolength=t_cup[f].olength;//裁剪的板料長度
 														
-														var cuttmp=[];//組合數量
-														for (var m=0;m<cupcutlength.length;m++){//裁切數量
-															var x_n=-1;
-															for (var n=0;n<cuttmp.length;n++){
-																if(cuttmp[n].lengthb==dec(cupcutlength[m])){
-																	cuttmp[n].mount=cuttmp[n].mount+1;
-																	x_n=n;
-																	break;	
-																}
-															}
-															if(x_n==-1){
-																cuttmp.push({
-																	'lengthb':dec(cupcutlength[m]),
-																	'mount':1
-																});
-															}
-														}
-														var t_wlength=dec(cupolength);
-														/*if(t_wlength.toString().slice(-1)=='5'){
-															t_wlength=dec(t_wlength.toString().substr(0,t_wlength.toString().length-1)+'0');
-														}*/
-														
-														var t_cutlength='';
-														for (var m=0;m<cuttmp.length;m++){
-															for (var n=0;n<tt_same.length;n++){
-																if(dec(cuttmp[m].mount)>0 && dec(cuttmp[m].lengthb)<=dec(tt_same[n].lengthb) && dec(cuttmp[m].lengthb)>=(dec(tt_same[n].lengthb)-dec(tt_same[n].tw03))){
-																	if(dec(cuttmp[m].mount)>dec(tt_same[n].mount)+dec(tt_same[n].maxmount)){
-																		t_wlength=q_sub(t_wlength,q_mul(dec(cuttmp[m].lengthb),dec(tt_same[n].mount)+dec(tt_same[n].maxmount)));
-																		var ttt_mount=dec(tt_same[n].mount)+dec(tt_same[n].maxmount);
-																		while(ttt_mount>0){
-																			t_cutlength=t_cutlength+(t_cutlength.length>0?',':'')+cuttmp[m].lengthb;
-																			ttt_mount--;
-																			cuttmp[m].mount=dec(cuttmp[m].mount)-1;
-																			tt_same[n].mount=dec(tt_same[n].mount)-1;
-																		}
-																	}else{
-																		t_wlength=q_sub(t_wlength,q_mul(dec(cuttmp[m].lengthb),cuttmp[m].mount));
-																		var ttt_mount=cuttmp[m].mount;
-																		while(ttt_mount>0){
-																			t_cutlength=t_cutlength+(t_cutlength.length>0?',':'')+cuttmp[m].lengthb;
-																			ttt_mount--;
-																			cuttmp[m].mount=dec(cuttmp[m].mount)-1;
-																			tt_same[n].mount=dec(tt_same[n].mount)-1;
-																		}
-																	}
-																	//106/09/14 不受項次限制
-																	//break;
-																}
-															}
-														}
-														if(t_wlength<0)
-															t_wlength=0;
-														t_cup[f].wlenhth=t_wlength;
-														t_cup[f].wrate=t_wlength/dec(cupolength);
-														t_cup[f].cutlength=t_cutlength+'#'+t_wlength;
-														if(t_cup[f].wrate>0){
-															t_cup.splice(f,1);
-															f--;
-														}else{
-															//做兩支以上
+														//---------------------------------------
+														//調整最後剩餘數量是否符合最低損耗率
+														for(var f=0;f<t_cup.length;f++){
+															tt_same=$.extend(true,[], tmp_same);
+															var cupcutlength=t_cup[f].cutlength.split('#')[0].split(',');//切割長度
+															var cupcutwlength=t_cup[f].cutlength.split('#')[1].split(',');//損耗長度
+															var cupolength=t_cup[f].olength;//裁剪的板料長度
+															
 															var cuttmp=[];//組合數量
 															for (var m=0;m<cupcutlength.length;m++){//裁切數量
 																var x_n=-1;
@@ -7147,16 +7584,211 @@
 															}
 															if(t_wlength<0)
 																t_wlength=0;
-															//t_cup[f].wlenhth=t_wlength;
+															t_cup[f].wlenhth=t_wlength;
 															t_cup[f].wrate=t_wlength/dec(cupolength);
-															//t_cup[f].cutlength=t_cutlength+'#'+t_wlength;
+															t_cup[f].cutlength=t_cutlength+'#'+t_wlength;
 															if(t_cup[f].wrate>0){
 																t_cup.splice(f,1);
 																f--;
+															}else{
+																//做兩支以上
+																var cuttmp=[];//組合數量
+																for (var m=0;m<cupcutlength.length;m++){//裁切數量
+																	var x_n=-1;
+																	for (var n=0;n<cuttmp.length;n++){
+																		if(cuttmp[n].lengthb==dec(cupcutlength[m])){
+																			cuttmp[n].mount=cuttmp[n].mount+1;
+																			x_n=n;
+																			break;	
+																		}
+																	}
+																	if(x_n==-1){
+																		cuttmp.push({
+																			'lengthb':dec(cupcutlength[m]),
+																			'mount':1
+																		});
+																	}
+																}
+																var t_wlength=dec(cupolength);
+																/*if(t_wlength.toString().slice(-1)=='5'){
+																	t_wlength=dec(t_wlength.toString().substr(0,t_wlength.toString().length-1)+'0');
+																}*/
+																
+																var t_cutlength='';
+																for (var m=0;m<cuttmp.length;m++){
+																	for (var n=0;n<tt_same.length;n++){
+																		if(dec(cuttmp[m].mount)>0 && dec(cuttmp[m].lengthb)<=dec(tt_same[n].lengthb) && dec(cuttmp[m].lengthb)>=(dec(tt_same[n].lengthb)-dec(tt_same[n].tw03))){
+																			if(dec(cuttmp[m].mount)>dec(tt_same[n].mount)+dec(tt_same[n].maxmount)){
+																				t_wlength=q_sub(t_wlength,q_mul(dec(cuttmp[m].lengthb),dec(tt_same[n].mount)+dec(tt_same[n].maxmount)));
+																				var ttt_mount=dec(tt_same[n].mount)+dec(tt_same[n].maxmount);
+																				while(ttt_mount>0){
+																					t_cutlength=t_cutlength+(t_cutlength.length>0?',':'')+cuttmp[m].lengthb;
+																					ttt_mount--;
+																					cuttmp[m].mount=dec(cuttmp[m].mount)-1;
+																					tt_same[n].mount=dec(tt_same[n].mount)-1;
+																				}
+																			}else{
+																				t_wlength=q_sub(t_wlength,q_mul(dec(cuttmp[m].lengthb),cuttmp[m].mount));
+																				var ttt_mount=cuttmp[m].mount;
+																				while(ttt_mount>0){
+																					t_cutlength=t_cutlength+(t_cutlength.length>0?',':'')+cuttmp[m].lengthb;
+																					ttt_mount--;
+																					cuttmp[m].mount=dec(cuttmp[m].mount)-1;
+																					tt_same[n].mount=dec(tt_same[n].mount)-1;
+																				}
+																			}
+																			//106/09/14 不受項次限制
+																			//break;
+																		}
+																	}
+																}
+																if(t_wlength<0)
+																	t_wlength=0;
+																//t_cup[f].wlenhth=t_wlength;
+																t_cup[f].wrate=t_wlength/dec(cupolength);
+																//t_cup[f].cutlength=t_cutlength+'#'+t_wlength;
+																if(t_cup[f].wrate>0){
+																	t_cup.splice(f,1);
+																	f--;
+																}
 															}
 														}
 													}
-													
+													if(t_cup.length==0 && t_level>0){
+														rep='';
+														t_cup=getmlength(q_add(clength,t_level),q_add(clength,t_level),maxcutlengthb,cutlengthbs,'',[],t_same,tspec1,tsize1,t_sortlen,t_safelen,t_stlen);
+														
+														//---------------------------------------
+														//調整最後剩餘數量是否符合最低損耗率
+														for(var f=0;f<t_cup.length;f++){
+															tt_same=$.extend(true,[], tmp_same);
+															var cupcutlength=t_cup[f].cutlength.split('#')[0].split(',');//切割長度
+															var cupcutwlength=t_cup[f].cutlength.split('#')[1].split(',');//損耗長度
+															var cupolength=t_cup[f].olength;//裁剪的板料長度
+															
+															var cuttmp=[];//組合數量
+															for (var m=0;m<cupcutlength.length;m++){//裁切數量
+																var x_n=-1;
+																for (var n=0;n<cuttmp.length;n++){
+																	if(cuttmp[n].lengthb==dec(cupcutlength[m])){
+																		cuttmp[n].mount=cuttmp[n].mount+1;
+																		x_n=n;
+																		break;	
+																	}
+																}
+																if(x_n==-1){
+																	cuttmp.push({
+																		'lengthb':dec(cupcutlength[m]),
+																		'mount':1
+																	});
+																}
+															}
+															var t_wlength=dec(cupolength);
+															/*if(t_wlength.toString().slice(-1)=='5'){
+																t_wlength=dec(t_wlength.toString().substr(0,t_wlength.toString().length-1)+'0');
+															}*/
+															
+															var t_cutlength='';
+															for (var m=0;m<cuttmp.length;m++){
+																for (var n=0;n<tt_same.length;n++){
+																	if(dec(cuttmp[m].mount)>0 && dec(cuttmp[m].lengthb)<=dec(tt_same[n].lengthb) && dec(cuttmp[m].lengthb)>=(dec(tt_same[n].lengthb)-dec(tt_same[n].tw03))){
+																		if(dec(cuttmp[m].mount)>dec(tt_same[n].mount)+dec(tt_same[n].maxmount)){
+																			t_wlength=q_sub(t_wlength,q_mul(dec(cuttmp[m].lengthb),dec(tt_same[n].mount)+dec(tt_same[n].maxmount)));
+																			var ttt_mount=dec(tt_same[n].mount)+dec(tt_same[n].maxmount);
+																			while(ttt_mount>0){
+																				t_cutlength=t_cutlength+(t_cutlength.length>0?',':'')+cuttmp[m].lengthb;
+																				ttt_mount--;
+																				cuttmp[m].mount=dec(cuttmp[m].mount)-1;
+																				tt_same[n].mount=dec(tt_same[n].mount)-1;
+																			}
+																		}else{
+																			t_wlength=q_sub(t_wlength,q_mul(dec(cuttmp[m].lengthb),cuttmp[m].mount));
+																			var ttt_mount=cuttmp[m].mount;
+																			while(ttt_mount>0){
+																				t_cutlength=t_cutlength+(t_cutlength.length>0?',':'')+cuttmp[m].lengthb;
+																				ttt_mount--;
+																				cuttmp[m].mount=dec(cuttmp[m].mount)-1;
+																				tt_same[n].mount=dec(tt_same[n].mount)-1;
+																			}
+																		}
+																		//106/09/14 不受項次限制
+																		//break;
+																	}
+																}
+															}
+															if(t_wlength<0)
+																t_wlength=0;
+															t_cup[f].wlenhth=t_wlength;
+															t_cup[f].wrate=t_wlength/dec(cupolength);
+															t_cup[f].cutlength=t_cutlength+'#'+t_wlength;
+															if(t_cup[f].wrate>0){
+																t_cup.splice(f,1);
+																f--;
+															}else{
+																//做兩支以上
+																var cuttmp=[];//組合數量
+																for (var m=0;m<cupcutlength.length;m++){//裁切數量
+																	var x_n=-1;
+																	for (var n=0;n<cuttmp.length;n++){
+																		if(cuttmp[n].lengthb==dec(cupcutlength[m])){
+																			cuttmp[n].mount=cuttmp[n].mount+1;
+																			x_n=n;
+																			break;	
+																		}
+																	}
+																	if(x_n==-1){
+																		cuttmp.push({
+																			'lengthb':dec(cupcutlength[m]),
+																			'mount':1
+																		});
+																	}
+																}
+																var t_wlength=dec(cupolength);
+																/*if(t_wlength.toString().slice(-1)=='5'){
+																	t_wlength=dec(t_wlength.toString().substr(0,t_wlength.toString().length-1)+'0');
+																}*/
+																
+																var t_cutlength='';
+																for (var m=0;m<cuttmp.length;m++){
+																	for (var n=0;n<tt_same.length;n++){
+																		if(dec(cuttmp[m].mount)>0 && dec(cuttmp[m].lengthb)<=dec(tt_same[n].lengthb) && dec(cuttmp[m].lengthb)>=(dec(tt_same[n].lengthb)-dec(tt_same[n].tw03))){
+																			if(dec(cuttmp[m].mount)>dec(tt_same[n].mount)+dec(tt_same[n].maxmount)){
+																				t_wlength=q_sub(t_wlength,q_mul(dec(cuttmp[m].lengthb),dec(tt_same[n].mount)+dec(tt_same[n].maxmount)));
+																				var ttt_mount=dec(tt_same[n].mount)+dec(tt_same[n].maxmount);
+																				while(ttt_mount>0){
+																					t_cutlength=t_cutlength+(t_cutlength.length>0?',':'')+cuttmp[m].lengthb;
+																					ttt_mount--;
+																					cuttmp[m].mount=dec(cuttmp[m].mount)-1;
+																					tt_same[n].mount=dec(tt_same[n].mount)-1;
+																				}
+																			}else{
+																				t_wlength=q_sub(t_wlength,q_mul(dec(cuttmp[m].lengthb),cuttmp[m].mount));
+																				var ttt_mount=cuttmp[m].mount;
+																				while(ttt_mount>0){
+																					t_cutlength=t_cutlength+(t_cutlength.length>0?',':'')+cuttmp[m].lengthb;
+																					ttt_mount--;
+																					cuttmp[m].mount=dec(cuttmp[m].mount)-1;
+																					tt_same[n].mount=dec(tt_same[n].mount)-1;
+																				}
+																			}
+																			//106/09/14 不受項次限制
+																			//break;
+																		}
+																	}
+																}
+																if(t_wlength<0)
+																	t_wlength=0;
+																//t_cup[f].wlenhth=t_wlength;
+																t_cup[f].wrate=t_wlength/dec(cupolength);
+																//t_cup[f].cutlength=t_cutlength+'#'+t_wlength;
+																if(t_cup[f].wrate>0){
+																	t_cup.splice(f,1);
+																	f--;
+																}
+															}
+														}
+													}
+													//-----------------------------------
 													if(t_cup.length==0){
 														//cutlengthbs.sort(function(a, b) {if(a>b) {return -1;} if (a < b) {return 1;} return 0;});//長>短
 														rep='';
@@ -7201,8 +7833,10 @@
 														cutlengthbs=cutlengthbs.concat(d_cutlengthbs);//數量1
 														
 														t_cup=getmlength(clength,clength,maxcutlengthb,cutlengthbs,'',[],t_same,tspec1,tsize1,t_sortlen,t_safelen,t_stlen);
-													}else{
-														t_cupsp=true;
+													}
+													if(t_cup.length==0 && t_level>0){
+														rep='';
+														t_cup=getmlength(q_add(clength,t_level),q_add(clength,t_level),maxcutlengthb,cutlengthbs,'',[],t_same,tspec1,tsize1,t_sortlen,t_safelen,t_stlen);
 													}
 													
 													//排序
@@ -7221,651 +7855,6 @@
 											if(iswlenzero){break;}
 										}
 										if(iswlenzero){break;}
-									}
-								}
-								
-								t_cups.sort(function(a, b) {
-									if(a.wrate > b.wrate) {return 1;} 
-									if(a.wrate < b.wrate) {return -1;}
-									return 0;
-								});
-								
-								//107/02/01 若原長度已有最好組合衍伸長度就不做組合
-								var t_levc=true;
-								if(t_cups.length>0){
-									if(t_cups[0].wrate==0){
-										t_levc=false;
-									}
-								}
-								
-								if(dec($('#txtLevel').val())>0 && t_levc){
-									var t_level=dec($('#txtLevel').val());
-									if (t_level>0){
-										clength=(dec(t_cutsheet[k])*100)+t_level; //原單位M
-										if(sheetlength.indexOf(t_cutsheet[k])>-1){//要使用板料=設定中可用的裁剪板料
-											bcount++;
-											//106/04/20 調整可裁減長度
-											var iswlenzero=false;
-											for (var ml=0;ml<maxcutlengthbs.length;ml++){
-												for (var mm=0;mm<cutlengthballs.length;mm++){
-													if(maxcutlengthbs[ml]==cutlengthballs[mm].chgmaxlength){
-														//最短裁剪長度限制
-														for(var mx=0;mx<cutlengthballs[mm].cutlengthbs.length;mx++){
-															cutlengthb=cutlengthballs[mm].cutlengthbs[mx];
-															maxcutlengthb=maxcutlengthbs[ml];
-											
-															var cutlengthbs=[];
-															var a_cutlengthbs=[];
-															var b_cutlengthbs=[];
-															var c_cutlengthbs=[];
-															var d_cutlengthbs=[];
-															var e_cutlengthbs=[];
-															
-															var t_maxlenmount=0;
-															for (var j=0;j<t_same.length;j++){
-																var tspec2=t_same[j].spec;
-																var tsize2=t_same[j].size;
-																var tmount2=t_same[j].mount;
-																var lengthb2=dec(t_same[j].lengthb);
-																if(tspec1==tspec2 && tsize1==tsize2 && dec(maxcutlengthb)==lengthb2 && dec(tmount2)>0){
-																		t_maxlenmount=dec(t_same[j].mount);
-																	break;
-																}
-															}
-															
-															//最短裁剪長度限制
-															for(var n=0;n<cutlengthb.length;n++){
-																if(dec(cutlengthb[n])!=dec(maxcutlengthb)){
-																	for (var j=0;j<t_same.length;j++){
-																		var tspec2=t_same[j].spec;
-																		var tsize2=t_same[j].size;
-																		var tmount2=t_same[j].mount;
-																		var lengthb2=dec(t_same[j].lengthb);
-																		if(tspec1==tspec2 && tsize1==tsize2 && dec(cutlengthb[n])==lengthb2 && dec(tmount2)>0){
-																			if (t_maxlenmount==dec(t_same[j].mount)){
-																				a_cutlengthbs.push(dec(cutlengthb[n]));
-																			}else if (t_maxlenmount<dec(t_same[j].mount)){
-																				b_cutlengthbs.push(dec(cutlengthb[n]));
-																			}else if (t_maxlenmount%dec(t_same[j].mount)){
-																				e_cutlengthbs.push(dec(cutlengthb[n]));
-																			}else if(dec(cutlengthb[n])<dec(maxcutlengthb)){
-																				d_cutlengthbs.push(dec(cutlengthb[n]));
-																			}else{
-																				c_cutlengthbs.push(dec(cutlengthb[n]));
-																			}
-																			
-																			break;
-																		}
-																	}
-																}
-															}
-															
-															rep='';
-															
-															t_cupsp=false;
-															//S1 數量相同
-															cutlengthbs=$.extend(true,[], a_cutlengthbs);
-															cutlengthbs.sort(function(a, b) {if(a>b) {return -1;} if (a < b) {return 1;} return 0;});//長>短
-															var tmp2=$.extend(true,[], b_cutlengthbs);
-															tmp2.sort(function(a, b) {if(a>b) {return -1;} if (a < b) {return 1;} return 0;});//長>短
-															cutlengthbs=cutlengthbs=cutlengthbs.concat(tmp2);
-															var t_cup=getmlength2(clength,clength,maxcutlengthb,cutlengthbs,'',[],t_same,tspec1,tsize1);
-															
-															//---------------------------------------
-															//取得所需數量
-															var tt_same=[],tmp_same=[];
-															for(var n=0;n<t_same.length;n++){
-																var tspec2=t_same[n].spec;
-																var tsize2=t_same[n].size;
-																var lengthb2=t_same[n].lengthb;
-																var tdata2=t_same[n].data;
-																if(tspec1==tspec2 && tsize1==tsize2){
-																	for(var m=0;m<tdata2.length;m++){
-																		if(dec(tdata2[m].mount)>0){
-																			tt_same.push({
-																				'maxmount':tdata2[m].maxmount,
-																				'lengthb':lengthb2,
-																				'mount':tdata2[m].mount,
-																				'nor':tdata2[m].nor,
-																				'tw03':tdata2[m].tw03
-																			});
-																		}
-																	}
-																}
-															}
-															tmp_same=$.extend(true,[], tt_same);
-															//調整最後剩餘數量是否符合最低損耗率
-															for(var f=0;f<t_cup.length;f++){
-																tt_same=$.extend(true,[], tmp_same);
-																var cupcutlength=t_cup[f].cutlength.split('#')[0].split(',');//切割長度
-																var cupcutwlength=t_cup[f].cutlength.split('#')[1].split(',');//損耗長度
-																var cupolength=t_cup[f].olength;//裁剪的板料長度
-																
-																var cuttmp=[];//組合數量
-																for (var m=0;m<cupcutlength.length;m++){//裁切數量
-																	var x_n=-1;
-																	for (var n=0;n<cuttmp.length;n++){
-																		if(cuttmp[n].lengthb==dec(cupcutlength[m])){
-																			cuttmp[n].mount=cuttmp[n].mount+1;
-																			x_n=n;
-																			break;	
-																		}
-																	}
-																	if(x_n==-1){
-																		cuttmp.push({
-																			'lengthb':dec(cupcutlength[m]),
-																			'mount':1
-																		});
-																	}
-																}
-																var t_wlength=dec(cupolength);
-																/*if(t_wlength.toString().slice(-1)=='5'){
-																	t_wlength=dec(t_wlength.toString().substr(0,t_wlength.toString().length-1)+'0');
-																}*/
-																
-																var t_cutlength='';
-																for (var m=0;m<cuttmp.length;m++){
-																	for (var n=0;n<tt_same.length;n++){
-																		if(dec(cuttmp[m].mount)>0 && dec(cuttmp[m].lengthb)<=dec(tt_same[n].lengthb) && dec(cuttmp[m].lengthb)>=(dec(tt_same[n].lengthb)-dec(tt_same[n].tw03))){
-																			if(dec(cuttmp[m].mount)>dec(tt_same[n].mount)+dec(tt_same[n].maxmount)){
-																				t_wlength=q_sub(t_wlength,q_mul(dec(cuttmp[m].lengthb),dec(tt_same[n].mount)+dec(tt_same[n].maxmount)));
-																				var ttt_mount=dec(tt_same[n].mount)+dec(tt_same[n].maxmount);
-																				while(ttt_mount>0){
-																					t_cutlength=t_cutlength+(t_cutlength.length>0?',':'')+cuttmp[m].lengthb;
-																					ttt_mount--;
-																					cuttmp[m].mount=dec(cuttmp[m].mount)-1;
-																					tt_same[n].mount=dec(tt_same[n].mount)-1;
-																				}
-																			}else{
-																				t_wlength=q_sub(t_wlength,q_mul(dec(cuttmp[m].lengthb),cuttmp[m].mount));
-																				var ttt_mount=cuttmp[m].mount;
-																				while(ttt_mount>0){
-																					t_cutlength=t_cutlength+(t_cutlength.length>0?',':'')+cuttmp[m].lengthb;
-																					ttt_mount--;
-																					cuttmp[m].mount=dec(cuttmp[m].mount)-1;
-																					tt_same[n].mount=dec(tt_same[n].mount)-1;
-																				}
-																			}
-																			//106/09/14 不受項次限制
-																			//break;
-																		}
-																	}
-																}
-																if(t_wlength<0)
-																	t_wlength=0;
-																t_cup[f].wlenhth=t_wlength;
-																t_cup[f].wrate=t_wlength/dec(cupolength);
-																t_cup[f].cutlength=t_cutlength+'#'+t_wlength;
-																if(t_cup[f].wrate>0){
-																	t_cup.splice(f,1)
-																	f--;
-																}else{
-																	//做兩支以上
-																	var cuttmp=[];//組合數量
-																	for (var m=0;m<cupcutlength.length;m++){//裁切數量
-																		var x_n=-1;
-																		for (var n=0;n<cuttmp.length;n++){
-																			if(cuttmp[n].lengthb==dec(cupcutlength[m])){
-																				cuttmp[n].mount=cuttmp[n].mount+1;
-																				x_n=n;
-																				break;	
-																			}
-																		}
-																		if(x_n==-1){
-																			cuttmp.push({
-																				'lengthb':dec(cupcutlength[m]),
-																				'mount':1
-																			});
-																		}
-																	}
-																	var t_wlength=dec(cupolength);
-																	/*if(t_wlength.toString().slice(-1)=='5'){
-																		t_wlength=dec(t_wlength.toString().substr(0,t_wlength.toString().length-1)+'0');
-																	}*/
-																	
-																	var t_cutlength='';
-																	for (var m=0;m<cuttmp.length;m++){
-																		for (var n=0;n<tt_same.length;n++){
-																			if(dec(cuttmp[m].mount)>0 && dec(cuttmp[m].lengthb)<=dec(tt_same[n].lengthb) && dec(cuttmp[m].lengthb)>=(dec(tt_same[n].lengthb)-dec(tt_same[n].tw03))){
-																				if(dec(cuttmp[m].mount)>dec(tt_same[n].mount)+dec(tt_same[n].maxmount)){
-																					t_wlength=q_sub(t_wlength,q_mul(dec(cuttmp[m].lengthb),dec(tt_same[n].mount)+dec(tt_same[n].maxmount)));
-																					var ttt_mount=dec(tt_same[n].mount)+dec(tt_same[n].maxmount);
-																					while(ttt_mount>0){
-																						t_cutlength=t_cutlength+(t_cutlength.length>0?',':'')+cuttmp[m].lengthb;
-																						ttt_mount--;
-																						cuttmp[m].mount=dec(cuttmp[m].mount)-1;
-																						tt_same[n].mount=dec(tt_same[n].mount)-1;
-																					}
-																				}else{
-																					t_wlength=q_sub(t_wlength,q_mul(dec(cuttmp[m].lengthb),cuttmp[m].mount));
-																					var ttt_mount=cuttmp[m].mount;
-																					while(ttt_mount>0){
-																						t_cutlength=t_cutlength+(t_cutlength.length>0?',':'')+cuttmp[m].lengthb;
-																						ttt_mount--;
-																						cuttmp[m].mount=dec(cuttmp[m].mount)-1;
-																						tt_same[n].mount=dec(tt_same[n].mount)-1;
-																					}
-																				}
-																				//106/09/14 不受項次限制
-																				//break;
-																			}
-																		}
-																	}
-																	if(t_wlength<0)
-																		t_wlength=0;
-																	//t_cup[f].wlenhth=t_wlength;
-																	t_cup[f].wrate=t_wlength/dec(cupolength);
-																	//t_cup[f].cutlength=t_cutlength+'#'+t_wlength;
-																	if(t_cup[f].wrate>0){
-																		t_cup.splice(f,1)
-																		f--;
-																	}
-																}
-															}
-															
-															//--------------------------------------
-															
-															//S2 長度小的數量要比長度大的數量大 之後取長度次長的不管數量
-															if(t_cup.length==0){
-																var tmp=$.extend(true,[], a_cutlengthbs);
-																tmp=tmp.concat(b_cutlengthbs);
-																tmp.sort(function(a, b) {if(a>b) {return 1;} if (a < b) {return -1;} return 0;});//短>長
-																cutlengthbs=$.extend(true,[], [tmp[0]]);
-																tmp.splice(0,1);
-																tmp.sort(function(a, b) {if(a>b) {return -1;} if (a < b) {return 1;} return 0;});//長>短
-																cutlengthbs=cutlengthbs.concat(tmp);
-																cutlengthbs=cutlengthbs.concat(e_cutlengthbs);
-																
-																t_cup=getmlength2(clength,clength,maxcutlengthb,cutlengthbs,'',[],t_same,tspec1,tsize1);
-															}else{
-																t_cupsp=true;
-															}
-															
-															//---------------------------------------
-															//取得所需數量
-															var tt_same=[],tmp_same=[];
-															for(var n=0;n<t_same.length;n++){
-																var tspec2=t_same[n].spec;
-																var tsize2=t_same[n].size;
-																var lengthb2=t_same[n].lengthb;
-																var tdata2=t_same[n].data;
-																if(tspec1==tspec2 && tsize1==tsize2){
-																	for(var m=0;m<tdata2.length;m++){
-																		if(dec(tdata2[m].mount)>0){
-																			tt_same.push({
-																				'maxmount':tdata2[m].maxmount,
-																				'lengthb':lengthb2,
-																				'mount':tdata2[m].mount,
-																				'nor':tdata2[m].nor,
-																				'tw03':tdata2[m].tw03
-																			});
-																		}
-																	}
-																}
-															}
-															tmp_same=$.extend(true,[], tt_same);
-															//調整最後剩餘數量是否符合最低損耗率
-															for(var f=0;f<t_cup.length;f++){
-																tt_same=$.extend(true,[], tmp_same);
-																var cupcutlength=t_cup[f].cutlength.split('#')[0].split(',');//切割長度
-																var cupcutwlength=t_cup[f].cutlength.split('#')[1].split(',');//損耗長度
-																var cupolength=t_cup[f].olength;//裁剪的板料長度
-																
-																var cuttmp=[];//組合數量
-																for (var m=0;m<cupcutlength.length;m++){//裁切數量
-																	var x_n=-1;
-																	for (var n=0;n<cuttmp.length;n++){
-																		if(cuttmp[n].lengthb==dec(cupcutlength[m])){
-																			cuttmp[n].mount=cuttmp[n].mount+1;
-																			x_n=n;
-																			break;	
-																		}
-																	}
-																	if(x_n==-1){
-																		cuttmp.push({
-																			'lengthb':dec(cupcutlength[m]),
-																			'mount':1
-																		});
-																	}
-																}
-																var t_wlength=dec(cupolength);
-																/*if(t_wlength.toString().slice(-1)=='5'){
-																	t_wlength=dec(t_wlength.toString().substr(0,t_wlength.toString().length-1)+'0');
-																}*/
-																
-																var t_cutlength='';
-																for (var m=0;m<cuttmp.length;m++){
-																	for (var n=0;n<tt_same.length;n++){
-																		if(dec(cuttmp[m].mount)>0 && dec(cuttmp[m].lengthb)<=dec(tt_same[n].lengthb) && dec(cuttmp[m].lengthb)>=(dec(tt_same[n].lengthb)-dec(tt_same[n].tw03))){
-																			if(dec(cuttmp[m].mount)>dec(tt_same[n].mount)+dec(tt_same[n].maxmount)){
-																				t_wlength=q_sub(t_wlength,q_mul(dec(cuttmp[m].lengthb),dec(tt_same[n].mount)+dec(tt_same[n].maxmount)));
-																				var ttt_mount=dec(tt_same[n].mount)+dec(tt_same[n].maxmount);
-																				while(ttt_mount>0){
-																					t_cutlength=t_cutlength+(t_cutlength.length>0?',':'')+cuttmp[m].lengthb;
-																					ttt_mount--;
-																					cuttmp[m].mount=dec(cuttmp[m].mount)-1;
-																					tt_same[n].mount=dec(tt_same[n].mount)-1;
-																				}
-																			}else{
-																				t_wlength=q_sub(t_wlength,q_mul(dec(cuttmp[m].lengthb),cuttmp[m].mount));
-																				var ttt_mount=cuttmp[m].mount;
-																				while(ttt_mount>0){
-																					t_cutlength=t_cutlength+(t_cutlength.length>0?',':'')+cuttmp[m].lengthb;
-																					ttt_mount--;
-																					cuttmp[m].mount=dec(cuttmp[m].mount)-1;
-																					tt_same[n].mount=dec(tt_same[n].mount)-1;
-																				}
-																			}
-																			//106/09/14 不受項次限制
-																			//break;
-																		}
-																	}
-																}
-																if(t_wlength<0)
-																	t_wlength=0;
-																t_cup[f].wlenhth=t_wlength;
-																t_cup[f].wrate=t_wlength/dec(cupolength);
-																t_cup[f].cutlength=t_cutlength+'#'+t_wlength;
-																if(t_cup[f].wrate>0){
-																	t_cup.splice(f,1)
-																	f--;
-																}else{
-																	//做兩支以上
-																	var cuttmp=[];//組合數量
-																	for (var m=0;m<cupcutlength.length;m++){//裁切數量
-																		var x_n=-1;
-																		for (var n=0;n<cuttmp.length;n++){
-																			if(cuttmp[n].lengthb==dec(cupcutlength[m])){
-																				cuttmp[n].mount=cuttmp[n].mount+1;
-																				x_n=n;
-																				break;	
-																			}
-																		}
-																		if(x_n==-1){
-																			cuttmp.push({
-																				'lengthb':dec(cupcutlength[m]),
-																				'mount':1
-																			});
-																		}
-																	}
-																	var t_wlength=dec(cupolength);
-																	/*if(t_wlength.toString().slice(-1)=='5'){
-																		t_wlength=dec(t_wlength.toString().substr(0,t_wlength.toString().length-1)+'0');
-																	}*/
-																	
-																	var t_cutlength='';
-																	for (var m=0;m<cuttmp.length;m++){
-																		for (var n=0;n<tt_same.length;n++){
-																			if(dec(cuttmp[m].mount)>0 && dec(cuttmp[m].lengthb)<=dec(tt_same[n].lengthb) && dec(cuttmp[m].lengthb)>=(dec(tt_same[n].lengthb)-dec(tt_same[n].tw03))){
-																				if(dec(cuttmp[m].mount)>dec(tt_same[n].mount)+dec(tt_same[n].maxmount)){
-																					t_wlength=q_sub(t_wlength,q_mul(dec(cuttmp[m].lengthb),dec(tt_same[n].mount)+dec(tt_same[n].maxmount)));
-																					var ttt_mount=dec(tt_same[n].mount)+dec(tt_same[n].maxmount);
-																					while(ttt_mount>0){
-																						t_cutlength=t_cutlength+(t_cutlength.length>0?',':'')+cuttmp[m].lengthb;
-																						ttt_mount--;
-																						cuttmp[m].mount=dec(cuttmp[m].mount)-1;
-																						tt_same[n].mount=dec(tt_same[n].mount)-1;
-																					}
-																				}else{
-																					t_wlength=q_sub(t_wlength,q_mul(dec(cuttmp[m].lengthb),cuttmp[m].mount));
-																					var ttt_mount=cuttmp[m].mount;
-																					while(ttt_mount>0){
-																						t_cutlength=t_cutlength+(t_cutlength.length>0?',':'')+cuttmp[m].lengthb;
-																						ttt_mount--;
-																						cuttmp[m].mount=dec(cuttmp[m].mount)-1;
-																						tt_same[n].mount=dec(tt_same[n].mount)-1;
-																					}
-																				}
-																				//106/09/14 不受項次限制
-																				//break;
-																			}
-																		}
-																	}
-																	if(t_wlength<0)
-																		t_wlength=0;
-																	//t_cup[f].wlenhth=t_wlength;
-																	t_cup[f].wrate=t_wlength/dec(cupolength);
-																	//t_cup[f].cutlength=t_cutlength+'#'+t_wlength;
-																	if(t_cup[f].wrate>0){
-																		t_cup.splice(f,1)
-																		f--;
-																	}
-																}
-															}
-															
-															//--------------------------------------
-															
-															//沒有其他組合選自己或更少的數量
-															
-															//var t_cup=getmlength2(clength,clength,maxcutlengthb,cutlengthbs,'',[],t_same,tspec1,tsize1);
-															if(t_cup.length==0 && !t_cupsp){
-																rep='';
-																//cutlengthbs=$.extend(true,[], b_cutlengthbs);//數量多
-																cutlengthbs=cutlengthbs.concat([dec(maxcutlengthb)]);
-																cutlengthbs=cutlengthbs.concat(c_cutlengthbs);//數量少
-																cutlengthbs=cutlengthbs.concat(d_cutlengthbs);//長度短 且數量少
-																
-																t_cup=getmlength(clength,clength,maxcutlengthb,cutlengthbs,'',[],t_same,tspec1,tsize1,t_sortlen,t_safelen,t_stlen);
-															}
-															
-															//---------------------------------------
-															//取得所需數量
-															var tt_same=[],tmp_same=[];
-															for(var n=0;n<t_same.length;n++){
-																var tspec2=t_same[n].spec;
-																var tsize2=t_same[n].size;
-																var lengthb2=t_same[n].lengthb;
-																var tdata2=t_same[n].data;
-																if(tspec1==tspec2 && tsize1==tsize2){
-																	for(var m=0;m<tdata2.length;m++){
-																		if(dec(tdata2[m].mount)>0){
-																			tt_same.push({
-																				'maxmount':tdata2[m].maxmount,
-																				'lengthb':lengthb2,
-																				'mount':tdata2[m].mount,
-																				'nor':tdata2[m].nor,
-																				'tw03':tdata2[m].tw03
-																			});
-																		}
-																	}
-																}
-															}
-															tmp_same=$.extend(true,[], tt_same);
-															//調整最後剩餘數量是否符合最低損耗率
-															for(var f=0;f<t_cup.length;f++){
-																tt_same=$.extend(true,[], tmp_same);
-																var cupcutlength=t_cup[f].cutlength.split('#')[0].split(',');//切割長度
-																var cupcutwlength=t_cup[f].cutlength.split('#')[1].split(',');//損耗長度
-																var cupolength=t_cup[f].olength;//裁剪的板料長度
-																
-																var cuttmp=[];//組合數量
-																for (var m=0;m<cupcutlength.length;m++){//裁切數量
-																	var x_n=-1;
-																	for (var n=0;n<cuttmp.length;n++){
-																		if(cuttmp[n].lengthb==dec(cupcutlength[m])){
-																			cuttmp[n].mount=cuttmp[n].mount+1;
-																			x_n=n;
-																			break;	
-																		}
-																	}
-																	if(x_n==-1){
-																		cuttmp.push({
-																			'lengthb':dec(cupcutlength[m]),
-																			'mount':1
-																		});
-																	}
-																}
-																var t_wlength=dec(cupolength);
-																/*if(t_wlength.toString().slice(-1)=='5'){
-																	t_wlength=dec(t_wlength.toString().substr(0,t_wlength.toString().length-1)+'0');
-																}*/
-																
-																var t_cutlength='';
-																for (var m=0;m<cuttmp.length;m++){
-																	for (var n=0;n<tt_same.length;n++){
-																		if(dec(cuttmp[m].mount)>0 && dec(cuttmp[m].lengthb)<=dec(tt_same[n].lengthb) && dec(cuttmp[m].lengthb)>=(dec(tt_same[n].lengthb)-dec(tt_same[n].tw03))){
-																			if(dec(cuttmp[m].mount)>dec(tt_same[n].mount)+dec(tt_same[n].maxmount)){
-																				t_wlength=q_sub(t_wlength,q_mul(dec(cuttmp[m].lengthb),dec(tt_same[n].mount)+dec(tt_same[n].maxmount)));
-																				var ttt_mount=dec(tt_same[n].mount)+dec(tt_same[n].maxmount);
-																				while(ttt_mount>0){
-																					t_cutlength=t_cutlength+(t_cutlength.length>0?',':'')+cuttmp[m].lengthb;
-																					ttt_mount--;
-																					cuttmp[m].mount=dec(cuttmp[m].mount)-1;
-																					tt_same[n].mount=dec(tt_same[n].mount)-1;
-																				}
-																			}else{
-																				t_wlength=q_sub(t_wlength,q_mul(dec(cuttmp[m].lengthb),cuttmp[m].mount));
-																				var ttt_mount=cuttmp[m].mount;
-																				while(ttt_mount>0){
-																					t_cutlength=t_cutlength+(t_cutlength.length>0?',':'')+cuttmp[m].lengthb;
-																					ttt_mount--;
-																					cuttmp[m].mount=dec(cuttmp[m].mount)-1;
-																					tt_same[n].mount=dec(tt_same[n].mount)-1;
-																				}
-																			}
-																			//106/09/14 不受項次限制
-																			//break;
-																		}
-																	}
-																}
-																if(t_wlength<0)
-																	t_wlength=0;
-																t_cup[f].wlenhth=t_wlength;
-																t_cup[f].wrate=t_wlength/dec(cupolength);
-																t_cup[f].cutlength=t_cutlength+'#'+t_wlength;
-																if(t_cup[f].wrate>0){
-																	t_cup.splice(f,1);
-																	f--;
-																}else{
-																	//做兩支以上
-																	var cuttmp=[];//組合數量
-																	for (var m=0;m<cupcutlength.length;m++){//裁切數量
-																		var x_n=-1;
-																		for (var n=0;n<cuttmp.length;n++){
-																			if(cuttmp[n].lengthb==dec(cupcutlength[m])){
-																				cuttmp[n].mount=cuttmp[n].mount+1;
-																				x_n=n;
-																				break;	
-																			}
-																		}
-																		if(x_n==-1){
-																			cuttmp.push({
-																				'lengthb':dec(cupcutlength[m]),
-																				'mount':1
-																			});
-																		}
-																	}
-																	var t_wlength=dec(cupolength);
-																	/*if(t_wlength.toString().slice(-1)=='5'){
-																		t_wlength=dec(t_wlength.toString().substr(0,t_wlength.toString().length-1)+'0');
-																	}*/
-																	
-																	var t_cutlength='';
-																	for (var m=0;m<cuttmp.length;m++){
-																		for (var n=0;n<tt_same.length;n++){
-																			if(dec(cuttmp[m].mount)>0 && dec(cuttmp[m].lengthb)<=dec(tt_same[n].lengthb) && dec(cuttmp[m].lengthb)>=(dec(tt_same[n].lengthb)-dec(tt_same[n].tw03))){
-																				if(dec(cuttmp[m].mount)>dec(tt_same[n].mount)+dec(tt_same[n].maxmount)){
-																					t_wlength=q_sub(t_wlength,q_mul(dec(cuttmp[m].lengthb),dec(tt_same[n].mount)+dec(tt_same[n].maxmount)));
-																					var ttt_mount=dec(tt_same[n].mount)+dec(tt_same[n].maxmount);
-																					while(ttt_mount>0){
-																						t_cutlength=t_cutlength+(t_cutlength.length>0?',':'')+cuttmp[m].lengthb;
-																						ttt_mount--;
-																						cuttmp[m].mount=dec(cuttmp[m].mount)-1;
-																						tt_same[n].mount=dec(tt_same[n].mount)-1;
-																					}
-																				}else{
-																					t_wlength=q_sub(t_wlength,q_mul(dec(cuttmp[m].lengthb),cuttmp[m].mount));
-																					var ttt_mount=cuttmp[m].mount;
-																					while(ttt_mount>0){
-																						t_cutlength=t_cutlength+(t_cutlength.length>0?',':'')+cuttmp[m].lengthb;
-																						ttt_mount--;
-																						cuttmp[m].mount=dec(cuttmp[m].mount)-1;
-																						tt_same[n].mount=dec(tt_same[n].mount)-1;
-																					}
-																				}
-																				//106/09/14 不受項次限制
-																				//break;
-																			}
-																		}
-																	}
-																	if(t_wlength<0)
-																		t_wlength=0;
-																	//t_cup[f].wlenhth=t_wlength;
-																	t_cup[f].wrate=t_wlength/dec(cupolength);
-																	//t_cup[f].cutlength=t_cutlength+'#'+t_wlength;
-																	if(t_cup[f].wrate>0){
-																		t_cup.splice(f,1);
-																		f--;
-																	}
-																}
-															}
-															
-															if(t_cup.length==0){
-																//cutlengthbs.sort(function(a, b) {if(a>b) {return -1;} if (a < b) {return 1;} return 0;});//長>短
-																rep='';
-																
-																cutlengthbs=[];
-																a_cutlengthbs=[];
-																b_cutlengthbs=[];
-																c_cutlengthbs=[];
-																d_cutlengthbs=[];
-																e_cutlengthbs=[];
-																
-																//最短裁剪長度限制
-																for(var n=0;n<cutlengthb.length;n++){
-																	if(dec(cutlengthb[n])!=dec(maxcutlengthb)){
-																		for (var j=0;j<t_same.length;j++){
-																			var tspec2=t_same[j].spec;
-																			var tsize2=t_same[j].size;
-																			var tmount2=t_same[j].mount;
-																			var lengthb2=dec(t_same[j].lengthb);
-																			if(tspec1==tspec2 && tsize1==tsize2 && dec(cutlengthb[n])==lengthb2 && dec(tmount2)>0){
-																				if (t_maxlenmount==dec(t_same[j].mount)){
-																					a_cutlengthbs.push(dec(cutlengthb[n]));
-																				}else if (t_maxlenmount<dec(t_same[j].mount)){
-																					b_cutlengthbs.push(dec(cutlengthb[n]));
-																				}else if (t_maxlenmount%dec(t_same[j].mount)){
-																					e_cutlengthbs.push(dec(cutlengthb[n]));
-																				}else if(dec(t_same[j].mount)==1){
-																					d_cutlengthbs.push(dec(cutlengthb[n]));
-																				}else{
-																					c_cutlengthbs.push(dec(cutlengthb[n]));
-																				}
-																				
-																				break;
-																			}
-																		}
-																	}
-																}
-																cutlengthbs=$.extend(true,[], [dec(maxcutlengthb)]);
-																cutlengthbs=cutlengthbs.concat(a_cutlengthbs);//數量相同
-																cutlengthbs=cutlengthbs.concat(b_cutlengthbs);//數量多
-																cutlengthbs=cutlengthbs.concat(e_cutlengthbs);//數量少 倍數
-																cutlengthbs=cutlengthbs.concat(c_cutlengthbs);//數量少
-																cutlengthbs=cutlengthbs.concat(d_cutlengthbs);//數量1
-																
-																t_cup=getmlength(clength,clength,maxcutlengthb,cutlengthbs,'',[],t_same,tspec1,tsize1,t_sortlen,t_safelen,t_stlen);
-															}else{
-																t_cupsp=true;
-															}
-															
-															t_cup.sort(function(a, b) { if(a.wrate > b.wrate) {return 1;} if (a.wrate < b.wrate) {return -1;}if(a.cutlength.split(',').length>b.cutlength.split(',').length) {return 1;}if(a.cutlength.split(',').length<b.cutlength.split(',').length) {return -1;}return 0;});
-															t_cups=t_cups.concat(t_cup);
-															
-															//106/05/10 取到最無損號就不計算可誤差
-															if(t_cup.length>0){
-																if(t_cup[0].wlenhth==0){
-																	iswlenzero=true;
-																	break;
-																}													
-															}
-														}
-													}
-													if(iswlenzero){break;}
-												}
-												if(iswlenzero){break;}
-											}
-										}
 									}
 								}
 							}
@@ -8774,7 +8763,7 @@
 
 			}
 			
-			function getmlength2 (olength,lengthb,cut,cutlength,cutall,cutarry,t_same,tspec1,tsize1){
+			function getmlength2 (olength,lengthb,cut,cutlength,cutall,cutarry,t_same,tspec1,tsize1,needcut){
 				//原長度,目前長度,本次裁剪長度,可裁剪長度,裁剪樣式,回傳陣列
 				if(rep.indexOf("@@")>-1){ //已找到損耗0的組合後續不再處理
 					return cutarry;
@@ -8801,8 +8790,25 @@
 						tttcutlength.splice(0,1);
 						for(var i=0;i<cutlength.length;i++){
 							if(lengthb-cutlength[i]>=0){
-								getmlength2(olength,lengthb,cutlength[i],tttcutlength,cutall,cutarry,t_same,tspec1,tsize1);
-								nn++;
+								if(needcut.length>0){
+									var tmpcutall=(cutall+','+cutlength[i]).split(',');
+									var tmpisexist=false;
+									for(var j=0;j<tmpcutall.length;j++){
+										for(var k=0;k<needcut.length;k++){
+											if(dec(tmpcutall[j])==dec(needcut[k])){//至少一個必要長度存在
+												tmpisexist=true;
+												break;
+											}
+										}
+									}
+									if(tmpisexist){
+										getmlength2(olength,lengthb,cutlength[i],tttcutlength,cutall,cutarry,t_same,tspec1,tsize1,needcut);
+										nn++;
+									}
+								}else{
+									getmlength2(olength,lengthb,cutlength[i],tttcutlength,cutall,cutarry,t_same,tspec1,tsize1,needcut);
+									nn++;
+								}
 							}
 						}
 						
@@ -8943,7 +8949,7 @@
 				font-size: medium;
 			}
 			#dbbt {
-				width: 1600px;
+				width: 1680px;
 			}
 			#tbbt {
 				margin: 0;
@@ -9129,7 +9135,7 @@
 					<tr>
 						<td><span> </span><a id="lblC1" class="lbl" > </a></td>
 						<td><input id="txtC1" type="text" class="txt num c1" style="width: 75%;"/><a class="lbl">cm</a></td>
-						<td><span> </span><a id="lblIdime_fe" class="lbl" >使用安全庫存%</a> </td>
+						<td><span> </span><a id="lblIdime_fe" class="lbl" >使用安全/庫存%</a> </td>
 						<td><input id="txtIdime" type="text" class="txt num c1"/></td>
 						<td> </td>
 						<td class="cut"><a style="margin-left: 50px;">8~16M</a></td>
@@ -9257,6 +9263,7 @@
 					<!--<td style="width:100px; text-align: center;"><a id='lblSpec_t'> </a></td>
 					<td style="width:80px; text-align: center;"><a id='lblSize_t'> </a></td>
 					<td style="width:80px; text-align: center;"><a id='lblLengthb_t'> </a></td>-->
+					<td style="width:80px; text-align: center;"><a id='lblRadiusfe_t'>支數</a></td>
 					<td style="width:80px; text-align: center;"><a id='lblGmount_t'> </a></td>
 					<td style="width:100px; text-align: center;"><a id='lblGweight_t'> </a></td>
 					<td style="width:150px; text-align: center;"><a id='lblStore_t'> </a></td>
@@ -9284,6 +9291,7 @@
 					<!--<td><input id="txtSpec..*" type="text" class="txt c1"/></td>
 					<td><input id="txtSize..*" type="text" class="txt c1"/></td>
 					<td><input id="txtLengthb..*" type="text" class="txt c1 num"/></td>-->
+					<td><input id="txtRadius..*" type="text" class="txt c1 num"/></td>
 					<td><input id="txtGmount..*" type="text" class="txt c1 num"/></td>
 					<td><input id="txtGweight..*" type="text" class="txt c1 num"/></td>
 					<td>

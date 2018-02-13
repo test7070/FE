@@ -21,7 +21,7 @@
 			var q_readonly = [];
 			var q_readonlys = ['txtProduct'];
 			var bbmNum = [];
-			var bbsNum = [['txtMount',10,0,1],['txtWeight',15,2,1],['txtLengthb',15,0,1]];
+			var bbsNum = [['txtRadius',10,0,1],['txtMount',10,0,1],['txtWeight',15,2,1],['txtLengthb',15,0,1]];
 			var bbmMask = [];
 			var bbsMask = [];
 			var Parent = window.parent;
@@ -76,9 +76,9 @@
 							cubBBsArray[j].datea=q_date();
 						}
 						q_gridAddRow(bbsHtm, 'tbbs'
-						, 'txtOrdeno,txtNo2,txtCustno,txtComp,txtDatea,txtProductno,txtProduct,txtLengthb,txtMount,txtWeight,txtMemo'
+						, 'txtOrdeno,txtNo2,txtCustno,txtComp,txtDatea,txtProductno,txtProduct,txtLengthb,txtRadius,txtMount,txtWeight,txtMemo'
 						, cubBBsArray.length, cubBBsArray
-						, 'ordeno,no2,custno,comp,datea,productno,product,lengthb,mount,weight,memo', 'txtOrdeno,txtProductno,txtMount');
+						, 'ordeno,no2,custno,comp,datea,productno,product,lengthb,mount,weight,weight,memo', 'txtOrdeno,txtProductno,txtMount');
 					}
 				});
 			}
@@ -137,7 +137,7 @@
 						var t_datea = trim($('#txtDatea_' + i).val());
 						var t_uno = trim($('#txtUno_' + i).val());
 						var t_ordeno = trim($('#txtOrdeno_' + i).val());
-						var t_mount = dec($('#txtMount_' + i).val());
+						var t_mount = dec($('#txtRadius_' + i).val());
 						var t_weight = dec($('#txtWeight_' + i).val());
 						if (t_datea.length != r_lend) {
 							if ($.trim(Parent.$('#txtDatea').val()) != '')
@@ -156,7 +156,7 @@
 							var tspec='',tsize='',tlength=0,tproduct='',tmount=0;
 							if($('#txtProduct_'+i).val()!='' ){
 								tproduct=$('#txtProduct_'+i).val();
-								tmount=dec($('#txtMount_'+i).val());
+								tmount=dec($('#txtRadius_'+i).val());
 								//材質號數長度
 								tspec=tproduct.substr(tproduct.indexOf('S'),tproduct.indexOf(' ')-tproduct.indexOf('S'))
 								tsize=tproduct.split(' ')[1].split('*')[0];
@@ -344,7 +344,7 @@
 	ondragover="event.dataTransfer.dropEffect='none';event.stopPropagation(); event.preventDefault();"
 	ondrop="event.dataTransfer.dropEffect='none';event.stopPropagation(); event.preventDefault();">
 		<input id="btnCubsin" type="button" value="代入裁剪表身" style="display: none;">
-		<div id="dbbs">
+		<div id="dbbs" style="width: 1350px;">
 			<table id="tbbs" class='tbbs'  border="2"  cellpadding='2' cellspacing='1' style='width:100%;font-size: medium;'>
 				<tr style='color:White; background:#003366;' >
 					<td align="center"><input class="btn"  id="btnPlus" type="button" value='+' style="font-weight: bold;"  /></td>
@@ -356,6 +356,7 @@
 					<td align="center" style="width:100px;"><a id='lblStoreno'> </a></td>
 					<td align="center" style="width:150px;"><a id='lblProductno'> </a></td>
 					<td align="center" style="width:80px;"><a id='lblLengthb'> </a></td>
+					<td align="center" style="width:80px;"><a id='lblRadius_fe'>支數</a></td>
 					<td align="center" style="width:80px;"><a id='lblMount'> </a></td>
 					<td align="center" style="width:90px;"><a id='lblWeight'> </a><br><a id='totWeight'> </a></td>
 					<td align="center" ><a id='lblMemo'> </a></td>
@@ -391,6 +392,7 @@
 						<input type="text" id="txtProduct.*" class="txt c1"/>
 					</td>
 					<td><input type="text" id="txtLengthb.*" class="txt c1 num"/></td>
+					<td><input type="text" id="txtRadius.*" class="txt c1 num"/></td>
 					<td><input type="text" id="txtMount.*" class="txt c1 num"/></td>
 					<td><input type="text" id="txtWeight.*" class="txt c1 num"/></td>
 					<td>
