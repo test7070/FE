@@ -1763,6 +1763,9 @@
 								return 0;
 							});
 							
+							//if(t_tmpgetp1s.length==0)
+							//	getp1s (t_same,t_cups,t_sortlen,t_stlen,t_cutsheet,tsafeas,asknife,sheetlength,tspec1,tsize1,'');
+							
 							var tt_zero=false;
 							var cuttmp=[];//組合數量
 							var wcuttmp=[];//損耗組合數量
@@ -2113,6 +2116,7 @@
 				return;
 
 			}
+			
 			
 			function getp2 (){
 				var t_err='';
