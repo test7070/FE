@@ -8074,10 +8074,11 @@
 														cutlengthbs=cutlengthbs.concat(d_cutlengthbs);//數量1
 														
 														t_cup=getmlength(clength,clength,maxcutlengthb,cutlengthbs,'',[],t_same,tspec1,tsize1,t_sortlen,t_safelen,t_stlen);
-													}
-													if(t_cup.length==0 && t_level>0){
-														rep='';
-														t_cup=getmlength(q_add(clength,t_level),q_add(clength,t_level),maxcutlengthb,cutlengthbs,'',[],t_same,tspec1,tsize1,t_sortlen,t_safelen,t_stlen);
+														
+														if(t_level>0){
+															rep='';
+															t_cup=getmlength(q_add(clength,t_level),q_add(clength,t_level),maxcutlengthb,cutlengthbs,'',[],t_same,tspec1,tsize1,t_sortlen,t_safelen,t_stlen);
+														}
 													}
 													
 													//排序
