@@ -703,7 +703,7 @@
 						
 						getucc[i].olengthb=getucc[i].lengthb;
 						if(getucc[i].typea!='s')//非安全存量
-							getucc[i].lengthb=dec(getucc[i].lengthb.toString().substr(0,getucc[i].lengthb.toString().length-2)+'00');
+							getucc[i].lengthb=q_mul(round(dec(getucc[i].lengthb)/100,0),100);
 						
 						t_where=t_where+" and (product like '%*"+(getucc[i].lengthb/100).toString()+"M' or product like '%*"+(getucc[i].lengthb/100).toString()+".0M' )";
 						t_where="where=^^"+t_where+"^^";
