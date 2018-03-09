@@ -3683,8 +3683,8 @@
 									}
 								}
 								if(!insalelen){
-									//找安全存量組合 (符合尾刀)
-									var tmpcup=getmicup(lengthb,t_safelen,'',[],dec(t_sortlen))
+									//找安全存量組合 (不需符合尾刀)
+									var tmpcup=getmicup(lengthb,t_safelen,'',[],0)
 									if(tmpcup.length>0){
 										insalelen=true;
 										//取第1個
@@ -3694,7 +3694,7 @@
 										//調整剩餘長度
 										if(olength.toString().slice(-2)=='00'){//正常長度
 											for(var ti=1 ; ti<=t_levellen ; ti++){
-												var ttmpcup=getmicup(lengthb+ti,t_safelen,'',[],dec(t_sortlen));
+												var ttmpcup=getmicup(lengthb+ti,t_safelen,'',[],0);
 												if(ttmpcup.length>0){
 													insalelen=true;
 													//取第1個
@@ -3705,7 +3705,7 @@
 											}
 										}else{//延長板料
 											for(var ti=1 ; ti<=t_levellen ; ti++){
-												var ttmpcup=getmicup(lengthb-ti,t_safelen,'',[],dec(t_sortlen));
+												var ttmpcup=getmicup(lengthb-ti,t_safelen,'',[],0);
 												if(ttmpcup.length>0){
 													insalelen=true;
 													//取第1個
