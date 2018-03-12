@@ -469,10 +469,13 @@ begin
 		from view_cubu b left join view_cub a on a.noa = b.noa left join view_ucaucc c on b.productno=c.noa
 		where b.productno BETWEEN @t_bproductno AND @t_eproductno and a.datea<=@t_edate and isnull(b.storeno,'') between @t_bstoreno and @t_estoreno
 		union all
-		select '','',b.productno,b.product xproduct,isnull(b.datea,'') datea, 'C0' typea, '加工領料' typec,
+		select '','',b.productno,b.product xproduct,isnull(a.datea,'') datea, 'C0' typea, '加工領料' typec,
 		       a.noa, isNull(a.tgg,'') comp, c.unit, b.gmount, b.gweight,'cub'+@qhref_acomp+'?noa=$noa?'+b.accy qhref,0 price
-		from view_cubt b left join view_cub a on a.noa = b.noa left join view_ucaucc c on b.productno=c.noa
-		where b.productno BETWEEN @t_bproductno AND @t_eproductno and a.datea<=@t_edate and isnull(b.storeno,'') between @t_bstoreno and @t_estoreno
+		from view_cubt b left join view_cub a on a.noa = b.noa 
+		left join view_ucaucc c on b.productno=c.noa
+		where b.productno BETWEEN @t_bproductno AND @t_eproductno 
+		and a.datea<=@t_edate 
+		and isnull(b.storeno,'') between @t_bstoreno and @t_estoreno
 		----------
 		union all
 		select '','',b.productno,b.product xproduct,isnull(b.datea,'') datea, '10' typea, '委外借入' typec,
@@ -486,6 +489,7 @@ begin
 		where b.productno BETWEEN @t_bproductno AND @t_eproductno and a.datea<=@t_edate and isnull(b.storeno,'') between @t_bstoreno and @t_estoreno
 		) as R1 where isnull(productno,'')!=''
 end		
+
 	--*****************************************************************************************	
 	
 	declare @result table(
@@ -714,7 +718,7 @@ end
 	
 	delete a from @result a where not exists (select * from ucc where noa=a.productno)
 	
-	--106/01/06 若查詢起始日期=盤點日期 前期資料不顯示(經理)
+		--106/01/06 若查詢起始日期=盤點日期 前期資料不顯示(經理)
 	delete a from @result a
 	where gno='0' and typea='02'
 	and exists (select * from @result where productno=a.productno and storeno=a.storeno and typea='01' and datea=@t_bdate)
@@ -747,12 +751,14 @@ end
 	
 	select gno,recno,storeno,case when ISNULL(stores,'')='' then storeno else left(stores,7) end stores,productno
 	,replace(xproduct,'~#$',char(39)) xproduct,datea,typea,typec,noa,left(comp,11) comp,unit,ucctype,qhref
-	,dbo.getComma((case when typea='A0' or typea='B0' or typea='C0' then -1 else 1 end)*mount,[11])	mount
-	,dbo.getComma((case when typea='A0' or typea='B0' or typea='C0' then -1 else 1 end)*weight,[12]) weight
-	,dbo.getComma(totmount,[11])	totmount
-	,dbo.getComma(totweight,[12])	totweight
-	,dbo.getComma(price,[13]) price
+	,dbo.getComma((case when typea='A0' or typea='B0' or typea='C0' then -1 else 1 end)*mount,3)	mount
+	,dbo.getComma((case when typea='A0' or typea='B0' or typea='C0' then -1 else 1 end)*weight,3) weight
+	,dbo.getComma(totmount,3)	totmount
+	,dbo.getComma(totweight,3)	totweight
+	,dbo.getComma(price,3) price
 	from @result order by productno,storeno, gno,datea, recno;
+	
+	
 --*****************************************************************************
 z_uccfe5:--z_uccfe5  批號庫存表
 	declare @t_bdate nvarchar(20) = '103/01/01'  --103/01/01後 的資料才看
