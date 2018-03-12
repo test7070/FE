@@ -58,7 +58,7 @@
                     },{
                         type : '5', //[12]
                         name : 'xshow',
-                        value : '0@合併,1@配料'.split(',')
+                        value : '0@客戶,1@板料'.split(',') //'0@合併,1@配料'.split(',')
                     }]
 				});
 				q_popAssign();

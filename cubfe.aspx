@@ -703,7 +703,7 @@
 						
 						getucc[i].olengthb=getucc[i].lengthb;
 						if(getucc[i].typea!='s')//非安全存量
-							getucc[i].lengthb=dec(getucc[i].lengthb.toString().substr(0,getucc[i].lengthb.toString().length-2)+'00');
+							getucc[i].lengthb=q_mul(round(dec(getucc[i].lengthb)/100,0),100);
 						
 						t_where=t_where+" and (product like '%*"+(getucc[i].lengthb/100).toString()+"M' or product like '%*"+(getucc[i].lengthb/100).toString()+".0M' )";
 						t_where="where=^^"+t_where+"^^";
@@ -1763,6 +1763,9 @@
 								return 0;
 							});
 							
+							//if(t_tmpgetp1s.length==0)
+							//	getp1s (t_same,t_cups,t_sortlen,t_stlen,t_cutsheet,tsafeas,asknife,sheetlength,tspec1,tsize1,'');
+							
 							var tt_zero=false;
 							var cuttmp=[];//組合數量
 							var wcuttmp=[];//損耗組合數量
@@ -2113,6 +2116,7 @@
 				return;
 
 			}
+			
 			
 			function getp2 (){
 				var t_err='';
@@ -3679,8 +3683,8 @@
 									}
 								}
 								if(!insalelen){
-									//找安全存量組合 (符合尾刀)
-									var tmpcup=getmicup(lengthb,t_safelen,'',[],dec(t_sortlen))
+									//找安全存量組合 (不需符合尾刀)
+									var tmpcup=getmicup(lengthb,t_safelen,'',[],0)
 									if(tmpcup.length>0){
 										insalelen=true;
 										//取第1個
@@ -3690,7 +3694,7 @@
 										//調整剩餘長度
 										if(olength.toString().slice(-2)=='00'){//正常長度
 											for(var ti=1 ; ti<=t_levellen ; ti++){
-												var ttmpcup=getmicup(lengthb+ti,t_safelen,'',[],dec(t_sortlen));
+												var ttmpcup=getmicup(lengthb+ti,t_safelen,'',[],0);
 												if(ttmpcup.length>0){
 													insalelen=true;
 													//取第1個
@@ -3701,7 +3705,7 @@
 											}
 										}else{//延長板料
 											for(var ti=1 ; ti<=t_levellen ; ti++){
-												var ttmpcup=getmicup(lengthb-ti,t_safelen,'',[],dec(t_sortlen));
+												var ttmpcup=getmicup(lengthb-ti,t_safelen,'',[],0);
 												if(ttmpcup.length>0){
 													insalelen=true;
 													//取第1個
