@@ -394,9 +394,7 @@
                 		break;
                 	case 'txtPicno_':
                 		var n = b_seq;
-                		t_noa = $('#txtPicno_'+n).val();
-                		//console.log('popPost:'+t_noa);
-                		q_gt('img', "where=^^noa='"+t_noa+"'^^", 0, 0, 0, JSON.stringify({action:"getimg",n:n}),1);
+                		createImg(n);
                    		break;
                     default:
                         break;
@@ -477,25 +475,6 @@
                             q_Seek_gtPost();
                         break;
                     default:
-                    	try{
-                    		var t_para = JSON.parse(t_name);
-                    		if(t_para.action=="getimg"){
-                    			var n = t_para.n;
-                    			as = _q_appendData("img", "", true);
-                    			if(as[0]!=undefined){
-                    				$('#txtPara_'+n).val(as[0].para);
-                    				$('#txtImgorg_'+n).val(as[0].org);
-                    			}else{
-                    				$('#txtPara_'+n).val('');
-                    				$('#txtImgorg_'+n).val('');
-                    			}
-                    			createImg(n);
-                    		}else if(t_para.action=="createimg" || t_para.action=="createimg_btnOk"){
-                    			alert('xxxx');
-							}
-                    	}catch(e){
-                    		Unlock(1);
-                    	}
                         break;
                 }
             }
@@ -1019,7 +998,6 @@
                     	//回傳檔名
                     	var file = JSON.parse(data);
                     	$('#imgPic_'+this.n).attr('src','..\\htm\\htm\\tmp\\'+file.filename+'?'+(new Date().Format("yyyy-MM-dd hh:mm:ss")));
-                   		$('#txtImgdata_'+this.n).val(file.filename);
                     },
                     complete: function(){ 
                     },
