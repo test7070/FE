@@ -35,7 +35,6 @@
 			aPop = new Array(
 				['txtMechno_', 'btnMechno_', 'mech', 'noa,mech', 'txtMechno_,txtMech_', "mech_b.aspx?" ]
             	, ['txtCustno__', 'btnCustno__', 'cust', 'noa,comp', 'txtCustno__,txtComp__', "cust_b.aspx?" ]
-				
 			);
             				
             $(document).ready(function() {
@@ -72,7 +71,7 @@
 						fr = new FileReader();
 					    fr.readAsDataURL(file);
 					    fr.onloadend = function(e){
-					    	$('#imgPic').attr('src',fr.result);
+					    	$('#txtOrg').val(fr.result);
 					    	$('#btnFile').val('');
 					    	refreshImg(true);
 					    };
@@ -83,22 +82,94 @@
 						refreshPara();
 					}
 				});
-				$('#textPara').focusout(function(e){
+				/*$('#textPara').focusout(function(e){
 					if(q_cur==1 || q_cur==2){
 						refreshPara();
 					}
-				});
-				
-				if(q_getPara('sys.project').toUpperCase()=='FE'){
-					$('.fe').show();
-					$('.dbbs').show();
-					$('#dbbt').show();
-				}
-				
-				if(q_getPara('sys.project').toUpperCase()=='VU' || q_getPara('sys.project').toUpperCase()=='SF'){
-					$('.sf').show();
-				}
+				});*/
+				$('.dbbs').show();
+				$('#dbbt').show();
             }
+            function refreshImg(status){
+            	if(!status){
+            		$('#imgPic').attr('src','..\\htm\\htm\\img\\' + $('#txtData').val()+'?'+(new Date().Format("yyyy-MM-dd hh:mm:ss")));
+            		return;
+            	}
+				$.ajax({
+                    url: 'getImage_fe.aspx',
+                    headers: { },
+                    type: 'POST',
+                    data: JSON.stringify({ db:q_db,action:"tmp",table:"img",originImg: $('#txtOrg').val(),picno:'',orgpara:$('#txtPara').val(),para:""}),
+                    dataType: 'text',
+                    timeout: 10000,
+                    success: function(data){
+                    	//回傳檔名
+                    	var file = JSON.parse(data);
+                    	$('#imgPic').attr('src','..\\htm\\htm\\tmp\\'+file.filename+'?'+(new Date().Format("yyyy-MM-dd hh:mm:ss")));
+                   		$('#txtData').val(file.filename);
+                    },
+                    complete: function(){ 
+                    },
+                    error: function(jqXHR, exception) {
+                    	$('#imgPic').attr('src','');
+                        var errmsg = this.url+'資料寫入異常。\n';
+                        if (jqXHR.status === 0) {
+                            alert(errmsg+'Not connect.\n Verify Network.');
+                        } else if (jqXHR.status == 404) {
+                            alert(errmsg+'Requested page not found. [404]');
+                        } else if (jqXHR.status == 500) {
+                            alert(errmsg+'Internal Server Error [500].');
+                        } else if (exception === 'parsererror') {
+                            alert(errmsg+'Requested JSON parse failed.');
+                        } else if (exception === 'timeout') {
+                            alert(errmsg+'Time out error.');
+                        } else if (exception === 'abort') {
+                            alert(errmsg+'Ajax request aborted.');
+                        } else {
+                            alert(errmsg+'Uncaught Error.\n' + jqXHR.responseText);
+                        }
+                    }
+                });
+			}
+			function saveImg(){
+				$.ajax({
+                    url: 'getImage_fe.aspx',
+                    headers: { },
+                    type: 'POST',
+                    data: JSON.stringify({ db:q_db,action:"img",table:"img",originImg: $('#txtOrg').val(),picno:$('#txtNoa').val(),orgpara:$('#txtPara').val(),para:"" }),
+                    dataType: 'text',
+                    timeout: 10000,
+                    success: function(data){
+                    	//回傳檔名
+                    	var file = JSON.parse(data);
+                    	$('#imgPic').attr('src','..\\htm\\htm\\img\\' + file.filename+'?'+(new Date().Format("yyyy-MM-dd hh:mm:ss")));
+                   		$('#txtData').val(file.filename);
+                   		refreshBbm();
+                    },
+                    complete: function(){ 
+                    	wrServer($('#txtNoa').val());
+                    },
+                    error: function(jqXHR, exception) {
+                    	$('#imgPic').attr('src','');
+                        var errmsg = this.url+'資料寫入異常。\n';
+                        if (jqXHR.status === 0) {
+                            alert(errmsg+'Not connect.\n Verify Network.');
+                        } else if (jqXHR.status == 404) {
+                            alert(errmsg+'Requested page not found. [404]');
+                        } else if (jqXHR.status == 500) {
+                            alert(errmsg+'Internal Server Error [500].');
+                        } else if (exception === 'parsererror') {
+                            alert(errmsg+'Requested JSON parse failed.');
+                        } else if (exception === 'timeout') {
+                            alert(errmsg+'Time out error.');
+                        } else if (exception === 'abort') {
+                            alert(errmsg+'Ajax request aborted.');
+                        } else {
+                            alert(errmsg+'Uncaught Error.\n' + jqXHR.responseText);
+                        }
+                    }
+                });
+			}
             
             function refreshPara(){
             	var string = $.trim($('#textPara').val());
@@ -116,95 +187,8 @@
 					}
 				}
 				$('#txtPara').val(JSON.stringify(t_para));
-				refreshImg(false);
+				refreshImg(true);
             }
-            
-			function refreshImg(isOrg){
-				var image = document.getElementById('imgPic');
-				var c = document.getElementById("canvas");
-				if(!isOrg){
-					image.src=$('#txtOrg').val();
-				}
-				image.onload = function() {
-					var imgwidth = $('#imgPic').width();
-	                var imgheight = $('#imgPic').height();
-	                $('#canvas').width(imgwidth).height(imgheight);
-					var ctx = c.getContext("2d");		
-					c.width = imgwidth;
-					c.height = imgheight;
-					ctx.drawImage($('#imgPic')[0],0,0,imgwidth,imgheight);
-					if(!isOrg && $('#textPara').val().length>0){
-						t_para = JSON.parse($('#txtPara').val());
-						$('#textPara').val('');
-						for(var i=0;i<t_para.length;i++){
-							ctx.font = t_para[i].fontsize+"px times new roman";
-							ctx.fillStyle = 'red';
-							if(q_getPara('sys.project').toUpperCase()=='SF' || q_getPara('sys.project').toUpperCase()=='VU'){
-								ctx.textAlign="center";
-							}
-							ctx.fillText(t_para[i].key,t_para[i].left,t_para[i].top);
-							if($('#textPara').val().length>0)
-								$('#textPara').val($('#textPara').val()+'\n');
-							$('#textPara').val($('#textPara').val()+t_para[i].key+','+t_para[i].top+','+t_para[i].left+','+t_para[i].fontsize);
-						}
-					}
-					image.src=c.toDataURL();
-					//$('#imgPic').attr('src',c.toDataURL());
-					refreshImg2(isOrg);
-				}
-			}
-			
-			function refreshImg2(isOrg){
-				var image = document.getElementById('imgPic');
-				var c = document.getElementById("canvas");
-				image.onload = function() {
-					if(isOrg){
-						var imgwidth = $('#imgPic').width();
-	                	var imgheight = $('#imgPic').height();
-						//縮放為300*100
-						$('#canvas').width(300).height(100);
-						c.width = 300;
-						c.height = 100;
-						$("#canvas")[0].getContext("2d").drawImage($('#imgPic')[0],0,0,imgwidth,imgheight,0,0,300,100);
-						$('#txtOrg').val(c.toDataURL());
-						
-						if(q_getPara('sys.project').toUpperCase()=='SF'){
-							//106/08/10 SF預先產生圖片
-							$('#imgPic_sf').attr('src',$('#txtOrg').val());
-							refreshImgSF_3();
-						}else{
-							refreshImg(false);
-						}
-					}
-					else
-						$('#txtData').val(c.toDataURL());
-				}
-			}
-			
-			function refreshImgSF_3(){
-				var imagesf = document.getElementById('imgPic_sf');
-				var imgwidth = 300;
-                var imgheight = 100;
-				imagesf.onload = function() {
-					var cx = document.getElementById("canvas_sf");
-					cx.getContext("2d");
-					$('#canvas_sf').width(355).height(119);
-					cx.width = 355;
-					cx.height = 119;
-					$("#canvas_sf")[0].getContext("2d").drawImage($('#imgPic_sf')[0],0,0,imgwidth,imgheight,0,0,355,119);
-					$('#txtBarcode').val(cx.toDataURL());
-					
-					cx.getContext("2d");
-					$('#canvas_sf').width(150).height(50);
-					cx.width = 150;
-					cx.height = 50;
-					$("#canvas_sf")[0].getContext("2d").drawImage($('#imgPic_sf')[0],0,0,imgwidth,imgheight,0,0,150,50);
-					$('#txtImgdata').val(cx.toDataURL());
-					
-					refreshImg(false);
-				}
-			}
-			
             function q_boxClose(s2) {
                 var ret;
                 switch (b_pop) {
@@ -231,7 +215,7 @@
 							Unlock(1);
 							return;
 						} else {
-							wrServer($('#txtNoa').val());
+							saveImg();
 						}
 						break;
                     case q_name:
@@ -280,7 +264,7 @@
 					t_where = "where=^^ noa='" + $('#txtNoa').val() + "'^^";
 					q_gt('img', t_where, 0, 0, 0, "checkNoa_btnOk");
 				} else {
-					wrServer($('#txtNoa').val());
+					saveImg();
 				}          	
             }
 
@@ -298,6 +282,7 @@
             function refresh(recno) {
                 _refresh(recno);     
                 refreshBbm();
+                //refreshImg(false);
             }
             
 			function refreshBbm(){
@@ -310,9 +295,9 @@
                 	$('#btnFile').removeAttr('disabled');
                 else
                 	$('#btnFile').attr('disabled','disabled');
-            	$('#imgPic').attr('src',$('#txtData').val());
+            	$('#imgPic').attr('src','..\\htm\\htm\\img\\'+$('#txtData').val()+'?'+(new Date().Format("yyyy-MM-dd hh:mm:ss")));
                 for(var i=0;i<brwCount2;i++){
-                	$('#vtimg_'+i).children().attr('src',$('#vtdata_'+i).text());
+                	$('#vtimg_'+i).children().attr('src','..\\htm\\htm\\img\\'+$('#vtdata_'+i).text()+'?'+(new Date().Format("yyyy-MM-dd hh:mm:ss")));
                 }
                 try{
                 	t_para = JSON.parse($('#txtPara').val());
@@ -412,6 +397,22 @@
             function btnCancel() {
                 _btnCancel();
             }
+            
+            Date.prototype.Format = function (fmt) { 
+			    var o = {
+			        "M+": this.getMonth() + 1, //月份 
+			        "d+": this.getDate(), //日 
+			        "h+": this.getHours(), //小时 
+			        "m+": this.getMinutes(), //分 
+			        "s+": this.getSeconds(), //秒 
+			        "q+": Math.floor((this.getMonth() + 3) / 3), //季度 
+			        "S": this.getMilliseconds() //毫秒 
+			    };
+			    if (/(y+)/.test(fmt)) fmt = fmt.replace(RegExp.$1, (this.getFullYear() + "").substr(4 - RegExp.$1.length));
+			    for (var k in o)
+			    if (new RegExp("(" + k + ")").test(fmt)) fmt = fmt.replace(RegExp.$1, (RegExp.$1.length == 1) ? (o[k]) : (("00" + o[k]).substr(("" + o[k]).length)));
+			    return fmt;
+			};
 		</script>
 
 		<style type="text/css">
@@ -564,11 +565,7 @@
             }
 		</style>
 	</head>
-	<body ondragstart="return false" draggable="false"
-	ondragenter="event.dataTransfer.dropEffect='none'; event.stopPropagation(); event.preventDefault();"
-	ondragover="event.dataTransfer.dropEffect='none';event.stopPropagation(); event.preventDefault();"
-	ondrop="event.dataTransfer.dropEffect='none';event.stopPropagation(); event.preventDefault();"
-	>
+	<body>
 		<div style="overflow: auto;display:block;width:1050px;">
 			<!--#include file="../inc/toolbar.inc"-->
 		</div>
@@ -615,11 +612,11 @@
 								<input id="txtPara"  type="text" style="display:none;" />	
 							</td>
 						</tr>
-						<tr class="fe" style="display: none;">
+						<tr>
 							<td><span> </span><a id='lblOfflength' class="lbl"> </a></td>
 							<td><input id="txtOfflength"  type="text"  class="txt num c1" style="width: 50px;"/></td>
 						</tr>
-						<tr class="fe" style="display: none;">
+						<tr>
 							<td><span> </span><a id='lblFold' class="lbl"> </a></td>
 							<td>
 								<input id="txtFold"  type="text" class="txt num c1" style="width: 50px;"/>
@@ -646,10 +643,8 @@
 						<tr>
 							<td><span> </span><a id='lblImgpci' class="lbl"> </a></td>
 							<td colspan="2" rowspan="4">
-								<img id="imgPic" src="" style="width:300px;height:100px;"/>
-								<img id="imgPic_sf" src="" style="width:300px;height:100px;display: none;"/>
+								<img id="imgPic" src=""/>
 								<canvas id="canvas" style="display:none"> </canvas>
-								<canvas id="canvas_sf" style="display:none"> </canvas><!--SF用-->
 							</td>
 						</tr>
 						<tr> </tr>

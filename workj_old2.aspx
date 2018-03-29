@@ -1,7 +1,7 @@
 <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
 <html xmlns="http://www.w3.org/1999/xhtml" dir="ltr">
 	<head>
-		<title> </title>
+		<title></title>
 		<script src="../script/jquery.min.js" type="text/javascript"></script>
 		<script src='../script/qj2.js' type="text/javascript"></script>
 		<script src='qset.js' type="text/javascript"></script>
@@ -57,7 +57,7 @@
 		            tolerance:$('#txtTolerance').val(),
 		            trantype1:$('#mbTrantype1').val(),
 		            trantype2:$('#mbTrantype2').val()    
-		       };
+		        }
 		        var t_workjs = new Array();
 		    	for(var i=0;i<q_bbsCount;i++){
 		    		t_workjs.push({
@@ -70,8 +70,6 @@
 			            weight:q_float('txtWeight_'+i),
 			            memo:$('#txtMemo_'+i).val(),
 			            picno:$('#txtPicno_'+i).val(),
-			            para:$('#txtPara_'+i).val(),
-			            imgorg:$('#txtImgorg_'+i).val(),
 			            imgpara:$('#txtImgpara_'+i).val(),
 			            imgdata:$('#txtImgdata_'+i).val(),
 			            imgbarcode:$('#txtImgBarcode_'+i).val(),
@@ -146,7 +144,7 @@
             q_tables = 't';
             var q_name = "workj";
             var q_readonly = ['txtNoa','txtOrdeno','txtMount','txtWeight','txtWorker','txtWorker2'];
-            var q_readonlys = ['txtContno','txtContnoq','txtStore','txtMech','txtWeight','txtProduct'];
+            var q_readonlys = ['txtContno','txtContnoq','txtStore','txtMech','txtWeight'];
             var q_readonlyt = ['txtBno'];
             var bbmNum = [['txtMount',10,0,1],['txtWeight',10,2,1]];
             var bbsNum = [['txtMount',10,0,1],['txtWeight',10,2,1],['txtLengthb',10,0,1]];
@@ -204,20 +202,19 @@
      
                 $('#btnPrint_d').click(function(e){
                 	$('#btnPrint_d').attr('disabled','disabled');
-                	setTimeout(function(){$('#btnPrint_d').removeAttr('disabled');}, 3000);
+                	setTimeout(function(){$('#btnPrint_d').removeAttr('disabled')}, 3000);
                 	Lock(1,{opacity:0});
                 	var t_noq = '';
-                	if($('#combPrint').val()=='barfe2-1.bat'){
-                		var t_printCount = 0;
+                	if($('#combPrint').val()=='barfe2.bat'){
+                		var t_printCount = 0
                 		for(var i=0;i<q_bbtCount;i++){
 	                		if($('#checkIsprint__'+i).prop('checked') && $.trim($('#txtBno__'+i).val()).length>0){
-	                			t_noq += (t_noq.length>0?'^':'')+$('#txtNoq__'+i).val();	
+	                			t_noq = t_noq + (t_noq.length>0?'^'.val():'')+$('#txtNoq__'+i);	
 	                			t_printCount ++;
 	                		}            
 	                	}        
 	                	if(t_noq.length==0){
 	                		alert('未選擇要列印的資料(餘料)。');
-	                		Unlock(1);
 	                	}else{
 	                		if (confirm("已選擇 "+t_printCount+" 筆，是否列印條碼?") ) {
 	                			q_func( 'barfe.gen2', $('#txtNoa').val()+',workjt,'+t_noq+','+$('#combPrint').val()); 
@@ -227,8 +224,8 @@
 	                		}	                		
 	                	}	
                 	}else{
-                		var t_printCount = 0;
-                		var t_printPage = 0;
+                		var t_printCount = 0
+                		var t_printPage = 0
                 		for(var i=0;i<q_bbsCount;i++){
 	                		if($('#checkIsprint_'+i).prop('checked') && $.trim($('#txtProductno_'+i).val()).length>0){
 	                			t_noq = t_noq + (t_noq.length>0?'^':'')+$('#txtNoq_'+i).val();	
@@ -272,20 +269,6 @@
                 $('#btnCancel_d').click(function() {
                     $('#divImport').toggle();
                 });
-                $('#btnChecker').click(function() {
-                    $('#divChk').toggle();
-                });
-                $('#btnCancel_c').click(function() {
-                    $('#divChk').toggle();
-                    var t_noa = $('#txtNoa').val();
-                    var t_checker = $('#textChecker').val();
-                    q_func('qtxt.query.wkchecker', 'workj.txt,checker,' + encodeURI(t_noa)+ ';' +encodeURI(t_checker)); 
-                });
-                $('#textChecker').change(function() {
-                	$('#txtChecker').val($(this).val());
-               	});
-
-                
                 //-----------------------------------------------------------------------
                 $('#btnCont').click(function(e){
                 	var t_noa = $('#txtNoa').val();
@@ -363,8 +346,6 @@
 							,worker4:$('#txtWorker4_'+i).val()
 							,worker5:$('#txtWorker5_'+i).val()
 							,picno:$('#txtPicno_'+i).val()
-							,para:$('#txtPara_'+i).val()
-							,imgorg:$('#txtImgorg_'+i).val()
 							//,imgdata:$('#txtImgdata_'+i).val()
 							//,imgbarcode:$('#txxtImgbarcode_'+i).val()
 						});
@@ -436,8 +417,6 @@
 						$('#txtWorker4_'+i).val(bbs[i].worker4);
 						$('#txtWorker5_'+i).val(bbs[i].worker5);
 						$('#txtPicno_'+i).val(bbs[i].picno);
-						$('#txtPara_'+i).val(bbs[i].para);
-						$('#txtImgorg_'+i).val(bbs[i].imgorg);
 						//$('#txtImgdata_'+i).val(bbs[i].imgdata);
 						//$('#txtImgbarcode_'+i).val(bbs[i].imgbarcode);
 						createImg(i);//產生圖片 ,若太多筆要等一下
@@ -458,10 +437,7 @@
                 		break;
                 	case 'barfe.gen2':
                 		Unlock(1);
-                		break;
-                	case 'qtxt.query.wkchecker':
-                		alert('已修改!'); 
-                		break;
+                		break;	
                 	case 'qtxt.query.cont':
                 		var as = _q_appendData("tmp0", "", true, true);
                         if (as[0] != undefined) {
@@ -488,7 +464,7 @@
                         }
                         Unlock(1);
                         //取得餘料編號
-                        q_gt('workj', "where=^^noa='"+$('#txtNoa').val()+"'^^", 0, 0, 0, 'getBno'); 
+                        //q_gt('workj', "where=^^noa='"+$('#txtNoa').val()+"'^^", 0, 0, 0, 'getBno'); 
                 		break;
                     default:
                         break;
@@ -499,35 +475,15 @@
                 	case 'txtProductno_':
                 		var n = b_seq;
                 		createImg(n);
-                		break;
                 	case 'txtPicno_':
                 		var n = b_seq;
-                		t_noa = $('#txtPicno_'+n).val();
-                		//console.log('popPost:'+t_noa);
-                		q_gt('img', "where=^^noa='"+t_noa+"'^^", 0, 0, 0, JSON.stringify({action:"getimg",n:n}),1);
-                   		break;
+                		createImg(n);
                     default:
                         break;
                 }
             }
             function q_gtPost(t_name) {
                 switch (t_name) {
-                	case 'acomp':
-  						var as = _q_appendData("acomp", "", true);
-                		if (r_rank<'8' && q_getPara('sys.project').toUpperCase()=='FE' && (r_userno.substr(0,1).toUpperCase())=='B'){
-  							q_content = "where=^^exists (select * from cust where noa=workj.custno and salesno='" + r_userno + "')^^";
-  							q_gt(q_name, q_content, q_sqlCount, 1, 0, '', r_accy);
-  		
-  						}else{
-  							if(q_content.length>0){
-	                        	q_content = replaceAll(q_content,'where=^^','');
-	                        }else{
-	                        	q_content = "";
-	                        }
-  							q_gt(q_name, q_content, q_sqlCount, 1, 0, '', r_accy);
-  						}
-                		break;
-                		
                 	case 'getBno':
                 		var as = _q_appendData("workjt", "", true);
                 		if (as[0] != undefined) {
@@ -568,7 +524,7 @@
 	                			z_mech += (z_mech.length>0?',':'')+as[i].noa+'@'+as[i].mech;
 	                		}
                 		}
-                		q_gt('acomp', 'where=^^1=1^^', 0, 1);
+                		q_gt(q_name, q_content, q_sqlCount, 1);
                 		break;
                 	case 'btnModi':
                 		var as = _q_appendData("view_vccs", "", true);
@@ -587,19 +543,61 @@
                     default:
                     	try{
                     		var t_para = JSON.parse(t_name);
-                    		if(t_para.action=="getimg"){
+                    		if(t_para.action=="createimg" || t_para.action=="createimg_btnOk"){
+                    			
                     			var n = t_para.n;
+                    			var action = t_para.action;
+                    			//console.log('gtpost:'+n);
                     			as = _q_appendData("img", "", true);
-                    			if(as[0]!=undefined){
-                    				$('#txtPara_'+n).val(as[0].para);
-                    				$('#txtImgorg_'+n).val(as[0].org);
-                    			}else{
-                    				$('#txtPara_'+n).val('');
-                    				$('#txtImgorg_'+n).val('');
-                    			}
-                    			createImg(n);
-                    		}else if(t_para.action=="createimg" || t_para.action=="createimg_btnOk"){
-                    			alert('xxxx');
+                    			t_para = JSON.parse(as[0].para);
+                    			//先用原大小
+		                    	$('#imgPic_'+n).attr('src',as[0].org)
+		                    	
+								/*var imgwidth = $('#imgPic_'+n).width();
+				                var imgheight = $('#imgPic_'+n).height();*/
+				                var imgwidth = 300;
+				                var imgheight = 100;
+				                $('#canvas_'+n).width(imgwidth).height(imgheight);
+				                var c = document.getElementById("canvas_"+n);
+								var ctx = c.getContext("2d");		
+								c.width = imgwidth;
+								c.height = imgheight;
+								ctx.drawImage($('#imgPic_'+n)[0],0,0,imgwidth,imgheight);
+								var t_length = 0;
+								for(var i=0;i<t_para.length;i++){
+									value = q_float('txtPara'+t_para[i].key.toLowerCase()+'_'+n);
+									if(value!=0){
+										t_length += value;
+										//ctx.font = t_para[i].fontsize+"px times new roman";
+										ctx.font = t_para[i].fontsize+"px Arial";
+										ctx.fillStyle = 'black';
+										ctx.fillText(value+'',t_para[i].left,t_para[i].top);
+									}
+								}
+								//------------------------------
+								$('#imgPic_'+n).attr('src',c.toDataURL());
+								//條碼用圖形
+								xx_width = 355;
+								xx_height = 119;						
+								$('#canvas_'+n).width(xx_width).height(xx_height);
+								c.width = xx_width;
+								c.height = xx_height;
+								$('#canvas_'+n)[0].getContext("2d").drawImage($('#imgPic_'+n)[0],0,0,imgwidth,imgheight,0,0,xx_width,xx_height);
+								$('#txtImgbarcode_'+n).val(c.toDataURL());
+								//報表用圖形 縮放為150*50
+								$('#canvas_'+n).width(150).height(50);
+								c.width = 150;
+								c.height = 50;
+								$('#canvas_'+n)[0].getContext("2d").drawImage($('#imgPic_'+n)[0],0,0,imgwidth,imgheight,0,0,150,50);
+								$('#txtImgdata_'+n).val(c.toDataURL());	
+								//------------------------------
+								if($('#txtMemo_'+n).val().substring(0,1)!='*'){
+									$('#txtLengthb_'+n).val(t_length);
+                				}
+								sum();
+								if(action=="createimg_btnOk"){
+									createImg_btnOk(n-1);
+								}	
 							}
                     	}catch(e){
                     		Unlock(1);
@@ -607,95 +605,7 @@
                         break;
                 }
             }
-            
-			function createImg(n){
-				var t_picno = $('#txtPicno_'+n).val();
-				var t_para = $('#txtPara_'+n).val();
-                var t_imgorg = $('#txtImgorg_'+n).val();
-				try{
-					t_para = JSON.parse(t_para);
-				}catch(e){
-					console.log('createImg:'+t_para);
-				}
-				if(t_imgorg.length==0)
-					return;
-				//$('#imgPic_'+n).attr('src',t_imgorg);
-				var image = document.getElementById('imgPic_'+n);
-				image.src=t_imgorg;
-                
-				image.onload = function(e) {
-					var imgwidth = 300;
-	                var imgheight = 100;
-	                //2017/05/25
-	                //因為會產生條碼用圖形,會有放大的情況,導致畫面有跳動的情形
-	                //因此就另外在canvas2做處理,顯示都由canvas,這樣可避免畫面跳動
-	                $('#canvas2_'+n).width(imgwidth).height(imgheight);
-	                var c = document.getElementById("canvas2_"+n);
-					var ctx = c.getContext("2d");		
-					c.width = imgwidth;
-					c.height = imgheight;
-				
-					ctx.drawImage($('#imgPic_'+n)[0],0,0,imgwidth,imgheight);
-					var t_length = 0;
-					for(var i=0;i<t_para.length;i++){
-						value = q_float('txtPara'+t_para[i].key.toLowerCase()+'_'+n);
-						if(value!=0){
-							t_length += value;
-							ctx.font = t_para[i].fontsize+"px Arial";
-							ctx.fillStyle = 'black';
-							ctx.fillText(value+'',t_para[i].left,t_para[i].top);
-						}
-					}
-					//------------------------------
-					if($('#txtMemo_'+n).val().substring(0,1)!='*'){
-						$('#txtLengthb_'+n).val(t_length);
-					}
-					sum();
-					this.onload = function(){};
-					createImg2(n);
-				};
-			};
-			
-			function createImg2(n){
-				var t_picno = $('#txtPicno_'+n).val();
-				var t_para = $('#txtPara_'+n).val();
-                var t_imgorg = $('#txtImgorg_'+n).val();
-				try{
-					t_para = JSON.parse(t_para);
-				}catch(e){
-					console.log('createImg:'+t_para);
-				}
-				if(t_imgorg.length==0)
-					return;
-				var image = document.getElementById('imgPic_'+n);
-				var c = document.getElementById("canvas2_"+n);
-                
-                $('#imgPic_'+n).attr('src',c.toDataURL());
-                image.onload = function(e) {
-                	var imgwidth = 300;
-               		var imgheight = 100;
-                	//------------------------------
-					//條碼用圖形
-					xx_width = 355;
-					xx_height = 119;						
-					$('#canvas2_'+n).width(xx_width).height(xx_height);
-					c.width = xx_width;
-					c.height = xx_height;
-                
-					$('#canvas2_'+n)[0].getContext("2d").drawImage($('#imgPic_'+n)[0],0,0,imgwidth,imgheight,0,0,xx_width,xx_height);
-					$('#txtImgbarcode_'+n).val(c.toDataURL());
-					//報表用圖形 縮放為150*50
-					$('#canvas_'+n).width(150).height(50);
-					c.width = 150;
-					c.height = 50;
-					$('#canvas2_'+n)[0].getContext("2d").drawImage($('#imgPic_'+n)[0],0,0,imgwidth,imgheight,0,0,150,50);
-					$('#txtImgdata_'+n).val(c.toDataURL());	
-					$('#canvas_'+n)[0].getContext("2d").drawImage($('#imgPic_'+n)[0],0,0,imgwidth,imgheight,0,0,150,50);
-					//------------------------------
-					this.onload = function(){};
-				};
-			};
-			
+
             function q_stPost() {
                 if (!(q_cur == 1 || q_cur == 2))
                     return false;
@@ -740,7 +650,7 @@
             function btnModi() {
                 if (emp($('#txtNoa').val()))
                     return;
-                var t_ordeno = $('#txtOrdeno').val();
+                var t_ordeno = $('#txtOrdeno').val()
                 if(t_ordeno.length>0){
                 	Lock(1,{opacity:0});
                		q_gt('view_vccs', "where=^^ ordeno='"+t_ordeno+"' ^^ stop=1", 0, 0, 0, 'btnModi'); 
@@ -760,13 +670,12 @@
                 Lock(1, {
                     opacity : 0
                 });
-                $('#bbsXpand').click();
                 if ($('#txtDatea').val().length == 0 || !q_cd($('#txtDatea').val())) {
                     alert(q_getMsg('lblDatea') + '錯誤。');
                     Unlock(1);
                     return;
                 }
-                if($.trim($('#txtCustno').val()).length==0){
+                if($.trim($('#txtCustno').val())==0){
                 	alert(q_getMsg('lblCust') + '空白。');
                     Unlock(1);
                     return;
@@ -809,16 +718,7 @@
                 } else
                     $('#txtWorker2').val(r_name);
                 $('#btnMemo').focus();
-                for(var i=0;i<q_bbsCount;i++){
-                	createImg(i);
-                }
-                sum();
-                var t_noa = trim($('#txtNoa').val());
-                var t_date = trim($('#txtDatea').val());
-                if (t_noa.length == 0 || t_noa == "AUTO")
-                    q_gtnoa(q_name, replaceAll(q_getPara('sys.key_workj') + (t_date.length == 0 ? q_date() : t_date), '/', ''));
-                else
-                    wrServer(t_noa);
+				createImg_btnOk(q_bbsCount-1);
             }
 
             function wrServer(key_value) {
@@ -828,7 +728,7 @@
             }
 
             function bbsSave(as) {
-                if (!as['product'] && !as['para']) {
+                if (!as['productno'] && !as['imgdata']) {
                     as[bbsKey[1]] = '';
                     return;
                 }
@@ -841,10 +741,9 @@
                 $('.justPrint').prop('checked',true);	
                 $('.justPrint2').prop('checked',true);	
                 $('.checkAll').prop('checked',true);	
-                $('.checkAll2').prop('checked',true);
+                $('.checkAll2').prop('checked',true);	
             }
-          /*  function q_bbsLenShow( t_start, t_end){
-            	
+            function q_bbsLenShow( t_start, t_end){
             	for(var i=t_start;i<=t_end;i++)
             	if($('#canvas_'+i).length>0){
 					$('#imgPic_'+i).attr('src', $('#txtImgdata_'+i).val());
@@ -852,7 +751,7 @@
                     var imgheight = $('#imgPic_'+i).height();
 					$("#canvas_"+i)[0].getContext("2d").drawImage($('#imgPic_'+i)[0],0,0,imgwidth,imgheight,0,0,150,50);
             	}
-            }*/
+            }
 
             function readonly(t_para, empty) {
                 _readonly(t_para, empty);
@@ -892,13 +791,35 @@
             function btnMinus(id) {
                 _btnMinus(id);
             }
-            function btnPlus(org_htm, dest_tag, afield) {
+            /*function btnPlus(org_htm, dest_tag, afield) {
                 _btnPlus(org_htm, dest_tag, afield);
             }
-            /*function btnPlut(org_htm, dest_tag, afield) {
+            function btnPlut(org_htm, dest_tag, afield) {
                 _btnPlut(org_htm, dest_tag, afield);
             }*/
-			
+			function createImg(n){
+				var t_picno = $('#txtPicno_'+n).val();
+				q_gt('img', "where=^^noa='"+t_picno+"'^^", 0, 0, 0, JSON.stringify({action:"createimg",n:n}),r_accy,1);	
+			};
+			function createImg_btnOk(n){
+				//console.log(n);
+				if(n>=0){				
+					var t_picno = $('#txtPicno_'+n).val();
+					if(t_picno.length>0){
+						q_gt('img', "where=^^noa='"+t_picno+"'^^", 0, 0, 0, JSON.stringify({action:"createimg_btnOk",n:n}),r_accy,1);	
+					}else{
+						createImg_btnOk(n-1)
+					}
+				}else{
+					sum();
+	                var t_noa = trim($('#txtNoa').val());
+	                var t_date = trim($('#txtDatea').val());
+	                if (t_noa.length == 0 || t_noa == "AUTO")
+	                    q_gtnoa(q_name, replaceAll(q_getPara('sys.key_workj') + (t_date.length == 0 ? q_date() : t_date), '/', ''));
+	                else
+	                    wrServer(t_noa);
+				}
+			};
 			function CopyMech(n){
 				if(!$('#lbl_mech').data('isInit')){
 					$('#lbl_mech').bind('contextmenu', function(e) {
@@ -928,94 +849,87 @@
                     $('#lblNo_' + i).text(i + 1);
                     if($('#canvas_'+i).length>0){
 						$('#imgPic_'+i).attr('src', $('#txtImgdata_'+i).val());
-						showimg(i);
-						//var imgwidth = $('#imgPic_'+i).width();
-                        //var imgheight = $('#imgPic_'+i).height();
-						//$("#canvas_"+i)[0].getContext("2d").drawImage($('#imgPic_'+i)[0],0,0,imgwidth,imgheight,0,0,150,50);
+						var imgwidth = $('#imgPic_'+i).width();
+                        var imgheight = $('#imgPic_'+i).height();
+						$("#canvas_"+i)[0].getContext("2d").drawImage($('#imgPic_'+i)[0],0,0,imgwidth,imgheight,0,0,150,50);
                 	}
                     if (!$('#btnMinus_' + i).hasClass('isAssign')) {
                     	//機台複製
                     	$('#cmbMech1_' + i).bind('contextmenu', function(e) {
                             /*滑鼠右鍵*/
                             e.preventDefault();
-                            var n = $(this).attr('id').replace(/^(.*)_(\d+)$/,'$2');
+                            var n = $(this).attr('id').replace('cmbMech1_', '');
                             CopyMech(n)
                         });
                         $('#cmbMech2_' + i).bind('contextmenu', function(e) {
                             /*滑鼠右鍵*/
                             e.preventDefault();
-                            var n = $(this).attr('id').replace(/^(.*)_(\d+)$/,'$2');
+                            var n = $(this).attr('id').replace('cmbMech2_', '');
                             CopyMech(n)
                         });
                         $('#cmbMech3_' + i).bind('contextmenu', function(e) {
                             /*滑鼠右鍵*/
                             e.preventDefault();
-                            var n = $(this).attr('id').replace(/^(.*)_(\d+)$/,'$2');
+                            var n = $(this).attr('id').replace('cmbMech3_', '');
                             CopyMech(n)
                         });
                         $('#cmbMech4_' + i).bind('contextmenu', function(e) {
                             /*滑鼠右鍵*/
                             e.preventDefault();
-                            var n = $(this).attr('id').replace(/^(.*)_(\d+)$/,'$2');
+                            var n = $(this).attr('id').replace('cmbMech4_', '');
                             CopyMech(n)
                         });
                         $('#cmbMech5_' + i).bind('contextmenu', function(e) {
                             /*滑鼠右鍵*/
                             e.preventDefault();
-                            var n = $(this).attr('id').replace(/^(.*)_(\d+)$/,'$2');
+                            var n = $(this).attr('id').replace('cmbMech5_', '');
                             CopyMech(n)
                         });
                     	//--------------------------------------------------------------
                     	$('#txtProductno_' + i).bind('contextmenu', function(e) {
                             /*滑鼠右鍵*/
                             e.preventDefault();
-                            var n = $(this).attr('id').replace(/^(.*)_(\d+)$/,'$2');
+                            var n = $(this).attr('id').replace('txtProductno_', '');
                             $('#btnProduct_'+n).click();
                         });
                         $('#txtStoreno_' + i).bind('contextmenu', function(e) {
                             /*滑鼠右鍵*/
                             e.preventDefault();
-                            var n = $(this).attr('id').replace(/^(.*)_(\d+)$/,'$2');
+                            var n = $(this).attr('id').replace('txtStoreno_', '');
                             $('#btnStore_'+n).click();
                         });
                         $('#txtPicno_' + i).bind('contextmenu', function(e) {
                             /*滑鼠右鍵*/
                             e.preventDefault();
-                            var n = $(this).attr('id').replace(/^(.*)_(\d+)$/,'$2');
+                            var n = $(this).attr('id').replace('txtPicno_', '');
                             $('#btnPicno_'+n).click();
                         });
-                    	/*$('#txtPicno_'+i).change(function(e){
+                    	$('#txtPicno_'+i).change(function(e){
                     		var n = $(this).attr('id').replace('txtPicno_', '');
                     		createImg(n);
-                    	});*/
+                    	});
                     	$('#txtParaa_'+i).change(function(e){
-                    		var n = $(this).attr('id').replace(/^(.*)_(\d+)$/,'$2');
-                    		$(this).val(isNaN(q_float($(this).attr('id')))?0:q_float($(this).attr('id')));
+                    		var n = $(this).attr('id').replace('txtParaa_', '');
                     		createImg(n);
                     	});
                     	$('#txtParab_'+i).change(function(e){
-                    		var n = $(this).attr('id').replace(/^(.*)_(\d+)$/,'$2');
-                    		$(this).val(isNaN(q_float($(this).attr('id')))?0:q_float($(this).attr('id')));
+                    		var n = $(this).attr('id').replace('txtParab_', '');
                     		createImg(n);
                     	});
                     	$('#txtParac_'+i).change(function(e){
-                    		var n = $(this).attr('id').replace(/^(.*)_(\d+)$/,'$2');
-                    		$(this).val(isNaN(q_float($(this).attr('id')))?0:q_float($(this).attr('id')));
+                    		var n = $(this).attr('id').replace('txtParac_', '');
                     		createImg(n);
                     	});
                     	$('#txtParad_'+i).change(function(e){
-                    		var n = $(this).attr('id').replace(/^(.*)_(\d+)$/,'$2');
-                    		$(this).val(isNaN(q_float($(this).attr('id')))?0:q_float($(this).attr('id')));
+                    		var n = $(this).attr('id').replace('txtParad_', '');
                     		createImg(n);
                     	});
                     	$('#txtParae_'+i).change(function(e){
-                    		var n = $(this).attr('id').replace(/^(.*)_(\d+)$/,'$2');
-                    		$(this).val(isNaN(q_float($(this).attr('id')))?0:q_float($(this).attr('id')));
+                    		var n = $(this).attr('id').replace('txtParae_', '');
                     		createImg(n);
                     	});
                     	$('#txtParaf_'+i).change(function(e){
-                    		var n = $(this).attr('id').replace(/^(.*)_(\d+)$/,'$2');
-                    		$(this).val(isNaN(q_float($(this).attr('id')))?0:q_float($(this).attr('id')));
+                    		var n = $(this).attr('id').replace('txtParaf_', '');
                     		createImg(n);
                     	});
                     	$('#txtContno_' + i).bind('contextmenu', function(e) {
@@ -1037,12 +951,6 @@
                     }
                 }
                 _bbsAssign();
-                for (var j = 0; j < q_bbsCount; j++) {
-                	if($('#canvas_'+j).length>0){
-						$('#imgPic_'+j).attr('src', $('#txtImgdata_'+j).val());
-						showimg(j);
-                	}
-                }
             }
 			var guid = (function() {
 				function s4() {return Math.floor((1 + Math.random()) * 0x10000).toString(16).substring(1);}
@@ -1081,15 +989,7 @@
             function sum() {
                 if (!(q_cur == 1 || q_cur == 2))
                     return;
-                for(var i=0;i<q_bbsCount;i++){
-                	//檢查參數輸入是否有問題
-                	$('#txtParaa_'+i).val(isNaN(q_float('txtParaa_'+i))?0:q_float('txtParaa_'+i));
-                	$('#txtParab_'+i).val(isNaN(q_float('txtParab_'+i))?0:q_float('txtParab_'+i));
-                	$('#txtParac_'+i).val(isNaN(q_float('txtParac_'+i))?0:q_float('txtParac_'+i));
-                	$('#txtParad_'+i).val(isNaN(q_float('txtParad_'+i))?0:q_float('txtParad_'+i));
-                	$('#txtParae_'+i).val(isNaN(q_float('txtParae_'+i))?0:q_float('txtParae_'+i));
-                	$('#txtParaf_'+i).val(isNaN(q_float('txtParaf_'+i))?0:q_float('txtParaf_'+i));
-                }
+                
                 var calc =[{key:'3#',value:0.56,m300:400,m600:400,m1000:270,m1600:250,w300:600,w600:1300,w1000:1300,w1600:1300}
 	                ,{key:'4#',value:0.994,m300:300,m600:250,m1000:150,m1600:130,w300:500,w600:1300,w1000:1300,w1600:1300}
 	                ,{key:'5#',value:1.56,m300:200,m600:160,m1000:100,m1600:80,w300:900,w600:1300,w1000:1300,w1600:1300}
@@ -1216,16 +1116,6 @@
                 alert("An error occurred:\r\n" + error.Message);
             }
             
-            function showimg(n){
-            	var image = document.getElementById('imgPic_'+n);
-            	image.onload = function() {
-					var imgwidth = 150;// $('#imgPic_'+n).width();
-	                var imgheight = 50; //$('#imgPic_'+n).height();
-	                if($("#canvas_"+n)[0]!=undefined)
-						$("#canvas_"+n)[0].getContext("2d").drawImage($('#imgPic_'+n)[0],0,0,imgwidth,imgheight,0,0,150,50);
-					this.onload = function(){};
-				};
-            }
 		</script>
 		<style type="text/css">
             #dmain {
@@ -1303,10 +1193,6 @@
             .txt.c2 {
                 width: 130%;
                 float: left;
-            }
-            .txt.c3 {
-                width: 45%;
-                float: right;
             }
             .txt.num {
                 text-align: right;
@@ -1404,8 +1290,6 @@
 							<option value="barfe1-2.bat">綠色</option>
 							<option value="barfe1-3.bat">黃色、膚色</option>
 							<option value="barfe1-4.bat">藍色、桃紅色</option>
-							<option value="barfe2-1.bat">條碼2</option>
-							
 						</select>
 					</td>
 					<td></td>
@@ -1422,20 +1306,6 @@
 				</tr>
 				<tr style="height:20px;">
 					<td colspan="7"><a style="font-size:8px; color:darkblue;">請至【設定】->【隱私權】(內容設定)->【彈出視窗】(管理例外情況)</a></td>
-				</tr>
-			</table>
-		</div>
-		<div id="divChk" style="position:absolute; top:100px; left:400px; display:none; width:400px; height:80px; background-color: pink; border: 5px solid gray;">
-			<table style="width:100%;">
-				<tr style="height:1px;">
-					<td style="width:80px;"></td>
-					<td style="width:220px;"></td>
-					<td style="width:40px;"></td>
-				</tr>
-				<tr style="height:20px;">
-					<td><span> </span><a id="lblChecker" class="lbl">複檢人</a></td>
-					<td><input id="textChecker" type="text" class="txt c1"/></td>
-					<td><input id="btnCancel_c" type="button" value="關閉"/></td>
 				</tr>
 			</table>
 		</div>
@@ -1508,13 +1378,8 @@
 					</tr>
 					<tr>
 						<td></td>
-						<td style="text-align: center;">
-							<input type="button" id="btnBarcode" value="條碼列印" />
-						</td>
-						<td>
-							<input type="button" id="btnChecker" value="複檢人" />
-							<input id="txtChecker" type="text" class="txt c3"/>
-						</td>
+						<td></td>
+						<td><input type="button" id="btnBarcode" value="條碼列印" /></td>
 						<td><span> </span><a id="lblWeight" class="lbl"> </a></td>
 						<td><input id="txtWeight"  type="text"  class="num txt c1"/></td>
 					</tr>
@@ -1530,7 +1395,8 @@
 							<input id="txtOrdeaccy"  type="text"  style="display:none;"/>
 							<input type="button" id="btnOrde" value="轉訂單" style="display:none;"/>
 						</td>
-					</tr>				
+					</tr>
+					
 				</table>
 			</div>
 		</div>
@@ -1579,15 +1445,12 @@
 					</td>
 					<td>
 						<canvas id="canvas.*" width="150" height="50"> </canvas>
-						<canvas id="canvas2.*" width="300" height="100" style="display:none;"> </canvas>
 						<img id="imgPic.*" src="" style="display:none;"/>
-						<textarea id="txtImgorg.*" style="display:none;"> </textarea>
-						<textarea id="txtImgdata.*" style="display:none;"> </textarea>
-						<textarea id="txtImgbarcode.*" style="display:none;"> </textarea>
+						<input id="txtImgdata.*" type="text" style="display:none;"/>
+						<input id="txtImgbarcode.*" type="text" style="display:none;"/>
 					</td>
 					<td>
 						<input class="txt" id="txtPicno.*" type="text" style="width:95%;"/>
-						<input class="txt" id="txtPara.*" type="text" style="display:none;"/>
 						<input id="btnPicno.*" type="button" style="display:none;">
 					</td>
 					<td style="background-color: burlywood;">
@@ -1649,7 +1512,7 @@
 		</div>
 		
 		<input id="q_sys" type="hidden" />
-		<div id="dbbt" style="display:noxne;">
+		<div id="dbbt" style="display:none;">
 			<table id="tbbt">
 				<tbody>
 					<tr class="head" style="color:white; background:#003366;">
@@ -1667,7 +1530,7 @@
 						<td style="width:100px; text-align: center;">餘料數量</td>
 						<td style="width:100px; text-align: center;">餘料重量</td>
 						<td style="width:100px; text-align: center;">儲位</td>
-						<td style="width:200px; text-align: center;">備註/爐號</td>
+						<td style="width:200px; text-align: center;">備註</td>
 					</tr>
 					<tr>
 						<td>

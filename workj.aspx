@@ -34,115 +34,7 @@
 		        if (Sys.opera) document.write('Opera: ' + Sys.opera);
 		        if (Sys.safari) document.write('Safari: ' + Sys.safari);*/
 		    });
-		    function backupData(){
-		    	var t_workj ={
-		            noa:$('#txtNoa').val(),
-		            site:$('#txtSite').val(),
-		            datea:$('#txtDatea').val(),
-		            odate:$('#txtOdate').val(),
-		            custno:$('#txtCustno').val(),
-		            cust:$('#txtCust').val(),
-		            nick:$('#txtNick').val(),
-		            tagcolor:$('#cmbTagcolor').val(),
-		            trantype:$('#cmbTrantype').val(),
-		            chktype:$('#txtChktype').val(),
-		            worker:$('#txtWorker').val(),
-		            worker2:$('#txtWorker2').val(),
-		            memo:$('#txtMemo').val(),
-		            ordeaccy:$('#txtOrdeaccy').val(),
-		            ordeno:$('#txtOrdeno').val(),
-		            mount:q_float('txtMount'),
-		            weight:q_float('txtWeight'),
-		            lengthb:q_float('txtLengthb'),
-		            tolerance:$('#txtTolerance').val(),
-		            trantype1:$('#mbTrantype1').val(),
-		            trantype2:$('#mbTrantype2').val()    
-		       };
-		        var t_workjs = new Array();
-		    	for(var i=0;i<q_bbsCount;i++){
-		    		t_workjs.push({
-		    			noa:$('#txtNoa_'+i).val(),
-			            noq:$('#txtNoq_'+i).val(),
-			            productno:$('#txtProductno_'+i).val(),
-			            product:$('#txtProduct_'+i).val(),
-			            lengthb:q_float('txtLengthb_'+i),
-			            mount:q_float('txtMount_'+i),
-			            weight:q_float('txtWeight_'+i),
-			            memo:$('#txtMemo_'+i).val(),
-			            picno:$('#txtPicno_'+i).val(),
-			            para:$('#txtPara_'+i).val(),
-			            imgorg:$('#txtImgorg_'+i).val(),
-			            imgpara:$('#txtImgpara_'+i).val(),
-			            imgdata:$('#txtImgdata_'+i).val(),
-			            imgbarcode:$('#txtImgBarcode_'+i).val(),
-			            contno:$('#txtContno_'+i).val(),
-			            contnoq:$('#txtContnoq_'+i).val(),
-			            mech1:$('#txtMech1_'+i).val(),
-			            mech2:$('#txtMech2_'+i).val(),
-			            mech3:$('#txtMech3_'+i).val(),
-			            mech4:$('#txtMech4_'+i).val(),
-			            mech5:$('#txtMech5_'+i).val(),
-			            place1:$('#txtPlace1_'+i).val(),
-			            place2:$('#txtPlace2_'+i).val(),
-			            place3:$('#txtPlace3_'+i).val(),
-			            place4:$('#txtPlace4_'+i).val(),
-			            place5:$('#txtPlace5_'+i).val(),
-			            time1:$('#txtTime1_'+i).val(),
-			            time2:$('#txtTime2_'+i).val(),
-			            time3:$('#txtTime3_'+i).val(),
-			            time4:$('#txtTime4_'+i).val(),
-			            time5:$('#txtTime5_'+i).val(),
-			            paraa:q_float('txtParaa_'+i),
-			            parab:q_float('txtParab_'+i),
-			            parac:q_float('txtParac_'+i),
-			            parad:q_float('txtParad_'+i),
-			            parae:q_float('txtParae_'+i),
-			            paraf:q_float('txtParaf_'+i),
-			            worker1:$('#txtWorker1_'+i).val(),
-			            worker2:$('#txtWorker2_'+i).val(),
-			            worker3:$('#txtWorker3_'+i).val(),
-			            worker4:$('#txtWorker4_'+i).val(),
-			            worker5:$('#txtWorker5_'+i).val(),
-			            place:$('#txtPlace_'+i).val(),
-			            cmount:$('#txtCmount_'+i).val(),
-			            cweight:$('#txtCweight_'+i).val()
-		    		});
-		    	}
-		    	//console.log(JSON.stringify({bbm:t_workj,bbs:t_workjs}));
-		    	$.ajax({
-                    url: 'workjbk.aspx',
-                    type: 'POST',
-                    data: JSON.stringify({bbm:t_workj,bbs:t_workjs}),
-                    dataType: 'text',
-                    timeout: 60000,
-                    success: function(data){
-                    	if(data.length>0)
-                    		alert(data);
-                    },
-                    complete: function(){
-                    	              
-                    },
-                    error: function(jqXHR, exception) {
-                        var errmsg = this.url+' 異常。\n';
-                        if (jqXHR.status === 0) {
-                            alert(errmsg+'Not connect.\n Verify Network.');
-                        } else if (jqXHR.status == 404) {
-                            alert(errmsg+'Requested page not found. [404]');
-                        } else if (jqXHR.status == 500) {
-                            alert(errmsg+'Internal Server Error [500].');
-                        } else if (exception === 'parsererror') {
-                            alert(errmsg+'Requested JSON parse failed.');
-                        } else if (exception === 'timeout') {
-                            alert(errmsg+'Time out error.');
-                        } else if (exception === 'abort') {
-                            alert(errmsg+'Ajax request aborted.');
-                        } else {
-                            alert(errmsg+'Uncaught Error.\n' + jqXHR.responseText);
-                        }
-                    }
-                });	
-		    }
-
+		    
             q_tables = 't';
             var q_name = "workj";
             var q_readonly = ['txtNoa','txtOrdeno','txtMount','txtWeight','txtWorker','txtWorker2'];
@@ -609,100 +501,14 @@
             }
             
 			function createImg(n){
-				var t_picno = $('#txtPicno_'+n).val();
-				var t_para = $('#txtPara_'+n).val();
-                var t_imgorg = $('#txtImgorg_'+n).val();
-				try{
-					t_para = JSON.parse(t_para);
-				}catch(e){
-					console.log('createImg:'+t_para);
-				}
-				if(t_imgorg.length==0)
-					return;
-				//$('#imgPic_'+n).attr('src',t_imgorg);
-				var image = document.getElementById('imgPic_'+n);
-				image.src=t_imgorg;
-                
-				image.onload = function(e) {
-					var imgwidth = 300;
-	                var imgheight = 100;
-	                //2017/05/25
-	                //因為會產生條碼用圖形,會有放大的情況,導致畫面有跳動的情形
-	                //因此就另外在canvas2做處理,顯示都由canvas,這樣可避免畫面跳動
-	                $('#canvas2_'+n).width(imgwidth).height(imgheight);
-	                var c = document.getElementById("canvas2_"+n);
-					var ctx = c.getContext("2d");		
-					c.width = imgwidth;
-					c.height = imgheight;
-				
-					ctx.drawImage($('#imgPic_'+n)[0],0,0,imgwidth,imgheight);
-					var t_length = 0;
-					for(var i=0;i<t_para.length;i++){
-						value = q_float('txtPara'+t_para[i].key.toLowerCase()+'_'+n);
-						if(value!=0){
-							t_length += value;
-							ctx.font = t_para[i].fontsize+"px Arial";
-							ctx.fillStyle = 'black';
-							ctx.fillText(value+'',t_para[i].left,t_para[i].top);
-						}
-					}
-					//------------------------------
-					if($('#txtMemo_'+n).val().substring(0,1)!='*'){
-						$('#txtLengthb_'+n).val(t_length);
-					}
-					sum();
-					this.onload = function(){};
-					createImg2(n);
-				};
-			};
-			
-			function createImg2(n){
-				var t_picno = $('#txtPicno_'+n).val();
-				var t_para = $('#txtPara_'+n).val();
-                var t_imgorg = $('#txtImgorg_'+n).val();
-				try{
-					t_para = JSON.parse(t_para);
-				}catch(e){
-					console.log('createImg:'+t_para);
-				}
-				if(t_imgorg.length==0)
-					return;
-				var image = document.getElementById('imgPic_'+n);
-				var c = document.getElementById("canvas2_"+n);
-                
-                $('#imgPic_'+n).attr('src',c.toDataURL());
-                image.onload = function(e) {
-                	var imgwidth = 300;
-               		var imgheight = 100;
-                	//------------------------------
-					//條碼用圖形
-					xx_width = 355;
-					xx_height = 119;						
-					$('#canvas2_'+n).width(xx_width).height(xx_height);
-					c.width = xx_width;
-					c.height = xx_height;
-                
-					$('#canvas2_'+n)[0].getContext("2d").drawImage($('#imgPic_'+n)[0],0,0,imgwidth,imgheight,0,0,xx_width,xx_height);
-					$('#txtImgbarcode_'+n).val(c.toDataURL());
-					//報表用圖形 縮放為150*50
-					$('#canvas_'+n).width(150).height(50);
-					c.width = 150;
-					c.height = 50;
-					$('#canvas2_'+n)[0].getContext("2d").drawImage($('#imgPic_'+n)[0],0,0,imgwidth,imgheight,0,0,150,50);
-					$('#txtImgdata_'+n).val(c.toDataURL());	
-					$('#canvas_'+n)[0].getContext("2d").drawImage($('#imgPic_'+n)[0],0,0,imgwidth,imgheight,0,0,150,50);
-					//------------------------------
-					this.onload = function(){};
-				};
+				refreshImg(n,true);
 			};
 			
             function q_stPost() {
                 if (!(q_cur == 1 || q_cur == 2))
                     return false;
-                Lock(1,{opacity:0});
-                //匯出訂單
-                //餘料編號
-                $('#btnOrde').click();
+                Lock(1,{opacity:0.5});
+                saveImg(q_bbsCount-1);
             }
 
             function q_boxClose(s2) {
@@ -808,10 +614,6 @@
                     $('#txtWorker').val(r_name);
                 } else
                     $('#txtWorker2').val(r_name);
-                $('#btnMemo').focus();
-                for(var i=0;i<q_bbsCount;i++){
-                	createImg(i);
-                }
                 sum();
                 var t_noa = trim($('#txtNoa').val());
                 var t_date = trim($('#txtDatea').val());
@@ -842,17 +644,11 @@
                 $('.justPrint2').prop('checked',true);	
                 $('.checkAll').prop('checked',true);	
                 $('.checkAll2').prop('checked',true);
+                
+                for(var i=0;i<q_bbsCount;i++){
+                	refreshImg(i,false);
+                }
             }
-          /*  function q_bbsLenShow( t_start, t_end){
-            	
-            	for(var i=t_start;i<=t_end;i++)
-            	if($('#canvas_'+i).length>0){
-					$('#imgPic_'+i).attr('src', $('#txtImgdata_'+i).val());
-					var imgwidth = $('#imgPic_'+i).width();
-                    var imgheight = $('#imgPic_'+i).height();
-					$("#canvas_"+i)[0].getContext("2d").drawImage($('#imgPic_'+i)[0],0,0,imgwidth,imgheight,0,0,150,50);
-            	}
-            }*/
 
             function readonly(t_para, empty) {
                 _readonly(t_para, empty);
@@ -926,44 +722,39 @@
             function bbsAssign() {
                 for (var i = 0; i < q_bbsCount; i++) {
                     $('#lblNo_' + i).text(i + 1);
-                    if($('#canvas_'+i).length>0){
-						$('#imgPic_'+i).attr('src', $('#txtImgdata_'+i).val());
-						showimg(i);
-						//var imgwidth = $('#imgPic_'+i).width();
-                        //var imgheight = $('#imgPic_'+i).height();
-						//$("#canvas_"+i)[0].getContext("2d").drawImage($('#imgPic_'+i)[0],0,0,imgwidth,imgheight,0,0,150,50);
-                	}
+                    $('#imgPic_'+ i).attr('src','..\\htm\\htm\\img\\workj' + $('#txtNoa').val()+'-'+$('#txtNoq_'+ i).val()+'.png?'+(new Date().Format("yyyy-MM-dd hh:mm:ss")));
+                    
                     if (!$('#btnMinus_' + i).hasClass('isAssign')) {
                     	//機台複製
                     	$('#cmbMech1_' + i).bind('contextmenu', function(e) {
                             /*滑鼠右鍵*/
                             e.preventDefault();
                             var n = $(this).attr('id').replace(/^(.*)_(\d+)$/,'$2');
-                            CopyMech(n)
+                            CopyMech(n);
                         });
                         $('#cmbMech2_' + i).bind('contextmenu', function(e) {
                             /*滑鼠右鍵*/
                             e.preventDefault();
                             var n = $(this).attr('id').replace(/^(.*)_(\d+)$/,'$2');
-                            CopyMech(n)
+                            CopyMech(n);
                         });
                         $('#cmbMech3_' + i).bind('contextmenu', function(e) {
                             /*滑鼠右鍵*/
                             e.preventDefault();
                             var n = $(this).attr('id').replace(/^(.*)_(\d+)$/,'$2');
-                            CopyMech(n)
+                            CopyMech(n);
                         });
                         $('#cmbMech4_' + i).bind('contextmenu', function(e) {
                             /*滑鼠右鍵*/
                             e.preventDefault();
                             var n = $(this).attr('id').replace(/^(.*)_(\d+)$/,'$2');
-                            CopyMech(n)
+                            CopyMech(n);
                         });
                         $('#cmbMech5_' + i).bind('contextmenu', function(e) {
                             /*滑鼠右鍵*/
                             e.preventDefault();
                             var n = $(this).attr('id').replace(/^(.*)_(\d+)$/,'$2');
-                            CopyMech(n)
+                            CopyMech(n);
                         });
                     	//--------------------------------------------------------------
                     	$('#txtProductno_' + i).bind('contextmenu', function(e) {
@@ -984,10 +775,6 @@
                             var n = $(this).attr('id').replace(/^(.*)_(\d+)$/,'$2');
                             $('#btnPicno_'+n).click();
                         });
-                    	/*$('#txtPicno_'+i).change(function(e){
-                    		var n = $(this).attr('id').replace('txtPicno_', '');
-                    		createImg(n);
-                    	});*/
                     	$('#txtParaa_'+i).change(function(e){
                     		var n = $(this).attr('id').replace(/^(.*)_(\d+)$/,'$2');
                     		$(this).val(isNaN(q_float($(this).attr('id')))?0:q_float($(this).attr('id')));
@@ -1037,20 +824,8 @@
                     }
                 }
                 _bbsAssign();
-                for (var j = 0; j < q_bbsCount; j++) {
-                	if($('#canvas_'+j).length>0){
-						$('#imgPic_'+j).attr('src', $('#txtImgdata_'+j).val());
-						showimg(j);
-                	}
-                }
             }
-			var guid = (function() {
-				function s4() {return Math.floor((1 + Math.random()) * 0x10000).toString(16).substring(1);}
-				return function() {return s4() + s4() + '-' + s4() + '-' + s4() + '-' +s4() + '-' + s4() + s4() + s4();};
-			})();
-			function imgDisplay(obj){
-				$(obj).hide();
-			}
+
             function bbtAssign() {
                 for (var i = 0; i < q_bbtCount; i++) {
                     $('#lblNo__' + i).text(i + 1);
@@ -1215,17 +990,135 @@
             function onPageError(error) {
                 alert("An error occurred:\r\n" + error.Message);
             }
-            
-            function showimg(n){
-            	var image = document.getElementById('imgPic_'+n);
-            	image.onload = function() {
-					var imgwidth = 150;// $('#imgPic_'+n).width();
-	                var imgheight = 50; //$('#imgPic_'+n).height();
-	                if($("#canvas_"+n)[0]!=undefined)
-						$("#canvas_"+n)[0].getContext("2d").drawImage($('#imgPic_'+n)[0],0,0,imgwidth,imgheight,0,0,150,50);
-					this.onload = function(){};
-				};
-            }
+            //
+            function refreshImg(n,status){
+            	if(!status){
+            		$('#imgPic_'+ n).attr('src','..\\htm\\htm\\img\\workj' + $('#txtNoa').val()+'-'+$('#txtNoq_'+ n).val()+'.png?'+(new Date().Format("yyyy-MM-dd hh:mm:ss")));
+            		return;
+            	}
+            	var t_picno = $.trim($('#txtPicno_'+n).val());
+				var t_para =  JSON.stringify({A:$('#txtParaa_'+n).val()
+					,B:$('#txtParab_'+n).val()
+					,C:$('#txtParac_'+n).val()
+					,D:$('#txtParad_'+n).val()
+					,E:$('#txtParae_'+n).val()
+					,F:$('#txtParaf_'+n).val()});
+				$('#txtPara_'+n).val(t_para);	
+				$.ajax({
+					n : n,
+                    url: 'getImage_fe.aspx',
+                    headers: { },
+                    type: 'POST',
+                    data: JSON.stringify({ db:q_db
+                    	,action:"tmp",table:"workj"
+                    	,originImg: '',picno:t_picno
+                    	,orgpara:'',para:t_para}),
+                    dataType: 'text',
+                    timeout: 10000,
+                    success: function(data){
+                    	//回傳檔名
+                    	var file = JSON.parse(data);
+                    	$('#imgPic_'+this.n).attr('src','..\\htm\\htm\\tmp\\'+file.filename+'?'+(new Date().Format("yyyy-MM-dd hh:mm:ss")));
+                   		$('#txtImgdata_'+this.n).val(file.filename);
+                    },
+                    complete: function(){ 
+                    },
+                    error: function(jqXHR, exception) {
+                    	$('#imgPic_'+this.n).attr('src','');
+                        var errmsg = this.url+'資料寫入異常。\n';
+                        if (jqXHR.status === 0) {
+                            alert(errmsg+'Not connect.\n Verify Network.');
+                        } else if (jqXHR.status == 404) {
+                            alert(errmsg+'Requested page not found. [404]');
+                        } else if (jqXHR.status == 500) {
+                            alert(errmsg+'Internal Server Error [500].');
+                        } else if (exception === 'parsererror') {
+                            alert(errmsg+'Requested JSON parse failed.');
+                        } else if (exception === 'timeout') {
+                            alert(errmsg+'Time out error.');
+                        } else if (exception === 'abort') {
+                            alert(errmsg+'Ajax request aborted.');
+                        } else {
+                            alert(errmsg+'Uncaught Error.\n' + jqXHR.responseText);
+                        }
+                    }
+                });
+			}
+			function saveImg(n){
+            	if(n<0){
+            		//匯出訂單
+	                //餘料編號
+	                $('#btnOrde').click();
+            		return;
+            	}
+            	var t_picno = $.trim($('#txtPicno_'+n).val());
+				var t_para =  JSON.stringify({A:$('#txtParaa_'+n).val()
+					,B:$('#txtParab_'+n).val()
+					,C:$('#txtParac_'+n).val()
+					,D:$('#txtParad_'+n).val()
+					,E:$('#txtParae_'+n).val()
+					,F:$('#txtParaf_'+n).val()});
+				$('#txtPara_'+n).val(t_para);	
+				var t_noa = $.trim($('#txtNoa').val());
+				var t_noq = $.trim($('#txtNoq_'+n).val());
+				$.ajax({
+					n : n,
+					noa : t_noa,
+					noq : t_noq,
+                    url: 'getImage_fe.aspx',
+                    headers: { },
+                    type: 'POST',
+                    data: JSON.stringify({ db:q_db
+                    	,action:"img",table:"workj"
+                    	,originImg: '',picno:t_picno
+                    	,orgpara:'',para:t_para
+                    	,noa:t_noa,noq:t_noq}),
+                    dataType: 'text',
+                    timeout: 10000,
+                    success: function(data){
+                    	//回傳檔名
+                    	var file = JSON.parse(data);
+                    	$('#imgPic_'+this.n).attr('src','..\\htm\\htm\\img\\workj'+this.noa+'-'+this.noq+'.png?'+(new Date().Format("yyyy-MM-dd hh:mm:ss")));
+                    },
+                    complete: function(){ 
+                    	saveImg(this.n-1);
+                    },
+                    error: function(jqXHR, exception) {
+                    	$('#imgPic_'+this.n).attr('src','');
+                        var errmsg = this.url+'資料寫入異常。\n';
+                        if (jqXHR.status === 0) {
+                            alert(errmsg+'Not connect.\n Verify Network.');
+                        } else if (jqXHR.status == 404) {
+                            alert(errmsg+'Requested page not found. [404]');
+                        } else if (jqXHR.status == 500) {
+                            alert(errmsg+'Internal Server Error [500].');
+                        } else if (exception === 'parsererror') {
+                            alert(errmsg+'Requested JSON parse failed.');
+                        } else if (exception === 'timeout') {
+                            alert(errmsg+'Time out error.');
+                        } else if (exception === 'abort') {
+                            alert(errmsg+'Ajax request aborted.');
+                        } else {
+                            alert(errmsg+'Uncaught Error.\n' + jqXHR.responseText);
+                        }
+                    }
+                });
+			}
+			Date.prototype.Format = function (fmt) { 
+			    var o = {
+			        "M+": this.getMonth() + 1, //月份 
+			        "d+": this.getDate(), //日 
+			        "h+": this.getHours(), //小时 
+			        "m+": this.getMinutes(), //分 
+			        "s+": this.getSeconds(), //秒 
+			        "q+": Math.floor((this.getMonth() + 3) / 3), //季度 
+			        "S": this.getMilliseconds() //毫秒 
+			    };
+			    if (/(y+)/.test(fmt)) fmt = fmt.replace(RegExp.$1, (this.getFullYear() + "").substr(4 - RegExp.$1.length));
+			    for (var k in o)
+			    if (new RegExp("(" + k + ")").test(fmt)) fmt = fmt.replace(RegExp.$1, (RegExp.$1.length == 1) ? (o[k]) : (("00" + o[k]).substr(("" + o[k]).length)));
+			    return fmt;
+			};
 		</script>
 		<style type="text/css">
             #dmain {
@@ -1578,12 +1471,8 @@
 						<input class="txt" id="txtPlace.*" type="text" style="width:95%;" title=""/>
 					</td>
 					<td>
-						<canvas id="canvas.*" width="150" height="50"> </canvas>
-						<canvas id="canvas2.*" width="300" height="100" style="display:none;"> </canvas>
-						<img id="imgPic.*" src="" style="display:none;"/>
-						<textarea id="txtImgorg.*" style="display:none;"> </textarea>
+						<img id="imgPic.*" src="" style="width:150px;height:50px;"/>
 						<textarea id="txtImgdata.*" style="display:none;"> </textarea>
-						<textarea id="txtImgbarcode.*" style="display:none;"> </textarea>
 					</td>
 					<td>
 						<input class="txt" id="txtPicno.*" type="text" style="width:95%;"/>
@@ -1656,7 +1545,7 @@
 						<td style="width:20px;">
 						<input id="btnPlut" type="button" style="font-size: medium; font-weight: bold;" value="＋"/>
 						</td>
-						<td style="width:20px;"></td>
+						<td style="width:20px;"> </td>
 						<td style="width:20px;">列印<input class="checkAll2" type="checkbox" onclick="checkAll2()"/></td>
 						<td style="width:200px; text-align: center;">批號</td>
 						<td style="width:200px; text-align: center;">品名</td>
