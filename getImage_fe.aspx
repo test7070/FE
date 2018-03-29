@@ -1,8 +1,8 @@
 <%@ Import Namespace="Newtonsoft.Json" %>
 <%@ Page Language="C#" Debug="true"%>
     <script language="c#" runat="server">     
-        System.IO.MemoryStream stream = new System.IO.MemoryStream();
-        string connectionString = "Data Source=59.125.143.171,1799;Persist Security Info=True;User ID=sa;Password=artsql963;Database=";
+        
+        string connectionString = "Data Source=127.0.0.1,1799;Persist Security Info=True;User ID=sa;Password=artsql963;Database=";
 
         public class ParaIn
         {
@@ -12,6 +12,7 @@
             public string picno = "";
             public string orgpara = "";//imgfe參數
             public string para = "";
+            public string noa = "", noq = "";
         }
         public class Result
         {
@@ -31,10 +32,21 @@
             System.Web.Script.Serialization.JavaScriptSerializer serializer = new System.Web.Script.Serialization.JavaScriptSerializer();
             ParaIn item = serializer.Deserialize<ParaIn>(encoding.GetString(formData));
             //ParaIn item = serializer.Deserialize<ParaIn>(@"{""db"":""st"",""action"":""img"",""table"":""img"",""originImg"":""data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAASwAAABkCAYAAAA8AQ3AAAAAAXNSR0IArs4c6QAAAARnQU1BAACxjwv8YQUAAAI1SURBVHhe7djbattAFEBRX0L+/3/j2M0xnpKWUkl96oa1QGjix+GwNZnz48sJIODyegP89wQLyBAsIEOwgAzBAjIEC8gQLCBDsIAMwQIyBAvIECwgQ7CADMECMgQLyBAsIEOwgAzBAjIEC8gQLCBDsIAMwQIyBAvIECwgQ7CADMECMgQLyBAsIEOwgAzBAjIEC8gQLCBDsIAMwQIyBAvIECwgQ7CADMECMgQLyBAsIEOwgAzBAjIEC8gQLCBDsIAMwQIyBAvIECwgQ7CADMECMgQLyBAsIEOwgAzBAjIEC8gQLCBDsDY8Ho/XCo5b8/P5+fl8j/ltPRwjWBvO5/NrdTrd7/fX6tc1bLler8/37XZ7ztR6OEawdlhfwsvl8vNLOWvRYsuK0szKzNHb29tzhj4+Pp6/c8z5axOdS3earfr9q2j72DIzsj5w814mXOvkxT6CteH79kysZui+R8uxnr+Z+ZkZWXGak9VES6j+jWAdNEf62bIVLtvHlrm3+lOgnLCOc4e1YYZqorTCNH+7u2KvCdI8Mz9zupp4jVmL1XFOWDvMFq1/B9/f35/RcunOXjM/a4bGzM33uyz2EywgQ+aBDMECMgQLyBAsIEOwgAzBAjIEC8gQLCBDsIAMwQIyBAvIECwgQ7CADMECMgQLyBAsIEOwgAzBAjIEC8gQLCBDsIAMwQIyBAvIECwgQ7CADMECMgQLyBAsIEOwgAzBAjIEC8gQLCBDsIAMwQIyBAuIOJ1+AGhApUiVxEknAAAAAElFTkSuQmCC"",""picno"":""00"",""orgpara"":""[{\""key\"":\""A\"",\""top\"":0,\""left\"":100,\""fontsize\"":\""50\""}]"",""para"":""""}");
+            //ParaIn item = serializer.Deserialize<ParaIn>(@"{""db"":""st"",""action"":""img"",""table"":""workj"",""originImg"":"""",""picno"":""10"",""orgpara"":"""",""para"":""{\""A\"":\""1\"",\""B\"":\""0\"",\""C\"":\""0\"",\""D\"":\""0\"",\""E\"":\""0\"",\""F\"":\""0\""}""}");
             connectionString += item.db;            
             // action = "tmp"   新增、修改下的預覽圖，只會產生一個圖片。檔案存在tmp資料夾底下，tmp資料夾檔案可隨時刪除
             // action = "img"   存檔後產生檔案，供imgfe、wrokj、xls使用。檔案存在img資料夾底下，資料不可隨意刪除
-            Response.Write(serializer.Serialize(genImage(item)));
+            string result = "";
+            switch (item.table)
+            {
+                case "img":
+                    result = serializer.Serialize(genImage(item));
+                    break;
+                case "workj":
+                    result = serializer.Serialize(genImage2(item));
+                    break; 
+            }
+            Response.Write(result);
             Response.End();
         }
         public Result genImage(ParaIn item)
@@ -43,7 +55,6 @@
             string filePath = item.action == "img" ? @"C:\inetpub\wwwroot\htm\htm\img\" : @"C:\inetpub\wwwroot\htm\htm\tmp\";
             //para為空值，代表是要產生imgfe用的預覽圖
             Result result = new Result();
-            System.IO.MemoryStream stream = new System.IO.MemoryStream();
             //前端參數
             Newtonsoft.Json.Linq.JObject jo1 = Newtonsoft.Json.JsonConvert.DeserializeObject<Newtonsoft.Json.Linq.JObject>(item.para);
             //圖片參數
@@ -101,6 +112,7 @@
                 catch (Exception e) { }
 
             }
+            System.IO.MemoryStream stream = new System.IO.MemoryStream();
             bmp.Save(stream, System.Drawing.Imaging.ImageFormat.Png);
             //---------------------------------------------------------------
             string uFileName = item.action == "img" ? item.table + item.picno + ".png" : string.Format(@"{0}.png", Guid.NewGuid());
@@ -133,41 +145,36 @@
                     pFileStream.Close();
             }
             stream.Close();
-            result.filename = @"\htm\htm\"+item.action+@"\"+uFileName;
+            result.filename = uFileName;
 
             return result;
         }
         public Result genImage2(ParaIn item)
         {
-            string filePath = item.action == "img" ? @"C:\inetpub\wwwroot\htm\htm\img\" : @"C:\inetpub\wwwroot\htm\htm\tmp\";
-            //para為空值，代表是要產生imgfe用的預覽圖
             Result result = new Result();
-            System.IO.MemoryStream stream = new System.IO.MemoryStream();
-            if (item != null && item.originImg.Length == 0 && item.picno.Length == 0)
-            {
-                return result;
-            }
-            else if (item.picno.Length > 0)
-            {
-                System.Data.DataTable dt = new System.Data.DataTable();
-                using (System.Data.SqlClient.SqlConnection connSource = new System.Data.SqlClient.SqlConnection(connectionString))
-                {
-                    System.Data.SqlClient.SqlDataAdapter adapter = new System.Data.SqlClient.SqlDataAdapter();
-                    connSource.Open();
-                    string queryString = @"select para,org from img where noa=@picno";
-                    System.Data.SqlClient.SqlCommand cmd = new System.Data.SqlClient.SqlCommand(queryString, connSource);
-                    cmd.Parameters.AddWithValue("@picno", item.picno);
-                    adapter.SelectCommand = cmd;
-                    adapter.Fill(dt);
-                    connSource.Close();
-                }
-                foreach (System.Data.DataRow r in dt.Rows)
-                {
-                    item.orgpara = System.DBNull.Value.Equals(r.ItemArray[0]) ? "" : (System.String)r.ItemArray[0];
-                    item.originImg = System.DBNull.Value.Equals(r.ItemArray[1]) ? "" : (System.String)r.ItemArray[1];
-                }
-            }
+            //縮放成  150 X 50
+            int tWidth = 150;
+            int tHeight = 50;
+            
+            string filePath = item.action == "img" ? @"C:\inetpub\wwwroot\htm\htm\img\" : @"C:\inetpub\wwwroot\htm\htm\tmp\";
 
+            System.Data.DataTable dt = new System.Data.DataTable();
+            using (System.Data.SqlClient.SqlConnection connSource = new System.Data.SqlClient.SqlConnection(connectionString))
+            {
+                System.Data.SqlClient.SqlDataAdapter adapter = new System.Data.SqlClient.SqlDataAdapter();
+                connSource.Open();
+                string queryString = @"select para,org from img where noa=@picno";
+                System.Data.SqlClient.SqlCommand cmd = new System.Data.SqlClient.SqlCommand(queryString, connSource);
+                cmd.Parameters.AddWithValue("@picno", item.picno);
+                adapter.SelectCommand = cmd;
+                adapter.Fill(dt);
+                connSource.Close();
+            }
+            foreach (System.Data.DataRow r in dt.Rows)
+            {
+                item.orgpara = System.DBNull.Value.Equals(r.ItemArray[0]) ? "" : (System.String)r.ItemArray[0];
+                item.originImg = System.DBNull.Value.Equals(r.ItemArray[1]) ? "" : (System.String)r.ItemArray[1];
+            }
             //前端參數
             Newtonsoft.Json.Linq.JObject jo1 = Newtonsoft.Json.JsonConvert.DeserializeObject<Newtonsoft.Json.Linq.JObject>(item.para);
             //圖片參數
@@ -186,6 +193,7 @@
                 bmp = new System.Drawing.Bitmap(ms);
             }
             System.Drawing.Graphics g = System.Drawing.Graphics.FromImage(bmp);
+            
             //畫圖
             float top, left;
             string val = "";
@@ -225,9 +233,22 @@
                 catch (Exception e) { }
 
             }
-            bmp.Save(stream, System.Drawing.Imaging.ImageFormat.Png);
+            System.Drawing.Bitmap tmpBmp = new System.Drawing.Bitmap(tWidth, tHeight);
+            System.Drawing.Graphics tmpG = System.Drawing.Graphics.FromImage(tmpBmp);
+            try
+            {
+                tmpG.DrawImage(bmp
+                        , new System.Drawing.Rectangle(0, 0, tWidth, tHeight)
+                        , new System.Drawing.Rectangle(0, 0, bmp.Width, bmp.Height)
+                        , System.Drawing.GraphicsUnit.Pixel);
+            }
+            catch
+            {
+            }
+            System.IO.MemoryStream stream = new System.IO.MemoryStream();
+            tmpBmp.Save(stream, System.Drawing.Imaging.ImageFormat.Png);
             //---------------------------------------------------------------
-            string uFileName = item.action == "img" ? item.table + item.picno + ".png" : string.Format(@"{0}.png", Guid.NewGuid());
+            string uFileName = item.action == "img" ? item.table + item.noa+"-"+item.noq + ".png" : string.Format(@"{0}.png", Guid.NewGuid());
 
             if (System.IO.Directory.Exists(filePath))
             {
@@ -257,7 +278,7 @@
                     pFileStream.Close();
             }
             stream.Close();
-            result.filename = @"\htm\htm\" + item.action + @"\" + uFileName;
+            result.filename = uFileName;
 
             return result;
         }

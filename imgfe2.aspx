@@ -92,7 +92,7 @@
             }
             function refreshImg(status){
             	if(!status){
-            		$('#imgPic').attr('src',$('#txtData').val());
+            		$('#imgPic').attr('src','..\\htm\\htm\\img\\' + $('#txtData').val()+'?'+(new Date().Format("yyyy-MM-dd hh:mm:ss")));
             		return;
             	}
 				$.ajax({
@@ -105,8 +105,8 @@
                     success: function(data){
                     	//回傳檔名
                     	var file = JSON.parse(data);
-                    	$('#imgPic').attr('src','..\\'+file.filename+'?'+(new Date().Format("yyyy-MM-dd hh:mm:ss")));
-                   		$('#txtData').val('..\\'+file.filename);
+                    	$('#imgPic').attr('src','..\\htm\\htm\\tmp\\'+file.filename+'?'+(new Date().Format("yyyy-MM-dd hh:mm:ss")));
+                   		$('#txtData').val(file.filename);
                     },
                     complete: function(){ 
                     },
@@ -142,8 +142,9 @@
                     success: function(data){
                     	//回傳檔名
                     	var file = JSON.parse(data);
-                    	$('#imgPic').attr('src','..\\'+file.filename+'?'+(new Date().Format("yyyy-MM-dd hh:mm:ss")));
-                   		$('#txtData').val('..\\'+file.filename);
+                    	$('#imgPic').attr('src','..\\htm\\htm\\img\\' + file.filename+'?'+(new Date().Format("yyyy-MM-dd hh:mm:ss")));
+                   		$('#txtData').val(file.filename);
+                   		refreshBbm();
                     },
                     complete: function(){ 
                     	wrServer($('#txtNoa').val());
@@ -281,7 +282,7 @@
             function refresh(recno) {
                 _refresh(recno);     
                 refreshBbm();
-                refreshImg(false);
+                //refreshImg(false);
             }
             
 			function refreshBbm(){
@@ -294,9 +295,9 @@
                 	$('#btnFile').removeAttr('disabled');
                 else
                 	$('#btnFile').attr('disabled','disabled');
-            	$('#imgPic').attr('src',$('#txtData').val());
+            	$('#imgPic').attr('src','..\\htm\\htm\\img\\'+$('#txtData').val()+'?'+(new Date().Format("yyyy-MM-dd hh:mm:ss")));
                 for(var i=0;i<brwCount2;i++){
-                	$('#vtimg_'+i).children().attr('src',$('#vtdata_'+i).text());
+                	$('#vtimg_'+i).children().attr('src','..\\htm\\htm\\img\\'+$('#vtdata_'+i).text()+'?'+(new Date().Format("yyyy-MM-dd hh:mm:ss")));
                 }
                 try{
                 	t_para = JSON.parse($('#txtPara').val());
