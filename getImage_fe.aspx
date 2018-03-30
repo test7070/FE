@@ -158,8 +158,9 @@
         {
             Result result = new Result();
             //縮放成  150 X 50
-            int tWidth = 150;
-            int tHeight = 50;
+            //縮放成  355 X 119  標籤用
+            int tWidth = 150, tHeight = 50;
+            int vWidth = 355, vHeight = 119;
             
             string filePath = item.action == "img" ? @"C:\inetpub\wwwroot\htm\htm\img\" : @"C:\inetpub\wwwroot\htm\htm\tmp\";
 
@@ -242,7 +243,7 @@
                 }
 
             }
-            System.Drawing.Bitmap tmpBmp = new System.Drawing.Bitmap(tWidth, tHeight);
+            System.Drawing.Bitmap tmpBmp = new System.Drawing.Bitmap(tWidth, tHeight);   
             System.Drawing.Graphics tmpG = System.Drawing.Graphics.FromImage(tmpBmp);
             try
             {
@@ -290,6 +291,58 @@
             result.filename = uFileName;
             result.lengthb = lengthb;
 
+            //標籤
+            if (item.action == "img")
+            {
+                tmpBmp = new System.Drawing.Bitmap(vWidth, vHeight);
+                tmpG = System.Drawing.Graphics.FromImage(tmpBmp);
+                try
+                {
+                    tmpG.DrawImage(bmp
+                            , new System.Drawing.Rectangle(0, 0, vWidth, vHeight)
+                            , new System.Drawing.Rectangle(0, 0, bmp.Width, bmp.Height)
+                            , System.Drawing.GraphicsUnit.Pixel);
+                }
+                catch
+                {
+                }
+                stream = new System.IO.MemoryStream();
+                tmpBmp.Save(stream, System.Drawing.Imaging.ImageFormat.Png);
+                //---------------------------------------------------------------
+                uFileName = "label_"+item.table + item.noa + "-" + item.noq + ".png";
+
+                if (System.IO.Directory.Exists(filePath))
+                {
+                    //資料夾存在
+                }
+                else
+                {
+                    //新增資料夾
+                    System.IO.Directory.CreateDirectory(filePath);
+                }
+                pFileStream = null;
+                try
+                {
+                    pFileStream = new System.IO.FileStream(filePath + uFileName, System.IO.FileMode.OpenOrCreate);
+                    pFileStream.Write(stream.ToArray(), 0, stream.ToArray().Length);
+                    result.status = 1;
+                }
+                catch (Exception e)
+                {
+                    uFileName = "";
+                    result.status = -1;
+                    result.message = e.Message;
+                }
+                finally
+                {
+                    if (pFileStream != null)
+                        pFileStream.Close();
+                }
+                stream.Close();
+            }
+            
+            
             return result;
         }
+        
     </script>
