@@ -168,8 +168,9 @@ z_workjp02:-- EXCEL用 ref z_workjp01 因為要印頁小計，改為一次只能
 		,spec b01
 		,num b02
 		
-		,'<span style="display:block'+char(59)+'width:120px'+char(59)+'height:30px'+char(59)+'">'+
-		+'<img src="'+@t_path+'workj'+noa+'-'+noq+'.png?'+replace(CONVERT(nvarchar,getdate(),120),' ','_')+'" width="88px" height="29px"/>' 
+		--,'<span style="display:block'+char(59)+'width:120px'+char(59)+'height:30px'+char(59)+'">'+
+		,'<span width="88" height="29">'+
+		+'<img src="'+@t_path+'workj'+noa+'-'+noq+'.png?'+replace(CONVERT(nvarchar,getdate(),120),' ','_')+'" width="88" height="29"/>' 
 		+  '</span>' b03
 			
 		,lengthb b04
