@@ -390,11 +390,12 @@
                 switch (id) {
                 	case 'txtProductno_':
                 		var n = b_seq;
-                		createImg(n);
+                		//createImg(n);
                 		break;
                 	case 'txtPicno_':
                 		var n = b_seq;
-                		createImg(n);
+                		t_noa = $('#txtPicno_'+n).val();
+                		q_gt('img', "where=^^noa='"+t_noa+"'^^", 0, 0, 0, JSON.stringify({action:"getimg",n:n}),1);
                    		break;
                     default:
                         break;
@@ -475,11 +476,45 @@
                             q_Seek_gtPost();
                         break;
                     default:
+                    	try{
+                    		var t_para = JSON.parse(t_name);
+                    		if(t_para.action=="getimg"){
+                    			var n = t_para.n;
+                    			as = _q_appendData("img", "", true);
+                    			if(as[0]!=undefined){
+                    				$('#txtPara_'+n).val(as[0].para);
+                    			}else{
+                    				$('#txtPara_'+n).val('');
+                    			}
+                    			createImg(n);
+                    		}else if(t_para.action=="createimg" || t_para.action=="createimg_btnOk"){
+                    			alert('xxxx');
+							}
+                    	}catch(e){
+                    		Unlock(1);
+                    	}
                         break;
                 }
             }
             
 			function createImg(n){
+				var t_para = $('#txtPara_'+n).val();
+				try{
+					t_para = JSON.parse(t_para);
+				}catch(e){
+					console.log('createImg:'+t_para);
+				}
+				var t_length = 0;
+				for(var i=0;i<t_para.length;i++){
+					value = q_float('txtPara'+t_para[i].key.toLowerCase()+'_'+n);
+					if(value!=0){
+						t_length += value;
+					}
+				}
+				//------------------------------
+				if($('#txtMemo_'+n).val().substring(0,1)!='*'){
+					$('#txtLengthb_'+n).val(t_length);
+				}
 				refreshImg(n,true);
 			};
 			
@@ -971,18 +1006,23 @@
             }
             //
             function refreshImg(n,status){
+            	var t_picno = $.trim($('#txtPicno_'+n).val());
+            	if(t_picno.length==0){
+            		$('#imgPic_'+ n).attr('src','');
+            		return;
+            	}
+            	
             	if(!status){
             		$('#imgPic_'+ n).attr('src','..\\htm\\htm\\img\\workj' + $('#txtNoa').val()+'-'+$('#txtNoq_'+ n).val()+'.png?'+(new Date().Format("yyyy-MM-dd hh:mm:ss")));
             		return;
             	}
-            	var t_picno = $.trim($('#txtPicno_'+n).val());
+            	
 				var t_para =  JSON.stringify({A:$('#txtParaa_'+n).val()
 					,B:$('#txtParab_'+n).val()
 					,C:$('#txtParac_'+n).val()
 					,D:$('#txtParad_'+n).val()
 					,E:$('#txtParae_'+n).val()
 					,F:$('#txtParaf_'+n).val()});
-				$('#txtPara_'+n).val(t_para);	
 				$.ajax({
 					n : n,
                     url: 'getImage_fe.aspx',
@@ -998,6 +1038,9 @@
                     	//回傳檔名
                     	var file = JSON.parse(data);
                     	$('#imgPic_'+this.n).attr('src','..\\htm\\htm\\tmp\\'+file.filename+'?'+(new Date().Format("yyyy-MM-dd hh:mm:ss")));
+                    	if($('#txtMemo_'+n).val().substring(0,1)!='*'){
+							$('#txtLengthb_'+n).val(file.lengthb);
+						}
                     },
                     complete: function(){ 
                     },
@@ -1030,13 +1073,17 @@
             		return;
             	}
             	var t_picno = $.trim($('#txtPicno_'+n).val());
+            	if(t_picno.length==0){
+            		$('#imgPic_'+ n).attr('src','');
+            		saveImg(n-1);
+            		return;
+            	}
 				var t_para =  JSON.stringify({A:$('#txtParaa_'+n).val()
 					,B:$('#txtParab_'+n).val()
 					,C:$('#txtParac_'+n).val()
 					,D:$('#txtParad_'+n).val()
 					,E:$('#txtParae_'+n).val()
 					,F:$('#txtParaf_'+n).val()});
-				$('#txtPara_'+n).val(t_para);	
 				var t_noa = $.trim($('#txtNoa').val());
 				var t_noq = $.trim($('#txtNoq_'+n).val());
 				$.ajax({
@@ -1057,6 +1104,9 @@
                     	//回傳檔名
                     	var file = JSON.parse(data);
                     	$('#imgPic_'+this.n).attr('src','..\\htm\\htm\\img\\workj'+this.noa+'-'+this.noq+'.png?'+(new Date().Format("yyyy-MM-dd hh:mm:ss")));
+                    	if($('#txtMemo_'+n).val().substring(0,1)!='*'){
+							$('#txtLengthb_'+n).val(file.lengthb);
+						}
                     },
                     complete: function(){ 
                     	saveImg(this.n-1);

@@ -19,6 +19,7 @@
             public int status = 0;
             public string filename = "";
             public string message = "";
+            public float lengthb = 0;
         }
 
         public void Page_Load()
@@ -32,7 +33,7 @@
             System.Web.Script.Serialization.JavaScriptSerializer serializer = new System.Web.Script.Serialization.JavaScriptSerializer();
             ParaIn item = serializer.Deserialize<ParaIn>(encoding.GetString(formData));
             //ParaIn item = serializer.Deserialize<ParaIn>(@"{""db"":""st"",""action"":""img"",""table"":""img"",""originImg"":""data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAASwAAABkCAYAAAA8AQ3AAAAAAXNSR0IArs4c6QAAAARnQU1BAACxjwv8YQUAAAI1SURBVHhe7djbattAFEBRX0L+/3/j2M0xnpKWUkl96oa1QGjix+GwNZnz48sJIODyegP89wQLyBAsIEOwgAzBAjIEC8gQLCBDsIAMwQIyBAvIECwgQ7CADMECMgQLyBAsIEOwgAzBAjIEC8gQLCBDsIAMwQIyBAvIECwgQ7CADMECMgQLyBAsIEOwgAzBAjIEC8gQLCBDsIAMwQIyBAvIECwgQ7CADMECMgQLyBAsIEOwgAzBAjIEC8gQLCBDsIAMwQIyBAvIECwgQ7CADMECMgQLyBAsIEOwgAzBAjIEC8gQLCBDsDY8Ho/XCo5b8/P5+fl8j/ltPRwjWBvO5/NrdTrd7/fX6tc1bLler8/37XZ7ztR6OEawdlhfwsvl8vNLOWvRYsuK0szKzNHb29tzhj4+Pp6/c8z5axOdS3earfr9q2j72DIzsj5w814mXOvkxT6CteH79kysZui+R8uxnr+Z+ZkZWXGak9VES6j+jWAdNEf62bIVLtvHlrm3+lOgnLCOc4e1YYZqorTCNH+7u2KvCdI8Mz9zupp4jVmL1XFOWDvMFq1/B9/f35/RcunOXjM/a4bGzM33uyz2EywgQ+aBDMECMgQLyBAsIEOwgAzBAjIEC8gQLCBDsIAMwQIyBAvIECwgQ7CADMECMgQLyBAsIEOwgAzBAjIEC8gQLCBDsIAMwQIyBAvIECwgQ7CADMECMgQLyBAsIEOwgAzBAjIEC8gQLCBDsIAMwQIyBAuIOJ1+AGhApUiVxEknAAAAAElFTkSuQmCC"",""picno"":""00"",""orgpara"":""[{\""key\"":\""A\"",\""top\"":0,\""left\"":100,\""fontsize\"":\""50\""}]"",""para"":""""}");
-            //ParaIn item = serializer.Deserialize<ParaIn>(@"{""db"":""st"",""action"":""img"",""table"":""workj"",""originImg"":"""",""picno"":""10"",""orgpara"":"""",""para"":""{\""A\"":\""1\"",\""B\"":\""0\"",\""C\"":\""0\"",\""D\"":\""0\"",\""E\"":\""0\"",\""F\"":\""0\""}""}");
+            //ParaIn item = serializer.Deserialize<ParaIn>(@"{""db"":""st"",""action"":""tmp"",""table"":""workj"",""originImg"":"""",""picno"":""01"",""orgpara"":"""",""para"":""{\""A\"":\""100\"",\""B\"":\""20\"",\""C\"":\""0\"",\""D\"":\""0\"",\""E\"":\""0\"",\""F\"":\""0\""}""}");
             connectionString += item.db;            
             // action = "tmp"   新增、修改下的預覽圖，只會產生一個圖片。檔案存在tmp資料夾底下，tmp資料夾檔案可隨時刪除
             // action = "img"   存檔後產生檔案，供imgfe、wrokj、xls使用。檔案存在img資料夾底下，資料不可隨意刪除
@@ -59,21 +60,23 @@
             Newtonsoft.Json.Linq.JObject jo1 = Newtonsoft.Json.JsonConvert.DeserializeObject<Newtonsoft.Json.Linq.JObject>(item.para);
             //圖片參數
             Newtonsoft.Json.Linq.JArray ja = Newtonsoft.Json.JsonConvert.DeserializeObject<Newtonsoft.Json.Linq.JArray>(item.orgpara);
-            Newtonsoft.Json.Linq.JObject[] jo2 = new Newtonsoft.Json.Linq.JObject[ja.Count];
-            for (int i = 0; i < ja.Count; i++)
+            Newtonsoft.Json.Linq.JObject[] jo2 = ja == null ? new Newtonsoft.Json.Linq.JObject[0] : new Newtonsoft.Json.Linq.JObject[ja.Count];
+            for (int i = 0; ja != null && i < ja.Count; i++)
             {
                 jo2[i] = Newtonsoft.Json.JsonConvert.DeserializeObject<Newtonsoft.Json.Linq.JObject>(ja[i].ToString());
             }
 
             //圖片
-            var bytes = Convert.FromBase64String(item.originImg.Split(',')[1]);
             System.Drawing.Bitmap bmp;
+            var bytes = Convert.FromBase64String(item.originImg.Split(',')[1]);
             using (var ms = new System.IO.MemoryStream(bytes))
             {
                 bmp = new System.Drawing.Bitmap(ms);
             }
+
             System.Drawing.Graphics g = System.Drawing.Graphics.FromImage(bmp);
             //畫圖
+            float lengthb = 0;
             float top, left;
             string val = "";
             int fontsize;
@@ -96,6 +99,7 @@
                     }
                     else
                     {
+                        lengthb += float.Parse((jo1.Property((string)jo2[i]["key"]).Value).ToString(), System.Globalization.CultureInfo.InvariantCulture.NumberFormat);
                         val = (jo1.Property((string)jo2[i]["key"]).Value).ToString();
                         drawBrush = new System.Drawing.SolidBrush(System.Drawing.Color.Black);
                     }
@@ -146,7 +150,8 @@
             }
             stream.Close();
             result.filename = uFileName;
-
+            result.lengthb = lengthb;
+            
             return result;
         }
         public Result genImage2(ParaIn item)
@@ -179,15 +184,15 @@
             Newtonsoft.Json.Linq.JObject jo1 = Newtonsoft.Json.JsonConvert.DeserializeObject<Newtonsoft.Json.Linq.JObject>(item.para);
             //圖片參數
             Newtonsoft.Json.Linq.JArray ja = Newtonsoft.Json.JsonConvert.DeserializeObject<Newtonsoft.Json.Linq.JArray>(item.orgpara);
-            Newtonsoft.Json.Linq.JObject[] jo2 = new Newtonsoft.Json.Linq.JObject[ja.Count];
-            for (int i = 0; i < ja.Count; i++)
+            Newtonsoft.Json.Linq.JObject[] jo2 = ja == null ? new Newtonsoft.Json.Linq.JObject[0]: new Newtonsoft.Json.Linq.JObject[ja.Count];
+            for (int i = 0; ja != null && i < ja.Count; i++)
             {
                 jo2[i] = Newtonsoft.Json.JsonConvert.DeserializeObject<Newtonsoft.Json.Linq.JObject>(ja[i].ToString());
             }
 
             //圖片
-            var bytes = Convert.FromBase64String(item.originImg.Split(',')[1]);
             System.Drawing.Bitmap bmp;
+            var bytes = Convert.FromBase64String(item.originImg.Split(',')[1]);
             using (var ms = new System.IO.MemoryStream(bytes))
             {
                 bmp = new System.Drawing.Bitmap(ms);
@@ -195,6 +200,7 @@
             System.Drawing.Graphics g = System.Drawing.Graphics.FromImage(bmp);
             
             //畫圖
+            float lengthb = 0;
             float top, left;
             string val = "";
             int fontsize;
@@ -217,6 +223,7 @@
                     }
                     else
                     {
+                        lengthb += float.Parse((jo1.Property((string)jo2[i]["key"]).Value).ToString(), System.Globalization.CultureInfo.InvariantCulture.NumberFormat);
                         val = (jo1.Property((string)jo2[i]["key"]).Value).ToString();
                         drawBrush = new System.Drawing.SolidBrush(System.Drawing.Color.Black);
                     }
@@ -230,7 +237,9 @@
                     // Draw string to screen.
                     g.DrawString(drawString, drawFont, drawBrush, left, top);
                 }
-                catch (Exception e) { }
+                catch (Exception e) {
+                
+                }
 
             }
             System.Drawing.Bitmap tmpBmp = new System.Drawing.Bitmap(tWidth, tHeight);
@@ -279,6 +288,7 @@
             }
             stream.Close();
             result.filename = uFileName;
+            result.lengthb = lengthb;
 
             return result;
         }
