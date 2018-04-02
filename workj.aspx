@@ -519,6 +519,37 @@
 			};
 			
             function q_stPost() {
+				var print_notification = new Array();　// 宣告一個新的陣列為 ArrTest
+				for(var i=0;i<q_bbsCount;i++){
+				 // 開始建立陣列
+					if ($('#txtParaa_'+i).val()>'240' && $('#txtParab_'+i).val()>'240' || $('#txtParaa_'+i).val()>'240' && $('#txtParac_'+i).val()>'240' || $('#txtParaa_'+i).val()>'240' && $('#txtParad_'+i).val()>'240' || $('#txtParaa_'+i).val()>'240' && $('#txtParae_'+i).val()>'240' || $('#txtParaa_'+i).val()>'240' && $('#txtParaf_'+i).val()>'240' ){
+						print_notification[i] = [$('#txtProductno_'+i).val()+'_'+$('#txtProduct_'+i).val()+
+									'\n參數A：'+$('#txtParaa_'+i).val()+'　參數B：'+$('#txtParab_'+i).val()+'　參數C：'+$('#txtParac_'+i).val()+
+									'\n參數D：'+$('#txtParad_'+i).val()+'　參數E：'+$('#txtParae_'+i).val()+'　參數F：'+$('#txtParaf_'+i).val()+'\n\n\n'];
+					}else if ($('#txtParaa_'+i).val()>'240' && $('#txtParab_'+i).val()>'240' || $('#txtParab_'+i).val()>'240' && $('#txtParac_'+i).val()>'240' || $('#txtParab_'+i).val()>'240' && $('#txtParad_'+i).val()>'240' || $('#txtParab_'+i).val()>'240' && $('#txtParae_'+i).val()>'240' || $('#txtParab_'+i).val()>'240' && $('#txtParaf_'+i).val()>'240' ){
+						print_notification[i] = [$('#txtProductno_'+i).val()+'_'+$('#txtProduct_'+i).val()+
+									'\n參數A：'+$('#txtParaa_'+i).val()+'　參數B：'+$('#txtParab_'+i).val()+'　參數C：'+$('#txtParac_'+i).val()+
+									'\n參數D：'+$('#txtParad_'+i).val()+'　參數E：'+$('#txtParae_'+i).val()+'　參數F：'+$('#txtParaf_'+i).val()+'\n\n\n'];
+					}else if ($('#txtParac_'+i).val()>'240' && $('#txtParaa_'+i).val()>'240' || $('#txtParac_'+i).val()>'240' && $('#txtParab_'+i).val()>'240' || $('#txtParac_'+i).val()>'240' && $('#txtParad_'+i).val()>'240' || $('#txtParac_'+i).val()>'240' && $('#txtParae_'+i).val()>'240' || $('#txtParac_'+i).val()>'240' && $('#txtParaf_'+i).val()>'240' ){
+						print_notification[i] = [$('#txtProductno_'+i).val()+'_'+$('#txtProduct_'+i).val()+
+									'\n參數A：'+$('#txtParaa_'+i).val()+'　參數B：'+$('#txtParab_'+i).val()+'　參數C：'+$('#txtParac_'+i).val()+
+									'\n參數D：'+$('#txtParad_'+i).val()+'　參數E：'+$('#txtParae_'+i).val()+'　參數F：'+$('#txtParaf_'+i).val()+'\n\n\n'];
+					}else if ($('#txtParad_'+i).val()>'240' && $('#txtParaa_'+i).val()>'240' || $('#txtParad_'+i).val()>'240' && $('#txtParab_'+i).val()>'240' || $('#txtParad_'+i).val()>'240' && $('#txtParac_'+i).val()>'240' || $('#txtParad_'+i).val()>'240' && $('#txtParae_'+i).val()>'240' || $('#txtParad_'+i).val()>'240' && $('#txtParaf_'+i).val()>'240' ){
+						print_notification[i] = [$('#txtProductno_'+i).val()+'_'+$('#txtProduct_'+i).val()+
+									'\n參數A：'+$('#txtParaa_'+i).val()+'　參數B：'+$('#txtParab_'+i).val()+'　參數C：'+$('#txtParac_'+i).val()+
+									'\n參數D：'+$('#txtParad_'+i).val()+'　參數E：'+$('#txtParae_'+i).val()+'　參數F：'+$('#txtParaf_'+i).val()+'\n\n\n'];
+					}else if ($('#txtParae_'+i).val()>'240' && $('#txtParaa_'+i).val()>'240' || $('#txtParae_'+i).val()>'240' && $('#txtParab_'+i).val()>'240' || $('#txtParae_'+i).val()>'240' && $('#txtParac_'+i).val()>'240' || $('#txtParae_'+i).val()>'240' && $('#txtParad_'+i).val()>'240' || $('#txtParae_'+i).val()>'240' && $('#txtParaf_'+i).val()>'240' ){
+						print_notification[i] = [$('#txtProductno_'+i).val()+'_'+$('#txtProduct_'+i).val()+
+									'\n參數A：'+$('#txtParaa_'+i).val()+'　參數B：'+$('#txtParab_'+i).val()+'　參數C：'+$('#txtParac_'+i).val()+
+									'\n參數D：'+$('#txtParad_'+i).val()+'　參數E：'+$('#txtParae_'+i).val()+'　參數F：'+$('#txtParaf_'+i).val()+'\n\n\n'];
+					}else if ($('#txtParaf_'+i).val()>'240' && $('#txtParaa_'+i).val()>'240' || $('#txtParaf_'+i).val()>'240' && $('#txtParab_'+i).val()>'240' || $('#txtParaf_'+i).val()>'240' && $('#txtParac_'+i).val()>'240' || $('#txtParaf_'+i).val()>'240' && $('#txtParad_'+i).val()>'240' || $('#txtParaf_'+i).val()>'240' && $('#txtParae_'+i).val()>'240' ){
+						print_notification[i] = [$('#txtProductno_'+i).val()+'_'+$('#txtProduct_'+i).val()+
+									'\n參數A：'+$('#txtParaa_'+i).val()+'　參數B：'+$('#txtParab_'+i).val()+'　參數C：'+$('#txtParac_'+i).val()+
+									'\n參數D：'+$('#txtParad_'+i).val()+'　參數E：'+$('#txtParae_'+i).val()+'　參數F：'+$('#txtParaf_'+i).val()+'\n\n\n'];
+					}
+				}
+				alert('警告~!! \n "加工品項有兩個參數(含兩個)，超過240cm。" \n\n'+print_notification);
+				
                 if (!(q_cur == 1 || q_cur == 2))
                     return false;
                 Lock(1,{opacity:0.5});
