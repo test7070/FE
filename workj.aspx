@@ -519,6 +519,41 @@
 			};
 			
             function q_stPost() {
+				var print_notification = new Array();　// 宣告一個新的陣列為 ArrTest
+				for(var i=0;i<q_bbsCount;i++){
+					t_a = $('#txtParaa_'+i).val();
+					t_b = $('#txtParab_'+i).val();
+					t_c = $('#txtParac_'+i).val();
+					t_d = $('#txtParad_'+i).val();
+					t_e = $('#txtParae_'+i).val();
+					t_f = $('#txtParaf_'+i).val();
+					if(t_a>240 && t_b>240 || t_a>240 && t_c>240 || t_a>240 && t_d>240 || t_a>240 && t_e>240 || t_a>240 && t_f>240){
+						print_notification[i] = [警告~!! \n "加工品項有兩個參數(含兩個)，超過240cm。"\n\n'+$('#txtProductno_'+i).val()+'_'+$('#txtProduct_'+i).val()+
+												 '\n參數A：'+ t_a +'　參數B：'+ t_b +'　參數C：'+ t_c +'\n參數D：'+ t_d +'　參數E：'+ t_e +'　參數F：'+ t_f +'\n\n\n'];
+					}else if(t_b>240 && t_a>240 || t_b>240 && t_c>240 || t_b>240 && t_d>240 || t_b>240 && t_e>240 || t_b>240 && t_f>240){
+								print_notification[i] = ['警告~!! \n "加工品項有兩個參數(含兩個)，超過240cm。"\n\n'+$('#txtProductno_'+i).val()+'_'+$('#txtProduct_'+i).val()+
+														 '\n參數A：'+ t_a +'　參數B：'+ t_b +'　參數C：'+ t_c +'\n參數D：'+ t_d +'　參數E：'+ t_e +'　參數F：'+ t_f +'\n\n\n'];
+					}else if(t_c>240 && t_a>240 || t_c>240 && t_b>240 || t_c>240 && t_d>240 || t_c>240 && t_e>240 || t_c>240 && t_f>240){
+								print_notification[i] = ['警告~!! \n "加工品項有兩個參數(含兩個)，超過240cm。"\n\n'+$('#txtProductno_'+i).val()+'_'+$('#txtProduct_'+i).val()+
+														 '\n參數A：'+ t_a +'　參數B：'+ t_b +'　參數C：'+ t_c +'\n參數D：'+ t_d +'　參數E：'+ t_e +'　參數F：'+ t_f +'\n\n\n'];
+					}else if(t_d>240 && t_a>240 || t_d>240 && t_b>240 || t_d>240 && t_c>240 || t_d>240 && t_e>240 || t_d>240 && t_f>240){
+								print_notification[i] = ['警告~!! \n "加工品項有兩個參數(含兩個)，超過240cm。"\n\n'+$('#txtProductno_'+i).val()+'_'+$('#txtProduct_'+i).val()+
+														 '\n參數A：'+ t_a +'　參數B：'+ t_b +'　參數C：'+ t_c +'\n參數D：'+ t_d +'　參數E：'+ t_e +'　參數F：'+ t_f +'\n\n\n'];
+					}else if(t_e>240 && t_a>240 || t_e>240 && t_b>240 || t_e>240 && t_c>240 || t_e>240 && t_d>240 || t_e>240 && t_f>240){
+								print_notification[i] = ['警告~!! \n "加工品項有兩個參數(含兩個)，超過240cm。"\n\n'+$('#txtProductno_'+i).val()+'_'+$('#txtProduct_'+i).val()+
+														 '\n參數A：'+ t_a +'　參數B：'+ t_b +'　參數C：'+ t_c +'\n參數D：'+ t_d +'　參數E：'+ t_e +'　參數F：'+ t_f +'\n\n\n'];
+					}else if(t_f>240 && t_a>240 || t_f>240 && t_b>240 || t_f>240 && t_c>240 || t_f>240 && t_d>240 || t_f>240 && t_e>240){
+								print_notification[i] = ['警告~!! \n "加工品項有兩個參數(含兩個)，超過240cm。"\n\n'+$('#txtProductno_'+i).val()+'_'+$('#txtProduct_'+i).val()+
+														 '\n參數A：'+ t_a +'　參數B：'+ t_b +'　參數C：'+ t_c +'\n參數D：'+ t_d +'　參數E：'+ t_e +'　參數F：'+ t_f +'\n\n\n'];
+					}
+				}
+				if (print_notification.length>0){
+					alert(print_notification);
+				}else{
+				}
+				
+				
+				
                 if (!(q_cur == 1 || q_cur == 2))
                     return false;
                 Lock(1,{opacity:0.5});
