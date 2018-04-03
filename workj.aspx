@@ -632,10 +632,11 @@
                 		n += parseFloat($('#txtPara'+key[j]+'_'+i).val())>=240?1:0;
                 		if(n>=2){
                 			alert('加工品項有兩個參數(含兩個)，超過240cm。');
-                			Unlock(1);
-                			return;
+                			break;
                 		}
                 	}
+                	if(n>=2)
+            			break;
                 }
                 
                 if (q_cur == 1) {
