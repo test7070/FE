@@ -1,0 +1,18 @@
+checkDuplicate:--checkDuplicate 
+	SET QUOTED_IDENTIFIER OFF
+	declare @cmd nvarchar(max)	
+	declare @t_noa nvarchar(20) = [1]
+	declare @t_uno nvarchar(30) = [2]
+	--------------------------------------------------------------------
+	declare @n int = 0
+	
+	select @n = count(1)
+	from workvs 
+	where (len(@t_uno)=0 or noa!=@t_uno) 
+	and uno = @t_uno
+	
+	declare @tmp table(
+		n int
+	)
+	insert into @tmp(n)select isnull(@n,0)
+	select * from @tmp;
