@@ -751,7 +751,8 @@
             function bbsAssign() {
                 for (var i = 0; i < q_bbsCount; i++) {
                     $('#lblNo_' + i).text(i + 1);
-                    $('#imgPic_'+ i).attr('src','..\\htm\\htm\\img\\workj' + $('#txtNoa').val()+'-'+$('#txtNoq_'+ i).val()+'.png?'+(new Date().Format("yyyy-MM-dd hh:mm:ss")));
+                    if(!(q_cur==1 || q_cur==2))
+                    	$('#imgPic_'+ i).attr('src','..\\htm\\htm\\img\\workj' + $('#txtNoa').val()+'-'+$('#txtNoq_'+ i).val()+'.png?'+(new Date().Format("yyyy-MM-dd hh:mm:ss")));
                     
                     if (!$('#btnMinus_' + i).hasClass('isAssign')) {
                     	//機台複製
