@@ -178,7 +178,7 @@
 							$('#btnMechno_'+n).click();
 						});
 						
-						if ($('#txtUnit_'+j).val('KG')){
+						if ($('#txtUnit_'+j).val().toUpperCase()=='KG'){
 								$('#txtWeight_' + j).change(function() {
 									if (q_cur == 1 || q_cur == 2){
 										var n = $(this).attr('id').replace(/^(.*)_(\d+)$/,'$2');
