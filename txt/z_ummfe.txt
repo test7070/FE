@@ -520,7 +520,6 @@ z_ummfe03:--z_ummfe03
 	declare @t_userno nvarchar(100)='[22]'
 	declare @t_rank nvarchar(100)='[23]'
 	---------------------------------------------------------------------------------
-	---------------------------------------------------------------------------------
 	declare @tmp table(
 		sel int identity(1,1)
 		,recno int
@@ -553,18 +552,19 @@ z_ummfe03:--z_ummfe03
 		,memo nvarchar(max)
 		,sssno  nvarchar(50)
 		,sss nvarchar(50)
+		,trantype nvarchar(20)
 	)
 	
 	--出貨單
 	insert into @tmp(recno,gno,cno,custno,tablea,accy,noa,noq,[money],datea,typea
-		,productno,product,size,unit,mount,[weight],price,moneys,paytype)
+		,productno,product,size,unit,mount,[weight],price,moneys,paytype,trantype)
 	select ROW_NUMBER()over(partition by b.cno,a.accy,a.noa order by b.cno,a.accy,a.noa,a.noq)
 		,'1',b.cno,b.custno,'vcc',a.accy,a.noa,a.noq,b.[money]
 		,b.datea,case when b.typea='2' then '退' else '出' end
 		,a.productno,a.product,a.size,a.unit
 		,case when a.unit='公斤' or upper(a.unit)='KG' then a.[weight] else a.mount end
 		,case when a.unit='公斤' or upper(a.unit)='KG' then a.[weight] else 0 end
-		,a.price,a.total,paytype
+		,a.price,a.total,paytype,trantype
 	from view_vccs a
 	left join view_vcc b on a.accy=b.accy and a.noa=b.noa
 	where b.noa is not null
@@ -829,6 +829,16 @@ z_ummfe03:--z_ummfe03
 	left join cust c on a.custno=c.noa
 	left join (select cno,custno,count(1) page from @tmp where recno=1 and (typea='出' or typea='退') group by cno,custno) d on a.cno=d.cno and a.custno=d.custno
 	left join (select cno,custno,SUM(case typea when '出' then 1 else -1 end * ISNULL([weight],0)) [weight] from @tmp where (typea='出' or typea='退') group by cno,custno) e on a.cno=e.cno and a.custno=e.custno
+
+	update @tmp set noa= noa +case trantype when '本廠送達' then 'A'
+		when '本廠拖運' then 'B'
+		when '本廠自運' then 'C'
+		when '指送' then 'D'
+		when '其它' then 'E'
+		when '廠商拖運' then 'F'
+		when '廠商送達' then 'G'
+		when '廠商自運' then 'H'
+		else '' end
 
 	select gno
 		,paytype
