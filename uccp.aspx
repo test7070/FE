@@ -606,7 +606,8 @@
                     <td align="center" style="width:20px;"> </td>
                     <td align="center" style="width:100px;"><a id='lblProductno_s'>物品編號</a></td>
   					<td align="center" style="width:150px;"><a id='lblProduct_s'>物品名稱</a></td>
-  					<td align="center" class="rk"style="width:80px;display:none;"><a id='lblDime_s'>厚度</a></td>
+  					<td align="center" class="rk" style="width:80px;display:none;"><a id='lblDime_s'>厚度</a></td>
+  					<td align="center" class="rk" style="width:80px;display:none;"><a id='lblWidth_s'>寬度</a></td>
   					<td align="center" style="width:100px;"><a id='lblSprice_s'>基價</a></td>
   					<td align="center" style="width:100px;"><a id='lblLprice_s'>上次基價</a></td>
   					<td align="center" style="width:100px;"><a id='lblLdate_s'>上次基價日</a></td>
@@ -625,6 +626,7 @@
                     </td>
                     <td><input type="text" id="txtProduct.*" style="width:95%;"/></td>
                     <td class="rk" style="display:none;"><input type="text" id="txtDime.*" style="width:95%;"/></td>
+                    <td class="rk" style="display:none;"><input type="text" id="txtWidth.*" style="width:95%;"/></td>
                     <td><input type="text" id="txtSprice.*" style="width:95%;text-align: right;"/></td>
                     <td><input type="text" id="txtLprice.*" style="width:95%;text-align: right;"/></td>
                     <td><input type="text" id="txtLdate.*" style="width:95%;text-align: right;"/></td>
