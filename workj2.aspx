@@ -1,7 +1,7 @@
 <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
 <html xmlns="http://www.w3.org/1999/xhtml" dir="ltr">
 	<head>
-		<title></title>
+		<title> </title>
 		<script src="../script/jquery.min.js" type="text/javascript"></script>
 		<script src='../script/qj2.js' type="text/javascript"></script>
 		<script src='qset.js' type="text/javascript"></script>
@@ -34,117 +34,11 @@
 		        if (Sys.opera) document.write('Opera: ' + Sys.opera);
 		        if (Sys.safari) document.write('Safari: ' + Sys.safari);*/
 		    });
-		    function backupData(){
-		    	var t_workj ={
-		            noa:$('#txtNoa').val(),
-		            site:$('#txtSite').val(),
-		            datea:$('#txtDatea').val(),
-		            odate:$('#txtOdate').val(),
-		            custno:$('#txtCustno').val(),
-		            cust:$('#txtCust').val(),
-		            nick:$('#txtNick').val(),
-		            tagcolor:$('#cmbTagcolor').val(),
-		            trantype:$('#cmbTrantype').val(),
-		            chktype:$('#txtChktype').val(),
-		            worker:$('#txtWorker').val(),
-		            worker2:$('#txtWorker2').val(),
-		            memo:$('#txtMemo').val(),
-		            ordeaccy:$('#txtOrdeaccy').val(),
-		            ordeno:$('#txtOrdeno').val(),
-		            mount:q_float('txtMount'),
-		            weight:q_float('txtWeight'),
-		            lengthb:q_float('txtLengthb'),
-		            tolerance:$('#txtTolerance').val(),
-		            trantype1:$('#mbTrantype1').val(),
-		            trantype2:$('#mbTrantype2').val()    
-		       };
-		        var t_workjs = new Array();
-		    	for(var i=0;i<q_bbsCount;i++){
-		    		t_workjs.push({
-		    			noa:$('#txtNoa_'+i).val(),
-			            noq:$('#txtNoq_'+i).val(),
-			            productno:$('#txtProductno_'+i).val(),
-			            product:$('#txtProduct_'+i).val(),
-			            lengthb:q_float('txtLengthb_'+i),
-			            mount:q_float('txtMount_'+i),
-			            weight:q_float('txtWeight_'+i),
-			            memo:$('#txtMemo_'+i).val(),
-			            picno:$('#txtPicno_'+i).val(),
-			            imgpara:$('#txtImgpara_'+i).val(),
-			            imgdata:$('#txtImgdata_'+i).val(),
-			            imgbarcode:$('#txtImgBarcode_'+i).val(),
-			            contno:$('#txtContno_'+i).val(),
-			            contnoq:$('#txtContnoq_'+i).val(),
-			            mech1:$('#txtMech1_'+i).val(),
-			            mech2:$('#txtMech2_'+i).val(),
-			            mech3:$('#txtMech3_'+i).val(),
-			            mech4:$('#txtMech4_'+i).val(),
-			            mech5:$('#txtMech5_'+i).val(),
-			            place1:$('#txtPlace1_'+i).val(),
-			            place2:$('#txtPlace2_'+i).val(),
-			            place3:$('#txtPlace3_'+i).val(),
-			            place4:$('#txtPlace4_'+i).val(),
-			            place5:$('#txtPlace5_'+i).val(),
-			            time1:$('#txtTime1_'+i).val(),
-			            time2:$('#txtTime2_'+i).val(),
-			            time3:$('#txtTime3_'+i).val(),
-			            time4:$('#txtTime4_'+i).val(),
-			            time5:$('#txtTime5_'+i).val(),
-			            paraa:q_float('txtParaa_'+i),
-			            parab:q_float('txtParab_'+i),
-			            parac:q_float('txtParac_'+i),
-			            parad:q_float('txtParad_'+i),
-			            parae:q_float('txtParae_'+i),
-			            paraf:q_float('txtParaf_'+i),
-			            worker1:$('#txtWorker1_'+i).val(),
-			            worker2:$('#txtWorker2_'+i).val(),
-			            worker3:$('#txtWorker3_'+i).val(),
-			            worker4:$('#txtWorker4_'+i).val(),
-			            worker5:$('#txtWorker5_'+i).val(),
-			            place:$('#txtPlace_'+i).val(),
-			            cmount:$('#txtCmount_'+i).val(),
-			            cweight:$('#txtCweight_'+i).val()
-		    		});
-		    	}
-		    	//console.log(JSON.stringify({bbm:t_workj,bbs:t_workjs}));
-		    	$.ajax({
-                    url: 'workjbk.aspx',
-                    type: 'POST',
-                    data: JSON.stringify({bbm:t_workj,bbs:t_workjs}),
-                    dataType: 'text',
-                    timeout: 60000,
-                    success: function(data){
-                    	if(data.length>0)
-                    		alert(data);
-                    },
-                    complete: function(){
-                    	              
-                    },
-                    error: function(jqXHR, exception) {
-                        var errmsg = this.url+' 異常。\n';
-                        if (jqXHR.status === 0) {
-                            alert(errmsg+'Not connect.\n Verify Network.');
-                        } else if (jqXHR.status == 404) {
-                            alert(errmsg+'Requested page not found. [404]');
-                        } else if (jqXHR.status == 500) {
-                            alert(errmsg+'Internal Server Error [500].');
-                        } else if (exception === 'parsererror') {
-                            alert(errmsg+'Requested JSON parse failed.');
-                        } else if (exception === 'timeout') {
-                            alert(errmsg+'Time out error.');
-                        } else if (exception === 'abort') {
-                            alert(errmsg+'Ajax request aborted.');
-                        } else {
-                            alert(errmsg+'Uncaught Error.\n' + jqXHR.responseText);
-                        }
-                    }
-                });	
-		    }
-
+		    
             q_tables = 't';
             var q_name = "workj2";
             var q_readonly = ['txtNoa','txtOrdeno','txtMount','txtWeight','txtWorker','txtWorker2'];
-            var q_readonlys = ['txtContno','txtContnoq','txtStore','txtMech','txtWeight'];
+            var q_readonlys = ['txtContno','txtContnoq','txtStore','txtMech','txtWeight','txtProduct'];
             var q_readonlyt = ['txtBno'];
             var bbmNum = [['txtMount',10,0,1],['txtWeight',10,2,1]];
             var bbsNum = [['txtMount',10,0,1],['txtWeight',10,2,1],['txtLengthb',10,0,1]];
@@ -199,27 +93,26 @@
 	                q_cmbParse("cmbMech4", z_mech,'s');
 	                q_cmbParse("cmbMech5", z_mech,'s');
                 }
-     			
-     			$('#btnPrint').hide();
-     			
+                $('#btnPrint').hide();
+
      			$('#btnPrint_d').hide();
                 $('#btnPrint_d').click(function(e){
                 	return;
-                	//不需要印條碼
                 	$('#btnPrint_d').attr('disabled','disabled');
                 	setTimeout(function(){$('#btnPrint_d').removeAttr('disabled');}, 3000);
                 	Lock(1,{opacity:0});
                 	var t_noq = '';
-                	if($('#combPrint').val()=='barfe2.bat'){
+                	if($('#combPrint').val()=='barfe2-1.bat'){
                 		var t_printCount = 0;
                 		for(var i=0;i<q_bbtCount;i++){
 	                		if($('#checkIsprint__'+i).prop('checked') && $.trim($('#txtBno__'+i).val()).length>0){
-	                			t_noq = t_noq + (t_noq.length>0?'^'.val():'')+$('#txtNoq__'+i);	
+	                			t_noq += (t_noq.length>0?'^':'')+$('#txtNoq__'+i).val();	
 	                			t_printCount ++;
 	                		}            
 	                	}        
 	                	if(t_noq.length==0){
 	                		alert('未選擇要列印的資料(餘料)。');
+	                		Unlock(1);
 	                	}else{
 	                		if (confirm("已選擇 "+t_printCount+" 筆，是否列印條碼?") ) {
 	                			q_func( 'barfe.gen2', $('#txtNoa').val()+',workjt,'+t_noq+','+$('#combPrint').val()); 
@@ -275,6 +168,21 @@
                 $('#btnCancel_d').click(function() {
                     $('#divImport').toggle();
                 });
+                $('#btnChecker').hide();
+                $('#btnChecker').click(function() {
+                    $('#divChk').toggle();
+                });
+                $('#btnCancel_c').click(function() {
+                    $('#divChk').toggle();
+                    var t_noa = $('#txtNoa').val();
+                    var t_checker = $('#textChecker').val();
+                    q_func('qtxt.query.wkchecker', 'workj.txt,checker,' + encodeURI(t_noa)+ ';' +encodeURI(t_checker)); 
+                });
+                $('#textChecker').change(function() {
+                	$('#txtChecker').val($(this).val());
+               	});
+
+                
                 //-----------------------------------------------------------------------
                 $('#btnCont').hide();
                 $('#btnCont').click(function(e){
@@ -285,19 +193,20 @@
                 	var t_where ='';
                 	q_box("contfe_b.aspx?" + r_userno + ";" + r_name + ";" + q_time + ";" + t_where+";"+";"+JSON.stringify({workjno:t_noa,custno:t_custno}), "cont_workj", "95%", "95%", '');
                 });
-                $('#txtOrdeno').hide();
                 $('#btnOrde').hide();
-                /*$('#btnOrde').click(function(e){
+                $('#btnOrde').click(function(e){
+                	return;
                 	var t_key = q_getPara('sys.key_orde');
                 	var t_noa = $('#txtNoa').val();
                 	q_func('qtxt.query.orde', 'workj.txt,orde,' + encodeURI(t_key)+ ';' +encodeURI(t_noa)); 	
                 });
                 $('#lblOrdeno').click(function(e){
+                	return;
                 	var t_noa= $('#txtOrdeno').val();
                 	var t_accy = $('#txtOrdeaccy').val();
                 	if(t_noa.length>0)
                 		q_box("ordefe.aspx?" + r_userno + ";" + r_name + ";" + q_time + ";noa='" + t_noa + "';" + t_accy, 'orde', "95%", "95%", q_getMsg("popOrde"));
-                });*/
+                });
                 $('#pageAll').parent().append('<input type="button" id="buttonCopy" value="複製"/>')
                 .append('<input type="button" id="buttonPaste" value="貼上"/>');
                 
@@ -355,6 +264,8 @@
 							,worker4:$('#txtWorker4_'+i).val()
 							,worker5:$('#txtWorker5_'+i).val()
 							,picno:$('#txtPicno_'+i).val()
+							,para:$('#txtPara_'+i).val()
+							,imgorg:$('#txtImgorg_'+i).val()
 							//,imgdata:$('#txtImgdata_'+i).val()
 							//,imgbarcode:$('#txxtImgbarcode_'+i).val()
 						});
@@ -448,7 +359,10 @@
                 		break;
                 	case 'barfe.gen2':
                 		Unlock(1);
-                		break;	
+                		break;
+                	case 'qtxt.query.wkchecker':
+                		alert('已修改!'); 
+                		break;
                 	case 'qtxt.query.cont':
                 		var as = _q_appendData("tmp0", "", true, true);
                         if (as[0] != undefined) {
@@ -475,7 +389,7 @@
                         }
                         Unlock(1);
                         //取得餘料編號
-                        //q_gt('workj', "where=^^noa='"+$('#txtNoa').val()+"'^^", 0, 0, 0, 'getBno'); 
+                        q_gt('workj', "where=^^noa='"+$('#txtNoa').val()+"'^^", 0, 0, 0, 'getBno'); 
                 		break;
                     default:
                         break;
@@ -485,18 +399,35 @@
                 switch (id) {
                 	case 'txtProductno_':
                 		var n = b_seq;
-                		createImg(n);
+                		//createImg(n);
+                		break;
                 	case 'txtPicno_':
                 		var n = b_seq;
                 		t_noa = $('#txtPicno_'+n).val();
-                		//console.log('popPost:'+t_noa);
                 		q_gt('img', "where=^^noa='"+t_noa+"'^^", 0, 0, 0, JSON.stringify({action:"getimg",n:n}),1);
+                   		break;
                     default:
                         break;
                 }
             }
             function q_gtPost(t_name) {
                 switch (t_name) {
+                	case 'acomp':
+  						var as = _q_appendData("acomp", "", true);
+                		if (r_rank<'8' && q_getPara('sys.project').toUpperCase()=='FE' && (r_userno.substr(0,1).toUpperCase())=='B'){
+  							q_content = "where=^^exists (select * from cust where noa=workj.custno and salesno='" + r_userno + "')^^";
+  							q_gt(q_name, q_content, q_sqlCount, 1, 0, '', r_accy);
+  		
+  						}else{
+  							if(q_content.length>0){
+	                        	q_content = replaceAll(q_content,'where=^^','');
+	                        }else{
+	                        	q_content = "";
+	                        }
+  							q_gt(q_name, q_content, q_sqlCount, 1, 0, '', r_accy);
+  						}
+                		break;
+                		
                 	case 'getBno':
                 		var as = _q_appendData("workjt", "", true);
                 		if (as[0] != undefined) {
@@ -537,7 +468,7 @@
 	                			z_mech += (z_mech.length>0?',':'')+as[i].noa+'@'+as[i].mech;
 	                		}
                 		}
-                		q_gt(q_name, q_content, q_sqlCount, 1);
+                		q_gt('acomp', 'where=^^1=1^^', 0, 1);
                 		break;
                 	case 'btnModi':
                 		var as = _q_appendData("view_vccs", "", true);
@@ -561,67 +492,12 @@
                     			as = _q_appendData("img", "", true);
                     			if(as[0]!=undefined){
                     				$('#txtPara_'+n).val(as[0].para);
-                    				$('#txtImgorg_'+n).val(as[0].org);
                     			}else{
                     				$('#txtPara_'+n).val('');
-                    				$('#txtImgorg_'+n).val('');
                     			}
                     			createImg(n);
                     		}else if(t_para.action=="createimg" || t_para.action=="createimg_btnOk"){
                     			alert('xxxx');
-                    			var n = t_para.n;
-                    			var action = t_para.action;
-                    			//console.log('gtpost:'+n);
-                    			as = _q_appendData("img", "", true);
-                    			t_para = JSON.parse(as[0].para);
-                    			//先用原大小
-		                    	$('#imgPic_'+n).attr('src',as[0].org)
-		                    	
-								/*var imgwidth = $('#imgPic_'+n).width();
-				                var imgheight = $('#imgPic_'+n).height();*/
-				                var imgwidth = 300;
-				                var imgheight = 100;
-				                $('#canvas_'+n).width(imgwidth).height(imgheight);
-				                var c = document.getElementById("canvas_"+n);
-								var ctx = c.getContext("2d");		
-								c.width = imgwidth;
-								c.height = imgheight;
-								ctx.drawImage($('#imgPic_'+n)[0],0,0,imgwidth,imgheight);
-								var t_length = 0;
-								for(var i=0;i<t_para.length;i++){
-									value = q_float('txtPara'+t_para[i].key.toLowerCase()+'_'+n);
-									if(value!=0){
-										t_length += value;
-										//ctx.font = t_para[i].fontsize+"px times new roman";
-										ctx.font = t_para[i].fontsize+"px Arial";
-										ctx.fillStyle = 'black';
-										ctx.fillText(value+'',t_para[i].left,t_para[i].top);
-									}
-								}
-								//------------------------------
-								$('#imgPic_'+n).attr('src',c.toDataURL());
-								//條碼用圖形
-								xx_width = 355;
-								xx_height = 119;						
-								$('#canvas_'+n).width(xx_width).height(xx_height);
-								c.width = xx_width;
-								c.height = xx_height;
-								$('#canvas_'+n)[0].getContext("2d").drawImage($('#imgPic_'+n)[0],0,0,imgwidth,imgheight,0,0,xx_width,xx_height);
-								$('#txtImgbarcode_'+n).val(c.toDataURL());
-								//報表用圖形 縮放為150*50
-								$('#canvas_'+n).width(150).height(50);
-								c.width = 150;
-								c.height = 50;
-								$('#canvas_'+n)[0].getContext("2d").drawImage($('#imgPic_'+n)[0],0,0,imgwidth,imgheight,0,0,150,50);
-								$('#txtImgdata_'+n).val(c.toDataURL());	
-								//------------------------------
-								if($('#txtMemo_'+n).val().substring(0,1)!='*'){
-									$('#txtLengthb_'+n).val(t_length);
-                				}
-								sum();
-								if(action=="createimg_btnOk"){
-									createImg_btnOk(n-1);
-								}	
 							}
                     	}catch(e){
                     		Unlock(1);
@@ -629,65 +505,33 @@
                         break;
                 }
             }
+            
 			function createImg(n){
-				var t_picno = $('#txtPicno_'+n).val();
 				var t_para = $('#txtPara_'+n).val();
-                var t_imgorg = $('#txtImgorg_'+n).val();
 				try{
 					t_para = JSON.parse(t_para);
 				}catch(e){
 					console.log('createImg:'+t_para);
 				}
-				if(t_imgorg.length==0)
-					return;
-				$('#imgPic_'+n).attr('src',t_imgorg);
-                var imgwidth = 300;
-                var imgheight = 100;
-                $('#canvas_'+n).width(imgwidth).height(imgheight);
-                var c = document.getElementById("canvas_"+n);
-				var ctx = c.getContext("2d");		
-				c.width = imgwidth;
-				c.height = imgheight;
-				ctx.drawImage($('#imgPic_'+n)[0],0,0,imgwidth,imgheight);
 				var t_length = 0;
 				for(var i=0;i<t_para.length;i++){
 					value = q_float('txtPara'+t_para[i].key.toLowerCase()+'_'+n);
 					if(value!=0){
 						t_length += value;
-						ctx.font = t_para[i].fontsize+"px Arial";
-						ctx.fillStyle = 'black';
-						ctx.fillText(value+'',t_para[i].left,t_para[i].top);
 					}
 				}
-				//------------------------------
-				$('#imgPic_'+n).attr('src',c.toDataURL());
-				//條碼用圖形
-				xx_width = 355;
-				xx_height = 119;						
-				$('#canvas_'+n).width(xx_width).height(xx_height);
-				c.width = xx_width;
-				c.height = xx_height;
-				$('#canvas_'+n)[0].getContext("2d").drawImage($('#imgPic_'+n)[0],0,0,imgwidth,imgheight,0,0,xx_width,xx_height);
-				$('#txtImgbarcode_'+n).val(c.toDataURL());
-				//報表用圖形 縮放為150*50
-				$('#canvas_'+n).width(150).height(50);
-				c.width = 150;
-				c.height = 50;
-				$('#canvas_'+n)[0].getContext("2d").drawImage($('#imgPic_'+n)[0],0,0,imgwidth,imgheight,0,0,150,50);
-				$('#txtImgdata_'+n).val(c.toDataURL());	
 				//------------------------------
 				if($('#txtMemo_'+n).val().substring(0,1)!='*'){
 					$('#txtLengthb_'+n).val(t_length);
 				}
-				sum();
+				refreshImg(n,true);
 			};
+			
             function q_stPost() {
                 if (!(q_cur == 1 || q_cur == 2))
                     return false;
-                //Lock(1,{opacity:0});
-                //匯出訂單
-                //餘料編號
-                //$('#btnOrde').click();
+                Lock(1,{opacity:0.5});
+                saveImg(q_bbsCount-1);
             }
 
             function q_boxClose(s2) {
@@ -725,9 +569,7 @@
             function btnModi() {
                 if (emp($('#txtNoa').val()))
                     return;
-                _btnModi();
-            	$('#txtDatea').focus();
-                /*var t_ordeno = $('#txtOrdeno').val();
+                var t_ordeno = $('#txtOrdeno').val();
                 if(t_ordeno.length>0){
                 	Lock(1,{opacity:0});
                		q_gt('view_vccs', "where=^^ ordeno='"+t_ordeno+"' ^^ stop=1", 0, 0, 0, 'btnModi'); 
@@ -735,11 +577,11 @@
                 else{
                 	_btnModi();
                 	$('#txtDatea').focus();
-                }   */ 
+                }    
             }
 
             function btnPrint() {
-                //q_box("z_workj2p.aspx?" + r_userno + ";" + r_name + ";" + q_time + ";" + JSON.stringify({noa:trim($('#txtNoa').val())}) + ";" + r_accy + "_" + r_cno, 'workj', "95%", "95%", m_print);
+                q_box("z_workjp.aspx?" + r_userno + ";" + r_name + ";" + q_time + ";" + JSON.stringify({noa:trim($('#txtNoa').val())}) + ";" + r_accy + "_" + r_cno, 'workj', "95%", "95%", m_print);
             }
 
             function btnOk() {
@@ -747,13 +589,14 @@
                 Lock(1, {
                     opacity : 0
                 });
+                $('#bbsXpand').click();
                 if ($('#txtDatea').val().length == 0 || !q_cd($('#txtDatea').val())) {
                     alert(q_getMsg('lblDatea') + '錯誤。');
                     Unlock(1);
                     return;
                 }
-                if($.trim($('#txtCustno').val())==0){
-                	alert('請輸入客戶。');
+                if($.trim($('#txtCustno').val()).length==0){
+                	alert(q_getMsg('lblCust') + '空白。');
                     Unlock(1);
                     return;
                 }
@@ -790,19 +633,30 @@
                 	}
                 }
                 
+                var key = ['a','b','c','d','e','f'];
+                var n = 0;
+                for(var i=0;i<q_bbsCount;i++){
+                	n=0;
+                	for(var j=0;j<key.length;j++){
+                		n += parseFloat($('#txtPara'+key[j]+'_'+i).val())>=240?1:0;
+                		if(n>=2){
+                			alert('加工品項有兩個參數(含兩個)，超過240cm。');
+                			break;
+                		}
+                	}
+                	if(n>=2)
+            			break;
+                }
+                
                 if (q_cur == 1) {
                     $('#txtWorker').val(r_name);
                 } else
                     $('#txtWorker2').val(r_name);
-                $('#btnMemo').focus();
-                for(var i=0;i<q_bbsCount;i++){
-                	createImg(i);
-                }
                 sum();
                 var t_noa = trim($('#txtNoa').val());
                 var t_date = trim($('#txtDatea').val());
                 if (t_noa.length == 0 || t_noa == "AUTO")
-                    q_gtnoa(q_name, replaceAll(q_getPara('sys.key_workj') + (t_date.length == 0 ? q_date() : t_date), '/', ''));
+                    q_gtnoa(q_name, replaceAll('X'+ (t_date.length == 0 ? q_date() : t_date), '/', ''));
                 else
                     wrServer(t_noa);
             }
@@ -814,16 +668,8 @@
             }
 
             function bbsSave(as) {
-                if (!as['productno'] && !as['imgdata']) {
+                if (!as['product'] && !as['para']) {
                     as[bbsKey[1]] = '';
-                    return;
-                }
-                q_nowf();
-                return true;
-            }
-            function bbtSave(as) {
-                if (!as['productno']) {
-                    as[bbtKey[1]] = '';
                     return;
                 }
                 q_nowf();
@@ -835,16 +681,11 @@
                 $('.justPrint').prop('checked',true);	
                 $('.justPrint2').prop('checked',true);	
                 $('.checkAll').prop('checked',true);	
-                $('.checkAll2').prop('checked',true);	
-            }
-            function q_bbsLenShow( t_start, t_end){
-            	for(var i=t_start;i<=t_end;i++)
-            	if($('#canvas_'+i).length>0){
-					$('#imgPic_'+i).attr('src', $('#txtImgdata_'+i).val());
-					var imgwidth = $('#imgPic_'+i).width();
-                    var imgheight = $('#imgPic_'+i).height();
-					$("#canvas_"+i)[0].getContext("2d").drawImage($('#imgPic_'+i)[0],0,0,imgwidth,imgheight,0,0,150,50);
-            	}
+                $('.checkAll2').prop('checked',true);
+                
+                for(var i=0;i<q_bbsCount;i++){
+                	refreshImg(i,false);
+                }
             }
 
             function readonly(t_para, empty) {
@@ -885,10 +726,10 @@
             function btnMinus(id) {
                 _btnMinus(id);
             }
-            /*function btnPlus(org_htm, dest_tag, afield) {
+            function btnPlus(org_htm, dest_tag, afield) {
                 _btnPlus(org_htm, dest_tag, afield);
             }
-            function btnPlut(org_htm, dest_tag, afield) {
+            /*function btnPlut(org_htm, dest_tag, afield) {
                 _btnPlut(org_htm, dest_tag, afield);
             }*/
 			
@@ -919,12 +760,9 @@
             function bbsAssign() {
                 for (var i = 0; i < q_bbsCount; i++) {
                     $('#lblNo_' + i).text(i + 1);
-                    if($('#canvas_'+i).length>0){
-						$('#imgPic_'+i).attr('src', $('#txtImgdata_'+i).val());
-						var imgwidth = $('#imgPic_'+i).width();
-                        var imgheight = $('#imgPic_'+i).height();
-						$("#canvas_"+i)[0].getContext("2d").drawImage($('#imgPic_'+i)[0],0,0,imgwidth,imgheight,0,0,150,50);
-                	}
+                    if(!(q_cur==1 || q_cur==2))
+                    	$('#imgPic_'+ i).attr('src','..\\htm\\htm\\img\\workj' + $('#txtNoa').val()+'-'+$('#txtNoq_'+ i).val()+'.png?'+(new Date().Format("yyyy-MM-dd hh:mm:ss")));
+                    
                     if (!$('#btnMinus_' + i).hasClass('isAssign')) {
                     	//機台複製
                     	$('#cmbMech1_' + i).bind('contextmenu', function(e) {
@@ -976,32 +814,34 @@
                             var n = $(this).attr('id').replace(/^(.*)_(\d+)$/,'$2');
                             $('#btnPicno_'+n).click();
                         });
-                    	/*$('#txtPicno_'+i).change(function(e){
-                    		var n = $(this).attr('id').replace('txtPicno_', '');
-                    		createImg(n);
-                    	});*/
                     	$('#txtParaa_'+i).change(function(e){
                     		var n = $(this).attr('id').replace(/^(.*)_(\d+)$/,'$2');
+                    		$(this).val(isNaN(q_float($(this).attr('id')))?0:q_float($(this).attr('id')));
                     		createImg(n);
                     	});
                     	$('#txtParab_'+i).change(function(e){
                     		var n = $(this).attr('id').replace(/^(.*)_(\d+)$/,'$2');
+                    		$(this).val(isNaN(q_float($(this).attr('id')))?0:q_float($(this).attr('id')));
                     		createImg(n);
                     	});
                     	$('#txtParac_'+i).change(function(e){
                     		var n = $(this).attr('id').replace(/^(.*)_(\d+)$/,'$2');
+                    		$(this).val(isNaN(q_float($(this).attr('id')))?0:q_float($(this).attr('id')));
                     		createImg(n);
                     	});
                     	$('#txtParad_'+i).change(function(e){
                     		var n = $(this).attr('id').replace(/^(.*)_(\d+)$/,'$2');
+                    		$(this).val(isNaN(q_float($(this).attr('id')))?0:q_float($(this).attr('id')));
                     		createImg(n);
                     	});
                     	$('#txtParae_'+i).change(function(e){
                     		var n = $(this).attr('id').replace(/^(.*)_(\d+)$/,'$2');
+                    		$(this).val(isNaN(q_float($(this).attr('id')))?0:q_float($(this).attr('id')));
                     		createImg(n);
                     	});
                     	$('#txtParaf_'+i).change(function(e){
                     		var n = $(this).attr('id').replace(/^(.*)_(\d+)$/,'$2');
+                    		$(this).val(isNaN(q_float($(this).attr('id')))?0:q_float($(this).attr('id')));
                     		createImg(n);
                     	});
                     	$('#txtContno_' + i).bind('contextmenu', function(e) {
@@ -1024,13 +864,7 @@
                 }
                 _bbsAssign();
             }
-			var guid = (function() {
-				function s4() {return Math.floor((1 + Math.random()) * 0x10000).toString(16).substring(1);}
-				return function() {return s4() + s4() + '-' + s4() + '-' + s4() + '-' +s4() + '-' + s4() + s4() + s4();};
-			})();
-			function imgDisplay(obj){
-				$(obj).hide();
-			}
+
             function bbtAssign() {
                 for (var i = 0; i < q_bbtCount; i++) {
                     $('#lblNo__' + i).text(i + 1);
@@ -1061,7 +895,15 @@
             function sum() {
                 if (!(q_cur == 1 || q_cur == 2))
                     return;
-                
+                for(var i=0;i<q_bbsCount;i++){
+                	//檢查參數輸入是否有問題
+                	$('#txtParaa_'+i).val(isNaN(q_float('txtParaa_'+i))?0:q_float('txtParaa_'+i));
+                	$('#txtParab_'+i).val(isNaN(q_float('txtParab_'+i))?0:q_float('txtParab_'+i));
+                	$('#txtParac_'+i).val(isNaN(q_float('txtParac_'+i))?0:q_float('txtParac_'+i));
+                	$('#txtParad_'+i).val(isNaN(q_float('txtParad_'+i))?0:q_float('txtParad_'+i));
+                	$('#txtParae_'+i).val(isNaN(q_float('txtParae_'+i))?0:q_float('txtParae_'+i));
+                	$('#txtParaf_'+i).val(isNaN(q_float('txtParaf_'+i))?0:q_float('txtParaf_'+i));
+                }
                 var calc =[{key:'3#',value:0.56,m300:400,m600:400,m1000:270,m1600:250,w300:600,w600:1300,w1000:1300,w1600:1300}
 	                ,{key:'4#',value:0.994,m300:300,m600:250,m1000:150,m1600:130,w300:500,w600:1300,w1000:1300,w1600:1300}
 	                ,{key:'5#',value:1.56,m300:200,m600:160,m1000:100,m1600:80,w300:900,w600:1300,w1000:1300,w1600:1300}
@@ -1187,7 +1029,150 @@
             function onPageError(error) {
                 alert("An error occurred:\r\n" + error.Message);
             }
-            
+            //
+            function refreshImg(n,status){
+            	var t_picno = $.trim($('#txtPicno_'+n).val());
+            	if(t_picno.length==0){
+            		$('#imgPic_'+ n).attr('src','');
+            		return;
+            	}
+            	
+            	if(!status){
+            		$('#imgPic_'+ n).attr('src','..\\htm\\htm\\img\\workj' + $('#txtNoa').val()+'-'+$('#txtNoq_'+ n).val()+'.png?'+(new Date().Format("yyyy-MM-dd hh:mm:ss")));
+            		return;
+            	}
+            	
+				var t_para =  JSON.stringify({A:$('#txtParaa_'+n).val()
+					,B:$('#txtParab_'+n).val()
+					,C:$('#txtParac_'+n).val()
+					,D:$('#txtParad_'+n).val()
+					,E:$('#txtParae_'+n).val()
+					,F:$('#txtParaf_'+n).val()});
+				$.ajax({
+					n : n,
+                    url: 'getImage_fe.aspx',
+                    headers: { },
+                    type: 'POST',
+                    data: JSON.stringify({ db:q_db
+                    	,action:"tmp",table:"workj"
+                    	,originImg: '',picno:t_picno
+                    	,orgpara:'',para:t_para}),
+                    dataType: 'text',
+                    timeout: 10000,
+                    success: function(data){
+                    	//回傳檔名
+                    	var file = JSON.parse(data);
+                    	$('#imgPic_'+this.n).attr('src','..\\htm\\htm\\tmp\\'+file.filename+'?'+(new Date().Format("yyyy-MM-dd hh:mm:ss")));
+                    	if($('#txtMemo_'+n).val().substring(0,1)!='*'){
+							$('#txtLengthb_'+n).val(file.lengthb);
+						}
+                    },
+                    complete: function(){ 
+                    },
+                    error: function(jqXHR, exception) {
+                    	$('#imgPic_'+this.n).attr('src','');
+                        var errmsg = this.url+'資料寫入異常。\n';
+                        if (jqXHR.status === 0) {
+                            alert(errmsg+'Not connect.\n Verify Network.');
+                        } else if (jqXHR.status == 404) {
+                            alert(errmsg+'Requested page not found. [404]');
+                        } else if (jqXHR.status == 500) {
+                            alert(errmsg+'Internal Server Error [500].');
+                        } else if (exception === 'parsererror') {
+                            alert(errmsg+'Requested JSON parse failed.');
+                        } else if (exception === 'timeout') {
+                            alert(errmsg+'Time out error.');
+                        } else if (exception === 'abort') {
+                            alert(errmsg+'Ajax request aborted.');
+                        } else {
+                            alert(errmsg+'Uncaught Error.\n' + jqXHR.responseText);
+                        }
+                    }
+                });
+			}
+			function saveImg(n){
+            	if(n<0){
+            		Unlock(1);
+            		//匯出訂單
+	                //餘料編號
+	                //$('#btnOrde').click();
+            		return;
+            	}
+            	var t_picno = $.trim($('#txtPicno_'+n).val());
+            	if(t_picno.length==0){
+            		$('#imgPic_'+ n).attr('src','');
+            		saveImg(n-1);
+            		return;
+            	}
+				var t_para =  JSON.stringify({A:$('#txtParaa_'+n).val()
+					,B:$('#txtParab_'+n).val()
+					,C:$('#txtParac_'+n).val()
+					,D:$('#txtParad_'+n).val()
+					,E:$('#txtParae_'+n).val()
+					,F:$('#txtParaf_'+n).val()});
+				var t_noa = $.trim($('#txtNoa').val());
+				var t_noq = $.trim($('#txtNoq_'+n).val());
+				$.ajax({
+					n : n,
+					noa : t_noa,
+					noq : t_noq,
+                    url: 'getImage_fe.aspx',
+                    headers: { },
+                    type: 'POST',
+                    data: JSON.stringify({ db:q_db
+                    	,action:"img",table:"workj"
+                    	,originImg: '',picno:t_picno
+                    	,orgpara:'',para:t_para
+                    	,noa:t_noa,noq:t_noq}),
+                    dataType: 'text',
+                    timeout: 10000,
+                    success: function(data){
+                    	//回傳檔名
+                    	var file = JSON.parse(data);
+                    	$('#imgPic_'+this.n).attr('src','..\\htm\\htm\\img\\workj'+this.noa+'-'+this.noq+'.png?'+(new Date().Format("yyyy-MM-dd hh:mm:ss")));
+                    	if($('#txtMemo_'+n).val().substring(0,1)!='*'){
+							$('#txtLengthb_'+n).val(file.lengthb);
+						}
+                    },
+                    complete: function(){ 
+                    	saveImg(this.n-1);
+                    },
+                    error: function(jqXHR, exception) {
+                    	$('#imgPic_'+this.n).attr('src','');
+                        var errmsg = this.url+'資料寫入異常。\n';
+                        if (jqXHR.status === 0) {
+                            alert(errmsg+'Not connect.\n Verify Network.');
+                        } else if (jqXHR.status == 404) {
+                            alert(errmsg+'Requested page not found. [404]');
+                        } else if (jqXHR.status == 500) {
+                            alert(errmsg+'Internal Server Error [500].');
+                        } else if (exception === 'parsererror') {
+                            alert(errmsg+'Requested JSON parse failed.');
+                        } else if (exception === 'timeout') {
+                            alert(errmsg+'Time out error.');
+                        } else if (exception === 'abort') {
+                            alert(errmsg+'Ajax request aborted.');
+                        } else {
+                            alert(errmsg+'Uncaught Error.\n' + jqXHR.responseText);
+                        }
+                    }
+                });
+			}
+			Date.prototype.Format = function (fmt) { 
+			    var o = {
+			        "M+": this.getMonth() + 1, //月份 
+			        "d+": this.getDate(), //日 
+			        "h+": this.getHours(), //小时 
+			        "m+": this.getMinutes(), //分 
+			        "s+": this.getSeconds(), //秒 
+			        "q+": Math.floor((this.getMonth() + 3) / 3), //季度 
+			        "S": this.getMilliseconds() //毫秒 
+			    };
+			    if (/(y+)/.test(fmt)) fmt = fmt.replace(RegExp.$1, (this.getFullYear() + "").substr(4 - RegExp.$1.length));
+			    for (var k in o)
+			    if (new RegExp("(" + k + ")").test(fmt)) fmt = fmt.replace(RegExp.$1, (RegExp.$1.length == 1) ? (o[k]) : (("00" + o[k]).substr(("" + o[k]).length)));
+			    return fmt;
+			};
 		</script>
 		<style type="text/css">
             #dmain {
@@ -1265,6 +1250,10 @@
             .txt.c2 {
                 width: 130%;
                 float: left;
+            }
+            .txt.c3 {
+                width: 45%;
+                float: right;
             }
             .txt.num {
                 text-align: right;
@@ -1362,6 +1351,8 @@
 							<option value="barfe1-2.bat">綠色</option>
 							<option value="barfe1-3.bat">黃色、膚色</option>
 							<option value="barfe1-4.bat">藍色、桃紅色</option>
+							<option value="barfe2-1.bat">條碼2</option>
+							
 						</select>
 					</td>
 					<td></td>
@@ -1378,6 +1369,20 @@
 				</tr>
 				<tr style="height:20px;">
 					<td colspan="7"><a style="font-size:8px; color:darkblue;">請至【設定】->【隱私權】(內容設定)->【彈出視窗】(管理例外情況)</a></td>
+				</tr>
+			</table>
+		</div>
+		<div id="divChk" style="position:absolute; top:100px; left:400px; display:none; width:400px; height:80px; background-color: pink; border: 5px solid gray;">
+			<table style="width:100%;">
+				<tr style="height:1px;">
+					<td style="width:80px;"></td>
+					<td style="width:220px;"></td>
+					<td style="width:40px;"></td>
+				</tr>
+				<tr style="height:20px;">
+					<td><span> </span><a id="lblChecker" class="lbl">複檢人</a></td>
+					<td><input id="textChecker" type="text" class="txt c1"/></td>
+					<td><input id="btnCancel_c" type="button" value="關閉"/></td>
 				</tr>
 			</table>
 		</div>
@@ -1411,7 +1416,7 @@
 						<td class="tdZ"></td>
 					</tr>
 					<tr>
-						<td><span> </span><a id="lblNoa" class="lbl">電腦編號</a></td>
+						<td><span> </span><a id="lblNoa" class="lbl"> </a></td>
 						<td colspan="2">
 						<input id="txtNoa"  type="text" class="txt c1"/>
 						</td>
@@ -1441,7 +1446,7 @@
 						<td><input id="txtTolerance"  type="text"  class="txt c1"/></td>
 					</tr>
 					<tr>
-						<td><span> </span><a id="lblMemo" class="lbl">備註</a></td>
+						<td><span> </span><a id="lblMemo" class="lbl"> </a></td>
 						<td colspan="2" rowspan="2"><textarea id="txtMemo" class="txt c1" rows="3"></textarea></td>
 						<td><span> </span><a id="lblChktype" class="lbl">檢驗方式</a></td>
 						<td><input id="txtChktype"  type="text"  class="txt c1"/></td>
@@ -1450,8 +1455,13 @@
 					</tr>
 					<tr>
 						<td></td>
-						<td></td>
-						<td><input type="button" id="btnBarcode" value="條碼列印" /></td>
+						<td style="text-align: center;">
+							<input type="button" id="btnBarcode" value="條碼列印" />
+						</td>
+						<td>
+							<input type="button" id="btnChecker" value="複檢人" />
+							<input id="txtChecker" type="text" class="txt c3"/>
+						</td>
 						<td><span> </span><a id="lblWeight" class="lbl">重量</a></td>
 						<td><input id="txtWeight"  type="text"  class="num txt c1"/></td>
 					</tr>
@@ -1461,14 +1471,13 @@
 						<td><span> </span><a id="lblWorker2" class="lbl">修改人</a></td>
 						<td><input id="txtWorker2" type="text" class="txt c1"/></td>
 						<td><input type="button" id="btnCont" value="合約匯入" /></td>
-						<td><span> </span><a id="lblOrdeno" class="lbl btn"> </a></td>
+						<td><span> </span><a id="lblOrdeno" class="lbl btn">訂單編號</a></td>
 						<td>
 							<input id="txtOrdeno"  type="text"  class="txt c1"/>
 							<input id="txtOrdeaccy"  type="text"  style="display:none;"/>
 							<input type="button" id="btnOrde" value="轉訂單" style="display:none;"/>
 						</td>
-					</tr>
-					
+					</tr>				
 				</table>
 			</div>
 		</div>
@@ -1495,7 +1504,7 @@
 					<td style="width:100px;"><a id='lbl_place'>儲位</a></td>
 					<td style="width:180px;"><a id='lbl_timea'>加工時間</a></td>
 					<td style="width:100px;"><a id='lbl_worker'>入庫人員</a></td>
-					<!--<td style="width:180px;"><a id='lbl_cont'>合約單號</a></td>-->
+					<td style="width:180px;"><a id='lbl_cont'>合約單號</a></td>
 				</tr>
 				<tr  style='background:#cad3ff;'>
 					<td align="center">
@@ -1516,11 +1525,8 @@
 						<input class="txt" id="txtPlace.*" type="text" style="width:95%;" title=""/>
 					</td>
 					<td>
-						<canvas id="canvas.*" width="150" height="50"> </canvas>
-						<img id="imgPic.*" src="" style="display:none;"/>
-						<input id="txtImgorg.*" type="text" style="display:none;"/>
-						<input id="txtImgdata.*" type="text" style="display:none;"/>
-						<input id="txtImgbarcode.*" type="text" style="display:none;"/>
+						<img id="imgPic.*" src="" style="width:150px;height:50px;"/>
+						<textarea id="txtImgdata.*" style="display:none;"> </textarea>
 					</td>
 					<td>
 						<input class="txt" id="txtPicno.*" type="text" style="width:95%;"/>
@@ -1577,23 +1583,23 @@
 						<input class="txt" id="txtWorker4.*" type="text" style="width:95%;padding: 0px;"/>
 						<input class="txt" id="txtWorker5.*" type="text" style="width:95%;padding: 0px;"/>
 					</td>
-					<!--<td>
+					<td>
 						<input class="txt" id="txtContno.*" type="text" style="float:left;width:120px;"/>
 						<input class="txt" id="txtContnoq.*" type="text" style="float:left;width:35px;"/>
-					</td>-->
+					</td>
 				</tr>
 			</table>
 		</div>
 		
 		<input id="q_sys" type="hidden" />
-		<div id="dbbt" style="display:none;">
+		<div id="dbbt" style="display:noxne;">
 			<table id="tbbt">
 				<tbody>
 					<tr class="head" style="color:white; background:#003366;">
 						<td style="width:20px;">
 						<input id="btnPlut" type="button" style="font-size: medium; font-weight: bold;" value="＋"/>
 						</td>
-						<td style="width:20px;"></td>
+						<td style="width:20px;"> </td>
 						<td style="width:20px;">列印<input class="checkAll2" type="checkbox" onclick="checkAll2()"/></td>
 						<td style="width:200px; text-align: center;">批號</td>
 						<td style="width:200px; text-align: center;">品名</td>
@@ -1604,7 +1610,7 @@
 						<td style="width:100px; text-align: center;">餘料數量</td>
 						<td style="width:100px; text-align: center;">餘料重量</td>
 						<td style="width:100px; text-align: center;">儲位</td>
-						<td style="width:200px; text-align: center;">備註</td>
+						<td style="width:200px; text-align: center;">備註/爐號</td>
 					</tr>
 					<tr>
 						<td>
