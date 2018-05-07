@@ -181,9 +181,14 @@
                 $('#textChecker').change(function() {
                 	$('#txtChecker').val($(this).val());
                	});
-
-                
-                //-----------------------------------------------------------------------
+                //========================================================================
+				$('#btntowork').click(function(e){  //轉內部加工單
+					var t_noa = $('#txtNoa').val();
+					var t_key = q_getPara('sys.key_orde');
+                	q_func('qtxt.query.toworkj', 'workj.txt,toworkj,' + encodeURI(t_noa));
+					q_func('qtxt.query.orde', 'workj.txt,orde,' + encodeURI(t_key)+ ';' +encodeURI(t_noa));
+                });
+				//========================================================================
                 $('#btnCont').hide();
                 $('#btnCont').click(function(e){
                 	var t_noa = $('#txtNoa').val();
@@ -1470,7 +1475,7 @@
 						<td><input id="txtWorker" type="text" class="txt c1"/></td>
 						<td><span> </span><a id="lblWorker2" class="lbl">修改人</a></td>
 						<td><input id="txtWorker2" type="text" class="txt c1"/></td>
-						<td><input type="button" id="btnCont" value="合約匯入" /></td>
+						<td><input type="button" id="btnCont" value="合約匯入" /><input type="button" id="btntowork" value="轉內部加工單"></td>
 						<td><span> </span><a id="lblOrdeno" class="lbl btn">訂單編號</a></td>
 						<td>
 							<input id="txtOrdeno"  type="text"  class="txt c1"/>
