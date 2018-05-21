@@ -109,9 +109,9 @@
 				}
 				
 				if (q_getPara('sys.project').toUpperCase()=='FE'){
-					q_readonly = ['txtCredit','txtWorker', 'txtKdate', 'txtSales', 'txtGrpname', 'txtCust2'];
+					q_readonly = ['txtProfit','txtCredit','txtWorker', 'txtKdate', 'txtSales', 'txtGrpname', 'txtCust2'];
 					if (r_rank<=7)
-						q_readonly = ['txtCredit','txtWorker', 'txtKdate', 'txtSales', 'txtGrpname', 'txtCust2','txtUacc1','txtUacc2','txtUacc3'];
+						q_readonly = ['txtProfit','txtCredit','txtWorker', 'txtKdate', 'txtSales', 'txtGrpname', 'txtCust2','txtUacc1','txtUacc2','txtUacc3'];
 					$('#lblConn').css("display","");
 					$('#txtConn').css("display","");
 					$('#lblConn').text("接洽人");					
