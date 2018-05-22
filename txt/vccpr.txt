@@ -1,6 +1,6 @@
 ﻿vccpr_vcc: -- update vcc 
 	SET QUOTED_IDENTIFIER OFF
-	declare @t_noa nvarchar(20) = [1]
+	declare @t_noa nvarchar(20) = '1070519007'
 	
 	------------------------------------------------------------------------------------------
 	declare @cmd nvarchar(max)
@@ -14,7 +14,7 @@
 	while(@@FETCH_STATUS <> -1)
 	begin		
 		set @cmd =
-		"update vccs"+@accy+" set sprice = case when isnull(b.sprice2,0)>0 then b.sprice2 when isnull(b.sprice,0)>0 then b.sprice else a.sprice end
+		"update vccs"+@accy+" set sprice = case when isnull(b.sprice2,0)>0 then b.sprice2 when isnull(b.sprice,0)>0 then b.sprice else 0 end
 			--, price = b.price   回寫到VCC有點問題
 			, sprice2 = b.sprice2
 			, profit = b.rate
