@@ -1,6 +1,6 @@
 ﻿vccpr_vcc: -- update vcc 
 	SET QUOTED_IDENTIFIER OFF
-	declare @t_noa nvarchar(20) = '1070519007'
+	declare @t_noa nvarchar(20) = [1]
 	
 	------------------------------------------------------------------------------------------
 	declare @cmd nvarchar(max)
