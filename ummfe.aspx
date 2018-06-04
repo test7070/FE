@@ -96,14 +96,9 @@
 				
 		         $('#txtDatea').blur(function() {
 		         	if(!emp($('#txtDatea').val())&&(q_cur==1 || q_cur==2)){
-		         		
-		         		if(q_getPara('sys.project').toUpperCase()=='IT' || q_getPara('sys.project').toUpperCase()=='UU' || q_getPara('sys.project').toUpperCase()=='XY'){
-		         			$('#txtMon').val($('#txtDatea').val().substr(0,6));
-		         		}else{
-                    		var d = new Date(dec($('#txtDatea').val().substr(0,3))+1911, dec($('#txtDatea').val().substr(4,2))-1, dec($('#txtDatea').val().substr(7,2)));
-							d.setMonth(d.getMonth() - 1);
-							$('#txtMon').val(d.getFullYear()-1911+'/'+('0'+(d.getMonth()+1)).slice(-2));
-						}
+                    	var d = new Date(dec($('#txtDatea').val().substr(0,3))+1911, dec($('#txtDatea').val().substr(4,2))-1, dec($('#txtDatea').val().substr(7,2)));
+						d.setMonth(d.getMonth() - 1);
+						$('#txtMon').val(d.getFullYear()-1911+'/'+('0'+(d.getMonth()+1)).slice(-2));
 					}
                 });
 		        
@@ -606,6 +601,10 @@
                 	if (emp($('#txtTablea_'+i).val())&&!emp($('#txtVccno_'+i).val())){
                 		$('#txtTablea_'+i).val('vccfe');
                 	}
+                	//107/06/04 bbs.cno空白時，寫入 1
+                	if(emp($('#txtCno_'+i).val()))
+                		$('#txtCno_'+i).val('1');
+                	
                 }
                 
                 if (emp($('#txtCustno').val()) && q_float('txtOpay')>0) {
