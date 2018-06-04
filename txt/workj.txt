@@ -128,4 +128,13 @@ checker:--複檢人修改
 	update workj
 	set checker=@checker
 	where noa=@noa
+;----------------------------------------------------------------------------------------------------------
+toworkj:--外部廠商-鋼筋加工單 匯入 內部鋼筋加工單
+	SET QUOTED_IDENTIFIER OFF
+	declare @noa nvarchar(20) = [1]
+	insert into workjs
+	select * from workj2s where noa=@noa
+	insert into workj (noa,site,datea,odate,custno,cust,nick,tagcolor,trantype,chktype,worker,worker2,memo,ordeaccy,ordeno,mount,weight,lengthb,tolerance,trantype1,trantype2)
+	select * from workj2 where noa=@noa
+	update workj SET memo='外部廠商-鋼筋加工單轉來' where noa=@noa
 ;
