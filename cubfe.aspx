@@ -1899,10 +1899,12 @@
 												'nor':''
 											});
 										}
+										x_n=-1;
 										for (var n=0;n<tt_same.length;n++){
 											if(dec(cupcutlength[m])<=dec(tt_same[n].lengthb) && dec(cupcutlength[m])>=(dec(tt_same[n].lengthb)-dec(tt_same[n].tw03))
 												&& dec(tt_same[n].mount)+dec(tt_same[n].maxmount)>0
 											){
+												x_n=n;
 												if(dec(tt_same[n].mount)>0)
 													tt_same[n].mount=q_sub(tt_same[n].mount,1);
 												else
@@ -1949,6 +1951,9 @@
 												
 												break;
 											}
+										}
+										if(x_n==-1 && bmount==1){
+											cupcutwlength.push(cupcutlength[m]);
 										}
 									}
 									
@@ -3206,10 +3211,12 @@
 												'nor':''
 											});
 										}
+										x_n=-1;
 										for (var n=0;n<tt_same.length;n++){
 											if(dec(cupcutlength[m])<=dec(tt_same[n].lengthb) && dec(cupcutlength[m])>=(dec(tt_same[n].lengthb)-dec(tt_same[n].tw03))
 												&& dec(tt_same[n].mount)+dec(tt_same[n].maxmount)>0
 											){
+												x_n=n;
 												if(dec(tt_same[n].mount)>0)
 													tt_same[n].mount=q_sub(tt_same[n].mount,1);
 												else
@@ -3256,6 +3263,9 @@
 												
 												break;
 											}
+										}
+										if(x_n==-1 && bmount==1){
+											cupcutwlength.push(cupcutlength[m]);
 										}
 									}
 									
@@ -4503,10 +4513,12 @@
 												'nor':''
 											});
 										}
+										x_n=-1;
 										for (var n=0;n<tt_same.length;n++){
 											if(dec(cupcutlength[m])<=dec(tt_same[n].lengthb) && dec(cupcutlength[m])>=(dec(tt_same[n].lengthb)-dec(tt_same[n].tw03))
 												&& dec(tt_same[n].mount)+dec(tt_same[n].maxmount)>0
 											){
+												x_n=n;
 												if(dec(tt_same[n].mount)>0)
 													tt_same[n].mount=q_sub(tt_same[n].mount,1);
 												else
@@ -4553,6 +4565,9 @@
 												
 												break;
 											}
+										}
+										if(x_n==-1 && bmount==1){
+											cupcutwlength.push(cupcutlength[m]);
 										}
 									}
 									
@@ -5190,6 +5205,34 @@
 												insalelen=true;
 												cutall=cutall+'#'+maxknife+','+t_sublen;
 												cutarry.push({'olength':q_sub(olength,q_sub(lengthb,t_sublen)),'cutlength':cutall,'wlenhth':(t_sublen+maxknife),'wrate':round((t_sublen+maxknife)/q_sub(olength,q_sub(lengthb,t_sublen)),4)});
+											}
+										}
+									}else{
+										if(olength.toString().slice(-2)=='00'){//正常長度
+											var t_addlen=0;
+											for (var ii=0;ii<asknife.length;ii++){
+												if(asknife[ii]>lengthb && lengthb+(t_levellen>0?t_levellen:5)>=asknife[ii]){
+													t_addlen=asknife[ii];
+													break;
+												}
+											}
+											if(t_addlen>0){
+												insalelen=true;
+												cutall=cutall+'#'+t_addlen;
+												cutarry.push({'olength':q_add(olength,q_sub(t_addlen,lengthb)),'cutlength':cutall,'wlenhth':t_addlen,'wrate':round(t_addlen/q_add(olength,q_sub(t_addlen,lengthb)),4)});
+											}
+										}else{//延長板料
+											var t_sublen=0;
+											for (var ii=0;ii<asknife.length;ii++){
+												if(asknife[ii]<lengthb && lengthb-(t_levellen>0?t_levellen:5)<=asknife[ii]){
+													t_sublen=asknife[ii];
+													break;
+												}
+											}
+											if(t_sublen>0){
+												insalelen=true;
+												cutall=cutall+'#'+t_sublen;
+												cutarry.push({'olength':q_sub(olength,q_sub(lengthb,t_sublen)),'cutlength':cutall,'wlenhth':t_sublen,'wrate':round(t_sublen/q_sub(olength,q_sub(lengthb,t_sublen)),4)});
 											}
 										}
 									}
@@ -7604,10 +7647,12 @@
 												'nor':''
 											});
 										}
+										x_n=-1;
 										for (var n=0;n<tt_same.length;n++){
 											if(dec(cupcutlength[m])<=dec(tt_same[n].lengthb) && dec(cupcutlength[m])>=(dec(tt_same[n].lengthb)-dec(tt_same[n].tw03))
 												&& dec(tt_same[n].mount)+dec(tt_same[n].maxmount)>0
 											){
+												x_n=n;
 												if(dec(tt_same[n].mount)>0)
 													tt_same[n].mount=q_sub(tt_same[n].mount,1);
 												else
@@ -7654,6 +7699,9 @@
 												
 												break;
 											}
+										}
+										if(x_n==-1 && bmount==1){
+											cupcutwlength.push(cupcutlength[m]);
 										}
 									}
 									
@@ -10133,10 +10181,12 @@
 												'nor':''
 											});
 										}
+										x_n=-1;
 										for (var n=0;n<tt_same.length;n++){
 											if(dec(cupcutlength[m])<=dec(tt_same[n].lengthb) && dec(cupcutlength[m])>=(dec(tt_same[n].lengthb)-dec(tt_same[n].tw03))
 												&& dec(tt_same[n].mount)+dec(tt_same[n].maxmount)>0
 											){
+												x_n=n;
 												if(dec(tt_same[n].mount)>0)
 													tt_same[n].mount=q_sub(tt_same[n].mount,1);
 												else
@@ -10183,6 +10233,9 @@
 												
 												break;
 											}
+										}
+										if(x_n==-1 && bmount==1){
+											cupcutwlength.push(cupcutlength[m]);
 										}
 									}
 									
@@ -12673,10 +12726,12 @@
 												'nor':''
 											});
 										}
+										x_n=-1;
 										for (var n=0;n<tt_same.length;n++){
 											if(dec(cupcutlength[m])<=dec(tt_same[n].lengthb) && dec(cupcutlength[m])>=(dec(tt_same[n].lengthb)-dec(tt_same[n].tw03))
 												&& dec(tt_same[n].mount)+dec(tt_same[n].maxmount)>0
 											){
+												x_n=n;
 												if(dec(tt_same[n].mount)>0)
 													tt_same[n].mount=q_sub(tt_same[n].mount,1);
 												else
@@ -12723,6 +12778,9 @@
 												
 												break;
 											}
+										}
+										if(x_n==-1 && bmount==1){
+											cupcutwlength.push(cupcutlength[m]);
 										}
 									}
 									
