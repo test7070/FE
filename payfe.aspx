@@ -627,6 +627,11 @@
 		            Unlock(1);
 		            return false;
 		        }
+		        //107/06/20 bbs.cno空白時換成表頭公司
+		        for (var i = 0; i < q_bbsCount; i++) {
+		        	if(emp($('#txtCno_'+i).val()))
+                		$('#txtCno_'+i).val($('#cmbCno').val());
+		        }
 		        
 		        //20130201只要預付單號有預付，預付金額=SUM(BBS沖帳金額)
 		        //1020618取消此功能//102/07/04恢復此功能
