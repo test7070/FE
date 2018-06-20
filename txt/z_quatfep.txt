@@ -19,7 +19,8 @@ z_quatfep02:--	z_quatfep02
 		,conn nvarchar(50)
 		,tel nvarchar(50)
 		,fax nvarchar(50)
-		
+		,sales nvarchar(50)
+
 		,productno nvarchar(20)
 		,product nvarchar(50)
 		,size nvarchar(50)
@@ -122,14 +123,15 @@ z_quatfep02:--	z_quatfep02
 	
 	-------------------------------------------------------------------------------------
 	update @tmp set worker=b.worker,datea=b.datea,odate=b.odate,noa=b.noa,custno=b.custno,cust=b.comp
-		,conn=b.conn,tel=b.tel,fax=b.fax,typea=b.typea
+		,conn=b.conn,tel=b.tel,fax=b.fax,typea=b.typea,sales=b.sales
 	from @tmp a
 	left join view_quat b on b.noa=@t_noa
+
 	-------------------------------------------------------------------------------------
 	select gno
 		,'<a style="font-size:30px'+char(59)+'font-family:'+ "'Times New Roman','標楷體', serif"+char(59)+'">報價單</a>' 
 			+'<a style="font-size:20px'+char(59)+'font-family:'+ "'Times New Roman','標楷體', serif"+char(59)+'">('+typea+')</a>'a01
-		,'<a style="font-family:'+ "'Times New Roman','標楷體', serif"+char(59)+'">聯絡人：'+@t_conn+'</a>' a02
+		,'<a style="font-family:'+ "'Times New Roman','標楷體', serif"+char(59)+'">聯絡人：'+sales+'</a>' a02
 		,'<a style="font-family:'+ "'Times New Roman','標楷體', serif"+char(59)+'">TEL：07-6661653 FAX：07-6662927 e-mail：jyu.sin@msa.hinet.net</a>' a03
 		,'<a style="font-family:'+ "'Times New Roman','標楷體', serif"+char(59)+'">報價日期：'+odate+'</a>' a04
 		,'<a style="font-family:'+ "'Times New Roman','標楷體', serif"+char(59)+'">報價編號：'+noa+'</a>' a05
