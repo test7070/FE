@@ -486,40 +486,7 @@
 					default:
 						break;
 				};
-				$('.b6_1_a_3').hide();
-				switch($('#b6_1_a_3').val()){
-					case '月結30天票期':
-						$('#b6_1_a_3a').show();
-						break;
-					case '月結45天票期':
-						$('#b6_1_a_3b').show();
-						break;
-					case '月結60天票期':
-						$('#b6_1_a_3c').show();
-						break;
-					case '月結現金':
-						$('#b6_1_a_3d').show();
-						break;
-					default:
-						break;
-				}
-				$('.b6_1_b_1').hide();
-				switch($('#b6_1_b_1').val()){
-					case '月結30天票期':
-						$('#b6_1_b_1a').show();
-						break;
-					case '月結45天票期':
-						$('#b6_1_b_1b').show();
-						break;
-					case '月結60天票期':
-						$('#b6_1_b_1c').show();
-						break;
-					case '月結現金':
-						$('#b6_1_b_1d').show();
-						break;
-					default:
-						break;
-				}
+				
 				$('#divBB').find('input[type="text"]').css('text-align','right');
 				$('#b3_1').css('text-align','center');
 				$('#b5_1_a_a').css('text-align','center');
@@ -1111,14 +1078,16 @@
 			</table>
 		</div>
 		
-		<div id='divBB' style="font-family: '細明體';">
-			<table style="">
+		<!---加工成型--->
+		<div id='divBB' style="font-family:'細明體';">
+			<table>
 				<tr style="color:white; background:#003366;" class="ignore">
 					<td>品名</td>
 					<td>規格</td>
 					<td>單位</td>
 					<td>數量</td>
 					<td>單價</td>
+					<td>金額(未稅)</td>
 					<td>備註</td>
 				</tr>
 				<tr class="ignore">
@@ -1127,6 +1096,7 @@
 					<td>噸</td>
 					<td rowspan="3"><input type="text" style="width:60px;" id="b0_1_a" /></td>
 					<td><input type="text" style="width:60px;" id="b0_2_a" /></td>
+					<td></td>
 					<td>加工成型</td>
 				</tr>
 				<tr class="ignore">
@@ -1134,6 +1104,7 @@
 					<td>4#、5#</td>
 					<td>噸</td>
 					<td><input type="text" style="width:60px;" id="b0_2_b" /></td>
+					<td></td>
 					<td>加工成型</td>
 				</tr>
 				<tr class="ignore">
@@ -1141,54 +1112,17 @@
 					<td>4#、5#、6#、7#、8#、10#</td>
 					<td>噸</td>
 					<td><input type="text" style="width:60px;" id="b0_2_c" /></td>
+					<td></td>
 					<td>加工成型</td>
 				</tr>
 			</table>
 			<table>
 				<tr>
 					<td>
-						<a style="float:left;">1.(1)本報價單價不含5%稅金。</a>
-						<select id="b1_1_a" style="float:left;"><option value='含'>含</option><option value='不含'>不含</option></select>
-						<a style="float:left;">運費、</a>
-						<select id="b1_1_b" style="float:left;"><option value='含'>含</option><option value='不含'>不含</option></select>
-						<a style="float:left;">磅費、</a>
-						<select id="b1_1_c" style="float:left;">
-							<option value='A'>A</option>
-							<option value='B'>B</option>
-							<option value='C'>C</option>
-						</select>
-						<div id="b1_1_c_1" class="b1_1_c" style="float:left;"><a>不含檢驗費。</a></div>
-						<div id="b1_1_c_2" class="b1_1_c" style="float:left;"><a>含物性檢驗費，不分爐號，每</a><input type="text" style="width:60px;" id="b1_1_c_2a" /><a>噸。檢驗1支，共</a><input type="text" style="width:60px;" id="b1_1_c_2b" /><a>支。</a></div>
-						<div id="b1_1_c_3" class="b1_1_c" style="float:left;">
-							<a>含物性及化性檢驗費，不分爐號，每</a><input type="text" style="width:60px;" id="b1_1_c_3a" />
-							<a>噸檢驗1支，共</a><input type="text" style="width:60px;" id="b1_1_c_3b" />
-							<a>支，</a>
-							<br><a>　　 物性共</a><input type="text" style="width:60px;" id="b1_1_c_3c" />
-							<a>支，化性共</a><input type="text" style="width:60px;" id="b1_1_c_3d" />
-							<a>支。</a>
-						</div>
-					</td>
-				</tr>
-				<tr class="b1_3">
-					<td>
-						<a>　(2)馬架10CM以下，圓型特殊框型不在此單價內。</a>
-					</td>
-				</tr>
-				<!-- 依BBS  動態產生   XXXXXX-->
-		 		<tr class="b1_4"><td><a>　</a><a>(3)</a><a>鋼筋3#每噸加價</a><input type="text" style="width:60px;" id="b1_4_a" /><a>元。</a></td></tr>
-				<tr class="b1_4"><td><a>　</a><a>　 </a><a>鋼筋9#每噸加價</a><input type="text" style="width:60px;" id="b1_4_b" /><a>元。</a></td></tr>
-				<tr class="b1_4"><td><a>　</a><a>　 </a><a>鋼筋11#每噸加價</a><input type="text" style="width:60px;" id="b1_4_c" /><a>元。</a></td></tr>
-				
-				<tr><td><a>　</a><a>(4)</a><a>本報價單不含至續接廠運輸費用。</a></td></tr>
-				<tr><td><a>　</a><a>(5)</a><a>加工成型部份總料計價，整案承接：不分板料、彎料、直料含入續接柱筋；尺寸公差為±5公分。</a></td></tr>
-				<tr><td><a>　</a><a>(6)</a><a>此單價不含裁切長度70CM以下直料。加工成型若分料包裝(台料)每噸加價600元。</a></td></tr>
-				<tr><td><a>　</a><a>(7)</a><a>鋼筋加工成品包裝所需鋼筋與線材重量，納入鋼筋加工重量與工資計算。</a></td></tr>
-				<tr>
-					<td>
-						<a style="float:left;">2.</a><a style="float:left;">交貨地點：</a>
+						<a style="float:left;">1.</a><a style="float:left;">交貨地點：</a>
 						<input style="float:left;" id="b2_1" list="b2_1a">
 						<datalist id="b2_1a" class="ignore">
-						  <option value='廠交(自運)'> </option>
+						  <option value="廠交(自運)"> </option>
 						</datalist>
 						<!--<select id="b2_1" style="float:left;">
 							<option value='廠交(自運)'>廠交(自運)</option>
@@ -1200,7 +1134,16 @@
 						<div id="b2_1_b" style="float:left;">
 							<a>　</a><input type="text" style="width:120px;" id="b2_1_b_1"/>
 						</div>-->
-						<a style="float:left;">，交貨期限：</a>
+					</td>
+				</tr>
+				<tr>
+					<td>
+						<a style="float:left;">2.合約數量：</a><input type="text" style="width:60px;" id="b5_1_a_c_0"/><a>噸。</a>
+					</td>
+				</tr>
+				<tr>
+					<td>
+						<a style="float:left;">3.交貨期限：</a>
 						<input type="text" style="width:40px;float:left;" id="b2_1_c"/>
 						<a style="float:left;">年</a>
 						<input type="text" style="width:40px;float:left;" id="b2_1_d"/>
@@ -1209,12 +1152,57 @@
 						<a style="float:left;">日止。</a>
 					</td>
 				</tr>
-				<tr><td><a>3.</a><a>工程名稱：</a><input type="text" style="width:200px;" id="b3_1"/></td></tr>
-				<tr><td><a>4.</a><a>鋼筋計價重量：以乙方實際過磅為準，若磅差超出千分之三時甲方得要求公證地磅會磅，千分之三內甲方不得扣失</a></td></tr>
-				<tr><td><a>　重，若超出千分之三以上，雙方各半。</a></td></tr>
+				<tr><td><a>4.</a><a>工程名稱：</a><input type="text" style="width:200px;" id="b3_1"/>。</td></tr>
+				<tr><td><a>5.鋼筋計價重量：以乙方實際過磅為準，若磅差超出千分之三時甲方得要求公證地磅會磅，千分之三</a></td></tr>
+				<tr><td><a>　　 　 　　　　內甲方不得扣失重，若超出千分之三以上，雙方各半。</a></td></tr>
 				<tr>
 					<td>
-						<a style="float:left;">5.交貨辦法：</a>
+						<a style="float:left;">6.本合約單價不含5%稅金。</a>
+						<select id="b1_1_a" style="float:left;"><option value='含'>含</option><option value='不含'>不含</option></select>
+						<a style="float:left;">運費、</a>
+						<select id="b1_1_b" style="float:left;"><option value='含'>含</option><option value='不含'>不含</option></select>
+						<a style="float:left;">磅費、</a>
+						<select id="b1_1_c" style="float:left;">
+							<option value='A'>A</option>
+							<option value='B'>B</option>
+							<option value='C'>C</option>
+						</select>
+						<div id="b1_1_c_1" class="b1_1_c" style="float:left;"><a>不含檢驗費、不含至續接廠運輸費用。</a></div>
+						<div id="b1_1_c_2" class="b1_1_c" style="float:left;"><a>含物性檢驗費，不分爐號，每</a><input type="text" style="width:60px;" id="b1_1_c_2a" /><a>噸。檢驗1支，共</a><input type="text" style="width:60px;" id="b1_1_c_2b" /><a>支。</a></div>
+						<div id="b1_1_c_3" class="b1_1_c" style="float:left;">
+							<a>含物性及化性檢驗費，不分爐號，每</a><input type="text" style="width:60px;" id="b1_1_c_3a" />
+							<a>噸檢驗1支，共</a><input type="text" style="width:60px;" id="b1_1_c_3b" />
+							<a>支，</a>
+							<br><a>　　 物性共</a><input type="text" style="width:60px;" id="b1_1_c_3c" />
+							<a>支，化性共</a><input type="text" style="width:60px;" id="b1_1_c_3d" />
+							<a>支。</a>
+						</div>
+					</td>
+				</tr>
+				<!-- <tr class="b1_3"><td><a>　(2)馬架10CM以下，圓型特殊框型不在此單價內。</a></td></tr>
+				依BBS  動態產生   XXXXXX-->
+		 		<tr class="b1_4"><td>
+					<a>7.鋼筋3#每噸加價</a><input type="text" style="width:60px;" id="b1_4_a" /><a>元。</a>
+					<a>鋼筋9#每噸加價</a><input type="text" style="width:60px;" id="b1_4_b" /><a>元。</a>
+					<a>鋼筋11#每噸加價</a><input type="text" style="width:60px;" id="b1_4_c" /><a>元。</a>
+				</td></tr>
+				<tr class="b1_4"><td><a>8.加工成型：</a></td></tr>
+				<tr class="b1_4"><td></td></tr>
+				<tr class="b1_4"><td></td></tr>
+				<tr><td><a>　</a><a>(1)</a><a>本合約單價以總料計價。若分料包裝(台料)每噸加價600 元。</a></td></tr>
+				<tr><td><a>　</a><a>(2)</a><a>本合約單價不分板料、彎料、直料(含入續接用直料)。</a></td></tr>
+				<tr><td><a>　</a><a>(3)</a><a>本合約單價不含：</a></td></tr>
+				<tr><td><a>　</a><a>　</a><a>　</a><a>A.裁切70 公分以下直料。</a></td></tr>
+				<tr><td><a>　</a><a>　</a><a>　</a><a>B.植筋用料。</a></td></tr>
+				<tr><td><a>　</a><a>　</a><a>　</a><a>C.10 公分以下馬架。</a></td></tr>
+				<tr><td><a>　</a><a>　</a><a>　</a><a>D.圓形。</a></td></tr>
+				<tr><td><a>　</a><a>　</a><a>　</a><a>E.漸變。</a></td></tr>
+				<tr><td><a>　</a><a>　</a><a>　</a><a>F.特殊形狀。</a></td></tr>
+				<tr><td><a>　</a><a>　</a><a>如有上述特殊加工，需依衍生工時程度補貼每人每小時300 元工資。</a></td></tr>
+				<tr><td><a>　</a><a>(4)</a><a>鋼筋加工成品包裝所需鋼筋與線材重量，納入鋼筋加工重量與工資計算。</a></td></tr>
+				<tr>
+					<td>
+						<a style="float:left;">9.交貨辦法：</a>
 						<select id="b5_1" style="float:left;">
 							<option value='A'>A</option>
 							<option value='B'>B</option>
@@ -1223,12 +1211,22 @@
 						</select>
 					</td>
 				</tr>
-				<!-- 含運  -->
+				<!-- 含運  
 				<tr id="b5_1_a" class="b5_1x">
 					<td>
 						<a>　</a><a>(1)</a>
 						<a>板車送達</a><input type="text" style="width:200px;" id="b5_1_a_a"/>
 						<a>，甲方負責卸貨。出貨須達25噸，未達25噸者須補貼運費至25噸，每噸</a><input type="text" style="width:60px;" id="b5_1_a_c"/><a>元。</a>
+					</td>
+				</tr>-->
+				<tr id="b5_1_a" class="b5_1x">
+					<td>
+						<a>　</a><a>(1)</a>
+						<a>運費加價：</a><input type="text" style="width:200px;" id="b5_1_a_a"/><a>，下料地點以1F 地坪為限，貨下車邊。毎趟須達</a>
+						<input type="text" style="width:60px;" id="b5_1_a_c_1"/><a>噸</a><br>
+						<a>　</a><a>　 </a><a>　　　　　</a>
+						<a>出貨未達</a><input type="text" style="width:60px;" id="b5_1_a_c_2"/><a>噸者須補貼運費至</a>
+						<input type="text" style="width:60px;" id="b5_1_a_c_3"/><a>噸，每噸</a><input type="text" style="width:60px;" id="b5_1_a_c"/><a>元。</a>
 					</td>
 				</tr>
 				<tr id="b5_1_b" class="b5_1x">
@@ -1276,20 +1274,22 @@
 					</td>
 				</tr>
 				<tr id="b5_1_g" class="b5_1x">
+					<td><a>　(1)</a><input type="text" style="width:500px;" id="b5_1_g_a" placeholder="自訂"/></td>
+				</tr>
+				<tr><td><a>　</a><a>(2)鋼筋材料若為加工成型者，甲方應於21日前通知乙方交貨數量規格。</a></td></tr>
+				<tr>
 					<td>
-						<a>　(1)</a><input type="text" style="width:500px;" id="b5_1_g_a" placeholder="自訂"/>
+						<a>　</a><a>(3)甲方應備妥足夠容納進貨之場地，及35 噸拖車可安全到達之卸貨場地，場地不符合前揭要求所</a><br>
+						<a>　</a><a>　 衍生之各項費用，概由甲方負擔。</a>
 					</td>
 				</tr>
 				<tr>
 					<td>
-						<a>　</a><a>(2)鋼筋材料若為加工成型者，甲方應於21日前通知乙方交貨數量規格。</a>
+						<a>　</a><a>(4)</a><a>板車料長度12M、14M。超長運費加價14.1M~15M，毎噸加價50 元，超長運費加價15.1M~18M，</a><br>
+						<a>　　 </a><a>毎米毎噸加價100 元，不足一米以一米計。</a>
 					</td>
 				</tr>
-				<tr>
-					<td>
-						<a>　</a><a>(3)甲方應備妥足夠容納進貨之場地，及35噸拖車可安全到達之卸貨場地，否則因而產生的其他費用由甲方負擔。</a>
-					</td>
-				</tr>
+				<!---
 				<tr>
 					<td>
 						<a>　</a><a>(4)</a>
@@ -1298,79 +1298,46 @@
 						<a>　　 超長運費加價15.1M~18M，毎米毎噸加價</a><input type="text" style="width:60px;" id="b5_1_5_b"/><a>元，不足一米以一米計。 </a>
 					</td>
 				</tr>
+				--->
+				<tr><td><a>10.</a><a>付款條件：</a></td></tr>
 				
 				<tr>
 					<td>
-						<a>6.</a><a>付款條件：</a>
-					</td>
-				</tr>
-				<tr>
-					<td>
-						<a style="float:left;">　(1)</a>
-						<select id="b6_1" style="float:left;" class="ignore">
-							<option value='預付'>預付</option>
-							<option value='月結'>月結</option>
-							<option value='電匯'>電匯</option>
-							<option value='自訂'>自訂</option>
+						<a style="float:left;">　(1)甲方應於簽約時，預付貨款</a><input type="text" style="width:40px;" id="b6_1_a_1"/><a>%為定金，</a>
+						<select id="b6_1_a_2">
+							<option value='定金抵尾款'>定金抵尾款。</option>
+							<option value='定金依出貨比例扣除'>定金依出貨比例扣除。</option>
 						</select>
-						<div id="b6_1_a" style="float:left;">
-							<a>預付</a><input type="text" style="width:40px;" id="b6_1_a_1"/><a>%貨款現金含稅為訂金，</a>
-							<select id="b6_1_a_2">
-								<option value='訂金抵尾款'>訂金抵尾款</option>
-								<option value='訂金依出貨比例扣除'>訂金依出貨比例扣除</option>
-							</select>
-							<a>每月出貨貨款為當月</a>
-							<select id="b6_1_a_3">
-								<option value='月結30天票期'>月結30天票期</option>
-								<option value='月結45天票期'>月結45天票期</option>
-								<option value='月結60天票期'>月結60天票期</option>
-								<option value='月結現金'>月結現金</option>
-							</select>
-							<a>。</a>
-							<br>
-							<a id="b6_1_a_3a" class="b6_1_a_3">　　 例：7月帳，開立8月30日到期支票。</a>
-							<a id="b6_1_a_3b" class="b6_1_a_3">　　 例：7月帳，開立9月15日到期支票。</a>
-							<a id="b6_1_a_3c" class="b6_1_a_3">　　 例：7月帳，開立9月30日到期支票。</a>
-							<a id="b6_1_a_3d" class="b6_1_a_3">　　 例：7月帳，開立8月10日前電匯現金。</a>
-							<br>
-							<a>　　 交貨期限到需將未出鋼筋噸數的金額扣除訂金依當期貨款支付現金完案。</a>
-						</div>
-						<div id="b6_1_b" style="float:left;">
-							<a>每月出貨貨款為當月</a>
+					</td>
+				</tr>
+				<tr>
+					<td>
+						<a>　(2)每月出貨貨款為當月月結</a>
+						<select id="b6_1_a_2">
+							<option value="30天票期。例：7月出貨，開立8月30日到期支票。">30天票期。例：7月出貨，開立8月30日到期支票。</option>
+							<option value="45天票期。例：7月出貨，開立9月15日到期支票。">45天票期。例：7月出貨，開立9月15日到期支票。</option>
+							<option value="60天票期。例：7月出貨，開立9月30日到期支票。">60天票期。例：7月出貨，開立9月30日到期支票。</option>
+							<option value="現金。例：7月出貨，開立8月10日前電匯現金。">現金。例：7月出貨，開立8月10日前電匯現金。</option>
+						</select>
+					</td>
+				</tr>
+				<tr><td><a>　</a><a>(3)</a><a>交貨期限到期，甲方需將未出鋼筋噸數的金額</a>
 							<select id="b6_1_b_1">
-								<option value='月結30天票期'>月結30天票期</option>
-								<option value='月結45天票期'>月結45天票期</option>
-								<option value='月結60天票期'>月結60天票期</option>
-								<option value='月結現金'>月結現金</option>
+								<option value=""></option>
+								<option value="扣除定金後">扣除定金後</option>
 							</select>
-							<a id="b6_1_b_1a" class="b6_1_b_1">。例：7月帳，開立8月30日到期支票。</a>
-							<a id="b6_1_b_1b" class="b6_1_b_1">。例：7月帳，開立9月15日到期支票。</a>
-							<a id="b6_1_b_1c" class="b6_1_b_1">。例：7月帳，開立9月30日到期支票。</a>
-							<a id="b6_1_b_1d" class="b6_1_b_1">。例：7月帳，開立8月10日前電匯現金。</a>
-							<br>
-							<a>　　 交貨期限到需將未出鋼筋噸數的金額依當期貨款支付現金完案。</a>
-						</div>
-						<div id="b6_1_c" style="float:left;">
-							<a>出貨前電匯貨款全額。</a><input type="text" style="width:150px;" id="b6_1_c_1"/>
-						</div>
-						<div id="b6_1_d" style="float:left;">
-							<a></a><input type="text" style="width:150px;" id="b6_1_d_1"/>
-						</div>
-					</td>
-				</tr>
+							<a>，依當期貨款支付現金予乙方結案。</a>
+				</td></tr>
+				<tr><td>
+						<a>　</a><a>(4)</a><a>甲方同意依照合約所定之付款日期及方式繳付價款予乙方，如逾期未付則按總價款之日息萬分</a><br>
+						<a>　</a><a>　 </a><a>之六計算遲延付款之利息，乙方並得據以暫停出貨並終止合約。</a>
+				</td></tr>
+				
+				
+				
 				<tr>
 					<td>
-						<a>　</a><a>(2)</a><a>甲方同意依照合約所定之付款日期及方式繳付價款予乙方，如逾期未付則按總價款之日息萬分之六計算遲延付款</a>
-					</td>
-				</tr>
-				<tr>
-					<td>
-						<a>　　 之利息，乙方並得據以暫停出貨。</a>
-					</td>
-				</tr>
-				<tr>
-					<td>
-						<a>7.</a><a>材料檢驗：</a>
+						<a>11.</a><a>材料檢驗：</a>
 					</td>
 				</tr>
 				<tr>
@@ -1414,6 +1381,7 @@
 			</table>
 		</div>
 		
+		<!---板料--->
 		<div id='divCC' style="font-family: '細明體';">
 			<table style="">
 				<tr style="color:white; background:#003366;" class="ignore">
