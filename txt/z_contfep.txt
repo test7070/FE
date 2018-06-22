@@ -121,7 +121,7 @@ z_contfep01:--z_contfep01
 	end
 	-------------------------------------------------------------------------------------
 	--insert into @tmp(gno)values('13')
-	insert into @tmp(gno,memo)values('14',N'本合約一式二份，買賣雙方各執壹份為憑')--換頁
+	--insert into @tmp(gno,memo)values('14',N'本合約一式二份，買賣雙方各執壹份為憑')--換頁
 	
 	insert into @tmp(gno)values('13')
 	insert into @tmp(gno,memo)values('16',N'訂立合約書人：')
