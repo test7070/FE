@@ -602,8 +602,9 @@
                 		$('#txtTablea_'+i).val('vccfe');
                 	}
                 	//107/06/04 bbs.cno空白時，寫入 1
+                	//107/06/20 換成表頭公司
                 	if(emp($('#txtCno_'+i).val()))
-                		$('#txtCno_'+i).val('1');
+                		$('#txtCno_'+i).val($('#cmbCno').val());
                 	
                 }
                 
