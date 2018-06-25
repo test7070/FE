@@ -1270,22 +1270,14 @@
 							<option value='C'>C</option>
 						</select>
 						<div id="b1_1_c_1" class="b1_1_c" style="float:left;"><a>不含檢驗費。</a></div>
-						<div id="b1_1_c_2" class="b1_1_c" style="float:left;"><a>含物性檢驗費，不分爐號，每</a><input type="text" style="width:60px;" id="b1_1_c_2a" /><a>噸。檢驗1支，共</a><input type="text" style="width:60px;" id="b1_1_c_2b" /><a>支。</a></div>
+						<div id="b1_1_c_2" class="b1_1_c" style="float:left;"><a>含物性檢驗費，不分爐號，每</a><input type="text" style="width:60px;" id="b1_1_c_2a" /><a>噸。檢驗<a><input type="text" style="width:60px;" id="b1_1_c_3b1" /></a>支，共</a><input type="text" style="width:60px;" id="b1_1_c_2b" /><a>支。</a></div>
 						<div id="b1_1_c_3" class="b1_1_c" style="float:left;">
-							<a>含物性及化性檢驗費，不分爐號，每</a><input type="text" style="width:60px;" id="b1_1_c_3a" />
-							<a>噸檢驗1支，共</a><input type="text" style="width:60px;" id="b1_1_c_3b" />
-							<a>支，</a><br>
-							<a>　　 物性共</a><input type="text" style="width:60px;" id="b1_1_c_3c" />
-							<a>支，化性共</a><input type="text" style="width:60px;" id="b1_1_c_3d" />
-							<a>支。</a>
+							<a>每</a><input type="text" style="width:60px;" id="b1_1_c_3a" /><a>噸檢驗?支，物性共</a><input type="text" style="width:60px;" id="b1_1_c_3c" /><a>支，化性共</a><input type="text" style="width:60px;" id="b1_1_c_3d" />
+							<a>支，共</a><input type="text" style="width:60px;" id="b1_1_c_3b" /><a>支。</a>
 						</div>
 					</td>
 				</tr>
-				<tr class="b1_3">
-					<td>
-						<a>　(2)馬架10CM以下、圓形、特殊框形、漸便尺寸、少量多樣尺寸加工不在此單價內。</a>
-					</td>
-				</tr>
+				<tr class="b1_3"><td><a>　(2)馬架10CM以下、圓形、特殊框形、漸變尺寸及少量多樣尺寸加工不在此單價內。</a></td></tr>
 				<!-- 依BBS  動態產生-->
 		 		<tr class="b1_4">
 		 			<td>
@@ -1305,6 +1297,7 @@
 						<a style="float:left;">2.</a><a style="float:left;">交貨地點：</a>
 						<input style="float:left;" id="b2_1" list="b2_1a">
 						<datalist id="b2_1a" class="ignore">
+						  <option value='自訂'> </option>
 						  <option value='廠交(自運)'> </option>
 						</datalist>
 						<a style="float:left;">。交貨期限：</a>
@@ -1316,7 +1309,7 @@
 						<a style="float:left;">日止。</a>
 					</td>
 				</tr>
-				<tr><td><a>3.</a><a>工程名稱：</a><input type="text" style="width:200px;" id="b3_1"/></td></tr>
+				<tr><td><a>3.</a><a>工程名稱：</a><input type="text" style="width:200px;" id="b3_1"/><a>。</a></td></tr>
 				<tr><td><a>4.</a><a>鋼筋計價重量：以賣方實際過磅為準，若磅差超出千分之三時買方得要求公證地磅會磅，千分之三內買方</a></td></tr>
 				<tr><td><a>  </a><a>　　　　　　　　不得扣失重，若超出千分之三以上，雙方各半。</a></td></tr>
 				<tr>
@@ -1343,7 +1336,8 @@
 					<td>
 						<a>　</a><a>(1)</a>
 						<a>吊車送達</a><input type="text" style="width:200px;" id="b5_1_b_a"/>
-						<a>，賣方負責卸貨，卸貨以1F地坪為限。每趟出貨須達20噸，未達20噸者需補貼運費至20噸，每噸</a>
+						<a>，賣方負責卸貨，卸貨以1F地坪為限。每趟出貨須達20噸，未達20噸者需補</a><br>
+                        <a>　 　</a><a>貼運費至20噸，每噸</a>
 						<input type="text" style="width:60px;" id="b5_1_b_c"/><a>元。</a>
 					</td>
 				</tr>
@@ -1415,7 +1409,7 @@
 							<option value='自訂'>自訂</option>
 						</select>
 						<div id="b6_1_a" style="float:left;">
-							<a>預付</a><input type="text" style="width:40px;" id="b6_1_a_1"/><a>%貨款現金含稅為定金，</a>
+							<a>預付</a><input type="text" style="width:40px;" id="b6_1_a_1"/><a>%貨款現金</a><select id="b6_1_as" style="float:left;"><option value='含'>含</option><option value='不含'>不含</option></select><a>稅為定金，</a>
 							<select id="b6_1_a_2">
 								<option value='定金抵尾款'>定金抵尾款</option>
 								<option value='定金依出貨比例扣除'>定金依出貨比例扣除</option>
@@ -1456,12 +1450,13 @@
 				<tr><td><a>　</a><a>(3)</a><a>買方同意依照合約所定之付款日期及方式繳付價款予賣方，如逾期未付則按總價款之日息萬分之六</a></td></tr>
 				<tr><td><a>　　 計算遲延付款之利息，賣方並得據以暫停出貨。</a></td></tr>
 				<tr><td><a>7.</a><a>材料檢驗：</a></td></tr>
-				<tr><td><a>　(1)</a><a>賣方鋼筋出廠毎批均附鋼筋無輻射證明，買方需要檢驗報告時依CNS560規範執行。</a></td></tr>
+				<tr><td><a>　(1)賣方鋼筋出廠毎批均附鋼筋無輻射證明，買方需要檢驗報告時依CNS560規範執行。</a></td></tr>
 				<tr><td><a>　(2)鋼筋未經送驗合格前，不得加工及使用，否則所衍費用由買方自行吸收，且該批鋼筋不得辦理退貨。</a></td></tr>
-				<tr><td><a>　(3)買賣雙方對交貨、加工、材質有所爭議時，雙方應先協調檢驗及驗收方式，如買方未經賣方同意而自</a><br>
+				<tr><td>
+                        <a>　(3)買賣雙方對交貨、加工、材質有所爭議時，雙方應先協調檢驗及驗收方式，如買方未經賣方同意而自</a><br>
 						<a>　</a><a> 　行扣款，則賣方有 權終止合約。</a>
 				</td></tr>
-				<tr><td><a>　(4)</a><a>賣方加工之鋼筋各項尺寸公差圍±5公分。</a></td></tr>
+				<tr><td><a>　(4)</a><a>賣方加工之鋼筋各項尺寸公差為±5公分。</a></td></tr>
           		<tr>
 					<td>
 						<a>8.</a><a>(1)本合約之各項材料單價，不論市面價款之漲落，買賣雙方均不得提出增減價格及數量之要求。</a><br>
@@ -1524,15 +1519,14 @@
 						<div id="c1_1_c_1" class="c1_1_c" style="float:left;"><a>不含檢驗費。</a></div>
 						<div id="c1_1_c_2" class="c1_1_c" style="float:left;"><a>含物性檢驗費，不分爐號，每</a><input type="text" style="width:60px;" id="c1_1_c_2a" /><a>噸。檢驗1支，共</a><input type="text" style="width:60px;" id="c1_1_c_2b" /><a>支。</a></div>
 						<div id="c1_1_c_3" class="c1_1_c" style="float:left;">
-							<a>含物性及化性檢驗費，不分爐號，每</a><input type="text" style="width:60px;" id="c1_1_c_3a" />
-							<a>噸檢驗1支，共</a><input type="text" style="width:60px;" id="c1_1_c_3b" /><a>支，</a>
-							<br><a>　　 物性共</a><input type="text" style="width:60px;" id="c1_1_c_3c" />
-							<a>支，化性共</a><input type="text" style="width:60px;" id="c1_1_c_3d" /><a>支。</a>
+							<a>每</a><input type="text" style="width:60px;" id="c1_1_c_3a" /><a>噸檢驗</a><input type="text" style="width:60px;" id="c1_1_c_3a1" /><a>支，物性共</a>
+							<input type="text" style="width:60px;" id="c1_1_c_3b" /><a>支，</a>
+							<a>支，化性共</a><input type="text" style="width:60px;" id="c1_1_c_3d" /><a>支，共</a><input type="text" style="width:60px;" id="c1_1_c_3c" /><a>支。</a>
 						</div>
 					</td>
 				</tr>
-				<tr><td><a>　(2)</a><a>定尺品每噸加價</a><input type="text" style="width:60px;" id="c1_2_a" /><a>元。定尺品長度最短2米，以0.1米為一單位，尺寸公差為±10公分。16米以上定尺價格</a></td></tr>
-				<tr><td><a>　　 另議。板料不拆支。</a></td></tr>
+				<tr><td><a>　(2)</a><a>定尺品每噸加價</a><input type="text" style="width:60px;" id="c1_2_a" /><a>元。定尺品長度最短2米，以0.1米為一單位，尺寸公差為±10公分。16米以上定尺</a></td></tr>
+				<tr><td><a>　　 價格另議。板料不拆支。</a></td></tr>
 				<tr class="c1_3"><td><a>　</a><a>(3)</a><a>定尺品每尺寸最少5噸，不足5噸依加工成型計價。</a></td></tr>
 			 	<!-- 依BBS  動態產生-->
 		 		<tr class="c1_4">
@@ -1544,7 +1538,7 @@
  				</tr>
 				
 				<tr><td><a>　</a><a>(5)</a><a>本報價單不含至續接廠運輸費用。</a></td></tr>
-				<tr><td><a>　</a><a>(6)</a><a>本報價單單價不含裁切植筋用料及漸便尺寸。</a></td></tr>
+				<tr><td><a>　</a><a>(6)</a><a>本報價單單價不含裁切植筋用料及漸變尺寸。</a></td></tr>
 				<tr><td><a>　</a><a>(7)</a><a>包裝鋼筋成品所需之鋼筋與線材重量，納入重量計算。</a></td></tr>
 				<tr>
 					<td>
@@ -1552,6 +1546,7 @@
 						<input style="float:left;" id="c2_1" list="c2_1a">
 						<datalist id="c2_1a" class="ignore">
 						  <option value='廠交(自運)'> </option>
+                          <option value='自訂'>自訂</option>
 						</datalist>
 						<!--<select id="c2_1" style="float:left;">
 							<option value='廠交(自運)'>廠交(自運)</option>
@@ -1563,13 +1558,13 @@
 						<div id="c2_1_b" style="float:left;">
 							<a>　</a><input type="text" style="width:120px;" id="c2_1_b_1"/>
 						</div>-->
-						<a style="float:left;">，交貨期限：</a>
+						<a style="float:left;">。交貨期限：</a>
 						<input type="text" style="width:40px;float:left;" id="c2_1_c"/><a style="float:left;">年</a>
 						<input type="text" style="width:40px;float:left;" id="c2_1_d"/><a style="float:left;">月</a>
 						<input type="text" style="width:40px;float:left;" id="c2_1_e"/><a style="float:left;">日止。</a>
 					</td>
 				</tr>
-				<tr><td><a>3.</a><a>工程名稱：</a><input type="text" style="width:200px;" id="c3_1"/></td></tr>
+				<tr><td><a>3.</a><a>工程名稱：</a><input type="text" style="width:200px;" id="c3_1"/><a>。</a></td></tr>
 				<tr><td><a>4.</a><a>鋼筋計價重量：以賣方實際過磅為準，若磅差超出千分之三時買方得要求公證地磅會磅，千分之三內買方</a></td></tr>
 				<tr><td><a>　不得扣失重，若超出千分之三以上，雙方各半。</a></td></tr>
 				<tr>
@@ -1634,11 +1629,7 @@
 					</td>
 				</tr>
 				
-				<tr>
-					<td>
-						<a>6.</a><a>付款條件：</a>
-					</td>
-				</tr>
+				<tr><td><a>6.</a><a>付款條件：</a></td></tr>
 				<tr>
 					<td>
 						<a style="float:left;">　(1)</a>
@@ -1649,7 +1640,7 @@
 							<option value='自訂'>自訂</option>
 						</select>
 						<div id="c6_1_a" style="float:left;">
-							<a>預付</a><input type="text" style="width:40px;" id="c6_1_a_1"/><a>%貨款現金含稅為訂金，</a>
+							<a>預付</a><input type="text" style="width:40px;" id="c6_1_a_1"/><a>%貨款現金</a><select id="c6_1_as" style="float:left;"><option value='含'>含</option><option value='不含'>不含</option></select><a>稅為訂金，</a>
 							<select id="c6_1_a_2">
 								<option value='訂金抵尾款'>定金抵尾款</option>
 								<option value='訂金依出貨比例扣除'>定金依出貨比例扣除</option>
@@ -1682,8 +1673,6 @@
 							<a id="c6_1_b_1b" class="c6_1_b_1">。例：7月帳，開立9月15日到期支票。</a>
 							<a id="c6_1_b_1c" class="c6_1_b_1">。例：7月帳，開立9月30日到期支票。</a>
 							<a id="c6_1_b_1d" class="c6_1_b_1">。例：7月帳，開立8月10日前電匯現金。</a>
-							<br>
-							<a>　　 交貨期限到需將未出鋼筋噸數的金額依當期貨款支付現金完案。</a>
 						</div>
 						<div id="c6_1_c" style="float:left;">
 							<a>出貨前電匯貨款全額。</a><input type="text" style="width:150px;" id="c6_1_c_1"/>
@@ -1691,7 +1680,8 @@
 						<div id="c6_1_d" style="float:left;"><a> </a><input type="text" style="width:150px;" id="c6_1_d_1"/></div>
 					</td>
 				</tr>
-				<tr><td><a>　</a><a>(2)</a><a>買方同意依照合約所定之付款日期及方式繳付價款予賣方，如逾期未付則按總價款之日息萬分之六</a></td></tr>
+				<tr><td><a>　</a><a>(2)</a><a>交貨期限到需將未出鋼筋噸數的金額扣除訂金依當期貨款支付現金完案。</a></td></tr>
+				<tr><td><a>　</a><a>(3)</a><a>買方同意依照合約所定之付款日期及方式繳付價款予賣方，如逾期未付則按總價款之日息萬分之六</a></td></tr>
 				<tr><td><a>　　 計算遲延付款之利息，賣方並得據以暫停出貨。</a></td></tr>
 				<tr><td><a>7.</a><a>材料檢驗：</a></td></tr>
 				<tr><td><a>　(1)</a><a>賣方鋼筋出廠毎批均附鋼筋無輻射證明，買方需要檢驗報告時依CNS560規範執行。</a></td></tr>

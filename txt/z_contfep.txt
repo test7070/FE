@@ -121,9 +121,10 @@ z_contfep01:--z_contfep01
 	end
 	-------------------------------------------------------------------------------------
 	--insert into @tmp(gno)values('13')
-	--insert into @tmp(gno,memo)values('14',N'本合約一式二份，買賣雙方各執壹份為憑')--換頁
+	insert into @tmp(gno,memo)values('14',N'本合約一式二份，買賣雙方各執壹份為憑')--換頁
 	
 	insert into @tmp(gno)values('13')
+	insert into @tmp(gno,memo)values('16',N'　')
 	insert into @tmp(gno,memo)values('16',N'訂立合約書人：')
 	insert into @tmp(gno)values('13')
 	insert into @tmp(gno)values('13')
@@ -140,7 +141,7 @@ z_contfep01:--z_contfep01
 	from cust a
 	left join cont b on a.noa=b.tggno
 	where b.noa=@t_noa
-	
+	insert into @tmp(gno,memo)values('14',N'　')
 	insert into @tmp(gno,memo)values('12',N'買方（甲方）：'+@comp)
 	insert into @tmp(gno,memo)values('12',N'負責人：'+@boss)
 	insert into @tmp(gno,memo)values('12',N'統編：'+@serial)
@@ -160,13 +161,14 @@ z_contfep01:--z_contfep01
 	from acomp a
 	left join cont b on a.noa=b.cno
 	where b.noa=@t_noa
-	
+	insert into @tmp(gno,memo)values('14',N'　')
 	insert into @tmp(gno,memo)values('12',N'賣方（乙方）：'+@comp)
 	insert into @tmp(gno,memo)values('12',N'負責人：'+@boss)
 	insert into @tmp(gno,memo)values('12',N'統編：'+@serial)
 	insert into @tmp(gno,memo)values('12',N'地址：'+@addr)
 	insert into @tmp(gno,memo)values('12',N'電話：'+@tel)
 	insert into @tmp(gno,memo)values('12',N'傳真：'+@fax)
+	insert into @tmp(gno,memo)values('14',N'　')
 
 	insert into @tmp(gno)values('13')
 	insert into @tmp(gno)values('13')
@@ -202,14 +204,12 @@ z_contfep01:--z_contfep01
 		,'<a style="font-size:30px'+char(59)+'font-family:'+ "'Times New Roman','標楷體', serif"+char(59)+'">買賣合約書</a>' a01
 		,'<a style="font-family:'+ "'Times New Roman','標楷體', serif"+char(59)+'">聯絡人：'+@t_conn+'</a>' a02
 		,'<a style="font-family:'+ "'Times New Roman','標楷體', serif"+char(59)+'">TEL：07-6661653 FAX：07-6662927 e-mail：jyu.sin@msa.hinet.net</a>' a03
-		,'<a style="font-family:'+ "'Times New Roman','標楷體', serif"+char(59)+'">合約日期：'+datea+'</a>' a04
-		,'<a style="font-family:'+ "'Times New Roman','標楷體', serif"+char(59)+'">合約編號：'+noa+'</a>' a05
+		,'<a style="font-family:'+ "'Times New Roman','標楷體', serif"+char(59)+'">報價日期：'+datea+'</a>' a04
+		,'<a style="font-family:'+ "'Times New Roman','標楷體', serif"+char(59)+'">報價編號：'+noa+'</a>' a05
 		,'<a style="font-family:'+ "'Times New Roman','標楷體', serif"+char(59)+'">謹致：'+cust+'   聯絡人：'+conn+'</a>' a06
 		,'<a style="font-family:'+ "'Times New Roman','標楷體', serif"+char(59)+'">電話：'+tel+'   傳真：'+fax+'</a>' a07
 		,'<a style="font-family:'+ "'Times New Roman','標楷體', serif"+char(59)+'">登打人：'+worker+'</a>' a08
-		,product b01
-		,size b02
-		,unit b03
+		,product b01 ,size b02 ,unit b03
 		,dbo.getComma(mount,-1) b04
 		,dbo.getComma(price,-1) b05
 		,memo b06
