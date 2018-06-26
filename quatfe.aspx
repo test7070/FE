@@ -23,8 +23,12 @@
 			var q_name = "quat";
 			var decbbs = ['price', 'weight', 'mount', 'total', 'dime', 'width', 'lengthb', 'c1', 'notv', 'theory'];
 			var decbbm = ['money', 'tax', 'total', 'weight', 'floata', 'mount', 'price', 'totalus'];
-			var decbbt = [];
-			var q_readonly = ['txtNoa','txtWorker', 'txtComp', 'txtSales', 'txtWorker2','txtApv', 'txtMoney', 'txtTotal', 'txtWeight'];
+            var decbbt = [];
+            if (q_getPara('sys.comp').substring(0, 2) == '鉅昕') {
+                var q_readonly = ['txtNoa', 'txtWorker', 'txtSales', 'txtWorker2', 'txtApv', 'txtMoney', 'txtTotal', 'txtWeight'];
+            } else {
+                var q_readonly = ['txtNoa','txtWorker', 'txtComp', 'txtSales', 'txtWorker2','txtApv', 'txtMoney', 'txtTotal', 'txtWeight'];
+            }
 			var q_readonlys = ['txtNo3'];
 			var q_readonlyt = ['txtMemo','txtMemo2'];
 			var bbmNum = [];
