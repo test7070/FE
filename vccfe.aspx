@@ -31,7 +31,7 @@
 
             q_tables = 's';
             var q_name = "vcc";
-            var q_readonly = ['txtNoa', 'txtAccno', 'txtComp', 'txtCardeal', 'txtSales', 'txtAcomp', 'txtMoney', 'txtTax', 'txtTotal', 'txtTotalus', 'txtWorker', 'txtWorker2', 'txtTranstart', 'txtWeight','txtApv','txtApvname','txtApvmemo'];
+            var q_readonly = ['txtNoa', 'txtAccno', 'txtComp', 'txtCardeal', 'txtSales', 'txtAcomp', 'txtMoney', 'txtTax', 'txtTotal', 'txtTotalus', 'txtWorker', 'txtWorker2', 'txtTranstart', 'txtWeight', 'txtApv', 'txtApvname', 'txtApvmemo', 'txtPaytype'];
             var q_readonlys = ['txtTotal', 'txtOrdeno', 'txtNo2', 'txtNoq', 'txtProfit', 'txtChecker'];
             var bbmNum = [];
             var bbsNum = [['txtWeight',10,2]];
@@ -1638,7 +1638,7 @@
 						</td>
 						<td class="td4"><span> </span><a id='lblPay' class="lbl"> </a></td>
 						<td class="td5"><input id="txtPaytype" type="text" class="txt c1"/></td>
-						<td class="td6"><select id="combPay" style="width: 100%;" onchange='combPay_chg()'></select></td>
+						<td class="td6"><select id="combPay" style="width:100%;display:none;" onchange='combPay_chg()'></select></td>
 						<td class="td6"align="right"><input id="btnOrdes" type="button"/></td>
 					</tr>
 					<tr>
