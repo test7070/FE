@@ -714,7 +714,7 @@
 							for(var k=0;k<t_cut.length;k++){
 								//107/02/06 依據台料 判斷是否受項次限制
 								if(!$('#chkCancel').prop('checked')){
-									if(getucc[i].cutmemo[j].nor==t_cut[k].nor){
+									if(getucc[i].cutmemo[j].nor==t_cut[k].nor && getucc[i].cutmemo[j].lengthb==t_cut[k].lengthb){
 										isincut=true;
 										t_cut[k].mount=q_add(t_cut[k].mount,dec(getucc[i].cutmemo[j].mount));
 									}
