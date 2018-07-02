@@ -86,9 +86,7 @@ z_ummfe06:--z_ummfe06
 	while(@@FETCH_STATUS <> -1)
 	begin		
 		set @cmd =
-		"select case when c.custno is not null then c.custno 
-			when d.custno is not null then d.custno
-			else e.custno end
+		"select case when c.custno is not null then c.custno when d.custno is not null then d.custno else e.custno end
 		,SUM(case when c.custno is null then 0 else ISNULL(b.dmoney,0)-ISNULL(b.cmoney,0)end)
 		,SUM(case when d.custno is null then 0 else ISNULL(b.cmoney,0)-ISNULL(b.dmoney,0)end)
 		,SUM(case when e.custno is null then 0 else ISNULL(b.dmoney,0)-ISNULL(b.cmoney,0)end)
@@ -104,9 +102,7 @@ z_ummfe06:--z_ummfe06
 			else e.custno end"
 		
 		insert into @tmp(custno,acccmoney1,acccmoney3,acccmoney2)
-		execute sp_executesql @cmd,N'@t_mon nvarchar(20),@yy nvarchar(20)'
-			,@t_mon=@t_mon,@yy=@yy
-			
+		execute sp_executesql @cmd,N'@t_mon nvarchar(20),@yy nvarchar(20)',@t_mon=@t_mon,@yy=@yy
 		fetch next from cursor_table
 		into @tablea,@accy,@yy
 	end
