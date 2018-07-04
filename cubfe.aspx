@@ -1905,6 +1905,26 @@
 												&& dec(tt_same[n].mount)+dec(tt_same[n].maxmount)>0
 											){
 												x_n=n;
+												var t_writenor=false;
+												for (var z=0;z<cuttmp.length;z++){
+													if(dec(cupcutlength[m])==dec(cuttmp[z].lengthb)){
+														if(dec(cuttmp[z].lengthb)<=dec(tt_same[n].lengthb) && dec(cuttmp[z].lengthb)>=(dec(tt_same[n].lengthb)-dec(tt_same[n].tw03))){
+															if((','+cuttmp[z].nor+',').indexOf(','+tt_same[n].nor.toString()+',')!=-1 && dec(tt_same[n].mount)+dec(tt_same[n].maxmount)>0){
+																break;
+															}
+															
+															if((','+cuttmp[z].nor+',').indexOf(','+tt_same[n].nor.toString()+',')==-1){
+																cuttmp[z].nor=cuttmp[z].nor+(cuttmp[z].nor.length>0?',':'')+tt_same[n].nor.toString();
+																tcuttmp[z].nor=tcuttmp[z].nor+(tcuttmp[z].nor.length>0?',':'')+tt_same[n].nor.toString();
+																t_writenor=true;
+															}
+															
+															if(t_writenor)
+																break;
+														}
+													}
+												}
+												
 												if(dec(tt_same[n].mount)>0)
 													tt_same[n].mount=q_sub(tt_same[n].mount,1);
 												else
@@ -1925,7 +1945,7 @@
 													}
 												}
 												
-												for (var z=0;z<cuttmp.length;z++){
+												/*for (var z=0;z<cuttmp.length;z++){
 													if(dec(cuttmp[z].lengthb)<=dec(tt_same[n].lengthb) && dec(cuttmp[z].lengthb)>=(dec(tt_same[n].lengthb)-dec(tt_same[n].tw03))){
 														if((','+cuttmp[z].nor+',').indexOf(','+tt_same[n].nor.toString()+',')==-1){
 															cuttmp[z].nor=cuttmp[z].nor+(cuttmp[z].nor.length>0?',':'')+tt_same[n].nor.toString();
@@ -1933,7 +1953,7 @@
 														}
 														//break;
 													}
-												}
+												}*/
 												if(bmount==1){
 													cutmemo.push({
 														'lengthb':dec(cupcutlength[m]),
@@ -2007,10 +2027,12 @@
 													isexist=true;
 													
 													for (var z=0;z<tcuttmp.length;z++){
-														if(dec(tcuttmp[z].lengthb)<=dec(ttt_same[n].lengthb) && dec(tcuttmp[z].lengthb)>=(dec(ttt_same[n].lengthb)-dec(ttt_same[n].tw03))){
-															if((','+tcuttmp[z].nor+',').indexOf(','+ttt_same[n].nor.toString()+',')==-1)
-																tcuttmp[z].nor=tcuttmp[z].nor+(tcuttmp[z].nor.length>0?',':'')+ttt_same[n].nor.toString();
-															break;
+														if(dec(cupcutlength[m])==dec(tcuttmp[z].lengthb)){
+															if(dec(tcuttmp[z].lengthb)<=dec(ttt_same[n].lengthb) && dec(tcuttmp[z].lengthb)>=(dec(ttt_same[n].lengthb)-dec(ttt_same[n].tw03))){
+																if((','+tcuttmp[z].nor+',').indexOf(','+ttt_same[n].nor.toString()+',')==-1)
+																	tcuttmp[z].nor=tcuttmp[z].nor+(tcuttmp[z].nor.length>0?',':'')+ttt_same[n].nor.toString();
+																break;
+															}
 														}
 													}
 													
@@ -3217,6 +3239,26 @@
 												&& dec(tt_same[n].mount)+dec(tt_same[n].maxmount)>0
 											){
 												x_n=n;
+												var t_writenor=false;
+												for (var z=0;z<cuttmp.length;z++){
+													if(dec(cupcutlength[m])==dec(cuttmp[z].lengthb)){
+														if(dec(cuttmp[z].lengthb)<=dec(tt_same[n].lengthb) && dec(cuttmp[z].lengthb)>=(dec(tt_same[n].lengthb)-dec(tt_same[n].tw03))){
+															if((','+cuttmp[z].nor+',').indexOf(','+tt_same[n].nor.toString()+',')!=-1 && dec(tt_same[n].mount)+dec(tt_same[n].maxmount)>0){
+																break;
+															}
+															
+															if((','+cuttmp[z].nor+',').indexOf(','+tt_same[n].nor.toString()+',')==-1){
+																cuttmp[z].nor=cuttmp[z].nor+(cuttmp[z].nor.length>0?',':'')+tt_same[n].nor.toString();
+																tcuttmp[z].nor=tcuttmp[z].nor+(tcuttmp[z].nor.length>0?',':'')+tt_same[n].nor.toString();
+																t_writenor=true;
+															}
+															
+															if(t_writenor)
+																break;
+														}
+													}
+												}
+												
 												if(dec(tt_same[n].mount)>0)
 													tt_same[n].mount=q_sub(tt_same[n].mount,1);
 												else
@@ -3237,7 +3279,7 @@
 													}
 												}
 												
-												for (var z=0;z<cuttmp.length;z++){
+												/*for (var z=0;z<cuttmp.length;z++){
 													if(dec(cuttmp[z].lengthb)<=dec(tt_same[n].lengthb) && dec(cuttmp[z].lengthb)>=(dec(tt_same[n].lengthb)-dec(tt_same[n].tw03))){
 														if((','+cuttmp[z].nor+',').indexOf(','+tt_same[n].nor.toString()+',')==-1){
 															cuttmp[z].nor=cuttmp[z].nor+(cuttmp[z].nor.length>0?',':'')+tt_same[n].nor.toString();
@@ -3245,7 +3287,7 @@
 														}
 														//break;
 													}
-												}
+												}*/
 												if(bmount==1){
 													cutmemo.push({
 														'lengthb':dec(cupcutlength[m]),
@@ -3319,10 +3361,12 @@
 													isexist=true;
 													
 													for (var z=0;z<tcuttmp.length;z++){
-														if(dec(tcuttmp[z].lengthb)<=dec(ttt_same[n].lengthb) && dec(tcuttmp[z].lengthb)>=(dec(ttt_same[n].lengthb)-dec(ttt_same[n].tw03))){
-															if((','+tcuttmp[z].nor+',').indexOf(','+ttt_same[n].nor.toString()+',')==-1)
-																tcuttmp[z].nor=tcuttmp[z].nor+(tcuttmp[z].nor.length>0?',':'')+ttt_same[n].nor.toString();
-															break;
+														if(dec(cupcutlength[m])==dec(tcuttmp[z].lengthb)){
+															if(dec(tcuttmp[z].lengthb)<=dec(ttt_same[n].lengthb) && dec(tcuttmp[z].lengthb)>=(dec(ttt_same[n].lengthb)-dec(ttt_same[n].tw03))){
+																if((','+tcuttmp[z].nor+',').indexOf(','+ttt_same[n].nor.toString()+',')==-1)
+																	tcuttmp[z].nor=tcuttmp[z].nor+(tcuttmp[z].nor.length>0?',':'')+ttt_same[n].nor.toString();
+																break;
+															}
 														}
 													}
 													
@@ -4519,6 +4563,26 @@
 												&& dec(tt_same[n].mount)+dec(tt_same[n].maxmount)>0
 											){
 												x_n=n;
+												var t_writenor=false;
+												for (var z=0;z<cuttmp.length;z++){
+													if(dec(cupcutlength[m])==dec(cuttmp[z].lengthb)){
+														if(dec(cuttmp[z].lengthb)<=dec(tt_same[n].lengthb) && dec(cuttmp[z].lengthb)>=(dec(tt_same[n].lengthb)-dec(tt_same[n].tw03))){
+															if((','+cuttmp[z].nor+',').indexOf(','+tt_same[n].nor.toString()+',')!=-1 && dec(tt_same[n].mount)+dec(tt_same[n].maxmount)>0){
+																break;
+															}
+															
+															if((','+cuttmp[z].nor+',').indexOf(','+tt_same[n].nor.toString()+',')==-1){
+																cuttmp[z].nor=cuttmp[z].nor+(cuttmp[z].nor.length>0?',':'')+tt_same[n].nor.toString();
+																tcuttmp[z].nor=tcuttmp[z].nor+(tcuttmp[z].nor.length>0?',':'')+tt_same[n].nor.toString();
+																t_writenor=true;
+															}
+															
+															if(t_writenor)
+																break;
+														}
+													}
+												}
+												
 												if(dec(tt_same[n].mount)>0)
 													tt_same[n].mount=q_sub(tt_same[n].mount,1);
 												else
@@ -4539,7 +4603,7 @@
 													}
 												}
 												
-												for (var z=0;z<cuttmp.length;z++){
+												/*for (var z=0;z<cuttmp.length;z++){
 													if(dec(cuttmp[z].lengthb)<=dec(tt_same[n].lengthb) && dec(cuttmp[z].lengthb)>=(dec(tt_same[n].lengthb)-dec(tt_same[n].tw03))){
 														if((','+cuttmp[z].nor+',').indexOf(','+tt_same[n].nor.toString()+',')==-1){
 															cuttmp[z].nor=cuttmp[z].nor+(cuttmp[z].nor.length>0?',':'')+tt_same[n].nor.toString();
@@ -4547,7 +4611,7 @@
 														}
 														//break;
 													}
-												}
+												}*/
 												if(bmount==1){
 													cutmemo.push({
 														'lengthb':dec(cupcutlength[m]),
@@ -4621,10 +4685,12 @@
 													isexist=true;
 													
 													for (var z=0;z<tcuttmp.length;z++){
-														if(dec(tcuttmp[z].lengthb)<=dec(ttt_same[n].lengthb) && dec(tcuttmp[z].lengthb)>=(dec(ttt_same[n].lengthb)-dec(ttt_same[n].tw03))){
-															if((','+tcuttmp[z].nor+',').indexOf(','+ttt_same[n].nor.toString()+',')==-1)
-																tcuttmp[z].nor=tcuttmp[z].nor+(tcuttmp[z].nor.length>0?',':'')+ttt_same[n].nor.toString();
-															break;
+														if(dec(cupcutlength[m])==dec(tcuttmp[z].lengthb)){
+															if(dec(tcuttmp[z].lengthb)<=dec(ttt_same[n].lengthb) && dec(tcuttmp[z].lengthb)>=(dec(ttt_same[n].lengthb)-dec(ttt_same[n].tw03))){
+																if((','+tcuttmp[z].nor+',').indexOf(','+ttt_same[n].nor.toString()+',')==-1)
+																	tcuttmp[z].nor=tcuttmp[z].nor+(tcuttmp[z].nor.length>0?',':'')+ttt_same[n].nor.toString();
+																break;
+															}
 														}
 													}
 													
@@ -7653,6 +7719,26 @@
 												&& dec(tt_same[n].mount)+dec(tt_same[n].maxmount)>0
 											){
 												x_n=n;
+												var t_writenor=false;
+												for (var z=0;z<cuttmp.length;z++){
+													if(dec(cupcutlength[m])==dec(cuttmp[z].lengthb)){
+														if(dec(cuttmp[z].lengthb)<=dec(tt_same[n].lengthb) && dec(cuttmp[z].lengthb)>=(dec(tt_same[n].lengthb)-dec(tt_same[n].tw03))){
+															if((','+cuttmp[z].nor+',').indexOf(','+tt_same[n].nor.toString()+',')!=-1 && dec(tt_same[n].mount)+dec(tt_same[n].maxmount)>0){
+																break;
+															}
+															
+															if((','+cuttmp[z].nor+',').indexOf(','+tt_same[n].nor.toString()+',')==-1){
+																cuttmp[z].nor=cuttmp[z].nor+(cuttmp[z].nor.length>0?',':'')+tt_same[n].nor.toString();
+																tcuttmp[z].nor=tcuttmp[z].nor+(tcuttmp[z].nor.length>0?',':'')+tt_same[n].nor.toString();
+																t_writenor=true;
+															}
+															
+															if(t_writenor)
+																break;
+														}
+													}
+												}
+												
 												if(dec(tt_same[n].mount)>0)
 													tt_same[n].mount=q_sub(tt_same[n].mount,1);
 												else
@@ -7673,7 +7759,7 @@
 													}
 												}
 												
-												for (var z=0;z<cuttmp.length;z++){
+												/*for (var z=0;z<cuttmp.length;z++){
 													if(dec(cuttmp[z].lengthb)<=dec(tt_same[n].lengthb) && dec(cuttmp[z].lengthb)>=(dec(tt_same[n].lengthb)-dec(tt_same[n].tw03))){
 														if((','+cuttmp[z].nor+',').indexOf(','+tt_same[n].nor.toString()+',')==-1){
 															cuttmp[z].nor=cuttmp[z].nor+(cuttmp[z].nor.length>0?',':'')+tt_same[n].nor.toString();
@@ -7681,7 +7767,8 @@
 														}
 														//break;
 													}
-												}
+												}*/
+												
 												if(bmount==1){
 													cutmemo.push({
 														'lengthb':dec(cupcutlength[m]),
@@ -7755,10 +7842,12 @@
 													isexist=true;
 													
 													for (var z=0;z<tcuttmp.length;z++){
-														if(dec(tcuttmp[z].lengthb)<=dec(ttt_same[n].lengthb) && dec(tcuttmp[z].lengthb)>=(dec(ttt_same[n].lengthb)-dec(ttt_same[n].tw03))){
-															if((','+tcuttmp[z].nor+',').indexOf(','+ttt_same[n].nor.toString()+',')==-1)
-																tcuttmp[z].nor=tcuttmp[z].nor+(tcuttmp[z].nor.length>0?',':'')+ttt_same[n].nor.toString();
-															break;
+														if(dec(cupcutlength[m])==dec(tcuttmp[z].lengthb)){
+															if(dec(tcuttmp[z].lengthb)<=dec(ttt_same[n].lengthb) && dec(tcuttmp[z].lengthb)>=(dec(ttt_same[n].lengthb)-dec(ttt_same[n].tw03))){
+																if((','+tcuttmp[z].nor+',').indexOf(','+ttt_same[n].nor.toString()+',')==-1)
+																	tcuttmp[z].nor=tcuttmp[z].nor+(tcuttmp[z].nor.length>0?',':'')+ttt_same[n].nor.toString();
+																break;
+															}
 														}
 													}
 													
@@ -8254,6 +8343,55 @@
 							}
 						}
 						
+						//107/07/04倍數或相同 優先
+						var tmountcut=[];
+						for(var m=cutlengthb.length-1;m>=0;m--){
+							var t_samemount=0;
+							var t_cutmount=0;
+							for (var j=0;j<t_same.length;j++){
+								var tspec2=t_same[j].spec;
+								var tsize2=t_same[j].size;
+								var tmount2=t_same[j].mount;
+								var lengthb2=dec(t_same[j].lengthb);
+								if(tspec1==tspec2 && tsize1==tsize2 && lengthb2==dec(cutlengthb[m])){
+									t_cutmount=tmount2;
+									break;
+								}
+							}
+							
+							if(t_cutmount<5){continue;}
+							
+							for(var m2=m-1;m2>=0;m2--){
+								var t_cutmount2=0;
+								for (var j=0;j<t_same.length;j++){
+									var tspec2=t_same[j].spec;
+									var tsize2=t_same[j].size;
+									var tmount2=t_same[j].mount;
+									var lengthb2=dec(t_same[j].lengthb);
+									if(tspec1==tspec2 && tsize1==tsize2 && lengthb2==dec(cutlengthb[m2])){
+										t_cutmount2=tmount2;
+										break;
+									}
+								}
+								
+								if(t_cutmount2==t_cutmount){
+									t_samemount++;
+								}else if(t_cutmount2%t_cutmount==0 && t_cutmount2>t_cutmount){
+									t_samemount++;
+								}
+							}
+							if(t_samemount>0){
+								tmountcut.push({
+									lengthb:dec(cutlengthb[m]),
+									mount:t_samemount
+								});
+							}
+						}
+						if(tmountcut.length>0){
+							tmountcut.sort(function(a, b) {if(a.mount>b.mount) {return -1;} if (a.mount < b.mount) {return 1;} return 0;});
+							maxcutlengthb=tmountcut[0].lengthb;
+						}
+						
 						//裁切組合
 						var t_cups=[];
 						var t_cupsp=false;
@@ -8382,9 +8520,9 @@
 																if(tspec1==tspec2 && tsize1==tsize2 && dec(cutlengthb[n])==lengthb2 && dec(tmount2)>0){
 																	if (t_maxlenmount==dec(t_same[j].mount)){
 																		a_cutlengthbs.push(dec(cutlengthb[n]));
-																	}else if (t_maxlenmount<dec(t_same[j].mount)){
+																	}else if (t_maxlenmount<dec(t_same[j].mount) && dec(t_same[j].mount)%t_maxlenmount==0){
 																		b_cutlengthbs.push(dec(cutlengthb[n]));
-																	}else if (t_maxlenmount%dec(t_same[j].mount)){
+																	}else if (t_maxlenmount<dec(t_same[j].mount)){
 																		e_cutlengthbs.push(dec(cutlengthb[n]));
 																	}else if(dec(cutlengthb[n])<dec(maxcutlengthb)){
 																		d_cutlengthbs.push(dec(cutlengthb[n]));
@@ -8432,9 +8570,13 @@
 													cutlengthbs.sort(function(a, b) {if(a>b) {return -1;} if (a < b) {return 1;} return 0;});//長>短
 													var tmp2=$.extend(true,[], b_cutlengthbs);
 													tmp2.sort(function(a, b) {if(a>b) {return -1;} if (a < b) {return 1;} return 0;});//長>短
-													cutlengthbs=cutlengthbs=cutlengthbs.concat(tmp2);
+													cutlengthbs=cutlengthbs.concat(tmp2);
+													cutlengthbs=cutlengthbs.concat(e_cutlengthbs);
 													rep='';
-													var t_cup=getmlength2(clength,clength,maxcutlengthb,cutlengthbs,'',[],t_same,tspec1,tsize1,a_cutlengthbs);
+													var t_cup=[];
+													
+													if(a_cutlengthbs.length>0)
+														t_cup=getmlength2(clength,clength,maxcutlengthb,cutlengthbs,'',[],t_same,tspec1,tsize1,a_cutlengthbs);
 													
 													//調整最後剩餘數量是否符合最低損耗率
 													for(var f=0;f<t_cup.length;f++){
@@ -8566,7 +8708,8 @@
 													}
 													if(t_cup.length==0 && t_level>0){
 														rep='';
-														t_cup=getmlength2(q_add(clength,t_level),q_add(clength,t_level),maxcutlengthb,cutlengthbs,'',[],t_same,tspec1,tsize1,a_cutlengthbs);
+														if(a_cutlengthbs.length>0)
+															t_cup=getmlength2(q_add(clength,t_level),q_add(clength,t_level),maxcutlengthb,cutlengthbs,'',[],t_same,tspec1,tsize1,a_cutlengthbs);
 														//調整最後剩餘數量是否符合最低損耗率
 														for(var f=0;f<t_cup.length;f++){
 															tt_same=$.extend(true,[], tmp_same);
@@ -8703,7 +8846,8 @@
 														cutlengthbs.sort(function(a, b) {if(a>b) {return -1;} if (a < b) {return 1;} return 0;});//長>短
 														var tmp2=$.extend(true,[], b_cutlengthbs);
 														tmp2.sort(function(a, b) {if(a>b) {return -1;} if (a < b) {return 1;} return 0;});//長>短
-														cutlengthbs=cutlengthbs=cutlengthbs.concat(tmp2);
+														cutlengthbs=cutlengthbs.concat(tmp2);
+														cutlengthbs=cutlengthbs.concat(e_cutlengthbs);
 														rep='';
 														var t_cup=getmlength2(clength,clength,maxcutlengthb,cutlengthbs,'',[],t_same,tspec1,tsize1,[]);
 														
@@ -9541,9 +9685,9 @@
 																	if(tspec1==tspec2 && tsize1==tsize2 && dec(cutlengthb[n])==lengthb2 && dec(tmount2)>0){
 																		if (t_maxlenmount==dec(t_same[j].mount)){
 																			a_cutlengthbs.push(dec(cutlengthb[n]));
-																		}else if (t_maxlenmount<dec(t_same[j].mount)){
+																		}else if (t_maxlenmount<dec(t_same[j].mount) && dec(t_same[j].mount)%t_maxlenmount==0){
 																			b_cutlengthbs.push(dec(cutlengthb[n]));
-																		}else if (t_maxlenmount%dec(t_same[j].mount)){
+																		}else if (t_maxlenmount<dec(t_same[j].mount)){
 																			e_cutlengthbs.push(dec(cutlengthb[n]));
 																		}else if(dec(t_same[j].mount)==1){
 																			d_cutlengthbs.push(dec(cutlengthb[n]));
@@ -9558,8 +9702,8 @@
 														}
 														cutlengthbs=$.extend(true,[], [dec(maxcutlengthb)]);
 														cutlengthbs=cutlengthbs.concat(a_cutlengthbs);//數量相同
-														cutlengthbs=cutlengthbs.concat(b_cutlengthbs);//數量多
-														cutlengthbs=cutlengthbs.concat(e_cutlengthbs); //數量少 倍數
+														cutlengthbs=cutlengthbs.concat(b_cutlengthbs);//數量多 倍數
+														cutlengthbs=cutlengthbs.concat(e_cutlengthbs); //數量多
 														cutlengthbs=cutlengthbs.concat(c_cutlengthbs);//數量少
 														cutlengthbs=cutlengthbs.concat(d_cutlengthbs);//數量1
 														
@@ -10187,6 +10331,26 @@
 												&& dec(tt_same[n].mount)+dec(tt_same[n].maxmount)>0
 											){
 												x_n=n;
+												var t_writenor=false;
+												for (var z=0;z<cuttmp.length;z++){
+													if(dec(cupcutlength[m])==dec(cuttmp[z].lengthb)){
+														if(dec(cuttmp[z].lengthb)<=dec(tt_same[n].lengthb) && dec(cuttmp[z].lengthb)>=(dec(tt_same[n].lengthb)-dec(tt_same[n].tw03))){
+															if((','+cuttmp[z].nor+',').indexOf(','+tt_same[n].nor.toString()+',')!=-1 && dec(tt_same[n].mount)+dec(tt_same[n].maxmount)>0){
+																break;
+															}
+															
+															if((','+cuttmp[z].nor+',').indexOf(','+tt_same[n].nor.toString()+',')==-1){
+																cuttmp[z].nor=cuttmp[z].nor+(cuttmp[z].nor.length>0?',':'')+tt_same[n].nor.toString();
+																tcuttmp[z].nor=tcuttmp[z].nor+(tcuttmp[z].nor.length>0?',':'')+tt_same[n].nor.toString();
+																t_writenor=true;
+															}
+															
+															if(t_writenor)
+																break;
+														}
+													}
+												}
+												
 												if(dec(tt_same[n].mount)>0)
 													tt_same[n].mount=q_sub(tt_same[n].mount,1);
 												else
@@ -10207,7 +10371,7 @@
 													}
 												}
 												
-												for (var z=0;z<cuttmp.length;z++){
+												/*for (var z=0;z<cuttmp.length;z++){
 													if(dec(cuttmp[z].lengthb)<=dec(tt_same[n].lengthb) && dec(cuttmp[z].lengthb)>=(dec(tt_same[n].lengthb)-dec(tt_same[n].tw03))){
 														if((','+cuttmp[z].nor+',').indexOf(','+tt_same[n].nor.toString()+',')==-1){
 															cuttmp[z].nor=cuttmp[z].nor+(cuttmp[z].nor.length>0?',':'')+tt_same[n].nor.toString();
@@ -10215,7 +10379,7 @@
 														}
 														//break;
 													}
-												}
+												}*/
 												if(bmount==1){
 													cutmemo.push({
 														'lengthb':dec(cupcutlength[m]),
@@ -10289,10 +10453,12 @@
 													isexist=true;
 													
 													for (var z=0;z<tcuttmp.length;z++){
-														if(dec(tcuttmp[z].lengthb)<=dec(ttt_same[n].lengthb) && dec(tcuttmp[z].lengthb)>=(dec(ttt_same[n].lengthb)-dec(ttt_same[n].tw03))){
-															if((','+tcuttmp[z].nor+',').indexOf(','+ttt_same[n].nor.toString()+',')==-1)
-																tcuttmp[z].nor=tcuttmp[z].nor+(tcuttmp[z].nor.length>0?',':'')+ttt_same[n].nor.toString();
-															break;
+														if(dec(cupcutlength[m])==dec(tcuttmp[z].lengthb)){
+															if(dec(tcuttmp[z].lengthb)<=dec(ttt_same[n].lengthb) && dec(tcuttmp[z].lengthb)>=(dec(ttt_same[n].lengthb)-dec(ttt_same[n].tw03))){
+																if((','+tcuttmp[z].nor+',').indexOf(','+ttt_same[n].nor.toString()+',')==-1)
+																	tcuttmp[z].nor=tcuttmp[z].nor+(tcuttmp[z].nor.length>0?',':'')+ttt_same[n].nor.toString();
+																break;
+															}
 														}
 													}
 													
@@ -10490,6 +10656,55 @@
 								if(!t_ismod){
 									break;
 								}
+							}
+							
+							//107/07/04倍數或相同 優先
+							var tmountcut=[];
+							for(var m=cutlengthb.length-1;m>=0;m--){
+								var t_samemount=0;
+								var t_cutmount=0;
+								for (var j=0;j<t_same.length;j++){
+									var tspec2=t_same[j].spec;
+									var tsize2=t_same[j].size;
+									var tmount2=t_same[j].mount;
+									var lengthb2=dec(t_same[j].lengthb);
+									if(tspec1==tspec2 && tsize1==tsize2 && lengthb2==dec(cutlengthb[m])){
+										t_cutmount=tmount2;
+										break;
+									}
+								}
+								
+								if(t_cutmount<5){continue;}
+								
+								for(var m2=m-1;m2>=0;m2--){
+									var t_cutmount2=0;
+									for (var j=0;j<t_same.length;j++){
+										var tspec2=t_same[j].spec;
+										var tsize2=t_same[j].size;
+										var tmount2=t_same[j].mount;
+										var lengthb2=dec(t_same[j].lengthb);
+										if(tspec1==tspec2 && tsize1==tsize2 && lengthb2==dec(cutlengthb[m2])){
+											t_cutmount2=tmount2;
+											break;
+										}
+									}
+									
+									if(t_cutmount2==t_cutmount){
+										t_samemount++;
+									}else if(t_cutmount2%t_cutmount==0 && t_cutmount2>t_cutmount){
+										t_samemount++;
+									}
+								}
+								if(t_samemount>0){
+									tmountcut.push({
+										lengthb:dec(cutlengthb[m]),
+										mount:t_samemount
+									});
+								}
+							}
+							if(tmountcut.length>0){
+								tmountcut.sort(function(a, b) {if(a.mount>b.mount) {return -1;} if (a.mount < b.mount) {return 1;} return 0;});
+								maxcutlengthb=tmountcut[0].lengthb;
 							}
 						}
 					}
@@ -10793,6 +11008,55 @@
 							}
 						}
 						
+						//107/07/04倍數或相同 優先
+						var tmountcut=[];
+						for(var m=cutlengthb.length-1;m>=0;m--){
+							var t_samemount=0;
+							var t_cutmount=0;
+							for (var j=0;j<t_same.length;j++){
+								var tspec2=t_same[j].spec;
+								var tsize2=t_same[j].size;
+								var tmount2=t_same[j].mount;
+								var lengthb2=dec(t_same[j].lengthb);
+								if(tspec1==tspec2 && tsize1==tsize2 && lengthb2==dec(cutlengthb[m])){
+									t_cutmount=tmount2;
+									break;
+								}
+							}
+							
+							if(t_cutmount<5){continue;}
+							
+							for(var m2=m-1;m2>=0;m2--){
+								var t_cutmount2=0;
+								for (var j=0;j<t_same.length;j++){
+									var tspec2=t_same[j].spec;
+									var tsize2=t_same[j].size;
+									var tmount2=t_same[j].mount;
+									var lengthb2=dec(t_same[j].lengthb);
+									if(tspec1==tspec2 && tsize1==tsize2 && lengthb2==dec(cutlengthb[m2])){
+										t_cutmount2=tmount2;
+										break;
+									}
+								}
+								
+								if(t_cutmount2==t_cutmount){
+									t_samemount++;
+								}else if(t_cutmount2%t_cutmount==0 && t_cutmount2>t_cutmount){
+									t_samemount++;
+								}
+							}
+							if(t_samemount>0){
+								tmountcut.push({
+									lengthb:dec(cutlengthb[m]),
+									mount:t_samemount
+								});
+							}
+						}
+						if(tmountcut.length>0){
+							tmountcut.sort(function(a, b) {if(a.mount>b.mount) {return -1;} if (a.mount < b.mount) {return 1;} return 0;});
+							maxcutlengthb=tmountcut[0].lengthb;
+						}
+						
 						//裁切組合
 						var t_cups=[];
 						var t_cupsp=false;
@@ -10921,9 +11185,9 @@
 																if(tspec1==tspec2 && tsize1==tsize2 && dec(cutlengthb[n])==lengthb2 && dec(tmount2)>0){
 																	if (t_maxlenmount==dec(t_same[j].mount)){
 																		a_cutlengthbs.push(dec(cutlengthb[n]));
-																	}else if (t_maxlenmount<dec(t_same[j].mount)){
+																	}else if (t_maxlenmount<dec(t_same[j].mount) && dec(t_same[j].mount)%t_maxlenmount==0){
 																		b_cutlengthbs.push(dec(cutlengthb[n]));
-																	}else if (t_maxlenmount%dec(t_same[j].mount)){
+																	}else if (t_maxlenmount<dec(t_same[j].mount)){
 																		e_cutlengthbs.push(dec(cutlengthb[n]));
 																	}else if(dec(cutlengthb[n])<dec(maxcutlengthb)){
 																		d_cutlengthbs.push(dec(cutlengthb[n]));
@@ -10971,7 +11235,8 @@
 													cutlengthbs.sort(function(a, b) {if(a>b) {return 1;} if (a < b) {return -1;} return 0;});//長<短
 													var tmp2=$.extend(true,[], b_cutlengthbs);
 													tmp2.sort(function(a, b) {if(a>b) {return 1;} if (a < b) {return -1;} return 0;});//長<短
-													cutlengthbs=cutlengthbs=cutlengthbs.concat(tmp2);
+													cutlengthbs=cutlengthbs.concat(tmp2);
+													cutlengthbs=cutlengthbs.concat(e_cutlengthbs);
 													rep='';
 													//var t_cup=getmlength2(clength,clength,maxcutlengthb,cutlengthbs,'',[],t_same,tspec1,tsize1,a_cutlengthbs);
 													var t_cup=getmlength(clength,clength,maxcutlengthb,cutlengthbs,'',[],t_same,tspec1,tsize1,t_sortlen,t_safelen,t_stlen);
@@ -11244,7 +11509,8 @@
 														cutlengthbs.sort(function(a, b) {if(a>b) {return 1;} if (a < b) {return -1;} return 0;});//長<短
 														var tmp2=$.extend(true,[], b_cutlengthbs);
 														tmp2.sort(function(a, b) {if(a>b) {return 1;} if (a < b) {return -1;} return 0;});//長<短
-														cutlengthbs=cutlengthbs=cutlengthbs.concat(tmp2);
+														cutlengthbs=cutlengthbs.concat(tmp2);
+														cutlengthbs=cutlengthbs.concat(e_cutlengthbs);
 														rep='';
 														//var t_cup=getmlength2(clength,clength,maxcutlengthb,cutlengthbs,'',[],t_same,tspec1,tsize1,[]);
 														var t_cup=getmlength(clength,clength,maxcutlengthb,cutlengthbs,'',[],t_same,tspec1,tsize1,t_sortlen,t_safelen,t_stlen);
@@ -12086,9 +12352,9 @@
 																	if(tspec1==tspec2 && tsize1==tsize2 && dec(cutlengthb[n])==lengthb2 && dec(tmount2)>0){
 																		if (t_maxlenmount==dec(t_same[j].mount)){
 																			a_cutlengthbs.push(dec(cutlengthb[n]));
-																		}else if (t_maxlenmount<dec(t_same[j].mount)){
+																		}else if (t_maxlenmount<dec(t_same[j].mount) && dec(t_same[j].mount)%t_maxlenmount==0){
 																			b_cutlengthbs.push(dec(cutlengthb[n]));
-																		}else if (t_maxlenmount%dec(t_same[j].mount)){
+																		}else if (t_maxlenmount<dec(t_same[j].mount)){
 																			e_cutlengthbs.push(dec(cutlengthb[n]));
 																		}else if(dec(t_same[j].mount)==1){
 																			d_cutlengthbs.push(dec(cutlengthb[n]));
@@ -12732,6 +12998,26 @@
 												&& dec(tt_same[n].mount)+dec(tt_same[n].maxmount)>0
 											){
 												x_n=n;
+												var t_writenor=false;
+												for (var z=0;z<cuttmp.length;z++){
+													if(dec(cupcutlength[m])==dec(cuttmp[z].lengthb)){
+														if(dec(cuttmp[z].lengthb)<=dec(tt_same[n].lengthb) && dec(cuttmp[z].lengthb)>=(dec(tt_same[n].lengthb)-dec(tt_same[n].tw03))){
+															if((','+cuttmp[z].nor+',').indexOf(','+tt_same[n].nor.toString()+',')!=-1 && dec(tt_same[n].mount)+dec(tt_same[n].maxmount)>0){
+																break;
+															}
+															
+															if((','+cuttmp[z].nor+',').indexOf(','+tt_same[n].nor.toString()+',')==-1){
+																cuttmp[z].nor=cuttmp[z].nor+(cuttmp[z].nor.length>0?',':'')+tt_same[n].nor.toString();
+																tcuttmp[z].nor=tcuttmp[z].nor+(tcuttmp[z].nor.length>0?',':'')+tt_same[n].nor.toString();
+																t_writenor=true;
+															}
+															
+															if(t_writenor)
+																break;
+														}
+													}
+												}
+												
 												if(dec(tt_same[n].mount)>0)
 													tt_same[n].mount=q_sub(tt_same[n].mount,1);
 												else
@@ -12752,7 +13038,7 @@
 													}
 												}
 												
-												for (var z=0;z<cuttmp.length;z++){
+												/*for (var z=0;z<cuttmp.length;z++){
 													if(dec(cuttmp[z].lengthb)<=dec(tt_same[n].lengthb) && dec(cuttmp[z].lengthb)>=(dec(tt_same[n].lengthb)-dec(tt_same[n].tw03))){
 														if((','+cuttmp[z].nor+',').indexOf(','+tt_same[n].nor.toString()+',')==-1){
 															cuttmp[z].nor=cuttmp[z].nor+(cuttmp[z].nor.length>0?',':'')+tt_same[n].nor.toString();
@@ -12760,7 +13046,7 @@
 														}
 														//break;
 													}
-												}
+												}*/
 												if(bmount==1){
 													cutmemo.push({
 														'lengthb':dec(cupcutlength[m]),
@@ -12834,10 +13120,12 @@
 													isexist=true;
 													
 													for (var z=0;z<tcuttmp.length;z++){
-														if(dec(tcuttmp[z].lengthb)<=dec(ttt_same[n].lengthb) && dec(tcuttmp[z].lengthb)>=(dec(ttt_same[n].lengthb)-dec(ttt_same[n].tw03))){
-															if((','+tcuttmp[z].nor+',').indexOf(','+ttt_same[n].nor.toString()+',')==-1)
-																tcuttmp[z].nor=tcuttmp[z].nor+(tcuttmp[z].nor.length>0?',':'')+ttt_same[n].nor.toString();
-															break;
+														if(dec(cupcutlength[m])==dec(tcuttmp[z].lengthb)){
+															if(dec(tcuttmp[z].lengthb)<=dec(ttt_same[n].lengthb) && dec(tcuttmp[z].lengthb)>=(dec(ttt_same[n].lengthb)-dec(ttt_same[n].tw03))){
+																if((','+tcuttmp[z].nor+',').indexOf(','+ttt_same[n].nor.toString()+',')==-1)
+																	tcuttmp[z].nor=tcuttmp[z].nor+(tcuttmp[z].nor.length>0?',':'')+ttt_same[n].nor.toString();
+																break;
+															}
 														}
 													}
 													
@@ -13035,6 +13323,55 @@
 								if(!t_ismod){
 									break;
 								}
+							}
+							
+							//107/07/04倍數或相同 優先
+							var tmountcut=[];
+							for(var m=cutlengthb.length-1;m>=0;m--){
+								var t_samemount=0;
+								var t_cutmount=0;
+								for (var j=0;j<t_same.length;j++){
+									var tspec2=t_same[j].spec;
+									var tsize2=t_same[j].size;
+									var tmount2=t_same[j].mount;
+									var lengthb2=dec(t_same[j].lengthb);
+									if(tspec1==tspec2 && tsize1==tsize2 && lengthb2==dec(cutlengthb[m])){
+										t_cutmount=tmount2;
+										break;
+									}
+								}
+								
+								if(t_cutmount<5){continue;}
+								
+								for(var m2=m-1;m2>=0;m2--){
+									var t_cutmount2=0;
+									for (var j=0;j<t_same.length;j++){
+										var tspec2=t_same[j].spec;
+										var tsize2=t_same[j].size;
+										var tmount2=t_same[j].mount;
+										var lengthb2=dec(t_same[j].lengthb);
+										if(tspec1==tspec2 && tsize1==tsize2 && lengthb2==dec(cutlengthb[m2])){
+											t_cutmount2=tmount2;
+											break;
+										}
+									}
+									
+									if(t_cutmount2==t_cutmount){
+										t_samemount++;
+									}else if(t_cutmount2%t_cutmount==0 && t_cutmount2>t_cutmount){
+										t_samemount++;
+									}
+								}
+								if(t_samemount>0){
+									tmountcut.push({
+										lengthb:dec(cutlengthb[m]),
+										mount:t_samemount
+									});
+								}
+							}
+							if(tmountcut.length>0){
+								tmountcut.sort(function(a, b) {if(a.mount>b.mount) {return -1;} if (a.mount < b.mount) {return 1;} return 0;});
+								maxcutlengthb=tmountcut[0].lengthb;
 							}
 						}
 					}
